@@ -57,6 +57,11 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
     sourcemap: true,
+    // Vite legt sonst ein Polyfill für `<link rel="modulepreload">` ins Bundle,
+    // das intern `fetch()` aufruft. Es würde hier nie feuern (es gibt nichts
+    // vorzuladen), aber in einer App, deren einziges Versprechen "keine
+    // Netzwerkanfrage" ist, soll der Aufruf gar nicht erst im Code stehen.
+    modulePreload: { polyfill: false },
   },
   server: {
     // Fail fast statt still auf einen anderen Port ausweichen.

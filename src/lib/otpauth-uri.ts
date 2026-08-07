@@ -26,11 +26,7 @@
  *   AWS        otpauth://totp/AWS:kevin@123456789012?secret=…&issuer=AWS
  */
 
-import {
-  DEFAULT_ALGORITHM,
-  DEFAULT_DIGITS,
-  DEFAULT_PERIOD,
-} from './totp';
+import { DEFAULT_ALGORITHM, DEFAULT_DIGITS, DEFAULT_PERIOD } from './totp';
 import { MAX_DIGITS, MIN_DIGITS, type HashAlgorithm } from './hotp';
 
 /** Fehler beim Zerlegen einer URI. */

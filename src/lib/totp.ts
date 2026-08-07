@@ -33,6 +33,7 @@
  */
 
 import { generateHotp, OtpError, type HashAlgorithm } from './hotp';
+import type { Bytes } from './bytes';
 
 export const DEFAULT_ALGORITHM: HashAlgorithm = 'SHA-1';
 export const DEFAULT_DIGITS = 6;
@@ -60,10 +61,7 @@ export function timeCounter(unixSeconds: number, period: number = DEFAULT_PERIOD
  * Wir zählen bewusst bis 1 herunter und nicht bis 0 — eine Anzeige, die eine
  * Sekunde lang auf "0" stehen bleibt, wirkt eingefroren.
  */
-export function secondsUntilNextCode(
-  unixSeconds: number,
-  period: number = DEFAULT_PERIOD,
-): number {
+export function secondsUntilNextCode(unixSeconds: number, period: number = DEFAULT_PERIOD): number {
   assertPeriod(period);
   const elapsed = unixSeconds - timeCounter(unixSeconds, period) * period;
   return Math.ceil(period - elapsed) || period;
@@ -81,7 +79,7 @@ export function periodProgress(unixSeconds: number, period: number = DEFAULT_PER
 
 export interface TotpParams {
   /** Das gemeinsame Geheimnis als rohe Bytes. */
-  readonly secret: Uint8Array;
+  readonly secret: Bytes;
   /** Unix-Zeit in **Sekunden** (nicht Millisekunden!). */
   readonly unixSeconds: number;
   readonly algorithm?: HashAlgorithm;
@@ -108,7 +106,7 @@ export async function generateTotp({
 }
 
 export interface TotpCounterParams {
-  readonly secret: Uint8Array;
+  readonly secret: Bytes;
   readonly counter: number;
   readonly algorithm?: HashAlgorithm;
   readonly digits?: number;

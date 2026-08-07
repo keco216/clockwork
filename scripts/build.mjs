@@ -26,8 +26,8 @@ console.log('\n▸ Build 1/2: normaler Build → dist/');
 await build({ root, mode: 'production', configFile: path.join(root, 'vite.config.ts') });
 
 // --- 2. Single-File-Build ---------------------------------------------------
-// `emptyOutDir: false` ist wichtig, weil `dist-single/` ausserhalb von `root`
-// liegen könnte; hier ist es egal, aber es verhindert Nachfragen von Vite.
+// Eigener Ordner, weil beide Builds sonst dieselbe `index.html` schreiben
+// würden. Er wird gleich nach dem Umkopieren wieder gelöscht.
 console.log(`\n▸ Build 2/2: Single-File → dist/${singleFileName}`);
 await build({
   root,
@@ -37,7 +37,7 @@ await build({
   build: {
     outDir: distSingle,
     emptyOutDir: true,
-    // Sourcemaps liessen sich nicht inlinen, ohne die Datei zu verdoppeln.
+    // Sourcemaps ließen sich nicht inlinen, ohne die Datei zu verdoppeln.
     sourcemap: false,
     cssCodeSplit: false,
   },

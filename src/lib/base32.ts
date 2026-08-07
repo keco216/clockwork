@@ -5,10 +5,10 @@
  * ── WARUM überhaupt Base32? ────────────────────────────────────────────────
  * Ein TOTP-Secret ist in Wahrheit eine Folge roher Bytes (typisch 10 oder 20).
  * Damit man dieses Secret abtippen, vorlesen oder in einen QR-Code packen kann,
- * wird es als Text codiert. Base64 wäre kürzer, benutzt aber Gross- UND
+ * wird es als Text codiert. Base64 wäre kürzer, benutzt aber Groß- UND
  * Kleinschreibung sowie "+" und "/" — beim Abtippen eine Fehlerquelle.
  * Base32 benutzt nur A–Z und 2–7:
- *   • Gross-/Kleinschreibung ist egal (es gibt nur eine Variante),
+ *   • Groß-/Kleinschreibung ist egal (es gibt nur eine Variante),
  *   • die Ziffern 0, 1 und 8 fehlen bewusst, weil sie mit O, I/l und B
  *     verwechselt werden.
  *
@@ -16,7 +16,7 @@
  * Das Alphabet hat 32 = 2^5 Zeichen, jedes Zeichen trägt also genau 5 Bit.
  * Byte-Grenzen (8 Bit) und Zeichen-Grenzen (5 Bit) treffen sich erst beim
  * kleinsten gemeinsamen Vielfachen: 40 Bit = 5 Byte = 8 Zeichen. Dieser
- * 40-Bit-Block heisst "Quantum" und ist die Einheit, in der Base32 arbeitet.
+ * 40-Bit-Block heißt "Quantum" und ist die Einheit, in der Base32 arbeitet.
  *
  *   Bytes    │ 0 0 1 1 0 0 0 1 │ 0 0 1 1 0 0 1 0 │ …   (je 8 Bit)
  *   Zeichen  │ 0 0 1 1 0 │ 0 0 1 0 0 │ 1 1 0 0 1 │ …   (je 5 Bit)
@@ -28,6 +28,8 @@
  * letzten Block echt sind. Genau deshalb dürfen wir es beim Decodieren einfach
  * ignorieren, und genau deshalb funktionieren Secrets auch ohne Padding.
  */
+
+import type { Bytes } from './bytes';
 
 /** Das Alphabet aus RFC 4648 Tabelle 3. Der Index IST der 5-Bit-Wert. */
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -69,10 +71,10 @@ export class Base32Error extends Error {
  *
  * @throws {Base32Error}
  */
-export function decodeBase32(input: string): Uint8Array {
+export function decodeBase32(input: string): Bytes {
   // ── Schritt 1: normalisieren ──────────────────────────────────────────────
   // Whitespace (auch Zeilenumbrüche aus Copy&Paste) und Bindestriche raus,
-  // alles auf Grossbuchstaben.
+  // alles auf Großbuchstaben.
   const cleaned = input.replace(/[\s-]+/g, '').toUpperCase();
 
   // ── Schritt 2: Padding abschneiden und prüfen ─────────────────────────────

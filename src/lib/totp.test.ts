@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { OtpError, type HashAlgorithm } from './hotp';
+import type { Bytes } from './bytes';
 import {
   generateTotp,
   generateTotpForCounter,
@@ -9,7 +10,7 @@ import {
 } from './totp';
 import { decodeBase32 } from './base32';
 
-const ascii = (text: string): Uint8Array => new TextEncoder().encode(text);
+const ascii = (text: string): Bytes => new TextEncoder().encode(text);
 
 /**
  * RFC 6238, Anhang B — die Secrets.
@@ -24,7 +25,7 @@ const ascii = (text: string): Uint8Array => new TextEncoder().encode(text);
  * bei SHA-256 und SHA-512 falsche Codes und sucht den Fehler stundenlang im
  * eigenen HMAC.
  */
-const SEEDS: Readonly<Record<HashAlgorithm, Uint8Array>> = {
+const SEEDS: Readonly<Record<HashAlgorithm, Bytes>> = {
   'SHA-1': ascii('12345678901234567890'),
   'SHA-256': ascii('12345678901234567890123456789012'),
   'SHA-512': ascii('1234567890123456789012345678901234567890123456789012345678901234'),

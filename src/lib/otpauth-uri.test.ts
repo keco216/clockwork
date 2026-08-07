@@ -17,7 +17,9 @@ describe('isOtpauthUri', () => {
 
 describe('parseOtpauthUri — URIs, wie echte Anbieter sie erzeugen', () => {
   it('GitHub', () => {
-    const parsed = parseOtpauthUri('otpauth://totp/GitHub:kevin?secret=JBSWY3DPEHPK3PXP&issuer=GitHub');
+    const parsed = parseOtpauthUri(
+      'otpauth://totp/GitHub:kevin?secret=JBSWY3DPEHPK3PXP&issuer=GitHub',
+    );
     expect(parsed).toEqual({
       secret: 'JBSWY3DPEHPK3PXP',
       issuer: 'GitHub',

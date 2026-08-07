@@ -87,9 +87,7 @@ describe('decodeBase32 — Toleranz gegenüber echten Eingaben', () => {
 
   it('decodiert das RFC-Test-Secret zurück nach ASCII', () => {
     // Dieses Secret taucht in RFC 4226 und RFC 6238 auf — und in der Demo der App.
-    expect(toText(decodeBase32('GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ'))).toBe(
-      '12345678901234567890',
-    );
+    expect(toText(decodeBase32('GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ'))).toBe('12345678901234567890');
   });
 });
 
@@ -100,7 +98,7 @@ describe('decodeBase32 — Fehlerfälle', () => {
     expect(() => decodeBase32('====')).toThrow(/leer/i);
   });
 
-  it('lehnt Zeichen ausserhalb des Alphabets ab', () => {
+  it('lehnt Zeichen außerhalb des Alphabets ab', () => {
     // 0, 1 und 8 gibt es in Base32 nicht.
     expect(() => decodeBase32('ABCD0FGH')).toThrow(Base32Error);
     expect(() => decodeBase32('ABCD1FGH')).toThrow(Base32Error);

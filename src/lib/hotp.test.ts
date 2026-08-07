@@ -13,7 +13,7 @@ const toHex = (bytes: Uint8Array): string =>
  *
  * Wir prüfen absichtlich nicht nur den Endcode, sondern auch die beiden
  * Zwischenergebnisse. Geht ein Test kaputt, sagt einem das sofort, WELCHER
- * Schritt falsch ist: HMAC, Truncation oder das abschliessende Modulo.
+ * Schritt falsch ist: HMAC, Truncation oder das abschließende Modulo.
  */
 const RFC4226_VECTORS: ReadonlyArray<{
   counter: number;
@@ -21,16 +21,66 @@ const RFC4226_VECTORS: ReadonlyArray<{
   truncated: number;
   code: string;
 }> = [
-  { counter: 0, hmacHex: 'cc93cf18508d94934c64b65d8ba7667fb7cde4b0', truncated: 1284755224, code: '755224' },
-  { counter: 1, hmacHex: '75a48a19d4cbe100644e8ac1397eea747a2d33ab', truncated: 1094287082, code: '287082' },
-  { counter: 2, hmacHex: '0bacb7fa082fef30782211938bc1c5e70416ff44', truncated: 137359152, code: '359152' },
-  { counter: 3, hmacHex: '66c28227d03a2d5529262ff016a1e6ef76557ece', truncated: 1726969429, code: '969429' },
-  { counter: 4, hmacHex: 'a904c900a64b35909874b33e61c5938a8e15ed1c', truncated: 1640338314, code: '338314' },
-  { counter: 5, hmacHex: 'a37e783d7b7233c083d4f62926c7a25f238d0316', truncated: 868254676, code: '254676' },
-  { counter: 6, hmacHex: 'bc9cd28561042c83f219324d3c607256c03272ae', truncated: 1918287922, code: '287922' },
-  { counter: 7, hmacHex: 'a4fb960c0bc06e1eabb804e5b397cdc4b45596fa', truncated: 82162583, code: '162583' },
-  { counter: 8, hmacHex: '1b3c89f65e6c9e883012052823443f048b4332db', truncated: 673399871, code: '399871' },
-  { counter: 9, hmacHex: '1637409809a679dc698207310c8c7fc07290d9e5', truncated: 645520489, code: '520489' },
+  {
+    counter: 0,
+    hmacHex: 'cc93cf18508d94934c64b65d8ba7667fb7cde4b0',
+    truncated: 1284755224,
+    code: '755224',
+  },
+  {
+    counter: 1,
+    hmacHex: '75a48a19d4cbe100644e8ac1397eea747a2d33ab',
+    truncated: 1094287082,
+    code: '287082',
+  },
+  {
+    counter: 2,
+    hmacHex: '0bacb7fa082fef30782211938bc1c5e70416ff44',
+    truncated: 137359152,
+    code: '359152',
+  },
+  {
+    counter: 3,
+    hmacHex: '66c28227d03a2d5529262ff016a1e6ef76557ece',
+    truncated: 1726969429,
+    code: '969429',
+  },
+  {
+    counter: 4,
+    hmacHex: 'a904c900a64b35909874b33e61c5938a8e15ed1c',
+    truncated: 1640338314,
+    code: '338314',
+  },
+  {
+    counter: 5,
+    hmacHex: 'a37e783d7b7233c083d4f62926c7a25f238d0316',
+    truncated: 868254676,
+    code: '254676',
+  },
+  {
+    counter: 6,
+    hmacHex: 'bc9cd28561042c83f219324d3c607256c03272ae',
+    truncated: 1918287922,
+    code: '287922',
+  },
+  {
+    counter: 7,
+    hmacHex: 'a4fb960c0bc06e1eabb804e5b397cdc4b45596fa',
+    truncated: 82162583,
+    code: '162583',
+  },
+  {
+    counter: 8,
+    hmacHex: '1b3c89f65e6c9e883012052823443f048b4332db',
+    truncated: 673399871,
+    code: '399871',
+  },
+  {
+    counter: 9,
+    hmacHex: '1637409809a679dc698207310c8c7fc07290d9e5',
+    truncated: 645520489,
+    code: '520489',
+  },
 ];
 
 describe('counterToBytes — 8 Byte Big-Endian (RFC 4226 §5.1)', () => {

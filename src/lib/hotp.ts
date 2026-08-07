@@ -21,13 +21,15 @@
  * Weil ein simples Hash-über-alles anfällig für Length-Extension-Angriffe ist:
  * Wer H(secret ‖ x) kennt, kann bei SHA-1 daraus H(secret ‖ x ‖ y) berechnen,
  * ohne das Secret zu kennen. HMAC hasht deshalb zweimal mit zwei aus dem Secret
- * abgeleiteten Padding-Blöcken und schliesst diese Klasse von Angriffen aus.
+ * abgeleiteten Padding-Blöcken und schließt diese Klasse von Angriffen aus.
  * Wir implementieren HMAC NICHT selbst — dafür gibt es die Web Crypto API, die
  * im Browser nativ und konstant-zeitig arbeitet.
  *
  * ── Warum drei Schritte statt "nimm einfach die ersten 6 Ziffern"? ─────────
  * Siehe {@link dynamicTruncate} — dort steht der interessanteste Teil.
  */
+
+import type { Bytes } from './bytes';
 
 /**
  * Die Hash-Funktionen, die die Web Crypto API für HMAC anbietet und die in
@@ -41,7 +43,7 @@ export type HashAlgorithm = 'SHA-1' | 'SHA-256' | 'SHA-512';
 /** Alle unterstützten Algorithmen, z. B. für Validierung und UI. */
 export const HASH_ALGORITHMS: readonly HashAlgorithm[] = ['SHA-1', 'SHA-256', 'SHA-512'];
 
-/** Kleinste bzw. grösste Stellenzahl, die diese App erlaubt. */
+/** Kleinste bzw. größte Stellenzahl, die diese App erlaubt. */
 export const MIN_DIGITS = 6;
 export const MAX_DIGITS = 8;
 
@@ -82,7 +84,7 @@ function assertDigits(digits: number): void {
  *   counter = 1  →  00 00 00 00 00 00 00 01
  *   counter = 256→  00 00 00 00 00 00 01 00
  */
-export function counterToBytes(counter: number | bigint): Uint8Array {
+export function counterToBytes(counter: number | bigint): Bytes {
   let value: bigint;
   if (typeof counter === 'bigint') {
     value = counter;
@@ -117,11 +119,7 @@ export function counterToBytes(counter: number | bigint): Uint8Array {
  * nicht mehr verlassen kann — selbst unser eigener Code kann ihn danach nicht
  * mehr auslesen. Kostet nichts und ist die richtige Voreinstellung.
  */
-export async function hmac(
-  algorithm: HashAlgorithm,
-  key: Uint8Array,
-  message: Uint8Array,
-): Promise<Uint8Array> {
+export async function hmac(algorithm: HashAlgorithm, key: Bytes, message: Bytes): Promise<Bytes> {
   if (key.length === 0) {
     throw new OtpError('Das Secret ist leer — daraus lässt sich kein Code berechnen.');
   }
@@ -158,7 +156,7 @@ export async function hmac(
  *
  * Der Offset ist maximal 15, wir lesen 4 Byte → wir brauchen mindestens 19+1 = 20
  * Byte. Genau die Länge von SHA-1. SHA-256 (32 B) und SHA-512 (64 B) sind länger;
- * ihre hinteren Bytes fliessen also gar nicht in den Code ein — das ist so gewollt
+ * ihre hinteren Bytes fließen also gar nicht in den Code ein — das ist so gewollt
  * und in RFC 6238 ausdrücklich so festgelegt.
  */
 export function dynamicTruncate(hmacResult: Uint8Array): number {
@@ -181,7 +179,7 @@ export function dynamicTruncate(hmacResult: Uint8Array): number {
 
 export interface HotpParams {
   /** Das gemeinsame Geheimnis als rohe Bytes (aus Base32 decodiert). */
-  readonly secret: Uint8Array;
+  readonly secret: Bytes;
   /** Der Zählerstand. Bei TOTP: `floor(unixZeit / periode)`. */
   readonly counter: number | bigint;
   /** Stellen des Codes, 6–8. Voreinstellung 6. */

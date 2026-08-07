@@ -1,0 +1,718 @@
+/* =============================================================================
+   2FA Live — Stylesheet
+
+   Gestalterische Idee: ein Messinstrument. Dunkles Graphit mit Blaustich als
+   Gehäuse, eine einzige warme Messing-Farbe als Akzent (die Farbe alter
+   Segment-Anzeigen und von Zifferblatt-Indizes), und die Ziffern als klar
+   ablesbare Anzeige in dicktengleicher Schrift. Der Akzent ist bewusst nur an
+   EINER Stelle laut: am Countdown-Ring. Der Code selbst ist schlicht hell —
+   seine Betonung ist die Größe, nicht die Farbe.
+
+   Farben liegen ausschließlich als Custom Properties in :root bzw. im
+   Light-Media-Query. Kein Bauteil weiter unten setzt je eine feste Farbe —
+   sonst würde genau ein Theme brechen.
+   ========================================================================== */
+
+:root {
+  color-scheme: dark light;
+
+  /* --- Dunkel ist die Basis (so gewünscht: „dunkel als Standard") --------- */
+  --bg: #0b0f14;
+  --surface: #121822;
+  --surface-sunken: #0e131b;
+  --border: #232d3d;
+  --border-strong: #35425a;
+  --edge: rgb(255 255 255 / 5%); /* feiner Lichtsaum an der Kartenoberkante */
+
+  --text: #e9edf3;
+  --text-dim: #8c99ab;
+  --text-mute: #78869b;
+
+  --accent: #e4a951; /* Messing */
+  --accent-ink: #1a1206; /* Text auf Messing-Flächen */
+  --danger: #e8705f;
+  --ok: #5fc9a0;
+
+  --focus: var(--accent);
+
+  /* --- Typografie ------------------------------------------------------- */
+  /* Keine Web-Fonts: ein Download wäre eine Netzwerkanfrage, und die soll es
+     hier nicht geben. Stattdessen zwei bewusst gewählte System-Stacks. */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI Variable Text', 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-mono:
+    ui-monospace, 'Cascadia Mono', 'Cascadia Code', 'SF Mono', 'Segoe UI Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
+
+  --radius: 14px;
+  --radius-sm: 9px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #eef1f6;
+    --surface: #ffffff;
+    --surface-sunken: #f5f7fa;
+    --border: #dce3ec;
+    --border-strong: #bcc7d6;
+    --edge: rgb(15 23 32 / 3%);
+
+    --text: #101720;
+    --text-dim: #5a6675;
+    --text-mute: #667385;
+
+    --accent: #9a6a15; /* dunkleres Messing — Kontrast auf Weiß */
+    --accent-ink: #fffaf0;
+    --danger: #bd3b2b;
+    --ok: #12805a;
+  }
+}
+
+/* =============================================================================
+   Grundlagen
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  /* Explizit gesetzt, nicht geerbt: sonst scheint der Hintergrund des
+     umgebenden Kontexts durch und ein Theme wird unlesbar. */
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Ein einziger, sehr zurückhaltender Lichtschein von oben — gibt der Seite
+   Tiefe, ohne ein Farbverlaufs-Hero zu sein. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    64rem 34rem at 50% -14rem,
+    color-mix(in oklab, var(--accent) 13%, transparent),
+    transparent 68%
+  );
+}
+
+:where(h1, h2, h3, p) {
+  margin: 0;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.05em 0.36em;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Sichtbarer Fokus für Tastaturbedienung — nie wegnehmen, nur schöner machen. */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Kleine, gesperrte Versalien als Beschriftung. */
+.micro,
+.label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+
+/* =============================================================================
+   Seitenraster
+   ========================================================================== */
+
+.page {
+  max-width: 74rem;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem) 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+/* =============================================================================
+   Kopfbereich
+   ========================================================================== */
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.wordmark__glyph {
+  width: 2.6rem;
+  height: 2.6rem;
+  flex: none;
+}
+
+.wordmark__ring {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 2.5;
+}
+
+.wordmark__pip {
+  fill: var(--accent);
+}
+
+.wordmark__title {
+  font-size: 1.32rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+}
+
+.wordmark__title span {
+  color: var(--accent);
+  font-weight: 400;
+}
+
+.wordmark__subtitle {
+  font-size: 0.83rem;
+  color: var(--text-dim);
+}
+
+.masthead__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.32rem 0.75rem 0.32rem 0.6rem;
+}
+
+.masthead__dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ok) 22%, transparent);
+}
+
+/* =============================================================================
+   Sicherheitshinweis
+   ========================================================================== */
+
+.notice {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 32%, var(--border));
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--accent) 7%, var(--surface));
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  text-wrap: pretty;
+}
+
+.notice strong {
+  color: var(--text);
+}
+
+.notice__icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: none;
+  margin-top: 0.1rem;
+  color: var(--accent);
+}
+
+/* =============================================================================
+   Eingabe-Panel
+   ========================================================================== */
+
+.console {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: clamp(0.9rem, 2.5vw, 1.25rem);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: inset 0 1px 0 var(--edge);
+}
+
+.console__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.console__status {
+  font-size: 0.78rem;
+  color: var(--text-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+.console__input {
+  width: 100%;
+  min-height: 6.5rem;
+  resize: vertical;
+  padding: 0.75rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 140ms ease;
+}
+
+.console__input::placeholder {
+  color: var(--text-mute);
+  opacity: 0.75;
+}
+
+.console__input:hover {
+  border-color: var(--border-strong);
+}
+
+.console__input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
+}
+
+.console__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.console__hint {
+  font-size: 0.8rem;
+  color: var(--text-mute);
+  max-width: 46ch;
+  text-wrap: pretty;
+}
+
+.console__hint code {
+  font-size: 0.85em;
+}
+
+.console__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.button {
+  font: inherit;
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.42rem 0.85rem;
+  cursor: pointer;
+  transition:
+    color 140ms ease,
+    border-color 140ms ease,
+    background-color 140ms ease;
+}
+
+.button:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+/* =============================================================================
+   Karten-Raster
+   ========================================================================== */
+
+.results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20.5rem), 1fr));
+  gap: 1rem;
+}
+
+.results:empty {
+  display: none;
+}
+
+.placeholder {
+  padding: 2.25rem 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-mute);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  text-wrap: balance;
+}
+
+.placeholder strong {
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.placeholder[hidden] {
+  display: none;
+}
+
+/* =============================================================================
+   Karte
+   ========================================================================== */
+
+.card {
+  /* Container-Query-Einheiten: die Code-Größe richtet sich nach der Karte,
+     nicht nach dem Fenster. So passen auch 8-stellige Codes in eine schmale
+     Spalte, ohne dass irgendwo etwas überläuft. */
+  container-type: inline-size;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.05rem 1.15rem 0.95rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: inset 0 1px 0 var(--edge);
+
+  /* Von der Uhr gesetzt: Anteil der verstrichenen Periode, 0 … 1. */
+  --progress: 0;
+}
+
+.card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.card__identity {
+  min-width: 0; /* erlaubt dem Text unten, zu kürzen statt zu überlaufen */
+}
+
+.card__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card__subtitle {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card__subtitle:empty {
+  display: none;
+}
+
+/* --- Countdown-Ring ------------------------------------------------------ */
+
+.card__timer {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.7rem;
+  height: 2.7rem;
+  flex: none;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ring__track,
+.ring__value {
+  fill: none;
+  stroke-width: 3;
+  transform: rotate(-90deg); /* Start auf 12 Uhr */
+  transform-origin: 50% 50%;
+}
+
+.ring__track {
+  stroke: var(--border);
+}
+
+.ring__value {
+  stroke-linecap: round;
+  /* `pathLength="100"` normiert den Kreisumfang auf 100 — damit ist
+     dashoffset = progress × 100 exakt der abgelaufene Anteil. */
+  stroke-dasharray: 100;
+  stroke-dashoffset: calc(var(--progress) * 100px);
+
+  stroke: var(--accent);
+  /* Im letzten Viertel wandert die Farbe von Messing nach Rosé. Der Übergang
+     ist bewusst gleitend und periodenrelativ — er funktioniert also auch bei
+     60 s oder 15 s. */
+  stroke: color-mix(
+    in oklab,
+    var(--accent),
+    var(--danger) calc(max(0, (var(--progress) - 0.75)) * 400%)
+  );
+}
+
+.card__seconds {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+  transition: color 200ms ease;
+}
+
+.card.is-expiring .card__seconds {
+  color: var(--danger);
+}
+
+/* --- Der Code ------------------------------------------------------------ */
+
+.card__main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.card__code {
+  font-family: var(--font-mono);
+  font-size: 2.1rem; /* Rückfallwert, falls cqi nicht unterstützt wird */
+  font-size: clamp(1.7rem, 11cqi, 2.35rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  /* Damit beim Wechsel von z. B. „1" auf „8" nichts springt. */
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  /* Der Code ist das Einzige, was man hier markieren können muss. */
+  user-select: all;
+  white-space: nowrap;
+}
+
+/* Der kurze Aufblend-Impuls beim Codewechsel steckt bewusst nicht hier, sondern
+   in card.ts: Eine CSS-Animation müsste man per Reflow-Trick neu starten, die
+   Web Animations API kann das von Haus aus. */
+
+.copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: none;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  transition:
+    color 140ms ease,
+    border-color 140ms ease;
+}
+
+.copy__icon {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex: none;
+}
+
+.copy:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.copy.is-done {
+  color: var(--ok);
+  border-color: color-mix(in oklab, var(--ok) 45%, var(--border));
+}
+
+.copy.is-failed {
+  color: var(--danger);
+  border-color: color-mix(in oklab, var(--danger) 45%, var(--border));
+}
+
+/* --- Fußzeile der Karte -------------------------------------------------- */
+
+.card__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border);
+}
+
+.card__next {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+/* Signaturdetail: Je leerer der Ring, desto präsenter wird der nächste Code.
+   Das ist keine Dekoration — es zeigt, dass dieser Code gleich der aktuelle
+   ist, und macht den Wechsel vorhersehbar statt überraschend. */
+.card__nextCode {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  opacity: clamp(0.34, calc(0.34 + (var(--progress) - 0.7) * 2), 0.92);
+}
+
+.card__params {
+  text-align: right;
+  white-space: nowrap;
+  font-size: 0.66rem;
+}
+
+/* --- Fehlerkarte --------------------------------------------------------- */
+
+.card--error {
+  border-color: color-mix(in oklab, var(--danger) 38%, var(--border));
+  background: color-mix(in oklab, var(--danger) 5%, var(--surface));
+}
+
+.card__alert {
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: none;
+  color: var(--danger);
+}
+
+.card__source {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-mute);
+  overflow-wrap: anywhere;
+}
+
+.card__error {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-wrap: pretty;
+}
+
+/* =============================================================================
+   Fußzeile
+   ========================================================================== */
+
+.colophon {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--text-mute);
+  text-wrap: pretty;
+}
+
+.colophon code {
+  font-size: 0.9em;
+}
+
+/* =============================================================================
+   Kleine Bildschirme
+   ========================================================================== */
+
+@media (max-width: 30rem) {
+  .console__foot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .console__actions {
+    margin-left: 0;
+  }
+
+  .button {
+    flex: 1;
+  }
+
+  .card__params {
+    display: none; /* Platz für das Wesentliche: Code und Countdown */
+  }
+}
+
+/* =============================================================================
+   Bewegung reduzieren
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
