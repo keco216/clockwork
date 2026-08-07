@@ -1,5 +1,11 @@
 <!doctype html>
-<html lang="de">
+<!--
+  lang und dir stehen hier auf Englisch/ltr, weil der ausgelieferte Text
+  englisch ist (en ist Basissprache). src/i18n/apply.ts setzt beide beim Start
+  auf die erkannte Sprache um — und damit auch data-script, das den
+  Schrift-Stack auswählt.
+-->
+<html lang="en" dir="ltr" data-script="latin">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -7,7 +13,7 @@
     <meta name="referrer" content="no-referrer" />
     <meta
       name="description"
-      content="Clockwork — TOTP Authenticator. Erzeugt Zwei-Faktor-Codes vollständig im Browser, ohne Netzwerkanfragen."
+      content="Clockwork — TOTP authenticator. Generates two-factor codes entirely in the browser, without any network requests."
     />
     <!-- Die Farbe der Browserleiste folgt dem Gehäuse: Papier bzw. Nacht. -->
     <meta name="theme-color" content="#f5f3ef" media="(prefers-color-scheme: light)" />
@@ -26,7 +32,7 @@
   </head>
 
   <body>
-    <a class="skip" href="#zone-codes">Zu den Codes springen</a>
+    <a class="skip" href="#zone-codes" data-i18n="skip.toCodes">Skip to the codes</a>
 
     <div class="device">
       <!-- ══ Kopf ══════════════════════════════════════════════════════ -->
@@ -37,31 +43,44 @@
           das erste trägt den Signal-Index auf 12 Uhr. Die Ringe sind echte
           Elemente, kein Bild — sie skalieren mit der Schriftgröße und tragen
           im dunklen Modus dieselbe Tinte wie die Buchstaben.
+
+          Die Marke bleibt in jeder Sprache lateinisch gesetzt (siehe
+          styles/scripts.css): Ein Logo wird nicht übersetzt.
         -->
-        <h1 class="wordmark" translate="no">
+        <h1 class="wordmark" translate="no" dir="ltr">
           <span class="sr-only">Clockwork</span>
           <span class="wordmark__word" aria-hidden="true"
             >CL<i class="wordmark__o wordmark__o--index"></i>CKW<i class="wordmark__o"></i>RK</span
           >
         </h1>
-        <p class="masthead__spec">TOTP Authenticator · RFC 6238</p>
+        <p class="masthead__spec" data-i18n="brand.tagline">TOTP Authenticator · RFC 6238</p>
         <p class="masthead__state">
           <span class="lamp" aria-hidden="true"></span>
-          <span id="state-text">Offline · nichts gespeichert</span>
+          <span id="state-text">Offline · nothing stored</span>
         </p>
       </header>
 
       <main>
         <!-- ══ Zone: Eingabe ═══════════════════════════════════════════ -->
         <section class="zone" id="zone-input" aria-labelledby="zone-input-label">
-          <h2 class="zone__label" id="zone-input-label">Eingabe</h2>
+          <h2 class="zone__label" id="zone-input-label" data-i18n="zone.input">Input</h2>
           <div class="zone__body">
             <div class="slot">
-              <label class="slot__legend" for="secrets">Ein Eintrag pro Zeile</label>
+              <label class="slot__legend" for="secrets" data-i18n="input.legend"
+                >One entry per line</label
+              >
+              <!--
+                dir="ltr" ist hier keine Kosmetik: Base32-Secrets und
+                otpauth-URIs sind lateinische Zeichenketten. In einer
+                RTL-Oberfläche würde die Bidi-Regel sie sonst am rechten Rand
+                ausrichten und Satzzeichen umsortieren — man tippt dann etwas
+                anderes ein, als man sieht.
+              -->
               <textarea
                 id="secrets"
                 class="field slot__field"
                 translate="no"
+                dir="ltr"
                 rows="4"
                 spellcheck="false"
                 autocomplete="off"
@@ -73,21 +92,25 @@
             </div>
 
             <div class="keys">
-              <button type="button" class="key" id="key-demo">Demo einsetzen</button>
-              <button type="button" class="key" id="key-clear">Leeren</button>
+              <button type="button" class="key" id="key-demo" data-i18n="key.demo">
+                Insert demo
+              </button>
+              <button type="button" class="key" id="key-clear" data-i18n="key.clear">Clear</button>
               <span class="keys__gap" aria-hidden="true"></span>
               <button type="button" class="key" id="key-file">
                 <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                   <path d="M2.5 12.5v-9h5l1.5 2h4.5v7z" />
                 </svg>
-                QR aus Bild
+                <!-- Eigener span: data-i18n setzt textContent, das würde sonst
+                     das Icon mit wegwischen. -->
+                <span data-i18n="key.qrImage">QR from image</span>
               </button>
               <button type="button" class="key" id="key-camera">
                 <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                   <path d="M1.5 4.5h3l1-2h5l1 2h3v9h-13z" />
                   <circle cx="8" cy="8.5" r="2.5" />
                 </svg>
-                Kamera
+                <span data-i18n="key.camera">Camera</span>
               </button>
               <input
                 type="file"
@@ -110,37 +133,66 @@
                 <span class="viewfinder__mark" data-corner="br" aria-hidden="true"></span>
               </div>
               <div class="viewfinder__bar">
-                <p class="viewfinder__hint" id="viewfinder-hint">QR-Code in den Rahmen halten</p>
-                <button type="button" class="key" id="key-camera-stop">Kamera aus</button>
+                <p class="viewfinder__hint" id="viewfinder-hint" data-i18n="viewfinder.hint">
+                  Hold the QR code inside the frame
+                </p>
+                <button type="button" class="key" id="key-camera-stop" data-i18n="key.cameraStop">
+                  Camera off
+                </button>
               </div>
             </div>
 
             <p class="note" id="import-note" role="status" aria-live="polite"></p>
 
-            <p class="note">
-              Base32, <code translate="no">Name: SECRET</code> oder
-              <code translate="no">otpauth://…</code> — gemischt.
-              <code translate="no">#</code> beginnt eine Notiz. QR-Bilder lassen sich auch hierher
-              ziehen oder mit <kbd>Strg</kbd>+<kbd>V</kbd> einfügen; Google-Authenticator-Exporte
-              (<code translate="no">otpauth-migration://</code>) werden automatisch umgewandelt.
+            <!--
+              Reichtexte: Der Satz ist EINE Übersetzung mit Platzhaltern, die
+              ausgezeichneten Stücke liegen als [data-slot] daneben. Beim
+              Anwenden werden sie an die Stelle ihres Platzhalters geschoben —
+              wohin, bestimmt die Übersetzung. Damit ist die Wortstellung frei.
+              Siehe src/i18n/apply.ts.
+            -->
+            <p class="note" data-rich="input.help.formats">
+              <code data-slot="nameSecret" translate="no" dir="ltr">Name: SECRET</code>
+              <code data-slot="uri" translate="no" dir="ltr">otpauth://…</code>
+              <code data-slot="hash" translate="no" dir="ltr">#</code>
+            </p>
+            <p class="note" data-rich="input.help.images">
+              <span data-slot="paste" dir="ltr"
+                ><kbd data-i18n="shortcut.modifier">Ctrl</kbd>+<kbd translate="no">V</kbd></span
+              >
+            </p>
+            <p class="note" data-rich="input.help.migration">
+              <code data-slot="migration" translate="no" dir="ltr">otpauth-migration://</code>
             </p>
           </div>
         </section>
 
         <!-- ══ Zone: Tresor ════════════════════════════════════════════ -->
         <section class="zone" id="zone-vault" aria-labelledby="zone-vault-label">
-          <h2 class="zone__label" id="zone-vault-label">Tresor</h2>
+          <h2 class="zone__label" id="zone-vault-label" data-i18n="zone.vault">Vault</h2>
           <div class="zone__body">
             <div class="vault" id="vault" data-state="off">
               <p class="vault__state">
                 <span class="vault__lamp" aria-hidden="true"></span>
-                <span id="vault-state-text">Aus — es wird nichts gespeichert</span>
+                <span id="vault-state-text">Off — nothing is stored</span>
               </p>
 
+              <!--
+                Der Text wird von vault-panel.ts gesetzt — er enthält die
+                Iterationszahl, und die will lokalisiert gruppiert sein
+                (600,000 / 600.000 / 600 000).
+
+                Trotzdem steht er hier ausgeschrieben, und das ist kein
+                Widerspruch: Das Bündel wiegt seit V3 rund 480 kB, der Browser
+                malt also einmal, BEVOR das Skript läuft. Ein leerer Absatz an
+                dieser Stelle wächst danach um drei Zeilen und schiebt die halbe
+                Seite nach unten — gemessen als Layout-Shift von 0,16. Steht der
+                Platz von Anfang an, bleibt vom Sprung nichts übrig.
+              -->
               <p class="note" id="vault-explain">
-                Standardmäßig speichert Clockwork nichts. Wer möchte, kann die Eingabe hier mit
-                einer Passphrase verschlüsselt ablegen: PBKDF2-SHA-256 mit 600&nbsp;000 Iterationen,
-                danach AES-256-GCM. Ohne die Passphrase ist der gespeicherte Block wertlos.
+                By default Clockwork stores nothing. If you want to, you can keep the input here
+                encrypted with a passphrase: PBKDF2-SHA-256 with 600,000 iterations, then
+                AES-256-GCM. Without the passphrase the stored block is worthless.
               </p>
 
               <form class="vault__form" id="vault-form">
@@ -153,34 +205,54 @@
                     id="vault-pass"
                     class="field vault__pass"
                     translate="no"
+                    dir="ltr"
                     autocomplete="current-password"
                     spellcheck="false"
                   />
-                  <button type="submit" class="key" id="vault-primary">
-                    Verschlüsselt speichern
-                  </button>
+                  <button type="submit" class="key" id="vault-primary">Store encrypted</button>
                 </div>
                 <p class="vault__error" id="vault-error" role="alert"></p>
               </form>
 
               <div class="keys" id="vault-actions">
-                <button type="button" class="key" id="vault-lock" hidden>Zusperren</button>
-                <button type="button" class="key" id="vault-update" hidden>Neu speichern</button>
+                <button
+                  type="button"
+                  class="key"
+                  id="vault-lock"
+                  hidden
+                  data-i18n="vault.action.lock"
+                >
+                  Lock
+                </button>
+                <button
+                  type="button"
+                  class="key"
+                  id="vault-update"
+                  hidden
+                  data-i18n="vault.action.update"
+                >
+                  Store again
+                </button>
                 <button type="button" class="key key--danger" id="vault-wipe" hidden>
-                  Alles löschen
+                  Delete everything
                 </button>
               </div>
 
               <p class="vault__config">
-                <label for="vault-timeout">Sperrt automatisch nach</label>
+                <label for="vault-timeout" data-i18n="vault.timeout.label"
+                  >Locks automatically after</label
+                >
+                <!-- Beschriftet werden die Einträge in vault-panel.ts über die
+                     Mehrzahlregeln. Der Text hier ist der Platzhalter für den
+                     ersten Anstrich, damit das Feld nicht nachträglich wächst. -->
                 <select id="vault-timeout" class="pick">
-                  <option value="60000">1 Minute</option>
-                  <option value="300000" selected>5 Minuten</option>
-                  <option value="900000">15 Minuten</option>
+                  <option value="60000">1 minute</option>
+                  <option value="300000" selected>5 minutes</option>
+                  <option value="900000">15 minutes</option>
                 </select>
                 <label class="vault__check">
                   <input type="checkbox" id="vault-hide-lock" checked />
-                  auch beim Verlassen des Tabs
+                  <span data-i18n="vault.lockOnHide">and when the tab is left</span>
                 </label>
               </p>
             </div>
@@ -189,7 +261,7 @@
 
         <!-- ══ Zone: Codes ═════════════════════════════════════════════ -->
         <section class="zone" id="zone-codes" aria-labelledby="zone-codes-label">
-          <h2 class="zone__label" id="zone-codes-label">Codes</h2>
+          <h2 class="zone__label" id="zone-codes-label" data-i18n="zone.codes">Codes</h2>
           <div class="zone__body">
             <div class="strips" id="strips"></div>
 
@@ -202,10 +274,16 @@
                 aria-hidden="true"
                 focusable="false"
               ></svg>
-              <p class="vacant__text">
-                Noch keine Eingabe. Setze oben ein Secret ein — oder nimm mit
-                <button type="button" class="linkkey" id="vacant-demo">Demo einsetzen</button>
-                den Testschlüssel aus RFC&nbsp;4226.
+              <p class="vacant__text" data-rich="vacant.text">
+                <button
+                  type="button"
+                  class="linkkey"
+                  id="vacant-demo"
+                  data-slot="demo"
+                  data-i18n="key.demo"
+                >
+                  Insert demo
+                </button>
               </p>
             </div>
           </div>
@@ -214,10 +292,28 @@
 
       <!-- ══ Fuß ═══════════════════════════════════════════════════════ -->
       <footer class="colophon">
-        <p class="colophon__specs" translate="no">
+        <p class="colophon__specs" translate="no" dir="ltr">
           <span>RFC 6238</span><span>RFC 4226</span><span>RFC 4648</span>
         </p>
-        <p class="colophon__note">Kein Netzwerk · kein Speicher · HMAC über die Web Crypto API</p>
+
+        <!-- Die Sprachwahl sitzt im Fuß und nicht im Kopf: Sie wird einmal
+             eingestellt und dann nie wieder angefasst — wie die Angaben auf
+             einem Typenschild. -->
+        <p class="colophon__lang">
+          <label for="lang-select" class="colophon__langLabel" data-i18n="lang.label"
+            >Language</label
+          >
+          <select
+            id="lang-select"
+            class="pick"
+            data-i18n-attr="aria-label=lang.aria"
+            aria-label="Choose language"
+          ></select>
+        </p>
+
+        <p class="colophon__note" data-i18n="colophon.note">
+          No network · no storage · HMAC via the Web Crypto API
+        </p>
       </footer>
     </div>
 
@@ -230,14 +326,24 @@
       Kanalzug pro Konto. Wird geklont statt per innerHTML gebaut: Alle Werte aus
       der Eingabe gehen ausschließlich über textContent ins DOM und können
       deshalb nie als HTML interpretiert werden.
+
+      Der Inhalt eines <template> steht NICHT im Dokumentbaum — die
+      data-i18n-Auszeichnungen hier erreicht der Durchlauf über `document`
+      also nicht. strip.ts übersetzt deshalb jeden Klon einzeln.
     -->
     <template id="tpl-strip">
       <article class="strip">
         <div class="gauge">
           <svg class="dialface" data-gauge aria-hidden="true" focusable="false"></svg>
-          <p class="gauge__seconds">
-            <span data-seconds>–</span><abbr title="Sekunden">s</abbr>
-            <span class="sr-only">gültig</span>
+          <p class="gauge__seconds" dir="ltr">
+            <span data-seconds>–</span
+            ><abbr
+              data-i18n="strip.seconds.abbr"
+              data-i18n-attr="title=strip.seconds.title"
+              title="seconds"
+              >s</abbr
+            >
+            <span class="sr-only" data-i18n="strip.seconds.valid">valid</span>
           </p>
         </div>
 
@@ -247,19 +353,19 @@
         </p>
         <p class="strip__spec" data-spec translate="no"></p>
 
-        <output class="dial" data-dial aria-live="off" translate="no"></output>
+        <output class="dial" data-dial aria-live="off" translate="no" dir="ltr"></output>
 
         <button type="button" class="key key--copy" data-copy>
           <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
             <rect x="5.5" y="5.5" width="8" height="8" />
             <path d="M10.5 3.5v-1h-8v8h1" />
           </svg>
-          <span data-copy-label>Kopieren</span>
+          <span data-copy-label data-i18n="key.copy">Copy</span>
         </button>
 
         <p class="strip__next">
-          <span class="strip__nextLabel">folgt</span>
-          <span class="strip__nextCode" data-next translate="no"></span>
+          <span class="strip__nextLabel" data-i18n="strip.next">next</span>
+          <span class="strip__nextCode" data-next translate="no" dir="ltr"></span>
         </p>
       </article>
     </template>
@@ -267,8 +373,13 @@
     <template id="tpl-fault">
       <article class="strip strip--fault">
         <p class="strip__id">
-          <span class="strip__issuer">Zeile nicht lesbar</span>
-          <span class="strip__account strip__account--src" data-source translate="no"></span>
+          <span class="strip__issuer" data-i18n="fault.title">Line not readable</span>
+          <span
+            class="strip__account strip__account--src"
+            data-source
+            translate="no"
+            dir="ltr"
+          ></span>
         </p>
         <p class="fault__text" data-message></p>
       </article>

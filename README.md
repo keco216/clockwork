@@ -5,6 +5,10 @@ Algorithmus ist von Hand implementiert (RFC 4226 und RFC 6238) — es wird **kei
 fertige OTP-Bibliothek** benutzt. Die einzige geliehene Krypto-Primitive ist HMAC
 aus der Web Crypto API.
 
+Seit V3 spricht die App **37 Sprachen**, von Arabisch bis Vietnamesisch, alle
+mitgebündelt und ohne eine einzige Netzwerkanfrage — auch die
+Übersetzungsverwaltung ist selbst geschrieben (siehe [Sprachen](#sprachen)).
+
 ```
   CL◍CKW◯RK          TOTP AUTHENTICATOR · RFC 6238        ● OFFLINE
 
@@ -21,7 +25,7 @@ aus der Web Crypto API.
 ```bash
 npm install      # einmalig
 npm run dev      # Dev-Server, danach http://localhost:5173 öffnen
-npm test         # 203 Tests
+npm test         # 467 Tests
 npm run build    # dist/ (PWA) + dist/clockwork.html (eine Datei)
 ```
 
@@ -44,7 +48,7 @@ direkt ein.
 | Ziel                  | Was es ist                                                           |
 | --------------------- | -------------------------------------------------------------------- |
 | `dist/`               | Installierbare PWA: Manifest, Service Worker, Icons, offline nutzbar |
-| `dist/clockwork.html` | **Eine einzige Datei**, ~256 kB, alles inline — auch die Schriften   |
+| `dist/clockwork.html` | **Eine einzige Datei**, ~599 kB, alles inline — auch die Schriften   |
 
 `dist/clockwork.html` ist die Datei für den täglichen Gebrauch: irgendwohin
 kopieren, doppelklicken, fertig. Kein Server, keine Internetverbindung. Sie hat
@@ -84,6 +88,138 @@ Decodiert wird mit dem eingebauten `BarcodeDetector`, wo es ihn gibt, sonst mit
 dem mitgelieferten [jsQR](https://github.com/cozmo/jsQR). Eine QR-Bibliothek ist
 Bildverarbeitung, keine Kryptografie: Sie sieht Pixel und liefert Text zurück —
 die OTP-Berechnung bleibt vollständig die eigene.
+
+---
+
+## Sprachen
+
+Clockwork spricht **37 Sprachen**. Alle sind mitgebündelt — auch in der einen
+HTML-Datei. Es wird nichts nachgeladen, weil es nichts nachzuladen gibt.
+
+Beim Start liest die App `navigator.languages` und nimmt den ersten Eintrag, den
+sie kennt. Regionalvarianten fallen auf ihre Sprache zurück (`de-AT` → `de`),
+Portugiesisch und Chinesisch werden nach Region bzw. Schriftform unterschieden
+(`pt-BR` bleibt `pt-BR`, `zh-TW` → `zh-Hant`, `zh-CN` → `zh-Hans`). Findet sich
+nichts, gilt Englisch.
+
+Umschalten geht im Fuß der Seite. Die Wahl landet **im URL-Hash**, nicht im
+Speicher:
+
+```
+clockwork.html#lang=fr
+```
+
+### Warum die Sprachwahl im Hash steht
+
+Im Fuß dieser App steht „kein Speicher", und dieser Satz soll wörtlich wahr
+bleiben. Ein Sprachcode ist harmlos — aber sobald die App anfängt, „harmlose"
+Dinge abzulegen, ist die Aussage keine Tatsache mehr, sondern eine
+Ermessensfrage. Der Hash kostet nichts und steht sichtbar in der Adresszeile.
+
+Zwei Eigenschaften fallen dabei ab, die wirklich nützlich sind: Ein Fragment
+wird **nie an einen Server geschickt** — selbst wer die PWA hostet, erfährt die
+Sprachwahl nicht. Und die Adresse ist weitergebbar: Man kann jemandem die App in
+seiner Sprache schicken.
+
+Der Preis: Wer die PWA vom Startbildschirm öffnet, startet ohne Hash und bekommt
+wieder die automatisch erkannte Sprache. Das ist verkraftbar — die Erkennung
+liest dieselbe Liste, nach der sich auch der Browser selbst richtet.
+
+Zum Vergleich: Die beiden Tresor-Einstellungen (Sperrzeit, Sperren beim
+Tabwechsel) liegen weiterhin im `localStorage`. Der Unterschied ist nicht die
+Harmlosigkeit, sondern die Erwartung: Wer den Tresor einschaltet, hat sich für
+Speichern entschieden. Wer nur die Sprache umstellt, nicht.
+
+### Ziffern bleiben lateinisch
+
+`Intl.NumberFormat` würde auf Arabisch von sich aus ٦٠٠٬٠٠٠ liefern. Clockwork
+erzwingt überall `-u-nu-latn` und damit lateinische Ziffern — die Gruppierung
+(600,000 / 600.000 / 600 000) bleibt selbstverständlich lokal.
+
+Der Grund ist nicht Bequemlichkeit: Die Codes werden in fremde Anmeldefelder
+getippt und müssen lateinisch sein; die Zifferblattschrift Chivo Mono kennt
+ohnehin nur lateinische Ziffern. Zwei Ziffernsysteme nebeneinander auf einem
+Messgerät wären ein Ablesefehler mit Ansage.
+
+### Rechtsläufig, aber nicht spiegelverkehrt
+
+Arabisch und Hebräisch setzen `dir="rtl"` am Dokument. Das ganze Gehäuse klappt
+um, ohne eine einzige Sonderregel — alle Abstände und Positionen stehen in
+logischen Eigenschaften (`margin-inline-start` statt `margin-left`). Übrig
+geblieben sind genau drei physische Angaben in `mark.css`; sie zentrieren einen
+Strich in der Wortmarke, die ohnehin per `dir="ltr"` festgenagelt ist.
+
+Zwei Dinge spiegeln **nicht** mit:
+
+- **Das Zifferblatt.** Ein Messinstrument ist richtungsneutral; Uhren laufen auch
+  in Kairo und Tel Aviv im Uhrzeigersinn.
+- **Codes, Secrets und Eingabefelder.** Sie tragen `dir="ltr"` und
+  `unicode-bidi: isolate`. Das ist keine Kosmetik: In einem rechtsläufigen Absatz
+  zieht der Bidi-Algorithmus neutrale Zeichen — Doppelpunkt, Schrägstrich,
+  Gleichheitszeichen — auf die andere Seite ihrer Nachbarn. Aus
+  `otpauth://totp/…?secret=X` würde sichtbar etwas anderes, als tatsächlich
+  dasteht. Wer das abtippt, tippt den Fehler mit ab.
+
+### Schriften
+
+Nicht-lateinische Schriften werden **nicht** mitgeliefert — eine CJK-Familie
+wiegt mehrere Megabyte und würde die Single-File-Datei sprengen. Stattdessen gibt
+es je Schriftsystem einen kuratierten System-Stack (`src/styles/scripts.css`),
+angesteuert über `data-script` am `<html>`.
+
+Dazu kam **ein** neuer Schnitt: Instrument Sans `latin-ext` (11 kB). Elf Sprachen
+brauchen Zeichen jenseits von Latin-1 — Polnisch (ł ą ę), Tschechisch (č ř ž),
+Ungarisch (ő ű), Rumänisch (ă ș ț), Türkisch (ğ ş) und andere. Ohne diesen
+Schnitt käme in einem polnischen Satz jedes zweite Wort aus einer Ersatzschrift.
+Der Browser lädt ihn nur, wenn wirklich so ein Zeichen vorkommt — dafür ist
+`unicode-range` da.
+
+Kyrillisch, Griechisch und Vietnamesisch bekommen dagegen eine durchgehende
+Systemschrift: Für sie bringt Instrument Sans gar keinen Schnitt mit, und eine
+halb gesetzte Schrift ist schlechter als eine andere ganze.
+
+Die **Wortmarke bleibt in jeder Sprache lateinisch** und in der Markenschrift.
+Ein Logo wird nicht übersetzt.
+
+Auch die Gravur-Beschriftung passt sich an: Kleine gesperrte Versalien setzen ein
+Alphabet mit Groß- und Kleinschreibung voraus. In Arabisch, Hebräisch, Thai,
+Devanagari und den CJK-Schriften entfallen Versalsatz und Sperrung — über zwei
+Tokens, nicht über Sonderregeln pro Bauteil.
+
+### Die 37 Sprachen und ihr Stand
+
+| Stand                       | Sprachen                                                                                                                                                                                                                           |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Redaktionelle Referenz**  | Deutsch (aus V2 wörtlich übernommen)                                                                                                                                                                                               |
+| **Quelle der Wahrheit**     | English (Basis- und Rückfallsprache)                                                                                                                                                                                               |
+| **Maschinell übersetzt**    | Français · Italiano · Español · Português (PT/BR) · Nederlands · Polski · Čeština · Slovenčina · Svenska · Dansk · Norsk bokmål · Suomi · Русский · Українська · Türkçe · Bahasa Indonesia · 日本語 · 한국어 · 简体中文 · 繁體中文 |
+| **Maschinell, prüfenswert** | Magyar · Slovenščina · Hrvatski · Română · Български · Ελληνικά · Eesti · Latviešu · Lietuvių · العربية · עברית · हिन्दी · Tiếng Việt · ไทย                                                                                        |
+
+**Was „maschinell übersetzt" hier heißt:** Die Texte stammen nicht von
+Muttersprachlern. Fachbegriffe, Anrede und Anführungszeichen sind je Sprache
+einmal festgelegt und am Kopf der jeweiligen Datei unter `src/i18n/locales/`
+dokumentiert; die Mehrzahlformen sind gegen die CLDR-Kategorien geprüft, die
+`Intl.PluralRules` für diese Sprache meldet. Was ein Test nicht prüfen kann, ist
+der Klang.
+
+Die Zeile **„prüfenswert"** nennt die Sprachen, bei denen ich zuerst jemanden
+draufschauen lassen würde: Sprachen mit reicher Formenlehre, in denen die
+Mehrzahlform vom Kasus abhängt (Lettisch, Litauisch, Slowenisch mit seinem Dual,
+Kroatisch, Rumänisch), und solche, deren Software-Wortschatz weniger festgefahren
+ist als der deutsche oder französische.
+
+### Neue Sprache in drei Schritten
+
+1. **Datei anlegen.** `src/i18n/locales/en.ts` nach `xx.ts` kopieren und
+   übersetzen. Das `satisfies Strings` am Ende stehen lassen — es ist der Grund,
+   warum ein vergessener Schlüssel ein Compilerfehler ist und keine leere Stelle
+   in der Oberfläche.
+2. **Eintragen.** In `src/i18n/catalogue.ts` importieren und ins Objekt hängen.
+3. **Beschreiben.** In `src/i18n/registry.ts` eine Zeile ergänzen: Code,
+   Eigenname, Leserichtung, Schriftsystem.
+
+Danach `npm test`. Die Tests sagen, was noch fehlt: ein Schlüssel, ein
+Platzhalter, eine Mehrzahlform, die diese Sprache braucht.
 
 ---
 
@@ -502,6 +638,15 @@ src/
 │   ├── accounts.ts         Eine Textzeile → Konto oder Fehlermeldung
 │   ├── bytes.ts            Typ-Alias Uint8Array<ArrayBuffer>
 │   └── format.ts           Ziffern gruppieren, Karten beschriften
+├── i18n/                   Sprachen — seit V3
+│   ├── strings.ts          Der Schlüsselvorrat als TypeScript-Interface
+│   ├── runtime.ts          t() · tn() · formatNumber()
+│   ├── registry.ts         Eigennamen, Richtung, Schrift, Sprach-Matching
+│   ├── catalogue.ts        Alle 37 Sprachen in einem Objekt
+│   ├── apply.ts            data-i18n ins Dokument bringen, Reichtexte
+│   ├── language.ts         Erkennen, Merken (URL-Hash), Wechseln
+│   ├── lib-text.ts         Übersetzt die deutschen Meldungen aus src/lib
+│   └── locales/            en.ts, de.ts, fr.ts … 37 Dateien
 ├── ui/
 │   ├── clock.ts            Die driftfreie Uhr
 │   ├── gauge.ts            Das Zifferblatt (Emblem A)
@@ -510,17 +655,45 @@ src/
 │   ├── scan.ts             QR: Kamera, Datei, Ziehen, Einfügen
 │   ├── qr-decode.ts        BarcodeDetector mit jsQR-Rückfall
 │   ├── vault-panel.ts      Tresor-Bedienung und Zeitschaltung
+│   ├── lang-switch.ts      Der Sprachumschalter im Fuß
 │   ├── app.ts              Verdrahtung
 │   ├── tokens.ts           Motion-Tokens aus dem CSS lesen
 │   └── dom.ts              Kleine Helfer, Zwischenablage
 ├── styles/
 │   ├── tokens.css          Farbe, Typo, Raster, Motion, Zifferblatt-Maße
+│   ├── scripts.css         Schrift-Stacks je Schriftsystem
 │   ├── fonts.css           @font-face, lokal
 │   ├── mark.css            Wortmarke und Zifferblatt
 │   └── panels.css          Tresor und Sucher
 ├── main.ts
 └── style.css               Gehäuse, Zonen, Kanalzug
 ```
+
+### Warum `src/lib/` unverändert bleiben konnte
+
+Die Module unter `src/lib/` sind byte-identisch geblieben — `git diff` gegen den
+Stand vor V3 liefert dort nichts. Das ist eine harte Projektregel und für die
+Krypto-Module der Grund, warum man ihnen trauen kann.
+
+Nur: Sie werfen ihre Fehler mit fertig formulierten **deutschen Sätzen**, und die
+landen auf einer Fehlerkarte. Ohne Gegenmaßnahme läse jemand mit französischer
+Oberfläche bei einem Tippfehler im Secret einen deutschen Absatz.
+
+`src/i18n/lib-text.ts` erkennt diese Sätze an ihrem Wortlaut und setzt sie neu.
+Mustererkennung auf Fehlermeldungen ist sonst eine schlechte Idee, weil Meldungen
+sich ändern — hier nicht: Die Quelldateien sind per Regel eingefroren, und was
+eingefroren ist, kann nicht davonlaufen. Abgesichert ist es trotzdem:
+`lib-text.test.ts` löst **jeden erreichbaren Fehlerpfad wirklich aus** und prüft,
+dass der Katalog die entstandene Meldung erkennt. Ändert doch jemand einen Satz,
+wird der Test rot statt der Nutzer ratlos. Und was der Katalog nicht erkennt,
+wird nicht durchgereicht, sondern durch eine neutrale Meldung in der richtigen
+Sprache ersetzt: lieber ungenau in der richtigen Sprache als genau in der
+falschen.
+
+Ein Nebeneffekt: `describeParameters` und `describeIdentity` aus `format.ts`
+benutzt die App nicht mehr — die Parameterzeile und der Kontoname-Rückfall
+entstehen jetzt übersetzt in `strip.ts`. Die beiden Funktionen bleiben stehen und
+getestet, weil die Datei nicht angefasst wird.
 
 ### Warum die Codes nicht wegdriften
 
@@ -543,17 +716,22 @@ berechnet wird und der dadurch von selbst auf die Sekundengrenze einrastet.
 npm test
 ```
 
-203 Tests. Die wichtigsten stammen unverändert aus den Standards:
+467 Tests. Die wichtigsten stammen unverändert aus den Standards:
 
 | Datei                 | Tests | Inhalt                                                                              |
 | --------------------- | ----- | ----------------------------------------------------------------------------------- |
+| `catalogue.test.ts`   | 187   | Jede der 37 Sprachen: Schlüssel, Platzhalter, Mehrzahl-Kategorien                   |
 | `hotp.test.ts`        | 42    | Alle 10 Vektoren aus RFC 4226 Anhang D, geprüft auf drei Ebenen                     |
+| `lib-text.test.ts`    | 36    | Jeder erreichbare Fehlerpfad aus `src/lib`, wirklich ausgelöst                      |
 | `totp.test.ts`        | 30    | Alle 18 Vektoren aus RFC 6238 Anhang B (SHA-1/256/512)                              |
 | `google-auth.test.ts` | 30    | Dokumentierter Beispiel-Export, selbst gebaute Exporte, Protobuf-Leser              |
 | `base32.test.ts`      | 29    | RFC 4648 Abschnitt 10, Round-trip 1–40, Toleranz, Laufzeit-Regression               |
 | `vault.test.ts`       | 24    | Roundtrip, falsche Passphrase, manipuliertes Chiffrat, heruntergesetzte Iterationen |
 | `otpauth-uri.test.ts` | 22    | URIs von GitHub, Google, Microsoft, AWS; Parameter; Fehlerfälle                     |
+| `runtime.test.ts`     | 14    | Einsetzen, Zahlen, Mehrzahl bei 0/1/2/5/21 in pl, ru, cs und ar                     |
+| `ui-literals.test.ts` | 14    | Steht in `src/ui` noch Text, der nicht durch `t()` läuft?                           |
 | `accounts.test.ts`    | 14    | Gemischte mehrzeilige Eingaben, Kommentare, kaputte Zeilen                          |
+| `registry.test.ts`    | 13    | Sprach-Matching: `de-AT`→`de`, `zh-TW`→`zh-Hant`, `xx`→`en`, alte ISO-Codes         |
 | `format.test.ts`      | 12    | Ziffern-Gruppierung, Kartentitel, Kürzung                                           |
 
 Die HOTP-Vektoren werden auf drei Ebenen geprüft — HMAC, Truncation und Endcode.
@@ -571,24 +749,71 @@ Dazu prüft `npm run shots` über Playwright die ganze App im Browser: Tresor
 speichern/zusperren/falsche Passphrase/aufsperren/löschen, Google-Import und
 Konsolenfehler — und erzeugt dabei die Screenshots unter `screenshots/`.
 
+Seit V3 prüft es zusätzlich, was man auf einem Standbild **nicht** sieht:
+
+- Stehen `lang`, `dir` und `data-script` richtig am Dokument?
+- Läuft die Seite waagerecht über? (Der Klassiker bei einer Übersetzung: Ein
+  langes deutsches oder finnisches Wort sprengt eine Taste. Man sieht es nicht,
+  weil die Seite einfach scrollbar wird.)
+- Bleibt das Zifferblatt ungespiegelt und der Code lateinisch und linksläufig?
+- Schreibt der Sprachwechsel den Hash und zeichnet er alles neu?
+
+Screenshots entstehen in **de, en, ar und ja**, je Desktop und 375 px.
+
 ---
 
 ## Messwerte
 
 Lighthouse gegen `dist/` (Chromium headless):
 
-| Kategorie      | Wert    |
-| -------------- | ------- |
-| Performance    | **99**  |
-| Accessibility  | **100** |
-| Best Practices | **100** |
-| SEO            | **100** |
-
-Die verbleibenden Performance-Hinweise betreffen render-blockierendes CSS
-(4 kB) und `registerSW.js` (0,4 kB) auf einem lokalen Preview-Server.
+| Kategorie      | V2  | V3      |
+| -------------- | --- | ------- |
+| Performance    | 99  | **98**  |
+| Accessibility  | 100 | **100** |
+| Best Practices | 100 | **100** |
+| SEO            | 100 | **100** |
 
 Laufzeit-Netzwerkanfragen: nur eigene Dateien vom selben Origin. Die
 Single-File-Variante erzeugt genau **eine** Anfrage — das Dokument selbst.
+
+### Bundle-Größe V2 → V3
+
+| Datei                       | V2      | V3      | Δ           |
+| --------------------------- | ------- | ------- | ----------- |
+| `dist/clockwork.html`       | 256 kB  | 599 kB  | **+343 kB** |
+| … davon gzip                | 121 kB  | 216 kB  | +95 kB      |
+| `dist/assets/*.js`          | 156 kB  | 477 kB  | +321 kB     |
+| … davon gzip                | 57 kB   | 138 kB  | +81 kB      |
+| `dist/assets/*.css`         | 13,6 kB | 16,2 kB | +2,6 kB     |
+| Instrument Sans `latin-ext` | —       | 11 kB   | +11 kB      |
+
+**Das liegt weit über den ~60 kB, ab denen der Auftrag reden wollte.** Deshalb
+hier die Zahlen und die Lage, statt einer stillen Entscheidung:
+
+Der Zuwachs ist fast vollständig der Katalog selbst: 37 Sprachen × rund 110
+Texte, darunter mehrere Absätze. In UTF-8 kostet ein kyrillisches Zeichen zwei
+Byte, ein chinesisches drei — die reine Textmenge ist rund 320 kB. Es gibt darin
+keine Redundanz, die sich wegkürzen ließe; es ist einfach viel Text.
+
+Was das praktisch heißt:
+
+- **Die PWA über einen Server**: Dort greift Kompression. 216 kB gzip für die
+  komplette App inklusive zweier Schriften ist unauffällig, und der Service
+  Worker holt sie genau einmal.
+- **Die eine Datei auf dem USB-Stick**: 599 kB. Sie wird lokal geöffnet, es gibt
+  keine Leitung, über die das dauern könnte.
+- **Lighthouse**: Performance fiel zunächst auf 90, weil der Browser bei diesem
+  Bündel einmal malt, BEVOR das Skript läuft — alles, was danach eingesetzt wird,
+  schiebt die Seite (siehe „Gefundene Fehler"). Nach drei gezielten Änderungen
+  steht sie wieder bei 98.
+
+**Was nicht gemacht wurde und warum:** Sprachen einzeln nachladen wäre die
+naheliegende Kur und ist hier ausgeschlossen — ein `import()` je Sprache ist eine
+Netzwerkanfrage, und die Single-File-Datei verbietet sie per CSP
+(`connect-src 'none'`). Offline schlägt Bundle-Größe. Wer die 342 kB wirklich
+nicht will, hat genau eine sinnvolle Stellschraube: weniger Sprachen. Die
+Architektur macht das leicht — eine Zeile aus `catalogue.ts` und eine aus
+`registry.ts`, und die Sprache ist weg.
 
 ---
 
@@ -599,7 +824,10 @@ sind drei Regeln absichtlich nicht befolgt:
 
 - **„URL reflects state."** Bei einer App, deren Zustand Schlüsselmaterial ist,
   wäre das ein Sicherheitsfehler: URLs landen im Verlauf, in Lesezeichen und in
-  Server-Logs. Clockwork schreibt nichts in die Adresszeile.
+  Server-Logs. Clockwork schreibt kein Schlüsselmaterial in die Adresszeile.
+  Seit V3 steht dort **eine** Angabe: die Sprachwahl als `#lang=fr`. Das ist
+  kein Widerspruch, sondern die Anwendung derselben Regel — ein Sprachcode ist
+  kein Geheimnis, und ein Fragment wird ohnehin nie an einen Server geschickt.
 - **„Placeholders end with `…`."** Der Platzhalter im Textfeld ist ein
   mehrzeiliges Beispiel gültiger Eingaben. Eine Ellipse dahinter sähe aus wie
   Teil der Syntax.
@@ -642,6 +870,27 @@ gesetzt) und keine Eingabe je als HTML ins DOM gelangt.
 **`frame-ancestors` fehlt in der CSP.** Die Direktive wirkt nur als HTTP-Header.
 Wer die App hostet, sollte sie als Header setzen.
 
+**Ausgeliefert wird Englisch, nicht Deutsch.** Der Text in `index.html` ist
+englisch, weil `en` die Basissprache ist; das Skript setzt danach die erkannte
+Sprache. So steht vor dem ersten Zeichnen etwas Sinnvolles da statt eines leeren
+Gerüsts, und wer die Datei im Texteditor öffnet, liest die Quelle der Wahrheit.
+
+**Das Schriftvorladen gilt nur für die PWA.** In V2 stand hier ausdrücklich kein
+`<link rel="preload">`, weil im Single-File-Build dieselben Bytes ein zweites Mal
+in der Datei stünden. Das gilt weiterhin — dort ist es auch unnötig, die Schrift
+steckt ja schon in derselben Datei. Im PWA-Build ist es seit dem größeren Bündel
+nötig geworden und hängt am selben Schalter wie die CSP.
+
+**Der Trennpunkt `·` steht als Zeichen im Code, nicht im Katalog.** Er reiht
+überall im Gerät Angaben aneinander und sieht in jeder Sprache gleich aus. Wo
+eine Sprache die Teile umstellen können muss — Statuszeile, Zähler,
+Parameterzeile —, steht er dagegen mitsamt Platzhaltern im Katalog.
+
+**`Intl.DateTimeFormat` kommt nicht vor.** Der Auftrag nennt es neben
+`Intl.NumberFormat`; Clockwork zeigt aber nirgends ein Datum oder eine Uhrzeit.
+Eines einzuführen, nur um die API zu benutzen, wäre Dekoration — und die hat in
+diesem Gerät keinen Platz.
+
 ## Gefundene Fehler
 
 Im Verlauf der Arbeit selbst gefunden und behoben — hier dokumentiert, weil sie
@@ -667,6 +916,32 @@ lehrreich sind:
   `fetch()`-Aufruf, der nie gefeuert hätte. In einer App mit diesem Versprechen
   soll er gar nicht erst im Code stehen — Polyfill abgeschaltet.
 
+Aus V3:
+
+- **Der Kanalzug lief auf dem Handy über den Rand.** Unter 34 rem setzte die
+  Regel `grid-template-columns: minmax(0, 1fr)` — eine Spalte. Nur legt
+  `grid-template-areas` die Spaltenzahl **selbst** fest, und die stand noch auf
+  drei. Also blieb das dreispaltige Raster, die Parameterzeile (`white-space:
+nowrap`) landete in der dritten Spalte und schob den Kanalzug bei 375 px rund
+  60 px über das Gehäuse hinaus. Der Fehler stammt aus V2 und war auf den
+  Screenshots nicht zu sehen, weil die Seite dadurch einfach seitlich scrollbar
+  wurde. Gefunden hat ihn die neue Überlaufprüfung in `scripts/shoot.mjs`, nicht
+  das Auge.
+- **Ein toter Selektor im Screenshot-Skript.** Der Ablaufzustand sollte den
+  Zeiger auf 94 % stellen und suchte dafür `.scale`. Diese Klasse gibt es seit
+  der Umbenennung auf Clockwork nicht mehr — der Zeiger heißt
+  `.dialface__hand`. Das `?.` davor hat den Fehlgriff stillschweigend
+  geschluckt, das Bild zeigte einfach die echte Zeigerstellung. Lehre: Ein
+  optionaler Zugriff ist bequem, aber er verschluckt auch Tippfehler; in einem
+  Prüfskript gehört stattdessen ein Befund ausgegeben.
+- **Layout-Shift durch das gewachsene Bündel.** Mit 480 kB statt 156 kB malt der
+  Browser einmal, bevor das Skript läuft. Der Tresor-Absatz war im HTML leer und
+  wuchs danach um drei Zeilen, das Sprachfeld war leer und bekam 37 Einträge, und
+  die Schrift tauschte erst nach dem ersten Anstrich. Zusammen: CLS 0,165 und
+  Performance 90. Behoben, indem der Platz im HTML von Anfang an dasteht und die
+  beiden lateinischen Schnitte im PWA-Build vorgeladen werden. Das ist die
+  Kehrseite eines großen Bundles, die man nicht am Bundle sieht.
+
 ## Was Clockwork nicht kann (TODO)
 
 - **QR-Code erzeugen**, um ein Konto in eine Handy-App zu übertragen.
@@ -674,6 +949,9 @@ lehrreich sind:
 - **Zeitversatz anzeigen** — ohne Netzwerk schwer festzustellen.
 - **HOTP** (zählerbasiert). Bräuchte einen gespeicherten Zählerstand.
 - **Argon2id** statt PBKDF2, sobald die Web Crypto API es anbietet.
+- **Übersetzungen von Muttersprachlern.** 35 der 37 Sprachen sind maschinell
+  übersetzt (siehe „Sprachen"). Die Gerüste stimmen — Schlüssel, Platzhalter und
+  Mehrzahlformen sind geprüft —, der Klang ist ungeprüft.
 
 ## Standards
 

@@ -13,15 +13,20 @@
  * Beide klonen ein `<template>` aus index.html. Alle Werte aus der Eingabe gehen
  * ausschließlich über `textContent` ins DOM und können deshalb nie als HTML
  * interpretiert werden.
+ *
+ * ── Sprache ────────────────────────────────────────────────────────────────
+ * Der Inhalt eines `<template>` steht nicht im Dokumentbaum; der
+ * Übersetzungsdurchlauf über `document` erreicht ihn also nie. Jeder Klon wird
+ * deshalb einzeln durch `applyStrings` geschickt. Beim Sprachwechsel baut
+ * app.ts alle Kanalzüge neu — das ist billiger und verlässlicher, als in jedem
+ * Bauteil einen eigenen Rückruf zu führen.
  */
 
+import { applyStrings } from '../i18n/apply';
+import { translateLibMessage } from '../i18n/lib-text';
+import { t, tn } from '../i18n/runtime';
 import type { Account, ParsedEntry } from '../lib/accounts';
-import {
-  describeIdentity,
-  describeParameters,
-  groupDigits,
-  truncateForDisplay,
-} from '../lib/format';
+import { groupDigits, truncateForDisplay } from '../lib/format';
 import { generateTotpForCounter } from '../lib/totp';
 import { Dial } from './dial';
 import { cloneTemplate, copyText, requireElement } from './dom';
@@ -51,6 +56,38 @@ export function createStrip(entry: ParsedEntry, index: number, context: StripCon
     : new FaultStrip(entry.source, entry.message);
 }
 
+/**
+ * Überschrift und Unterzeile eines Kanalzugs.
+ *
+ * Entspricht `lib/format.ts:describeIdentity`, nur mit übersetztem Rückfalltext.
+ * Die Fassung in `lib/` bleibt unverändert — sie gehört zu den Modulen, die in
+ * V3 byte-identisch bleiben.
+ */
+function identityOf(account: Account, index: number): { title: string; subtitle: string } {
+  if (account.issuer && account.accountName) {
+    return { title: account.issuer, subtitle: account.accountName };
+  }
+  const single = account.issuer ?? account.accountName;
+  if (single) {
+    return { title: single, subtitle: '' };
+  }
+  return { title: t('strip.accountFallback', { n: index + 1 }), subtitle: '' };
+}
+
+/**
+ * Die Parameterzeile, z. B. „SHA-1 · 6 Stellen · 30 s".
+ *
+ * Die Stellenzahl geht über die Mehrzahlregeln — im Polnischen heißt es je nach
+ * Zahl „cyfra", „cyfry" oder „cyfr". Algorithmus und Periode bleiben technisch.
+ */
+function specOf(account: Account): string {
+  return t('strip.spec', {
+    algorithm: account.algorithm,
+    digits: tn('strip.digits', account.digits),
+    period: t('strip.period', { n: String(account.period) }),
+  });
+}
+
 /* ========================================================================== */
 
 class CodeStrip implements Strip {
@@ -77,6 +114,7 @@ class CodeStrip implements Strip {
     this.#account = account;
     this.#context = context;
     this.element = cloneTemplate('tpl-strip');
+    applyStrings(this.element);
 
     this.#dial = new Dial(requireElement(this.element, '[data-dial]'));
 
@@ -85,15 +123,15 @@ class CodeStrip implements Strip {
     this.#copyButton = requireElement<HTMLButtonElement>(this.element, '[data-copy]');
     this.#copyLabel = requireElement(this.element, '[data-copy-label]');
 
-    const identity = describeIdentity(account, index);
+    const identity = identityOf(account, index);
     this.#title = identity.title;
     requireElement(this.element, '[data-issuer]').textContent = identity.title;
-    requireElement(this.element, '[data-account]').textContent = identity.subtitle ?? '';
-    requireElement(this.element, '[data-spec]').textContent = describeParameters(account);
+    requireElement(this.element, '[data-account]').textContent = identity.subtitle;
+    requireElement(this.element, '[data-spec]').textContent = specOf(account);
 
     // Die Kopiertaste trägt sichtbar „Kopieren" und zusätzlich den Kontonamen als
     // Beschriftung — sonst hört man bei zehn Konten zehnmal dasselbe Wort.
-    this.#copyButton.setAttribute('aria-label', `Code für ${identity.title} kopieren`);
+    this.#copyButton.setAttribute('aria-label', t('strip.copyAria', { name: identity.title }));
 
     this.#hand = buildGauge(
       requireElement<SVGSVGElement>(this.element, '[data-gauge]'),
@@ -118,6 +156,9 @@ class CodeStrip implements Strip {
     const remaining = Math.max(1, Math.ceil(period - elapsed));
     if (remaining !== this.#renderedSeconds) {
       this.#renderedSeconds = remaining;
+      // Bewusst `String()` und nicht die lokalisierte Zahlenformatierung: Diese
+      // Ziffer sitzt im Zifferblatt, und das trägt in jeder Sprache lateinische
+      // Ziffern (siehe i18n/runtime.ts).
       this.#seconds.textContent = String(remaining);
 
       const expiring = remaining <= EXPIRING_SECONDS;
@@ -187,13 +228,13 @@ class CodeStrip implements Strip {
     const code = this.#dial.value;
     try {
       await copyText(code);
-      this.#showCopyResult('done', 'Kopiert', `Code ${[...code].join(' ')} kopiert`);
-    } catch {
       this.#showCopyResult(
-        'failed',
-        'Fehlgeschlagen',
-        'Kopieren fehlgeschlagen. Code bitte von Hand markieren.',
+        'done',
+        t('key.copyDone'),
+        t('strip.copyAnnounce', { digits: [...code].join(' ') }),
       );
+    } catch {
+      this.#showCopyResult('failed', t('key.copyFailed'), t('strip.copyFailedHint'));
     }
   }
 
@@ -202,16 +243,16 @@ class CodeStrip implements Strip {
       return;
     }
     window.clearTimeout(this.#copyResetTimer);
-    this.#copyButton.dataset.state = state;
+    this.#copyButton.dataset['state'] = state;
     this.#copyLabel.textContent = label;
     this.element.classList.toggle('strip--copied', state === 'done');
     this.#context.announce(announcement);
 
     this.#copyResetTimer = window.setTimeout(() => {
-      delete this.#copyButton.dataset.state;
-      this.#copyLabel.textContent = 'Kopieren';
+      delete this.#copyButton.dataset['state'];
+      this.#copyLabel.textContent = t('key.copy');
       this.element.classList.remove('strip--copied');
-      this.#copyButton.setAttribute('aria-label', `Code für ${this.#title} kopieren`);
+      this.#copyButton.setAttribute('aria-label', t('strip.copyAria', { name: this.#title }));
     }, COPY_FEEDBACK_MS);
   }
 }
@@ -223,8 +264,12 @@ class FaultStrip implements Strip {
 
   constructor(source: string, message: string) {
     this.element = cloneTemplate('tpl-fault');
+    applyStrings(this.element);
     requireElement(this.element, '[data-source]').textContent = truncateForDisplay(source);
-    requireElement(this.element, '[data-message]').textContent = message;
+    // Die Meldung entsteht in src/lib und ist dort auf Deutsch formuliert; die
+    // Module bleiben byte-identisch. Übersetzt wird deshalb erst hier, an der
+    // Grenze zur Oberfläche.
+    requireElement(this.element, '[data-message]').textContent = translateLibMessage(message);
   }
 
   update(): void {

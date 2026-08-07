@@ -16,6 +16,7 @@
  * Was daraus wird, entscheidet der Aufrufer.
  */
 
+import { t } from '../i18n/runtime';
 import { decodeQr, decodeQrFromBlob } from './qr-decode';
 import { requireElement } from './dom';
 
@@ -44,23 +45,30 @@ export function startScanner(handlers: ScanHandlers): Scanner {
 
   /* ── Bilddatei ──────────────────────────────────────────────────────────── */
 
-  async function readImage(blob: Blob, origin: string): Promise<void> {
+  /**
+   * Die Meldung unterscheidet nicht mehr, WOHER das Bild kam („dem gezogenen
+   * Bild", „dem eingefügten Bild"). In V2 war das eine deutsche Genitiv-Fügung;
+   * über 37 Sprachen hinweg wäre daraus entweder eine Grammatikfalle geworden
+   * (der Kasus hängt an der Präposition) oder sechs statt zwei Sätze. Wer
+   * gerade ein Bild eingefügt hat, weiß ohnehin, welches gemeint ist.
+   */
+  async function readImage(blob: Blob): Promise<void> {
     try {
       const text = await decodeQrFromBlob(blob);
       if (text === null) {
-        handlers.onProblem(`In ${origin} war kein QR-Code zu erkennen.`);
+        handlers.onProblem(t('scan.noQr'));
         return;
       }
       handlers.onResult(text);
     } catch {
-      handlers.onProblem(`${origin} konnte nicht gelesen werden — ist es wirklich ein Bild?`);
+      handlers.onProblem(t('scan.unreadable'));
     }
   }
 
   fileInput.addEventListener('change', () => {
     const file = fileInput.files?.[0];
     if (file) {
-      void readImage(file, 'dem Bild');
+      void readImage(file);
     }
     // Zurücksetzen, damit dieselbe Datei ein zweites Mal ausgewählt werden kann.
     fileInput.value = '';
@@ -77,10 +85,7 @@ export function startScanner(handlers: ScanHandlers): Scanner {
       return;
     }
     if (!navigator.mediaDevices?.getUserMedia) {
-      handlers.onProblem(
-        'Diese Umgebung gibt keine Kamera frei. Beim Öffnen als Datei (file://) sperren die ' +
-          'meisten Browser sie — „QR aus Bild" funktioniert dort immer.',
-      );
+      handlers.onProblem(t('scan.camera.unavailable'));
       return;
     }
 
@@ -98,7 +103,7 @@ export function startScanner(handlers: ScanHandlers): Scanner {
 
     video.srcObject = stream;
     viewfinder.hidden = false;
-    hint.textContent = 'QR-Code in den Rahmen halten';
+    hint.textContent = t('viewfinder.hint');
     await video.play();
 
     scanTimer = window.setInterval(() => {
@@ -173,7 +178,7 @@ export function startScanner(handlers: ScanHandlers): Scanner {
     }
     event.preventDefault();
     document.body.classList.remove('is-dropping');
-    void readImage(file, 'dem gezogenen Bild');
+    void readImage(file);
   };
 
   const onPaste = (event: ClipboardEvent): void => {
@@ -183,7 +188,7 @@ export function startScanner(handlers: ScanHandlers): Scanner {
       return; // Text einfügen macht das Textfeld selbst
     }
     event.preventDefault();
-    void readImage(file, 'dem eingefügten Bild');
+    void readImage(file);
   };
 
   document.addEventListener('dragover', onDragOver);
@@ -208,12 +213,12 @@ function describeCameraError(error: unknown): string {
   const name = error instanceof DOMException ? error.name : '';
   switch (name) {
     case 'NotAllowedError':
-      return 'Die Kamera wurde abgelehnt. Erlaubnis im Browser zurücksetzen — oder „QR aus Bild" nehmen.';
+      return t('scan.camera.denied');
     case 'NotFoundError':
-      return 'Es ist keine Kamera angeschlossen. „QR aus Bild" funktioniert trotzdem.';
+      return t('scan.camera.notFound');
     case 'NotReadableError':
-      return 'Die Kamera wird gerade von einem anderen Programm benutzt.';
+      return t('scan.camera.busy');
     default:
-      return 'Die Kamera ließ sich nicht starten. „QR aus Bild" funktioniert immer.';
+      return t('scan.camera.failed');
   }
 }

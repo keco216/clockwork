@@ -16,9 +16,12 @@
  * wirklich davorsitzt.
  */
 
+import { translateLibMessage } from '../i18n/lib-text';
+import { formatNumber, onLocaleChange, t, tn } from '../i18n/runtime';
 import {
   isVaultEnvelope,
   openVault,
+  PBKDF2_ITERATIONS,
   sealVault,
   VaultError,
   type VaultEnvelope,
@@ -84,9 +87,24 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
     return readEnvelope() === null ? 'off' : 'locked';
   }
 
+  /**
+   * Beschriftungen, die sich mit der Sprache ändern, aber nicht mit dem
+   * Zustand. Die Zeitangaben laufen über die Mehrzahlregeln — „1 Minute",
+   * „5 Minuten", auf Polnisch „5 minutach".
+   */
+  function paintLabels(): void {
+    explain.textContent = t('vault.explain', { iterations: formatNumber(PBKDF2_ITERATIONS) });
+    for (const option of timeoutSelect.options) {
+      option.textContent = tn('vault.timeout.minutes', Number(option.value) / 60_000);
+    }
+    if (wipeButton.dataset['armed'] === undefined) {
+      wipeButton.textContent = t('vault.action.wipe');
+    }
+  }
+
   function paint(message = ''): void {
     const state = currentState();
-    panel.dataset.state = state;
+    panel.dataset['state'] = state;
     errorText.textContent = message;
     handlers.reportState(state);
 
@@ -98,21 +116,21 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
 
     switch (state) {
       case 'off':
-        stateText.textContent = 'Aus — es wird nichts gespeichert';
-        passLabel.textContent = 'Neue Passphrase';
+        stateText.textContent = t('vault.state.off');
+        passLabel.textContent = t('vault.pass.new');
         passField.autocomplete = 'new-password';
-        primary.textContent = 'Verschlüsselt speichern';
+        primary.textContent = t('vault.action.seal');
         explain.hidden = false;
         break;
       case 'locked':
-        stateText.textContent = 'Gesperrt — Passphrase nötig';
-        passLabel.textContent = 'Passphrase';
+        stateText.textContent = t('vault.state.locked');
+        passLabel.textContent = t('vault.pass.existing');
         passField.autocomplete = 'current-password';
-        primary.textContent = 'Aufsperren';
+        primary.textContent = t('vault.action.unseal');
         explain.hidden = true;
         break;
       case 'open':
-        stateText.textContent = 'Offen — Secrets liegen im Textfeld';
+        stateText.textContent = t('vault.state.open');
         explain.hidden = true;
         break;
     }
@@ -171,6 +189,8 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
 
   function saveSettings(): void {
     // Hier stehen nur zwei Zahlen zur Bedienung — kein Geheimnis, kein Secret.
+    // Die Sprachwahl steht bewusst NICHT hier, sondern im URL-Hash: siehe
+    // i18n/language.ts.
     try {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
     } catch {
@@ -183,16 +203,16 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
   async function seal(passphrase: string, quiet = false): Promise<void> {
     const secrets = handlers.readSecrets().trim();
     if (secrets === '') {
-      paint('Es gibt nichts zu speichern — das Textfeld ist leer.');
+      paint(t('vault.error.nothingToStore'));
       return;
     }
 
     primary.disabled = true;
-    stateText.textContent = 'Schlüssel wird abgeleitet …';
+    stateText.textContent = t('vault.action.deriving');
     try {
       const envelope = await sealVault(secrets, passphrase);
       if (!writeEnvelope(envelope)) {
-        paint('Der Browser lässt kein Speichern zu (privater Modus?).');
+        paint(t('vault.error.storageBlocked'));
         return;
       }
       sessionPassphrase = passphrase;
@@ -200,10 +220,14 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
       resetIdleTimer();
       paint();
       if (!quiet) {
-        handlers.announce('Tresor verschlüsselt gespeichert.');
+        handlers.announce(t('vault.msg.sealed'));
       }
     } catch (error) {
-      paint(error instanceof VaultError ? error.message : 'Speichern fehlgeschlagen.');
+      paint(
+        error instanceof VaultError
+          ? translateLibMessage(error.message)
+          : t('vault.error.sealFailed'),
+      );
     } finally {
       primary.disabled = false;
     }
@@ -212,12 +236,12 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
   async function unseal(passphrase: string): Promise<void> {
     const envelope = readEnvelope();
     if (envelope === null) {
-      paint('Es ist kein Tresor gespeichert.');
+      paint(t('vault.error.noVault'));
       return;
     }
 
     primary.disabled = true;
-    stateText.textContent = 'Schlüssel wird abgeleitet …';
+    stateText.textContent = t('vault.action.deriving');
     try {
       const secrets = await openVault(envelope, passphrase);
       sessionPassphrase = passphrase;
@@ -225,12 +249,16 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
       handlers.writeSecrets(secrets);
       resetIdleTimer();
       paint();
-      handlers.announce('Tresor aufgesperrt.');
+      handlers.announce(t('vault.msg.unsealed'));
     } catch (error) {
       // Der Cursor bleibt im Feld, der falsche Versuch wird markiert — man tippt
       // sich in aller Regel nur einmal falsch.
       passField.select();
-      paint(error instanceof VaultError ? error.message : 'Aufsperren fehlgeschlagen.');
+      paint(
+        error instanceof VaultError
+          ? translateLibMessage(error.message)
+          : t('vault.error.unsealFailed'),
+      );
     } finally {
       primary.disabled = false;
     }
@@ -246,7 +274,7 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
     // Der wichtigste Schritt: Der Klartext verschwindet aus dem Textfeld.
     handlers.writeSecrets('');
     paint(reason ?? '');
-    handlers.announce('Tresor zugesperrt.');
+    handlers.announce(t('vault.msg.locked'));
   }
 
   function wipe(): void {
@@ -259,8 +287,8 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
     window.clearTimeout(idleTimer);
     passField.value = '';
     handlers.writeSecrets('');
-    paint('Gelöscht. Es liegt nichts mehr im Speicher.');
-    handlers.announce('Tresor gelöscht.');
+    paint(t('vault.msg.wipedNote'));
+    handlers.announce(t('vault.msg.wiped'));
   }
 
   /* ── Zeitschaltung ──────────────────────────────────────────────────────── */
@@ -271,7 +299,7 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
       return;
     }
     idleTimer = window.setTimeout(() => {
-      lock(`Nach ${Math.round(settings.timeoutMs / 60_000)} Minuten ohne Eingabe zugesperrt.`);
+      lock(tn('vault.locked.idle', Math.round(settings.timeoutMs / 60_000)));
     }, settings.timeoutMs);
   }
 
@@ -283,7 +311,7 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState !== 'visible' && settings.lockOnHide) {
-      lock('Beim Verlassen des Tabs zugesperrt.');
+      lock(t('vault.locked.hidden'));
     }
   });
 
@@ -293,7 +321,7 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
     event.preventDefault();
     const passphrase = passField.value;
     if (passphrase === '') {
-      paint('Ohne Passphrase gibt es keinen Schlüssel.');
+      paint(t('vault.error.noPassphrase'));
       return;
     }
     void (currentState() === 'off' ? seal(passphrase) : unseal(passphrase));
@@ -306,7 +334,7 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
   updateButton.addEventListener('click', () => {
     if (sessionPassphrase !== null) {
       void seal(sessionPassphrase);
-      handlers.announce('Tresor neu verschlüsselt.');
+      handlers.announce(t('vault.msg.resealed'));
     }
   });
 
@@ -314,17 +342,17 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
     // Zweistufig statt `confirm()`: Ein Dialog blockiert den Thread und sieht
     // auf jedem System anders aus. Der zweite Klick auf denselben Knopf ist
     // ebenso eindeutig und bleibt im Gerät.
-    if (wipeButton.dataset.armed === undefined) {
-      wipeButton.dataset.armed = '';
-      wipeButton.textContent = 'Wirklich löschen?';
+    if (wipeButton.dataset['armed'] === undefined) {
+      wipeButton.dataset['armed'] = '';
+      wipeButton.textContent = t('vault.action.wipeConfirm');
       window.setTimeout(() => {
-        delete wipeButton.dataset.armed;
-        wipeButton.textContent = 'Alles löschen';
+        delete wipeButton.dataset['armed'];
+        wipeButton.textContent = t('vault.action.wipe');
       }, 4000);
       return;
     }
-    delete wipeButton.dataset.armed;
-    wipeButton.textContent = 'Alles löschen';
+    delete wipeButton.dataset['armed'];
+    wipeButton.textContent = t('vault.action.wipe');
     wipe();
   });
 
@@ -339,5 +367,14 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
     saveSettings();
   });
 
+  // Beim Sprachwechsel alles neu beschriften. Eine stehen gebliebene
+  // Fehlermeldung wird dabei verworfen — sie wäre sonst die einzige Stelle im
+  // Gerät, die noch in der alten Sprache steht.
+  onLocaleChange(() => {
+    paintLabels();
+    paint();
+  });
+
+  paintLabels();
   paint();
 }

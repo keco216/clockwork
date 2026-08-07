@@ -1,0 +1,132 @@
+/* =============================================================================
+   Schriftsysteme
+
+   `data-script` steht am <html>-Element und wird von i18n/apply.ts gesetzt. Es
+   beschreibt nicht die Sprache, sondern die SCHRIFT — Russisch und Bulgarisch
+   teilen sich dieselbe Gruppe, Portugiesisch und Vietnamesisch nicht.
+
+   ── Warum hier keine Schriftdatei dazukommt ────────────────────────────────
+   Eine CJK-Schrift wiegt mehrere Megabyte, eine arabische Naskh gut 100 kB.
+   Beides würde die Single-File-Datei sprengen, die heute 256 kB hat und per
+   Doppelklick laufen soll. Deshalb: kuratierte System-Stacks. Sie sind auf
+   jedem System vorhanden, kosten null Byte und null Netzwerkanfragen.
+
+   Ausgewählt ist jeweils die neutrale Grotesk des Systems — dieselbe
+   Gestaltungsabsicht wie bei Instrument Sans, nur mit den Mitteln, die schon da
+   sind. Reihenfolge immer: ui-sans-serif und system-ui zuerst (dann trifft der
+   Browser selbst die beste Wahl), danach die bekannten Namen je Plattform.
+
+   ── Warum auch Kyrillisch und Griechisch hier stehen ───────────────────────
+   Weil das mitgelieferte Instrument Sans nur die Subsets `latin` und
+   `latin-ext` enthält — für diese Schriften bringt die Markenschrift schlicht
+   keinen Schnitt mit. Ließe man sie an erster Stelle stehen, käme jedes zweite
+   Zeichen aus einer Ersatzschrift und der Text bestünde sichtbar aus zwei
+   Schriften. Eine durchgehende Systemschrift ist das kleinere Übel.
+   Vietnamesisch steht aus demselben Grund dabei: Die vietnamesischen
+   Mehrfachdiakritika liegen außerhalb von `latin-ext`.
+   ========================================================================== */
+
+/* ── 1. Der System-Stack je Schriftsystem ──────────────────────────────────
+   Überschrieben wird nur `--font-system`. `--font-ui` und `--font-mono` bauen
+   in tokens.css darauf auf und erben die Änderung — die Zifferblattschrift
+   bekommt damit denselben Rückfall wie der Rest der Oberfläche, statt sich für
+   ein „秒" oder „ث" irgendetwas aus dem System zu greifen. */
+
+:root[data-script='arabic'] {
+  --font-system:
+    ui-sans-serif, system-ui, 'SF Arabic', 'Segoe UI', 'Noto Sans Arabic', 'Geeza Pro', Tahoma,
+    sans-serif;
+}
+
+:root[data-script='hebrew'] {
+  --font-system:
+    ui-sans-serif, system-ui, 'SF Hebrew', 'Segoe UI', 'Noto Sans Hebrew', 'Arial Hebrew', Arial,
+    sans-serif;
+}
+
+:root[data-script='devanagari'] {
+  --font-system:
+    ui-sans-serif, system-ui, 'Nirmala UI', 'Noto Sans Devanagari', 'Kohinoor Devanagari',
+    'Devanagari Sangam MN', sans-serif;
+}
+
+:root[data-script='thai'] {
+  --font-system:
+    ui-sans-serif, system-ui, 'Leelawadee UI', 'Noto Sans Thai', 'Sukhumvit Set', Thonburi,
+    sans-serif;
+}
+
+:root[data-script='japanese'] {
+  --font-system:
+    ui-sans-serif, system-ui, 'Hiragino Sans', 'Yu Gothic UI', 'Yu Gothic', Meiryo, 'Noto Sans JP',
+    sans-serif;
+}
+
+:root[data-script='korean'] {
+  --font-system:
+    ui-sans-serif, system-ui, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+}
+
+:root[data-script='hans'] {
+  --font-system:
+    ui-sans-serif, system-ui, 'PingFang SC', 'Microsoft YaHei UI', 'Microsoft YaHei',
+    'Noto Sans SC', sans-serif;
+}
+
+:root[data-script='hant'] {
+  --font-system:
+    ui-sans-serif, system-ui, 'PingFang TC', 'Microsoft JhengHei UI', 'Microsoft JhengHei',
+    'Noto Sans TC', sans-serif;
+}
+
+/* ── 2. Wo die Markenschrift ganz weichen muss ─────────────────────────────
+   Für Kyrillisch, Griechisch und Vietnamesisch bringt Instrument Sans keinen
+   Schnitt mit. Hier hilft kein Rückfall: Stünde die Markenschrift vorne, kämen
+   die lateinischen Grundbuchstaben aus ihr und alles Übrige aus dem System —
+   ein Text aus zwei Schriften. Also tritt sie ganz zurück.
+
+   Bei Arabisch, Hebräisch, Thai, Devanagari und CJK erledigt das der Rückfall
+   von selbst, weil dort ohnehin kein Zeichen in Instrument Sans steht. */
+:root[data-script='cyrillic'],
+:root[data-script='greek'],
+:root[data-script='vietnamese'] {
+  --font-ui: var(--font-system);
+}
+
+/* ── Gravur-Beschriftung außerhalb der Alphabetschriften ────────────────────
+   Die kleinen gesperrten Versalien sind ein tragendes Gestaltungsmittel dieser
+   App — aber sie setzen ein Alphabet mit Groß- und Kleinschreibung voraus.
+   Arabisch, Hebräisch, Devanagari, Thai und die CJK-Schriften kennen keine
+   Versalien; `text-transform: uppercase` tut dort nichts, und eine Sperrung von
+   0,14 em reißt Silben und Ligaturen auseinander (im Arabischen bricht sie
+   sogar die Verbindung zwischen den Buchstaben auf).
+
+   Deshalb kippen diese Schriften zwei Tokens. Größe, Farbe und Stellung der
+   Beschriftung bleiben — nur Versalsatz und Sperrung entfallen. */
+:root[data-script='arabic'],
+:root[data-script='hebrew'],
+:root[data-script='devanagari'],
+:root[data-script='thai'],
+:root[data-script='japanese'],
+:root[data-script='korean'],
+:root[data-script='hans'],
+:root[data-script='hant'] {
+  --case-caps: none;
+  --track-caps: 0.02em;
+}
+
+/* ── Thailändischer Zeilenumbruch ───────────────────────────────────────────
+   Thailändisch schreibt ohne Wortzwischenräume. Wo eine Zeile brechen darf,
+   weiß nur ein Wörterbuch — und das hat der Browser, aber er benutzt es nur,
+   wenn `lang="th"` gesetzt ist (das erledigt i18n/apply.ts).
+
+   Hier steht deshalb nichts Cleveres, sondern ausdrücklich das Gegenteil: kein
+   erzwungener Zeichenumbruch. `word-break: break-all` oder
+   `overflow-wrap: anywhere` würden mitten in einer Silbe trennen und den Text
+   unlesbar machen. `line-break: auto` überlässt die Entscheidung dem
+   Wörterbuch. */
+:root[data-script='thai'] {
+  word-break: normal;
+  overflow-wrap: normal;
+  line-break: auto;
+}

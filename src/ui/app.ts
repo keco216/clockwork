@@ -12,12 +12,16 @@
  * das Secret weg.
  */
 
+import { applyStaticStrings } from '../i18n/apply';
+import { translateLibMessage } from '../i18n/lib-text';
+import { onLocaleChange, t, tn } from '../i18n/runtime';
 import { parseEntries, type ParsedEntry } from '../lib/accounts';
 import { isMigrationUri, MigrationError, parseMigrationUri } from '../lib/google-auth';
 import { createStrip, type Strip, type StripContext } from './strip';
 import { startClock } from './clock';
 import { requireElement } from './dom';
 import { buildGauge } from './gauge';
+import { startLanguageSwitch } from './lang-switch';
 import { startScanner } from './scan';
 import { startVaultPanel } from './vault-panel';
 
@@ -29,12 +33,17 @@ import { startVaultPanel } from './vault-panel';
  */
 const INPUT_DEBOUNCE_MS = 220;
 
-/** Was „Demo einsetzen" einfügt. */
-const DEMO_CONTENT = [
-  '# Testschlüssel aus RFC 4226 — das Secret ist der Text "12345678901234567890"',
-  'RFC-Test: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ',
-  'otpauth://totp/ACME%20Co:kevin@example.com?secret=JBSWY3DPEHPK3PXP&issuer=ACME%20Co',
-].join('\n');
+/** Der Testschlüssel aus RFC 4226, Base32-codiert. Kein Text, keine Sprache. */
+const DEMO_SECRET = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
+
+/** Eine Beispiel-URI, wie sie aus einem QR-Code käme. Ebenfalls sprachfrei. */
+const DEMO_URI =
+  'otpauth://totp/ACME%20Co:kevin@example.com?secret=JBSWY3DPEHPK3PXP&issuer=ACME%20Co';
+
+/** Was „Demo einsetzen" einfügt — Kommentar und Kontoname in der Oberflächensprache. */
+function demoContent(): string {
+  return [t('demo.comment'), `${t('demo.label')}: ${DEMO_SECRET}`, DEMO_URI].join('\n');
+}
 
 export function startApp(): void {
   const input = requireElement<HTMLTextAreaElement>(document, '#secrets');
@@ -115,7 +124,8 @@ export function startApp(): void {
 
   function insertDemo(): void {
     const existing = input.value.trim();
-    input.value = existing === '' ? DEMO_CONTENT : `${existing}\n${DEMO_CONTENT}`;
+    const demo = demoContent();
+    input.value = existing === '' ? demo : `${existing}\n${demo}`;
     input.focus();
     reparse();
   }
@@ -150,7 +160,10 @@ export function startApp(): void {
      entsprechenden `otpauth://`-Zeilen ersetzt. Der Nutzer SIEHT damit, was
      importiert wurde, und kann es prüfen oder löschen — ein Import, der
      Schlüsselmaterial still im Hintergrund anlegt, wäre hier das falsche
-     Verhalten. Ab da laufen die Zeilen durch denselben Parser wie alles andere. */
+     Verhalten. Ab da laufen die Zeilen durch denselben Parser wie alles andere.
+
+     Die Meldungen von `parseMigrationUri` entstehen in src/lib und sind dort
+     deutsch formuliert; übersetzt wird an dieser Grenze. */
   function expandMigrationLines(): void {
     const lines = input.value.split(/\r?\n/);
     if (!lines.some((line) => isMigrationUri(line))) {
@@ -171,10 +184,14 @@ export function startApp(): void {
         const result = parseMigrationUri(line);
         expanded.push(...result.lines);
         imported += result.imported;
-        skipped.push(...result.skipped);
+        skipped.push(...result.skipped.map(translateLibMessage));
       } catch (error) {
-        expanded.push(`# ${error instanceof MigrationError ? error.message : 'Export unlesbar.'}`);
-        problems.push(error instanceof MigrationError ? error.message : 'Export unlesbar.');
+        const message =
+          error instanceof MigrationError
+            ? translateLibMessage(error.message)
+            : t('import.unreadable');
+        expanded.push(`# ${message}`);
+        problems.push(message);
       }
     }
 
@@ -183,14 +200,10 @@ export function startApp(): void {
 
     const parts: string[] = [];
     if (imported > 0) {
-      parts.push(
-        imported === 1
-          ? '1 Konto aus Google-Authenticator-Export übernommen'
-          : `${imported} Konten aus Google-Authenticator-Export übernommen`,
-      );
+      parts.push(tn('import.done', imported));
     }
     if (skipped.length > 0) {
-      parts.push(`übersprungen: ${skipped.join(', ')}`);
+      parts.push(t('import.skipped', { list: skipped.join(', ') }));
     }
     parts.push(...problems);
     setNote(parts.join(' · '));
@@ -208,7 +221,7 @@ export function startApp(): void {
       expandMigrationLines();
       reparse();
       if (!isMigrationUri(line)) {
-        setNote('QR-Code gelesen und eingesetzt.');
+        setNote(t('scan.done'));
       }
     },
     onProblem(message: string): void {
@@ -235,20 +248,42 @@ export function startApp(): void {
     },
     reportState(state): void {
       // Die Statuszeile im Kopf sagt, was tatsächlich der Fall ist. „Offline"
-      // gilt immer; der zweite Teil hängt am Tresor.
-      const label = {
-        off: 'nichts gespeichert',
-        locked: 'Tresor gesperrt',
-        open: 'Tresor offen',
+      // gilt immer; der zweite Teil hängt am Tresor. Beide Teile stehen als
+      // eigene Platzhalter in `status.line`, damit eine Sprache sie umstellen
+      // kann.
+      const vaultLabel = {
+        off: t('status.vault.off'),
+        locked: t('status.vault.locked'),
+        open: t('status.vault.open'),
       }[state];
-      stateText.textContent = `Offline · ${label}`;
+      stateText.textContent = t('status.line', {
+        connection: t('status.offline'),
+        vault: vaultLabel,
+      });
       stateLamp.classList.toggle('lamp--signal', state === 'open');
     },
   });
 
+  startLanguageSwitch();
+
   // Der Leerzustand trägt das Emblem — dieselbe Teilung, die gleich die Codes
   // begleitet. Es steht still: Es gibt noch nichts zu messen.
   buildGauge(requireElement<SVGSVGElement>(document, '#vacant-dial'), 30);
+
+  /* ── Sprachwechsel ───────────────────────────────────────────────────────
+     Die Kanalzüge tragen übersetzte Beschriftungen (Kontoname-Rückfall,
+     Parameterzeile, Kopiertaste) und werden deshalb komplett verworfen. Sie
+     über einen eigenen Rückruf nachzubessern wäre mehr Code und eine weitere
+     Stelle, die man vergessen kann — neu bauen kostet hier nichts. */
+  onLocaleChange(() => {
+    applyStaticStrings();
+    for (const strip of strips.values()) {
+      strip.destroy();
+    }
+    strips = new Map();
+    setNote('');
+    reparse();
+  });
 
   startClock(tick);
   reparse();
@@ -262,12 +297,14 @@ function summarise(entries: ParsedEntry[]): string {
   const accounts = entries.filter((entry) => entry.kind === 'account').length;
   const faults = entries.length - accounts;
 
-  const parts: string[] = [];
+  if (accounts > 0 && faults > 0) {
+    return t('input.count.join', {
+      accounts: tn('input.count.accounts', accounts),
+      errors: tn('input.count.errors', faults),
+    });
+  }
   if (accounts > 0) {
-    parts.push(accounts === 1 ? '1 Konto' : `${accounts} Konten`);
+    return tn('input.count.accounts', accounts);
   }
-  if (faults > 0) {
-    parts.push(faults === 1 ? '1 Fehler' : `${faults} Fehler`);
-  }
-  return parts.join(' · ');
+  return tn('input.count.errors', faults);
 }
