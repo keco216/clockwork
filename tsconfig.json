@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    /* Zielumgebung: moderne Browser. ES2022 gibt uns u. a. `DataView.setBigUint64`,
+       `Array.prototype.at` und Top-Level-await. */
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["vite/client", "node"],
+
+    /* --- Strenge --- */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    /* Zugriffe wie `bytes[i]` liefern `number | undefined`. Das zwingt uns, überall
+       explizit zu prüfen — genau das wollen wir in Krypto-Code. Wo wir garantierte
+       Längen haben, benutzen wir `DataView`, das exakt typisierte Getter hat. */
+    "noUncheckedIndexedAccess": true,
+    /* Ein optionales Feld darf nicht mit `undefined` belegt werden. Erzwingt, dass
+       Defaults *vor* dem Aufruf aufgelöst werden statt irgendwo tief drin. */
+    "exactOptionalPropertyTypes": true,
+
+    /* --- Modul-Hygiene (Vite/esbuild transpilieren Datei für Datei) --- */
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+
+    /* Vite erzeugt das JS, tsc prüft nur die Typen. */
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": ["src", "scripts", "vite.config.ts"]
+}

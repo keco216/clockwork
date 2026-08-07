@@ -1,0 +1,8 @@
+node_modules/
+dist/
+dist-single/
+coverage/
+*.local
+.vite/
+.DS_Store
+Thumbs.db
