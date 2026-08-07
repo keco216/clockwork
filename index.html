@@ -177,9 +177,23 @@
                 <span id="vault-state-text">Off — nothing is stored</span>
               </p>
 
-              <!-- Text kommt aus vault-panel.ts: Er enthält die Iterationszahl,
-                   und die will lokalisiert gruppiert sein. -->
-              <p class="note" id="vault-explain"></p>
+              <!--
+                Der Text wird von vault-panel.ts gesetzt — er enthält die
+                Iterationszahl, und die will lokalisiert gruppiert sein
+                (600,000 / 600.000 / 600 000).
+
+                Trotzdem steht er hier ausgeschrieben, und das ist kein
+                Widerspruch: Das Bündel wiegt seit V3 rund 490 kB, der Browser
+                malt also einmal, BEVOR das Skript läuft. Ein leerer Absatz an
+                dieser Stelle wächst danach um drei Zeilen und schiebt die halbe
+                Seite nach unten — gemessen als Layout-Shift von 0,16. Steht der
+                Platz von Anfang an, bleibt vom Sprung nichts übrig.
+              -->
+              <p class="note" id="vault-explain">
+                By default Clockwork stores nothing. If you want to, you can keep the input here
+                encrypted with a passphrase: PBKDF2-SHA-256 with 600,000 iterations, then
+                AES-256-GCM. Without the passphrase the stored block is worthless.
+              </p>
 
               <form class="vault__form" id="vault-form">
                 <label class="slot__legend" for="vault-pass" id="vault-pass-label"
@@ -228,10 +242,13 @@
                 <label for="vault-timeout" data-i18n="vault.timeout.label"
                   >Locks automatically after</label
                 >
+                <!-- Beschriftet werden die Einträge in vault-panel.ts über die
+                     Mehrzahlregeln. Der Text hier ist der Platzhalter für den
+                     ersten Anstrich, damit das Feld nicht nachträglich wächst. -->
                 <select id="vault-timeout" class="pick">
-                  <option value="60000"></option>
-                  <option value="300000" selected></option>
-                  <option value="900000"></option>
+                  <option value="60000">1 minute</option>
+                  <option value="300000" selected>5 minutes</option>
+                  <option value="900000">15 minutes</option>
                 </select>
                 <label class="vault__check">
                   <input type="checkbox" id="vault-hide-lock" checked />

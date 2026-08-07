@@ -285,6 +285,14 @@ kbd {
   color: var(--ink-3);
 }
 
+/* Feste Breite, nicht inhaltsabhängig: Das Feld ist beim ersten Anstrich leer
+   und bekommt seine 37 Einträge erst vom Skript. Ohne feste Breite würde es in
+   dem Moment aufspringen und den Fuß verschieben. Die Breite fasst den längsten
+   Eigennamen („Português (Portugal)"). */
+.colophon__lang .pick {
+  width: 11rem;
+}
+
 .colophon__note {
   font-size: var(--t-small);
   color: var(--ink-3);

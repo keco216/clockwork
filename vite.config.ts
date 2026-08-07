@@ -74,10 +74,60 @@ function injectContentSecurityPolicy(singleFile: boolean): Plugin {
   };
 }
 
+/**
+ * Lädt die beiden lateinischen Schriftschnitte im PWA-Build vor.
+ *
+ * ── Warum das in V3 dazukam ────────────────────────────────────────────────
+ * In V2 stand hier ausdrücklich KEIN Preload, und der Grund galt: Im
+ * Single-File-Build stecken die Schriften als data:-URI im CSS; ein
+ * Preload-Link würde dieselben Bytes ein zweites Mal in die Datei schreiben.
+ *
+ * Mit den 37 Sprachkatalogen wiegt das Bündel aber rund 490 kB statt 160 kB.
+ * Damit verschiebt sich die Reihenfolge: Der Browser malt einmal in der
+ * Ersatzschrift, und wenn Instrument Sans nachrückt, springt der Umbruch —
+ * Lighthouse maß dafür einen Layout-Shift von 0,13. Der Preload holt die
+ * Schrift wieder vor den ersten Anstrich.
+ *
+ * Deshalb hängt er am selben Schalter wie die CSP: PWA ja, Single-File nein.
+ * Dort ist er auch gar nicht nötig — die Schrift steht in derselben Datei und
+ * ist da, sobald das CSS gelesen ist.
+ *
+ * Vorgeladen werden nur die beiden `latin`-Schnitte, die JEDE Sprache braucht.
+ * `latin-ext` bleibt außen vor: Den fordert der Browser über `unicode-range`
+ * nur an, wenn wirklich ein polnisches ł oder ein tschechisches ř vorkommt.
+ */
+function preloadLatinFonts(singleFile: boolean): Plugin {
+  return {
+    name: 'clockwork:font-preload',
+    apply: 'build',
+    enforce: 'post',
+    transformIndexHtml(_html, context) {
+      if (singleFile || context.bundle === undefined) {
+        return [];
+      }
+      return Object.keys(context.bundle)
+        .filter((file) => /-latin-wght-normal-[^/]*\.woff2$/.test(file))
+        .map((file) => ({
+          tag: 'link',
+          attrs: {
+            rel: 'preload',
+            as: 'font',
+            type: 'font/woff2',
+            href: `./${file}`,
+            // Schriften werden immer anonym per CORS geholt — ohne dieses
+            // Attribut lädt der Browser die Datei ein zweites Mal.
+            crossorigin: '',
+          },
+          injectTo: 'head-prepend' as const,
+        }));
+    },
+  };
+}
+
 export default defineConfig({
   // Relative Pfade, damit `dist/index.html` auch direkt per file:// funktioniert.
   base: './',
-  plugins: [injectContentSecurityPolicy(SINGLE_FILE)],
+  plugins: [injectContentSecurityPolicy(SINGLE_FILE), preloadLatinFonts(SINGLE_FILE)],
   build: {
     target: 'es2022',
     outDir: 'dist',
