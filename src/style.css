@@ -1,76 +1,14 @@
-/* =============================================================================
-   2FA Live — Stylesheet
-
-   Gestalterische Idee: ein Messinstrument. Dunkles Graphit mit Blaustich als
-   Gehäuse, eine einzige warme Messing-Farbe als Akzent (die Farbe alter
-   Segment-Anzeigen und von Zifferblatt-Indizes), und die Ziffern als klar
-   ablesbare Anzeige in dicktengleicher Schrift. Der Akzent ist bewusst nur an
-   EINER Stelle laut: am Countdown-Ring. Der Code selbst ist schlicht hell —
-   seine Betonung ist die Größe, nicht die Farbe.
-
-   Farben liegen ausschließlich als Custom Properties in :root bzw. im
-   Light-Media-Query. Kein Bauteil weiter unten setzt je eine feste Farbe —
-   sonst würde genau ein Theme brechen.
-   ========================================================================== */
-
-:root {
-  color-scheme: dark light;
-
-  /* --- Dunkel ist die Basis (so gewünscht: „dunkel als Standard") --------- */
-  --bg: #0b0f14;
-  --surface: #121822;
-  --surface-sunken: #0e131b;
-  --border: #232d3d;
-  --border-strong: #35425a;
-  --edge: rgb(255 255 255 / 5%); /* feiner Lichtsaum an der Kartenoberkante */
-
-  --text: #e9edf3;
-  --text-dim: #8c99ab;
-  --text-mute: #78869b;
-
-  --accent: #e4a951; /* Messing */
-  --accent-ink: #1a1206; /* Text auf Messing-Flächen */
-  --danger: #e8705f;
-  --ok: #5fc9a0;
-
-  --focus: var(--accent);
-
-  /* --- Typografie ------------------------------------------------------- */
-  /* Keine Web-Fonts: ein Download wäre eine Netzwerkanfrage, und die soll es
-     hier nicht geben. Stattdessen zwei bewusst gewählte System-Stacks. */
-  --font-sans:
-    ui-sans-serif, system-ui, -apple-system, 'Segoe UI Variable Text', 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
-  --font-mono:
-    ui-monospace, 'Cascadia Mono', 'Cascadia Code', 'SF Mono', 'Segoe UI Mono', Menlo, Consolas,
-    'Liberation Mono', monospace;
-
-  --radius: 14px;
-  --radius-sm: 9px;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #eef1f6;
-    --surface: #ffffff;
-    --surface-sunken: #f5f7fa;
-    --border: #dce3ec;
-    --border-strong: #bcc7d6;
-    --edge: rgb(15 23 32 / 3%);
-
-    --text: #101720;
-    --text-dim: #5a6675;
-    --text-mute: #667385;
-
-    --accent: #9a6a15; /* dunkleres Messing — Kontrast auf Weiß */
-    --accent-ink: #fffaf0;
-    --danger: #bd3b2b;
-    --ok: #12805a;
-  }
-}
+@import './styles/tokens.css';
+@import './styles/fonts.css';
 
 /* =============================================================================
-   Grundlagen
+   2FA Live — Frontplatte
+
+   Aufbau von oben nach unten: Grundlagen, Gehäuse, Zonen, Bedienelemente,
+   Kanalzug (der Kern), Zustände, Umbrüche.
+
+   Kein Bauteil hier setzt einen Farb-, Abstands- oder Schriftwert direkt —
+   alles kommt aus styles/tokens.css.
    ========================================================================== */
 
 *,
@@ -85,47 +23,42 @@ html {
 
 body {
   margin: 0;
-  /* Explizit gesetzt, nicht geerbt: sonst scheint der Hintergrund des
-     umgebenden Kontexts durch und ein Theme wird unlesbar. */
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.55;
-  min-height: 100dvh;
+  /* Explizit gesetzt: Ein transparenter Body übernimmt sonst den Grund des
+     umgebenden Kontexts, und dann steht ein Theme auf dem falschen Untergrund. */
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--t-body);
+  line-height: var(--lh-normal);
+  font-synthesis-weight: none;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Ein einziger, sehr zurückhaltender Lichtschein von oben — gibt der Seite
-   Tiefe, ohne ein Farbverlaufs-Hero zu sein. */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(
-    64rem 34rem at 50% -14rem,
-    color-mix(in oklab, var(--accent) 13%, transparent),
-    transparent 68%
-  );
-}
-
-:where(h1, h2, h3, p) {
+:where(h1, h2, h3, p, figure) {
   margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
 }
 
 code {
   font-family: var(--font-mono);
   font-size: 0.92em;
-  background: var(--surface-sunken);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  padding: 0.05em 0.36em;
+  color: var(--ink-2);
 }
 
-.nowrap {
-  white-space: nowrap;
+abbr {
+  text-decoration: none;
+}
+
+/* Tastaturbedienung sichtbar machen — nie entfernen, nur präzisieren.
+   Ein Messgerät zeigt immer an, welches Element gerade bedient wird. */
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
 }
 
 .sr-only {
@@ -140,567 +73,616 @@ code {
   border: 0;
 }
 
-/* Sichtbarer Fokus für Tastaturbedienung — nie wegnehmen, nur schöner machen. */
-:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* Kleine, gesperrte Versalien als Beschriftung. */
-.micro,
-.label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.09em;
+.skip {
+  position: absolute;
+  left: var(--sp-4);
+  top: calc(var(--sp-4) * -4);
+  z-index: 10;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--surface-inverted);
+  color: var(--ink-on-inverted);
+  font-size: var(--t-micro);
+  letter-spacing: var(--track-caps);
   text-transform: uppercase;
-  color: var(--text-mute);
+  text-decoration: none;
+  transition: top var(--dur-quick) var(--ease-mech);
+}
+
+.skip:focus {
+  top: var(--sp-4);
+}
+
+/* Gravur-Beschriftung: kleine gesperrte Versalien, wie auf ein Gehäuse
+   siebgedruckt. Das ist die einzige Textauszeichnung, die die App kennt. */
+.zone__label,
+.slot__legend,
+.strip__spec,
+.gauge__nextLabel,
+.colophon__specs,
+.masthead__spec,
+.masthead__state,
+.key {
+  font-size: var(--t-micro);
+  font-weight: 500;
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
 }
 
 /* =============================================================================
-   Seitenraster
+   Gehäuse
    ========================================================================== */
 
-.page {
-  max-width: 74rem;
+.device {
+  max-width: var(--measure);
   margin-inline: auto;
-  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem) 4rem;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1.25rem, 3vw, 1.75rem);
+  padding-inline: var(--sp-5);
+  padding-block: var(--sp-6) var(--sp-8);
 }
 
-/* =============================================================================
-   Kopfbereich
-   ========================================================================== */
+/* ── Kopf ─────────────────────────────────────────────────────────────────── */
 
 .masthead {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: var(--sp-2) var(--sp-5);
+  padding-bottom: var(--sp-4);
 }
 
+/* Die Wortmarke ist keine Überschrift, sondern eine Gravur: Versalien,
+   weit gesperrt, mit einem gefrästen Steg zwischen den beiden Hälften. */
 .wordmark {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-}
-
-.wordmark__glyph {
-  width: 2.6rem;
-  height: 2.6rem;
-  flex: none;
-}
-
-.wordmark__ring {
-  fill: none;
-  stroke: var(--border-strong);
-  stroke-width: 2.5;
-}
-
-.wordmark__pip {
-  fill: var(--accent);
-}
-
-.wordmark__title {
-  font-size: 1.32rem;
+  gap: var(--sp-2);
+  font-size: var(--t-lead);
   font-weight: 600;
-  letter-spacing: 0.01em;
-  line-height: 1.15;
+  letter-spacing: 0.2em;
+  line-height: var(--lh-tight);
 }
 
-.wordmark__title span {
-  color: var(--accent);
-  font-weight: 400;
+.wordmark i {
+  width: var(--sp-4);
+  height: 1px;
+  background: var(--ink);
 }
 
-.wordmark__subtitle {
-  font-size: 0.83rem;
-  color: var(--text-dim);
-}
-
-.masthead__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--text-dim);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.32rem 0.75rem 0.32rem 0.6rem;
-}
-
-.masthead__dot {
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
-  background: var(--ok);
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ok) 22%, transparent);
-}
-
-/* =============================================================================
-   Sicherheitshinweis
-   ========================================================================== */
-
-.notice {
-  display: flex;
-  gap: 0.85rem;
-  align-items: flex-start;
-  padding: 0.9rem 1.1rem;
-  border: 1px solid color-mix(in oklab, var(--accent) 32%, var(--border));
-  border-radius: var(--radius);
-  background: color-mix(in oklab, var(--accent) 7%, var(--surface));
-  font-size: 0.88rem;
-  color: var(--text-dim);
-  text-wrap: pretty;
-}
-
-.notice strong {
-  color: var(--text);
-}
-
-.notice__icon {
-  width: 1.35rem;
-  height: 1.35rem;
-  flex: none;
-  margin-top: 0.1rem;
-  color: var(--accent);
-}
-
-/* =============================================================================
-   Eingabe-Panel
-   ========================================================================== */
-
-.console {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  padding: clamp(0.9rem, 2.5vw, 1.25rem);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: inset 0 1px 0 var(--edge);
-}
-
-.console__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.console__status {
-  font-size: 0.78rem;
-  color: var(--text-mute);
-  font-variant-numeric: tabular-nums;
-}
-
-.console__input {
-  width: 100%;
-  min-height: 6.5rem;
-  resize: vertical;
-  padding: 0.75rem 0.9rem;
-  font-family: var(--font-mono);
-  font-size: 0.92rem;
-  line-height: 1.7;
-  color: var(--text);
-  background: var(--surface-sunken);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  transition: border-color 140ms ease;
-}
-
-.console__input::placeholder {
-  color: var(--text-mute);
-  opacity: 0.75;
-}
-
-.console__input:hover {
-  border-color: var(--border-strong);
-}
-
-.console__input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
-}
-
-.console__foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.console__hint {
-  font-size: 0.8rem;
-  color: var(--text-mute);
-  max-width: 46ch;
-  text-wrap: pretty;
-}
-
-.console__hint code {
-  font-size: 0.85em;
-}
-
-.console__actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-left: auto;
-}
-
-.button {
-  font: inherit;
-  font-size: 0.83rem;
-  font-weight: 500;
-  color: var(--text-dim);
-  background: var(--surface-sunken);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.42rem 0.85rem;
-  cursor: pointer;
-  transition:
-    color 140ms ease,
-    border-color 140ms ease,
-    background-color 140ms ease;
-}
-
-.button:hover {
-  color: var(--text);
-  border-color: var(--border-strong);
-}
-
-.button:active {
-  transform: translateY(1px);
-}
-
-/* =============================================================================
-   Karten-Raster
-   ========================================================================== */
-
-.results {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20.5rem), 1fr));
-  gap: 1rem;
-}
-
-.results:empty {
-  display: none;
-}
-
-.placeholder {
-  padding: 2.25rem 1.5rem;
+.masthead__spec {
+  color: var(--ink-3);
   text-align: center;
-  font-size: 0.9rem;
-  color: var(--text-mute);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
-  text-wrap: balance;
 }
 
-.placeholder strong {
-  color: var(--text-dim);
-  font-weight: 600;
+.masthead__state {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--ink-2);
+  justify-self: end;
 }
 
-.placeholder[hidden] {
-  display: none;
+/* Betriebsleuchte. Grün wäre die naheliegende Wahl und wäre falsch: Diese App
+   hat genau eine Akzentfarbe, und der Normalzustand ist kein Alarm. Also eine
+   kleine ausgefüllte Marke in Ink — sie zeigt „Gerät in Betrieb", nicht mehr. */
+.lamp {
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+  border-radius: 50%;
+  flex: none;
 }
 
-/* =============================================================================
-   Karte
-   ========================================================================== */
+/* ── Zonen ────────────────────────────────────────────────────────────────── */
 
-.card {
-  /* Container-Query-Einheiten: die Code-Größe richtet sich nach der Karte,
-     nicht nach dem Fenster. So passen auch 8-stellige Codes in eine schmale
-     Spalte, ohne dass irgendwo etwas überläuft. */
-  container-type: inline-size;
+/* Der linke Streifen mit der Zonenbeschriftung ist das tragende Layout-Element
+   der App: Er benennt Funktionsbereiche, so wie ein Gerät seine Bedienfelder
+   beschriftet. Er ist kein Dekorstreifen — jede Zeile darin steht für einen
+   echten Funktionsblock. */
+.zone {
+  display: grid;
+  grid-template-columns: var(--col-label) minmax(0, 1fr);
+  gap: var(--sp-5);
+  padding-block: var(--sp-5);
+  border-top: 1px solid var(--rule-strong);
+}
 
+.zone__label {
+  color: var(--ink-3);
+  padding-top: 0.2em; /* auf die erste Grundlinie der Zone ausrichten */
+}
+
+.zone__body {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
-  padding: 1.05rem 1.15rem 0.95rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: inset 0 1px 0 var(--edge);
-
-  /* Von der Uhr gesetzt: Anteil der verstrichenen Periode, 0 … 1. */
-  --progress: 0;
-}
-
-.card__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-
-.card__identity {
-  min-width: 0; /* erlaubt dem Text unten, zu kürzen statt zu überlaufen */
-}
-
-.card__title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  line-height: 1.3;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card__subtitle {
-  font-size: 0.8rem;
-  color: var(--text-dim);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.card__subtitle:empty {
-  display: none;
-}
-
-/* --- Countdown-Ring ------------------------------------------------------ */
-
-.card__timer {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 2.7rem;
-  height: 2.7rem;
-  flex: none;
-}
-
-.ring {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.ring__track,
-.ring__value {
-  fill: none;
-  stroke-width: 3;
-  transform: rotate(-90deg); /* Start auf 12 Uhr */
-  transform-origin: 50% 50%;
-}
-
-.ring__track {
-  stroke: var(--border);
-}
-
-.ring__value {
-  stroke-linecap: round;
-  /* `pathLength="100"` normiert den Kreisumfang auf 100 — damit ist
-     dashoffset = progress × 100 exakt der abgelaufene Anteil. */
-  stroke-dasharray: 100;
-  stroke-dashoffset: calc(var(--progress) * 100px);
-
-  stroke: var(--accent);
-  /* Im letzten Viertel wandert die Farbe von Messing nach Rosé. Der Übergang
-     ist bewusst gleitend und periodenrelativ — er funktioniert also auch bei
-     60 s oder 15 s. */
-  stroke: color-mix(
-    in oklab,
-    var(--accent),
-    var(--danger) calc(max(0, (var(--progress) - 0.75)) * 400%)
-  );
-}
-
-.card__seconds {
-  position: relative;
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-dim);
-  transition: color 200ms ease;
-}
-
-.card.is-expiring .card__seconds {
-  color: var(--danger);
-}
-
-/* --- Der Code ------------------------------------------------------------ */
-
-.card__main {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /* Umbruch statt Überlauf: Passen Code und Knopf nicht nebeneinander (sehr
-     schmales Fenster mit achtstelligem Code), rutscht der Knopf darunter,
-     statt aus der Karte zu ragen. */
-  flex-wrap: wrap;
-  gap: 0.5rem 0.75rem;
-}
-
-.card__code {
-  font-family: var(--font-mono);
-  font-size: 2.1rem; /* Rückfallwert, falls cqi nicht unterstützt wird */
-  font-size: clamp(1.7rem, 11cqi, 2.35rem);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  line-height: 1.1;
-  /* Damit beim Wechsel von z. B. „1" auf „8" nichts springt. */
-  font-variant-numeric: tabular-nums;
-  color: var(--text);
-  /* Der Code ist das Einzige, was man hier markieren können muss. */
-  user-select: all;
-  white-space: nowrap;
-}
-
-/* Der kurze Aufblend-Impuls beim Codewechsel steckt bewusst nicht hier, sondern
-   in card.ts: Eine CSS-Animation müsste man per Reflow-Trick neu starten, die
-   Web Animations API kann das von Haus aus. */
-
-.copy {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  flex: none;
-  font: inherit;
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--text-dim);
-  background: var(--surface-sunken);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.4rem 0.7rem;
-  cursor: pointer;
-  transition:
-    color 140ms ease,
-    border-color 140ms ease;
-}
-
-.copy__icon {
-  width: 0.95rem;
-  height: 0.95rem;
-  flex: none;
-}
-
-.copy:hover {
-  color: var(--text);
-  border-color: var(--border-strong);
-}
-
-.copy.is-done {
-  color: var(--ok);
-  border-color: color-mix(in oklab, var(--ok) 45%, var(--border));
-}
-
-.copy.is-failed {
-  color: var(--danger);
-  border-color: color-mix(in oklab, var(--danger) 45%, var(--border));
-}
-
-/* --- Fußzeile der Karte -------------------------------------------------- */
-
-.card__foot {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.3rem 0.75rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid var(--border);
-}
-
-.card__next {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
+  gap: var(--sp-4);
   min-width: 0;
 }
 
-/* Signaturdetail: Je leerer der Ring, desto präsenter wird der nächste Code.
-   Das ist keine Dekoration — es zeigt, dass dieser Code gleich der aktuelle
-   ist, und macht den Wechsel vorhersehbar statt überraschend. */
-.card__nextCode {
-  font-family: var(--font-mono);
-  font-size: 0.88rem;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
-  color: var(--text);
-  opacity: clamp(0.34, calc(0.34 + (var(--progress) - 0.7) * 2), 0.92);
-}
-
-.card__params {
-  text-align: right;
-  white-space: nowrap;
-  font-size: 0.66rem;
-}
-
-/* --- Fehlerkarte --------------------------------------------------------- */
-
-.card--error {
-  border-color: color-mix(in oklab, var(--danger) 38%, var(--border));
-  background: color-mix(in oklab, var(--danger) 5%, var(--surface));
-}
-
-.card__alert {
-  width: 1.35rem;
-  height: 1.35rem;
-  flex: none;
-  color: var(--danger);
-}
-
-.card__source {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  color: var(--text-mute);
-  overflow-wrap: anywhere;
-}
-
-.card__error {
-  font-size: 0.85rem;
-  color: var(--text-dim);
-  text-wrap: pretty;
-}
-
-/* =============================================================================
-   Fußzeile
-   ========================================================================== */
+/* ── Fuß: Seriennummern-Gravur ────────────────────────────────────────────── */
 
 .colophon {
   display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  margin-top: 0.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--border);
-  font-size: 0.78rem;
-  color: var(--text-mute);
-  text-wrap: pretty;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-5);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--rule-strong);
 }
 
-.colophon code {
-  font-size: 0.9em;
+.colophon__specs {
+  display: flex;
+  gap: var(--sp-3);
+  color: var(--ink-3);
+}
+
+/* Die Trennzeichen sind gesetzt, nicht getippt — so sitzen sie exakt mittig
+   zwischen den Angaben. */
+.colophon__specs span + span::before {
+  content: '·';
+  margin-right: var(--sp-3);
+}
+
+.colophon__note {
+  font-size: var(--t-small);
+  color: var(--ink-3);
 }
 
 /* =============================================================================
-   Kleine Bildschirme
+   Bedienelemente
    ========================================================================== */
 
-@media (max-width: 30rem) {
-  .console__foot {
-    flex-direction: column;
-    align-items: stretch;
+/* Eingabeschlitz: versenkt, mit einer dunkleren Oberkante — so sieht eine
+   Fräsung aus. Kein Schatten, kein Verlauf, nur zwei Linien. */
+.slot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.slot__legend {
+  color: var(--ink-3);
+}
+
+.slot__field {
+  width: 100%;
+  min-height: 6rem;
+  resize: vertical;
+  padding: var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: var(--t-body);
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--surface-recessed);
+  border: 1px solid var(--rule);
+  border-top-color: var(--rule-strong);
+  border-radius: var(--radius-flat);
+  transition: border-color var(--dur-calm) var(--ease-mech);
+}
+
+.slot__field::placeholder {
+  color: var(--ink-3);
+}
+
+.slot__field:hover {
+  border-color: var(--rule-strong);
+}
+
+.slot__field:focus-visible {
+  outline-offset: -1px;
+}
+
+.slot__meter {
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+  min-height: 1.2em; /* Platz reservieren, damit nichts springt */
+}
+
+/* Taste: ein Objekt mit Kante. Gedrückt kehrt sie sich um — genau das macht
+   eine echte Taste sichtbar, ganz ohne Schatten oder Animation. */
+.keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 2.25rem; /* Zielgröße für Finger und Maus */
+  padding: 0 var(--sp-3);
+  color: var(--ink-2);
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-key);
+  cursor: pointer;
+  transition:
+    color var(--dur-quick) var(--ease-mech),
+    border-color var(--dur-quick) var(--ease-mech),
+    background-color var(--dur-quick) var(--ease-mech);
+}
+
+.key:hover {
+  color: var(--ink);
+  border-color: var(--ink-3);
+}
+
+.key:active {
+  background: var(--surface-inverted);
+  border-color: var(--surface-inverted);
+  color: var(--ink-on-inverted);
+}
+
+.key__icon {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+/* Ein Knopf, der im Fließtext steht, sieht aus wie Text — aber unterstrichen,
+   damit er nicht nur an der Farbe erkennbar ist. */
+.linkkey {
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.note {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  text-wrap: pretty;
+}
+
+/* =============================================================================
+   Kanalzug — ein Konto
+   ========================================================================== */
+
+.strips {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Keine Karte: keine Fläche, kein Rahmen, kein Radius, kein Schatten. Nur eine
+   Haarlinie trennt zwei Kanäle — wie die Fuge zwischen zwei Modulen im Rack. */
+.strip {
+  /* Container fuer die cqi-Einheit des Zifferblatts: Die Codegroesse richtet
+     sich nach der Breite des Kanalzugs, nicht nach der des Fensters. */
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--sp-5);
+  row-gap: var(--sp-2);
+  padding-block: var(--sp-4);
+  border-top: 1px solid var(--rule);
+}
+
+.strip:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.strip__id {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--sp-2);
+  min-width: 0;
+}
+
+.strip__issuer {
+  font-size: var(--t-lead);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.strip__account {
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.strip__account:empty {
+  display: none;
+}
+
+.strip__spec {
+  color: var(--ink-3);
+  justify-self: end;
+  white-space: nowrap;
+}
+
+/* ── Das Zifferblatt ──────────────────────────────────────────────────────── */
+
+.dial {
+  grid-column: 1;
+  display: flex;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-size: var(--t-dial-min);
+  font-size: clamp(var(--t-dial-min), 9.5cqi, var(--t-dial-max));
+  font-weight: 400;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--track-dial);
+  /* Ziffern dürfen beim Wechsel nicht wackeln. Bei einer Monospace ohnehin
+     gegeben — hier steht es trotzdem, damit ein Schriftwechsel den Wert nicht
+     stillschweigend kippt. */
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--ink);
+  user-select: all;
+}
+
+/* Jede Ziffer ist ein eigenes Element, weil beim Codewechsel nur die Ziffern
+   umspringen sollen, die sich tatsächlich ändern — genau wie an einer
+   Fallblattanzeige. Siehe ui/dial.ts. */
+.dial__digit {
+  display: inline-block;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+/* Die Lücke in „123 456". Ein echtes Leerzeichen wäre zu schmal und würde je
+   nach Schrift anders ausfallen. */
+.dial__gap {
+  display: inline-block;
+  width: 0.42em;
+}
+
+.strip--copied .dial {
+  color: var(--signal);
+}
+
+/* ── Kopiertaste ──────────────────────────────────────────────────────────── */
+
+.key--copy {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: center;
+}
+
+.key--copy[data-state='done'] {
+  color: var(--signal);
+  border-color: var(--signal);
+}
+
+.key--copy[data-state='failed'] {
+  color: var(--fault);
+  border-color: var(--fault);
+}
+
+/* ── Messwerk: Skala, Restsekunden, Vorschau ──────────────────────────────── */
+
+/* Das Messwerk steht in Spalte 1, direkt unter dem Zifferblatt — Anzeige oben,
+   ihre Skala darunter, so wie an einem Gerät. Die Breitenbegrenzung ist kein
+   Zufallswert: Sie hält die Teilung dicht genug, um sie als Skala zu lesen
+   statt als gepunktete Linie. Der Weißraum rechts davon ist gewollt. */
+.gauge {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  max-width: 32rem;
+  padding-top: var(--sp-2);
+}
+
+/* Die Skala ist das Signaturelement der App.
+
+   Kein Ring, kein Balken, der sich füllt: eine geteilte Sekundenskala, wie sie
+   auf einem Messgerät eingraviert wäre — eine Marke pro Sekunde, jede fünfte
+   länger. Sie zeigt nicht nur „wie viel noch", sondern WIE VIELE SEKUNDEN, und
+   das ist die Information, um die es hier geht.
+
+   Aufbau: zwei identische Markenreihen übereinander. Die untere in heller Ink
+   (verbrauchte Sekunden), die obere in voller Ink, per clip-path auf den
+   verbleibenden Teil beschnitten. Dazu eine Indexmarke an der Grenze. Der
+   gesamte Zustand hängt an einer einzigen Custom Property `--progress`, die die
+   Uhr pro Frame setzt — es gibt kein DOM-Update pro Marke. */
+.scale {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 5rem;
+  height: var(--scale-height);
+}
+
+.scale__row {
+  position: absolute;
+  inset: 0;
+}
+
+.scale__row i {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+  height: var(--tick-minor);
+  /* Dieselbe Abbildung wie bei der Indexmarke, deshalb sitzt sie exakt auf
+     einer Teilung statt einen halben Pixel daneben. */
+  left: calc(var(--k) * (100% - 1px) / var(--n));
+  background: currentcolor;
+}
+
+.scale__row i[data-major] {
+  height: var(--tick-major);
+}
+
+.scale__row--spent {
+  color: var(--ink-3);
+  opacity: 0.45;
+}
+
+.scale__row--left {
+  color: var(--ink-2);
+  clip-path: inset(0 0 0 calc(var(--progress, 0) * 100%));
+}
+
+.scale__index {
+  position: absolute;
+  bottom: 0;
+  width: 2px;
+  height: var(--scale-height);
+  left: calc(var(--progress, 0) * (100% - 1px));
+  background: var(--ink);
+}
+
+.gauge__seconds {
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+  white-space: nowrap;
+  min-width: 3ch;
+  text-align: right;
+}
+
+.gauge__seconds abbr {
+  color: var(--ink-3);
+  margin-left: 0.15em;
+}
+
+/* Die letzten Sekunden: der einzige Ort, an dem die App Signalfarbe zeigt,
+   ohne dass der Nutzer etwas getan hat. Genau dafür ist sie da. */
+/* Die Indexmarke ist eine Fläche und braucht `background`. Die Markenreihe ist
+   ein transparenter Container, dessen Marken ihre Farbe über `currentcolor`
+   beziehen — bekäme sie hier ein `background`, färbte sich das ganze Rechteck
+   und aus der Teilung würde ein Balken. */
+.strip--expiring .scale__index {
+  background: var(--signal);
+}
+
+.strip--expiring .scale__row--left {
+  color: var(--signal);
+}
+
+.strip--expiring .gauge__seconds {
+  color: var(--signal);
+}
+
+.gauge__next {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.gauge__nextLabel {
+  color: var(--ink-3);
+}
+
+.gauge__nextCode {
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+
+/* ── Fehlerhafte Zeile ────────────────────────────────────────────────────── */
+
+.strip--fault {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--sp-1);
+}
+
+.strip--fault .strip__issuer {
+  color: var(--fault);
+}
+
+.strip__account--src {
+  font-family: var(--font-mono);
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.fault__text {
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+
+/* ── Leerzustand ──────────────────────────────────────────────────────────── */
+
+/* Kein gestrichelter Kasten mit Wolken-Symbol. Ein Satz, der sagt, was zu tun
+   ist — mehr braucht ein leerer Zustand nicht. */
+.vacant {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  max-width: 60ch;
+  text-wrap: pretty;
+}
+
+.vacant[hidden] {
+  display: none;
+}
+
+/* =============================================================================
+   Umbrüche
+   ========================================================================== */
+
+/* Unter 46rem gibt es keine Gravur-Spalte mehr: Die Beschriftung rückt über
+   ihre Zone. Das Raster bleibt, es klappt nur um. */
+@media (max-width: 46rem) {
+  .zone {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-3);
   }
 
-  .console__actions {
+  .masthead {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .masthead__spec {
+    text-align: left;
+  }
+
+  .masthead__state {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 34rem) {
+  .device {
+    padding-inline: var(--sp-4);
+  }
+
+  .strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .strip__spec {
+    justify-self: start;
+  }
+
+  .key--copy {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+  }
+
+  .gauge {
+    flex-wrap: wrap;
+  }
+
+  .gauge__next {
     margin-left: 0;
-  }
-
-  .button {
-    flex: 1;
+    width: 100%;
   }
 }
 

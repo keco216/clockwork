@@ -3,199 +3,132 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="dark light" />
-    <!-- Es gibt hier zwar nichts zu verlinken, aber falls doch je etwas dazukommt:
-         kein Referrer nach draußen. -->
+    <meta name="color-scheme" content="light dark" />
     <meta name="referrer" content="no-referrer" />
     <meta
       name="description"
-      content="TOTP-Codes lokal im Browser erzeugen — ohne Netzwerkanfragen und ohne Speicherung."
-    />
-    <!--
-      Favicon als Inline-SVG (data:-URI). Ohne diese Zeile fragt der Browser
-      automatisch /favicon.ico an — das wäre eine Netzwerkanfrage, und genau die
-      soll diese App nie machen.
-    -->
-    <link
-      rel="icon"
-      href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Ccircle%20cx='16'%20cy='16'%20r='12'%20fill='none'%20stroke='%23E4A951'%20stroke-width='4'%20stroke-linecap='round'%20stroke-dasharray='56%2020'%20transform='rotate(-90%2016%2016)'/%3E%3C/svg%3E"
+      content="TOTP-Codes lokal im Browser erzeugen — ohne Netzwerkanfragen, ohne Speicherung."
     />
     <title>2FA Live — TOTP-Codes lokal erzeugen</title>
   </head>
 
   <body>
-    <div class="page">
+    <a class="skip" href="#zone-codes">Zu den Codes springen</a>
+
+    <div class="device">
+      <!-- ══ Kopf: Gravur ══════════════════════════════════════════════ -->
       <header class="masthead">
-        <div class="wordmark">
-          <svg class="wordmark__glyph" viewBox="0 0 40 40" aria-hidden="true">
-            <circle class="wordmark__ring" cx="20" cy="20" r="15" pathLength="100" />
-            <circle class="wordmark__pip" cx="20" cy="5" r="2.6" />
-          </svg>
-          <div>
-            <h1 class="wordmark__title">2FA <span>Live</span></h1>
-            <p class="wordmark__subtitle">TOTP-Codes, im Browser selbst gerechnet</p>
-          </div>
-        </div>
-        <p class="masthead__badge" title="Diese Seite lädt nichts nach und sendet nichts.">
-          <span class="masthead__dot" aria-hidden="true"></span>
-          100&nbsp;% offline
+        <p class="wordmark"><span>2FA</span><i aria-hidden="true"></i><span>LIVE</span></p>
+        <p class="masthead__spec">Time-based One-Time Passwords · RFC 6238</p>
+        <p class="masthead__state">
+          <span class="lamp" aria-hidden="true"></span>
+          <span id="state-text">Offline · nichts gespeichert</span>
         </p>
       </header>
 
-      <aside class="notice">
-        <svg class="notice__icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M12 2.5 4 6v6c0 4.7 3.2 8.6 8 9.5 4.8-.9 8-4.8 8-9.5V6l-8-3.5Z"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linejoin="round"
-          />
-          <path
-            d="m8.6 12.2 2.3 2.3 4.5-4.8"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        <p>
-          <strong>Secrets niemals auf fremden Websites eingeben.</strong> Wer dein Secret hat, kann
-          deine Codes für immer erzeugen — ein gestohlenes Secret ist so schlimm wie ein gestohlenes
-          Passwort. Diese Seite rechnet alles lokal und sendet nichts; bei jeder anderen Seite musst
-          du das selbst nachprüfen.
-        </p>
-      </aside>
-
-      <section class="console">
-        <div class="console__head">
-          <label class="label" for="secrets">Secrets — ein Eintrag pro Zeile</label>
-          <span class="console__status" id="entry-count"></span>
-        </div>
-
-        <textarea
-          id="secrets"
-          class="console__input"
-          rows="4"
-          spellcheck="false"
-          autocomplete="off"
-          autocapitalize="off"
-          autocorrect="off"
-          placeholder="JBSWY3DPEHPK3PXP&#10;GitHub: jbsw y3dp ehpk 3pxp&#10;otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP&amp;issuer=ACME"
-        ></textarea>
-
-        <div class="console__foot">
-          <p class="console__hint">
-            Rohes Base32, <code>Name: SECRET</code> oder <code>otpauth://…</code> — gemischt
-            erlaubt. Zeilen mit <code>#</code> sind Notizen.
-          </p>
-          <div class="console__actions">
-            <button type="button" class="button" id="demo">Demo einfügen</button>
-            <button type="button" class="button" id="clear">Leeren</button>
+      <!-- ══ Zone: Eingabe ═════════════════════════════════════════════ -->
+      <section class="zone" id="zone-input" aria-labelledby="zone-input-label">
+        <h2 class="zone__label" id="zone-input-label">Eingabe</h2>
+        <div class="zone__body">
+          <div class="slot">
+            <label class="slot__legend" for="secrets">Ein Eintrag pro Zeile</label>
+            <textarea
+              id="secrets"
+              class="slot__field"
+              rows="4"
+              spellcheck="false"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              placeholder="JBSWY3DPEHPK3PXP&#10;GitHub: jbsw y3dp ehpk 3pxp&#10;otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP"
+            ></textarea>
+            <p class="slot__meter" id="entry-count"></p>
           </div>
+
+          <div class="keys">
+            <button type="button" class="key" id="key-demo">Demo einsetzen</button>
+            <button type="button" class="key" id="key-clear">Leeren</button>
+          </div>
+
+          <p class="note">
+            Base32, <code>Name: SECRET</code> oder <code>otpauth://…</code> — gemischt.
+            <code>#</code> beginnt eine Notiz.
+          </p>
         </div>
       </section>
 
-      <section class="results" id="results" aria-label="Erzeugte Codes"></section>
+      <!-- ══ Zone: Codes ═══════════════════════════════════════════════ -->
+      <section class="zone" id="zone-codes" aria-labelledby="zone-codes-label">
+        <h2 class="zone__label" id="zone-codes-label">Codes</h2>
+        <div class="zone__body">
+          <div class="strips" id="strips"></div>
+          <p class="vacant" id="vacant">
+            Keine Eingabe. Setze oben ein Secret ein — oder nimm mit
+            <button type="button" class="linkkey" id="vacant-demo">Demo einsetzen</button>
+            den Testschlüssel aus RFC 4226.
+          </p>
+        </div>
+      </section>
 
-      <p class="placeholder" id="placeholder">
-        Noch nichts eingegeben. Füge oben ein Secret ein — oder klicke
-        <strong>Demo einfügen</strong> für den Testschlüssel aus RFC&nbsp;4226.
-      </p>
-
+      <!-- ══ Fuß: Gravur ═══════════════════════════════════════════════ -->
       <footer class="colophon">
-        <p>
-          Kein Netzwerk, kein <code>localStorage</code>, keine Cookies. Schließt du den Tab, ist
-          alles weg.
+        <p class="colophon__specs">
+          <span>RFC 6238</span><span>RFC 4226</span><span>RFC 4648</span>
         </p>
-        <p>
-          TOTP nach <span class="nowrap">RFC 6238</span>, HOTP nach
-          <span class="nowrap">RFC 4226</span>, Base32 nach <span class="nowrap">RFC 4648</span>.
-          HMAC über die Web&nbsp;Crypto&nbsp;API des Browsers.
-        </p>
+        <p class="colophon__note">Kein Netzwerk · kein Speicher · HMAC über die Web Crypto API</p>
       </footer>
     </div>
 
-    <!-- Für Screenreader: Rückmeldung des Kopieren-Knopfs. -->
+    <!-- Nur für Nutzeraktionen (Kopieren). Die rotierenden Codes sind
+         bewusst NICHT live — sonst läse ein Screenreader alle 30 Sekunden
+         jeden Code vor. -->
     <p class="sr-only" id="live-region" role="status" aria-live="polite"></p>
 
     <!--
-      Karten werden aus diesen Templates geklont statt per innerHTML
-      zusammengebaut. Der Grund ist nicht Bequemlichkeit, sondern Sicherheit:
-      Alle Werte aus der Eingabe landen ausschließlich über `textContent` im DOM
-      und können deshalb niemals als HTML interpretiert werden.
+      Kanalzug pro Konto. Wird geklont statt per innerHTML gebaut: Alle Werte
+      aus der Eingabe gehen ausschließlich über textContent ins DOM und können
+      deshalb nie als HTML interpretiert werden.
     -->
-    <template id="tpl-card">
-      <article class="card">
-        <header class="card__head">
-          <div class="card__identity">
-            <h2 class="card__title" data-title></h2>
-            <p class="card__subtitle" data-subtitle></p>
+    <template id="tpl-strip">
+      <article class="strip">
+        <p class="strip__id">
+          <span class="strip__issuer" data-issuer></span>
+          <span class="strip__account" data-account></span>
+        </p>
+        <p class="strip__spec" data-spec></p>
+
+        <output class="dial" data-dial aria-live="off"></output>
+
+        <button type="button" class="key key--copy" data-copy>
+          <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <rect x="5.5" y="5.5" width="8" height="8" />
+            <path d="M10.5 3.5v-1h-8v8h1" />
+          </svg>
+          <span data-copy-label>Kopieren</span>
+        </button>
+
+        <div class="gauge">
+          <div class="scale" data-scale>
+            <div class="scale__row scale__row--spent" data-ticks-spent></div>
+            <div class="scale__row scale__row--left" data-ticks-left></div>
+            <div class="scale__index" data-index></div>
           </div>
-
-          <div class="card__timer">
-            <svg class="ring" viewBox="0 0 40 40" aria-hidden="true">
-              <circle class="ring__track" cx="20" cy="20" r="16" pathLength="100" />
-              <circle class="ring__value" cx="20" cy="20" r="16" pathLength="100" />
-            </svg>
-            <span class="card__seconds" data-seconds>–</span>
-            <span class="sr-only"> Sekunden gültig</span>
-          </div>
-        </header>
-
-        <div class="card__main">
-          <!-- `aria-live="off"` hebt die Vorgabe von <output> auf: Sonst würde
-               ein Screenreader alle 30 Sekunden jeden Code vorlesen. -->
-          <output class="card__code" data-code aria-live="off">––– –––</output>
-          <button type="button" class="copy" data-copy>
-            <svg class="copy__icon" viewBox="0 0 24 24" aria-hidden="true">
-              <rect
-                x="9"
-                y="9"
-                width="11"
-                height="11"
-                rx="2.5"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.7"
-              />
-              <path
-                d="M15 6.2V5.5A1.5 1.5 0 0 0 13.5 4h-8A1.5 1.5 0 0 0 4 5.5v8A1.5 1.5 0 0 0 5.5 15h.7"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.7"
-                stroke-linecap="round"
-              />
-            </svg>
-            <span data-copy-label>Kopieren</span>
-          </button>
-        </div>
-
-        <footer class="card__foot">
-          <p class="card__next">
-            <span class="micro">Nächster</span>
-            <span class="card__nextCode" data-next>––– –––</span>
+          <p class="gauge__seconds"><span data-seconds>–</span><abbr title="Sekunden">s</abbr></p>
+          <p class="gauge__next">
+            <span class="gauge__nextLabel">folgt</span>
+            <span class="gauge__nextCode" data-next></span>
           </p>
-          <p class="card__params micro" data-params></p>
-        </footer>
+        </div>
       </article>
     </template>
 
-    <template id="tpl-error">
-      <article class="card card--error">
-        <header class="card__head">
-          <div class="card__identity">
-            <h2 class="card__title">Zeile nicht lesbar</h2>
-            <p class="card__source" data-source></p>
-          </div>
-          <svg class="card__alert" viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="1.6" />
-            <path d="M12 7.3v6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
-            <circle cx="12" cy="16.6" r="1.05" fill="currentColor" />
-          </svg>
-        </header>
-        <p class="card__error" data-message></p>
+    <template id="tpl-fault">
+      <article class="strip strip--fault">
+        <p class="strip__id">
+          <span class="strip__issuer">Zeile nicht lesbar</span>
+          <span class="strip__account strip__account--src" data-source></span>
+        </p>
+        <p class="fault__text" data-message></p>
       </article>
     </template>
 
