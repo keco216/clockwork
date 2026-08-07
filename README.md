@@ -209,6 +209,13 @@ Dazu passend:
   von `<template>`-Elementen, alle Werte gehen über `textContent`.
 - **Der HMAC-Schlüssel wird als `extractable: false` importiert.** Nach dem Import
   kann selbst der eigene Code ihn nicht mehr auslesen.
+- **Keine regulären Ausdrücke mit Rückzugs-Explosion.** Alle Muster, die auf
+  Nutzereingaben laufen, sind linear. Das naheliegende
+  `cleaned.replace(/=+$/, '')` im Base32-Decoder war es nicht: bei n
+  Gleichheitszeichen mit einem anderen Zeichen am Ende probiert die
+  Regex-Maschine an jeder Position alle Längen durch (gemessen: 80 000 Zeichen
+  ≈ 1,8 s, 500 000 Zeichen ≈ eine Minute eingefrorener Tab). Ersetzt durch eine
+  Schleife; `base32.test.ts` hat dafür einen Laufzeit-Regressionstest.
 
 ### Wo die Grenzen sind
 
@@ -316,13 +323,13 @@ alter Code stehen bleibt.
 npm test
 ```
 
-148 Tests. Die wichtigsten stammen unverändert aus den Standards:
+149 Tests. Die wichtigsten stammen unverändert aus den Standards:
 
 | Datei                 | Tests | Inhalt                                                                            |
 | --------------------- | ----- | --------------------------------------------------------------------------------- |
 | `hotp.test.ts`        | 42    | Alle 10 Vektoren aus RFC 4226 Anhang D, geprüft auf drei Ebenen; Zähler-Codierung |
 | `totp.test.ts`        | 30    | Alle 18 Vektoren aus RFC 6238 Anhang B (SHA-1/256/512); Zähler und Restzeit       |
-| `base32.test.ts`      | 28    | RFC 4648 Abschnitt 10; Round-trip Länge 1–40; Toleranz- und Fehlerfälle           |
+| `base32.test.ts`      | 29    | RFC 4648 Abschnitt 10; Round-trip Länge 1–40; Toleranz- und Fehlerfälle           |
 | `otpauth-uri.test.ts` | 22    | URIs von GitHub, Google, Microsoft, AWS; Parameter; Fehlerfälle                   |
 | `accounts.test.ts`    | 14    | Gemischte mehrzeilige Eingaben, Kommentare, kaputte Zeilen                        |
 | `format.test.ts`      | 12    | Ziffern-Gruppierung, Kartentitel, Kürzung                                         |

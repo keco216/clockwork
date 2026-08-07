@@ -124,6 +124,19 @@ describe('decodeBase32 — Fehlerfälle', () => {
     expect(() => decodeBase32('ABCDEFGHA')).toThrow(/Länge/);
   });
 
+  it('bleibt bei pathologischen Eingaben linear schnell', () => {
+    // Regressionstest: `cleaned.replace(/=+$/, '')` hätte hier quadratische
+    // Laufzeit (80 000 Zeichen ≈ 1,8 s — der Tab friert ein). Das Abschneiden
+    // des Paddings läuft deshalb über eine Schleife.
+    const start = performance.now();
+    for (const length of [20_000, 200_000]) {
+      expect(() => decodeBase32('='.repeat(length) + 'A')).toThrow(Base32Error);
+    }
+    // Grosszügige Schranke: linear braucht das wenige Millisekunden,
+    // quadratisch wären es Minuten.
+    expect(performance.now() - start).toBeLessThan(1000);
+  });
+
   it('akzeptiert alle möglichen Längen', () => {
     for (const validLength of [2, 4, 5, 7, 8, 10, 16, 26, 32]) {
       const input = 'A'.repeat(validLength);
