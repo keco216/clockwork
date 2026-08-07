@@ -1,0 +1,255 @@
+/* =============================================================================
+   Tresor und QR-Sucher
+
+   Beide sind Zustände des Geräts, keine Overlays. Es gibt kein Modal, keinen
+   abgedunkelten Hintergrund, keine Dialogbox — das Gerät wechselt sichtbar in
+   einen anderen Betriebszustand, und man sieht dabei weiter alles andere.
+   ========================================================================== */
+
+/* ── Tresor ───────────────────────────────────────────────────────────────── */
+
+.vault {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.vault__state {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--t-micro);
+  font-weight: 500;
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* Die Zustandsleuchte ist die einzige Stelle, an der eine Fläche Farbe trägt.
+   Aus = leerer Ring, gesperrt = gefüllt in Ink, offen = gefüllt in Signal.
+   Damit ist der Zustand auch ohne den Text ablesbar — aber nie NUR über Farbe:
+   Ring gegen Fläche ist ein Formunterschied. */
+.vault__lamp {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--ink-3);
+  background: transparent;
+}
+
+.vault[data-state='locked'] .vault__lamp {
+  background: var(--ink-3);
+  border-color: var(--ink-3);
+}
+
+.vault[data-state='open'] .vault__lamp {
+  background: var(--signal);
+  border-color: var(--signal);
+}
+
+.vault[data-state='open'] .vault__state {
+  color: var(--signal);
+}
+
+.vault__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.vault__form[hidden] {
+  display: none;
+}
+
+.vault__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: stretch;
+}
+
+.vault__pass {
+  flex: 1 1 16rem;
+  min-width: 0;
+  min-height: 2.25rem;
+  font-family: var(--font-mono);
+}
+
+.vault__error {
+  font-size: var(--t-small);
+  color: var(--fault);
+  min-height: 1.2em;
+}
+
+.vault__error:empty {
+  min-height: 0;
+}
+
+.key--danger {
+  color: var(--fault);
+  border-color: color-mix(in oklab, var(--fault) 45%, var(--rule-strong));
+}
+
+.key--danger:hover {
+  color: var(--fault);
+  border-color: var(--fault);
+}
+
+.key--danger[data-armed] {
+  background: var(--fault);
+  border-color: var(--fault);
+  color: var(--surface);
+}
+
+.vault__config {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
+
+.vault[data-state='off'] .vault__config {
+  display: none; /* Ohne Tresor gibt es nichts zu sperren. */
+}
+
+/* Auswahlfeld im selben Stil wie eine Taste — es ist auch eines. */
+.pick {
+  font: inherit;
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  background: var(--surface-recessed);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-key);
+  padding: 0.15rem var(--sp-2);
+  min-height: 1.75rem;
+}
+
+.vault__check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+/* Bewusst NICHT in Signalfarbe: Eine angehakte Einstellung ist kein
+   Betriebszustand. Das Orange bleibt den vier Stellen vorbehalten, an denen es
+   etwas bedeutet — ablaufender Code, bestätigtes Kopieren, offener Tresor,
+   Sucherrahmen. */
+.vault__check input {
+  accent-color: var(--ink);
+  width: 1rem;
+  height: 1rem;
+}
+
+/* ── Kamerasucher ─────────────────────────────────────────────────────────── */
+
+.viewfinder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.viewfinder[hidden] {
+  display: none;
+}
+
+.viewfinder__frame {
+  position: relative;
+  /* Quadratisch, weil ein QR-Code quadratisch ist — und begrenzt, damit der
+     Sucher nicht die halbe Seite einnimmt. */
+  width: min(100%, 22rem);
+  aspect-ratio: 1;
+  background: var(--surface-recessed);
+  border: 1px solid var(--rule-strong);
+  overflow: hidden;
+}
+
+.viewfinder__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Vier Eckwinkel statt eines Rahmens: Sie zeigen den Zielbereich, ohne das Bild
+   zu verdecken. Genau so sind Sucher an Messkameras markiert. */
+.viewfinder__mark {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--signal);
+}
+
+.viewfinder__mark[data-corner='tl'] {
+  top: 12px;
+  left: 12px;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.viewfinder__mark[data-corner='tr'] {
+  top: 12px;
+  right: 12px;
+  border-left: 0;
+  border-bottom: 0;
+}
+
+.viewfinder__mark[data-corner='bl'] {
+  bottom: 12px;
+  left: 12px;
+  border-right: 0;
+  border-top: 0;
+}
+
+.viewfinder__mark[data-corner='br'] {
+  bottom: 12px;
+  right: 12px;
+  border-left: 0;
+  border-top: 0;
+}
+
+.viewfinder__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.viewfinder__hint {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+}
+
+/* ── Bild hierher ziehen ──────────────────────────────────────────────────── */
+
+/* Kein Overlay, keine Wolke, kein gestrichelter Kasten über der ganzen Seite:
+   Das Gerät bekommt eine Kante in Signalfarbe. Mehr braucht die Rückmeldung
+   „hier kannst du loslassen" nicht. */
+.is-dropping .device {
+  outline: 2px solid var(--signal);
+  outline-offset: var(--sp-3);
+}
+
+/* ── Kleinigkeiten ────────────────────────────────────────────────────────── */
+
+.keys__gap {
+  flex: 1 1 var(--sp-4);
+  min-width: var(--sp-2);
+}
+
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-key);
+  padding: 0.05em 0.3em;
+  color: var(--ink-2);
+}
+
+@media (max-width: 34rem) {
+  .keys__gap {
+    flex-basis: 100%;
+  }
+}

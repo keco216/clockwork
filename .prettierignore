@@ -3,3 +3,5 @@ dist/
 dist-single/
 coverage/
 package-lock.json
+branding/
+public/

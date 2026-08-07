@@ -1,0 +1,3 @@
+# Clockwork laeuft lokal und hat nichts, was indexiert werden sollte.
+User-agent: *
+Disallow:

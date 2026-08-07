@@ -1,0 +1,151 @@
+/* =============================================================================
+   Design-Tokens — Clockwork
+
+   Leitidee: ein Messgerät für Zeit, gestaltet im Geist von Dieter Rams. Jedes
+   Token hat eine Funktion; es gibt keine dekorativen Werte.
+
+   Regel für alles darunter: KEIN Bauteil setzt je eine feste Farbe, einen festen
+   Abstand oder eine feste Schriftgröße. Alles kommt aus dieser Datei — sonst
+   bricht genau ein Theme, und zwar immer erst beim Nutzer.
+   ========================================================================== */
+
+:root {
+  color-scheme: light dark;
+
+  /* ── Markenpalette (verbindlich, branding/README-BRANDING.md) ─────────────
+        Tinte   #171614
+        Papier  #F5F3EF
+        Nacht   #131210
+        Signal  #F05A28
+     Genau ein Akzent. Alle weiteren Werte unten sind daraus ABGELEITET —
+     Zwischentöne für Nebenbeschriftung und versenkte Flächen, die eine
+     Vier-Farben-Palette naturgemäß nicht mitliefert. */
+
+  /* Flächen: helles Gerätegehäuse. Kein Reinweiß — Papier, kein Bildschirm. */
+  --surface: #f5f3ef; /* Papier */
+  --surface-recessed: #e9e6e0; /* versenkt: Eingabeschlitz */
+  --surface-inverted: #171614; /* Tinte, für gedrückte Tasten */
+
+  /* Ink: gedruckte und eingravierte Markierungen. */
+  --ink: #171614; /* Tinte */
+  --ink-2: #5c5852; /* Nebenbeschriftung — 6,3:1 auf Papier */
+  --ink-3: #6b665e; /* Skalenteilung, Platzhalter — 5,1:1 auf Papier */
+  --ink-on-inverted: #f5f3ef;
+
+  /* Haarlinien: Fugen im Gehäuse. */
+  --rule: rgb(23 22 20 / 18%);
+  --rule-strong: rgb(23 22 20 / 34%);
+
+  /* ── Signal: der eine Akzent ──────────────────────────────────────────────
+     Nur für Zustände mit Bedeutung: der ablaufende Code, ein bestätigter
+     Kopiervorgang, ein offener Tresor, der Sucherrahmen. Nie als Dekoration.
+
+     Zwei Token für eine Marke: `--signal` ist der verbindliche Markenwert und
+     steht überall dort, wo er als FLÄCHE oder MARKE erscheint — Zeiger,
+     Skalenmarke, Leuchte, Rahmen. Dort genügt 3:1, und #f05a28 erreicht auf
+     Papier 3,05:1.
+
+     Für kleine SCHRIFT auf Papier reicht das nicht (AA verlangt 4,5:1). Deshalb
+     gibt es `--signal-text`: derselbe Farbton, nur tiefer, gemessene 4,6:1. Auf
+     Nacht ist der Markenwert selbst mit 5,5:1 ausreichend — dort sind beide
+     Token identisch. Die Marke wird also nicht verwässert, sie bekommt für
+     Fließtext eine lesbare Variante. */
+  --signal: #f05a28;
+  --signal-text: #c4400f;
+  --signal-quiet: rgb(240 90 40 / 14%);
+
+  /* ── Fehler ───────────────────────────────────────────────────────────────
+     Bewusst NICHT der Signal-Akzent: Eine unlesbare Zeile ist kein
+     Betriebszustand des Geräts, sondern ein Eingabefehler. */
+  --fault: #9c2f1c;
+
+  /* ── Typografie ───────────────────────────────────────────────────────────
+     Genau zwei Schriften, beide lokal gebündelt (siehe fonts.css).
+     Instrument Sans: neutrale Grotesk, technisch, ohne Manierismen.
+     Chivo Mono:      die Ziffern des Zifferblatts, gleichmäßig und geschlossen. */
+  --font-ui:
+    'Instrument Sans Variable', ui-sans-serif, system-ui, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  --font-mono: 'Chivo Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, 'SF Mono', monospace;
+
+  /* Typo-Skala, gerastert auf 4 px. */
+  --t-micro: 0.6875rem; /* 11px — Gravur-Beschriftung, Versalien */
+  --t-small: 0.75rem; /*   12px — Nebenangaben */
+  --t-body: 0.875rem; /*  14px — Fließtext */
+  --t-lead: 1rem; /*      16px — Kontoname */
+  --t-mark: 1.125rem; /*  18px — Wortmarke */
+  --t-dial-min: 2.25rem; /* 36px — Zifferblatt, Untergrenze */
+  --t-dial-max: 4.25rem; /* 68px — Zifferblatt, Obergrenze */
+
+  --lh-tight: 1.15;
+  --lh-normal: 1.5;
+
+  --track-caps: 0.14em;
+  --track-dial: 0.015em;
+  --track-mark: 0.16em; /* Wortmarke */
+
+  /* ── Raster: 4 px Basis, 8 px Haupttakt ────────────────────────────────── */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
+
+  --col-label: 6.5rem;
+  --measure: 62rem;
+
+  /* ── Radien ───────────────────────────────────────────────────────────────
+     0 für Flächen: Ein Gehäuseausschnitt ist rechteckig. 2 px nur für Tasten. */
+  --radius-flat: 0;
+  --radius-key: 2px;
+
+  /* ── Bewegung ─────────────────────────────────────────────────────────────
+     Kurz und mechanisch. Nichts schwebt, nichts federt nach. */
+  --dur-snap: 110ms; /* Fallblatt-Umsprung */
+  --dur-quick: 90ms; /* Tastendruck */
+  --dur-calm: 200ms; /* Zustandswechsel */
+  --ease-mech: cubic-bezier(0.2, 0.85, 0.3, 1);
+  --stagger-flap: 14ms;
+
+  /* ── Zifferblatt: Proportionen aus dem Emblem ─────────────────────────────
+     branding/clockwork-logo-a-skala.svg: Außenradius 96, Marke 19,2 lang
+     (0,20 R), Signalzeiger 28,8 (0,30 R), Strichstärken 4,6 (0,048 R) und
+     7,0 (0,073 R), Nabe r = 5 (0,052 R), Teilung 12° = 30 Sekunden.
+
+     Diese Verhältnisse gelten hier unverändert: Das Instrument in der App IST
+     die Marke, nicht bloß etwas Ähnliches. */
+  --dial-size: 5rem;
+  --dial-tick-len: 0.2;
+  --dial-hand-len: 0.3;
+  --dial-tick-w: 0.048;
+  --dial-hand-w: 0.073;
+  --dial-hub: 0.052;
+}
+
+/* ── Dunkler Modus: mattschwarzes Gerät ──────────────────────────────────────
+   Nicht die Umkehrung des hellen Themes, sondern dasselbe Gerät in einer
+   anderen Ausführung. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #131210; /* Nacht */
+    --surface-recessed: #0a0908;
+    --surface-inverted: #f5f3ef;
+
+    --ink: #f5f3ef; /* Papier */
+    --ink-2: #9a948b; /* 6,2:1 auf Nacht */
+    --ink-3: #8a857c; /* 5,1:1 auf Nacht */
+    --ink-on-inverted: #131210;
+
+    --rule: rgb(245 243 239 / 16%);
+    --rule-strong: rgb(245 243 239 / 30%);
+
+    /* Auf Nacht trägt der Markenwert selbst — 5,5:1, also auch für Fließtext. */
+    --signal-text: #f05a28;
+    --signal-quiet: rgb(240 90 40 / 16%);
+
+    --fault: #e5806e;
+  }
+}

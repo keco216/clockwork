@@ -1,32 +1,35 @@
 /**
- * Die Verdrahtung: Textfeld → Parser → Karten → Uhr.
+ * Die Verdrahtung: Textfeld → Parser → Kanalzüge → Uhr.
  *
- * Der Datenfluss ist absichtlich in eine Richtung:
+ * Der Datenfluss läuft absichtlich nur in eine Richtung:
  *
- *   Textfeld ändert sich ──► parseEntries() ──► Karten abgleichen
- *                                                    │
- *   Uhr tickt ───────────────────────────────────────┴──► card.update(now)
+ *   Textfeld ändert sich ──► parseEntries() ──► Kanalzüge abgleichen
+ *                                                     │
+ *   Uhr tickt ────────────────────────────────────────┴──► strip.update(now)
  *
- * Es gibt keinen Zustand ausser den Karten selbst. Insbesondere landet nichts in
- * `localStorage`, `sessionStorage` oder einem Cookie — schließt man den Tab,
- * ist das Secret weg. Das ist der ganze Sinn von Version 1.
+ * Es gibt keinen Zustand außer den Kanalzügen selbst. Nichts landet in
+ * `localStorage`, `sessionStorage` oder einem Cookie — schließt man den Tab, ist
+ * das Secret weg.
  */
 
 import { parseEntries, type ParsedEntry } from '../lib/accounts';
-import { createCard, type Card, type CardContext } from './card';
+import { isMigrationUri, MigrationError, parseMigrationUri } from '../lib/google-auth';
+import { createStrip, type Strip, type StripContext } from './strip';
 import { startClock } from './clock';
 import { requireElement } from './dom';
+import { buildGauge } from './gauge';
+import { startScanner } from './scan';
+import { startVaultPanel } from './vault-panel';
 
 /**
  * Wartezeit nach dem letzten Tastendruck, bevor neu ausgewertet wird.
  *
- * Ohne diese Pause würde beim Tippen eines Secrets nach jedem einzelnen Zeichen
- * eine Fehlerkarte aufblitzen ("Ungültige Länge", "Ungültige Länge", …) — nur
- * um beim nächsten Zeichen wieder zu verschwinden.
+ * Ohne diese Pause blitzt beim Eintippen eines Secrets nach jedem Zeichen eine
+ * Fehlerzeile auf — nur um beim nächsten Zeichen wieder zu verschwinden.
  */
 const INPUT_DEBOUNCE_MS = 220;
 
-/** Was der Knopf „Demo einfügen" einsetzt. */
+/** Was „Demo einsetzen" einfügt. */
 const DEMO_CONTENT = [
   '# Testschlüssel aus RFC 4226 — das Secret ist der Text "12345678901234567890"',
   'RFC-Test: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ',
@@ -35,56 +38,74 @@ const DEMO_CONTENT = [
 
 export function startApp(): void {
   const input = requireElement<HTMLTextAreaElement>(document, '#secrets');
-  const results = requireElement(document, '#results');
-  const placeholder = requireElement(document, '#placeholder');
-  const status = requireElement(document, '#entry-count');
+  const stripHost = requireElement(document, '#strips');
+  const vacant = requireElement(document, '#vacant');
+  const meter = requireElement(document, '#entry-count');
   const liveRegion = requireElement(document, '#live-region');
-  const demoButton = requireElement<HTMLButtonElement>(document, '#demo');
-  const clearButton = requireElement<HTMLButtonElement>(document, '#clear');
+  const importNote = requireElement(document, '#import-note');
 
-  const context: CardContext = {
+  const context: StripContext = {
     announce(message: string): void {
       liveRegion.textContent = message;
     },
   };
 
-  /** Karten nach ihrem Schlüssel — damit wir beim Tippen nur Geändertes neu bauen. */
-  let cards = new Map<string, Card>();
+  let noteTimer = 0;
+
+  /**
+   * Rückmeldung zu Import und Scan.
+   *
+   * Das Element ist `aria-live="polite"` und damit die einzige Stelle neben dem
+   * Kopieren, die Screenreader von sich aus anspricht — beides sind Reaktionen
+   * auf eine Nutzeraktion. Die rotierenden Codes bleiben stumm.
+   */
+  function setNote(message: string): void {
+    window.clearTimeout(noteTimer);
+    importNote.textContent = message;
+    if (message !== '') {
+      noteTimer = window.setTimeout(() => {
+        importNote.textContent = '';
+      }, 12_000);
+    }
+  }
+
+  /** Kanalzüge nach ihrem Schlüssel — damit beim Tippen nur Geändertes neu entsteht. */
+  let strips = new Map<string, Strip>();
   let debounceTimer = 0;
 
   function render(entries: ParsedEntry[]): void {
-    const next = new Map<string, Card>();
+    const next = new Map<string, Strip>();
     const ordered = document.createDocumentFragment();
 
     entries.forEach((entry, index) => {
-      // Bestehende Karte wiederverwenden, wenn die Zeile unverändert ist.
-      // Das erhält nicht nur den Zustand, sondern verhindert vor allem ein
-      // Flackern der Codes bei jedem Tastendruck in einer anderen Zeile.
-      const card = cards.get(entry.key) ?? createCard(entry, index, context);
-      next.set(entry.key, card);
-      ordered.append(card.element);
+      // Bestehenden Kanalzug wiederverwenden, wenn die Zeile unverändert ist.
+      // Das verhindert vor allem ein Flackern der Codes bei jedem Tastendruck in
+      // einer anderen Zeile.
+      const strip = strips.get(entry.key) ?? createStrip(entry, index, context);
+      next.set(entry.key, strip);
+      ordered.append(strip.element);
     });
 
-    for (const [key, card] of cards) {
+    for (const [key, strip] of strips) {
       if (!next.has(key)) {
-        card.destroy();
+        strip.destroy();
       }
     }
 
-    cards = next;
-    results.replaceChildren(ordered);
+    strips = next;
+    stripHost.replaceChildren(ordered);
 
-    placeholder.hidden = entries.length > 0;
-    status.textContent = summarise(entries);
+    vacant.hidden = entries.length > 0;
+    meter.textContent = summarise(entries);
 
-    // Sofort einen Tick, damit frisch erzeugte Karten nicht bis zum nächsten
-    // Frame leer dastehen.
+    // Sofort ein Tick, damit frische Kanalzüge nicht bis zum nächsten Frame
+    // leer dastehen.
     tick(Date.now());
   }
 
   function tick(nowMs: number): void {
-    for (const card of cards.values()) {
-      card.update(nowMs);
+    for (const strip of strips.values()) {
+      strip.update(nowMs);
     }
   }
 
@@ -92,49 +113,161 @@ export function startApp(): void {
     render(parseEntries(input.value));
   }
 
+  function insertDemo(): void {
+    const existing = input.value.trim();
+    input.value = existing === '' ? DEMO_CONTENT : `${existing}\n${DEMO_CONTENT}`;
+    input.focus();
+    reparse();
+  }
+
   input.addEventListener('input', () => {
     window.clearTimeout(debounceTimer);
     debounceTimer = window.setTimeout(reparse, INPUT_DEBOUNCE_MS);
   });
 
-  // Beim Einfügen aus der Zwischenablage sofort reagieren — da ist die Eingabe
-  // in einem Rutsch fertig, eine Wartezeit wäre nur träge.
+  // Beim Einfügen sofort reagieren: Da ist die Eingabe in einem Rutsch fertig,
+  // eine Wartezeit wäre nur träge. Ein eingefügter Google-Export wird direkt
+  // umgewandelt.
   input.addEventListener('paste', () => {
     window.clearTimeout(debounceTimer);
-    window.setTimeout(reparse, 0);
+    window.setTimeout(() => {
+      expandMigrationLines();
+      reparse();
+    }, 0);
   });
 
-  demoButton.addEventListener('click', () => {
-    const existing = input.value.trim();
-    input.value = existing === '' ? DEMO_CONTENT : `${existing}\n${DEMO_CONTENT}`;
-    input.focus();
-    reparse();
-  });
+  requireElement<HTMLButtonElement>(document, '#key-demo').addEventListener('click', insertDemo);
+  requireElement<HTMLButtonElement>(document, '#vacant-demo').addEventListener('click', insertDemo);
 
-  clearButton.addEventListener('click', () => {
+  requireElement<HTMLButtonElement>(document, '#key-clear').addEventListener('click', () => {
     input.value = '';
     input.focus();
     reparse();
   });
 
+  /* ── Google-Authenticator-Export ─────────────────────────────────────────
+     Eine `otpauth-migration://`-Zeile wird an Ort und Stelle durch die
+     entsprechenden `otpauth://`-Zeilen ersetzt. Der Nutzer SIEHT damit, was
+     importiert wurde, und kann es prüfen oder löschen — ein Import, der
+     Schlüsselmaterial still im Hintergrund anlegt, wäre hier das falsche
+     Verhalten. Ab da laufen die Zeilen durch denselben Parser wie alles andere. */
+  function expandMigrationLines(): void {
+    const lines = input.value.split(/\r?\n/);
+    if (!lines.some((line) => isMigrationUri(line))) {
+      return;
+    }
+
+    const expanded: string[] = [];
+    let imported = 0;
+    const skipped: string[] = [];
+    const problems: string[] = [];
+
+    for (const line of lines) {
+      if (!isMigrationUri(line)) {
+        expanded.push(line);
+        continue;
+      }
+      try {
+        const result = parseMigrationUri(line);
+        expanded.push(...result.lines);
+        imported += result.imported;
+        skipped.push(...result.skipped);
+      } catch (error) {
+        expanded.push(`# ${error instanceof MigrationError ? error.message : 'Export unlesbar.'}`);
+        problems.push(error instanceof MigrationError ? error.message : 'Export unlesbar.');
+      }
+    }
+
+    input.value = expanded.join('\n');
+    reparse();
+
+    const parts: string[] = [];
+    if (imported > 0) {
+      parts.push(
+        imported === 1
+          ? '1 Konto aus Google-Authenticator-Export übernommen'
+          : `${imported} Konten aus Google-Authenticator-Export übernommen`,
+      );
+    }
+    if (skipped.length > 0) {
+      parts.push(`übersprungen: ${skipped.join(', ')}`);
+    }
+    parts.push(...problems);
+    setNote(parts.join(' · '));
+  }
+
+  /* ── QR-Import ───────────────────────────────────────────────────────────
+     Kamera, Bilddatei, Ziehen und Einfügen enden alle hier. Der Inhalt eines
+     QR-Codes ist Text aus einer fremden Quelle und wird deshalb wie eine
+     getippte Zeile behandelt: angehängt, geparst, sichtbar. */
+  startScanner({
+    onResult(text: string): void {
+      const line = text.trim();
+      const existing = input.value.trim();
+      input.value = existing === '' ? line : `${existing}\n${line}`;
+      expandMigrationLines();
+      reparse();
+      if (!isMigrationUri(line)) {
+        setNote('QR-Code gelesen und eingesetzt.');
+      }
+    },
+    onProblem(message: string): void {
+      setNote(message);
+    },
+  });
+
+  /* ── Tresor ──────────────────────────────────────────────────────────── */
+
+  const stateText = requireElement(document, '#state-text');
+  const stateLamp = requireElement(document, '.lamp');
+
+  startVaultPanel({
+    readSecrets: () => input.value,
+    writeSecrets(text: string): void {
+      input.value = text;
+      reparse();
+    },
+    // Als Pfeilfunktion weitergereicht, nicht als Methodenreferenz: `announce`
+    // losgelöst zu übergeben würde `this` verlieren, sobald daraus je eine
+    // Methode wird.
+    announce: (message) => {
+      context.announce(message);
+    },
+    reportState(state): void {
+      // Die Statuszeile im Kopf sagt, was tatsächlich der Fall ist. „Offline"
+      // gilt immer; der zweite Teil hängt am Tresor.
+      const label = {
+        off: 'nichts gespeichert',
+        locked: 'Tresor gesperrt',
+        open: 'Tresor offen',
+      }[state];
+      stateText.textContent = `Offline · ${label}`;
+      stateLamp.classList.toggle('lamp--signal', state === 'open');
+    },
+  });
+
+  // Der Leerzustand trägt das Emblem — dieselbe Teilung, die gleich die Codes
+  // begleitet. Es steht still: Es gibt noch nichts zu messen.
+  buildGauge(requireElement<SVGSVGElement>(document, '#vacant-dial'), 30);
+
   startClock(tick);
   reparse();
 }
 
-/** „2 Konten · 1 Fehler" — kurze Bilanz über dem Textfeld. */
+/** „2 Konten · 1 Fehler" — die Bilanz unter dem Eingabefeld. */
 function summarise(entries: ParsedEntry[]): string {
   if (entries.length === 0) {
     return '';
   }
   const accounts = entries.filter((entry) => entry.kind === 'account').length;
-  const errors = entries.length - accounts;
+  const faults = entries.length - accounts;
 
   const parts: string[] = [];
   if (accounts > 0) {
     parts.push(accounts === 1 ? '1 Konto' : `${accounts} Konten`);
   }
-  if (errors > 0) {
-    parts.push(errors === 1 ? '1 Fehler' : `${errors} Fehler`);
+  if (faults > 0) {
+    parts.push(faults === 1 ? '1 Fehler' : `${faults} Fehler`);
   }
   return parts.join(' · ');
 }
