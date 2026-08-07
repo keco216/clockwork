@@ -6,6 +6,12 @@
  * und nicht unter src/.
  *
  *   node scripts/shoot.mjs [url] [ausgabeordner]
+ *
+ * Seit V3 prüft es zusätzlich, was man auf einem Standbild NICHT sieht:
+ *   • steht `lang` und `dir` richtig am Dokument,
+ *   • läuft die Seite waagerecht über (der klassische RTL- und Langwort-Fehler),
+ *   • bleibt das Zifferblatt ungespiegelt,
+ *   • bleiben Codes und Secrets lateinisch und linksläufig.
  */
 
 import { chromium } from 'playwright';
@@ -27,7 +33,7 @@ const browser = await chromium.launch();
 const problems = [];
 const shots = [];
 
-async function session(name, { width, height, scheme, steps }) {
+async function session(name, { width, height, scheme, lang, steps }) {
   const context = await browser.newContext({
     viewport: { width, height },
     colorScheme: scheme,
@@ -41,7 +47,10 @@ async function session(name, { width, height, scheme, steps }) {
     if (message.type() === 'error') problems.push(`[${name}] Konsole: ${message.text()}`);
   });
 
-  await page.goto(url, { waitUntil: 'networkidle' });
+  // Die Sprache kommt über den Hash — genau den Weg geht auch ein Nutzer, der
+  // sich einen Link schicken lässt.
+  const target = lang === undefined ? url : `${url}#lang=${lang}`;
+  await page.goto(target, { waitUntil: 'networkidle' });
   await steps(page, name);
   await context.close();
 }
@@ -57,74 +66,149 @@ async function fillSecrets(page, text = DEMO) {
   await page.waitForTimeout(450);
 }
 
-/* ── 1. Hell, Desktop ─────────────────────────────────────────────────────── */
-await session('01-hell-desktop', {
-  width: 1280,
-  height: 900,
-  scheme: 'light',
-  steps: async (page, name) => {
-    await fillSecrets(page);
-    await shoot(page, name);
-  },
-});
+/**
+ * Läuft irgendetwas waagerecht über den Rand?
+ *
+ * Der Klassiker bei einer Übersetzung: Ein deutsches oder finnisches Wort
+ * sprengt eine Taste, oder eine rechtsläufige Sprache schiebt ein Element aus
+ * dem Gehäuse. Auf einem Standbild sieht man das oft nicht, weil die Seite
+ * einfach scrollbar wird.
+ */
+async function checkNoOverflow(page, name) {
+  const report = await page.evaluate(() => {
+    const root = document.documentElement;
+    const slack = root.scrollWidth - root.clientWidth;
+    const limit = root.clientWidth + 1;
+    const guilty = [...document.querySelectorAll('body *')]
+      .filter((element) => {
+        const box = element.getBoundingClientRect();
+        return box.width > 0 && (box.right > limit || box.left < -1);
+      })
+      .map((element) => `${element.tagName.toLowerCase()}.${element.className || '(ohne Klasse)'}`);
+    return { slack, guilty: [...new Set(guilty)].slice(0, 4) };
+  });
+  if (report.slack > 1) {
+    problems.push(
+      `[${name}] waagerechter Überlauf um ${report.slack} px — ${report.guilty.join(', ')}`,
+    );
+  }
+}
 
-/* ── 2. Dunkel, Desktop ───────────────────────────────────────────────────── */
+/** Steht die Sprache wirklich am Dokument? Davon hängen Trennung und Schrift ab. */
+async function checkDocument(page, name, expectedLang, expectedDir) {
+  const actual = await page.evaluate(() => ({
+    lang: document.documentElement.lang,
+    dir: document.documentElement.dir,
+    script: document.documentElement.dataset.script,
+    title: document.title,
+  }));
+  if (actual.lang !== expectedLang) {
+    problems.push(`[${name}] lang ist »${actual.lang}«, erwartet »${expectedLang}«`);
+  }
+  if (actual.dir !== expectedDir) {
+    problems.push(`[${name}] dir ist »${actual.dir}«, erwartet »${expectedDir}«`);
+  }
+  if (!actual.script) {
+    problems.push(`[${name}] data-script fehlt — der Schrift-Stack greift nicht`);
+  }
+  if (!actual.title.includes('Clockwork')) {
+    problems.push(`[${name}] Titel ohne Marke: ${actual.title}`);
+  }
+}
+
+/* ── 1.–8. Vier Sprachen, je Desktop und mobil ────────────────────────────── */
+
+const LANGUAGES = [
+  { code: 'de', dir: 'ltr', scheme: 'light' },
+  { code: 'en', dir: 'ltr', scheme: 'light' },
+  { code: 'ar', dir: 'rtl', scheme: 'light' },
+  { code: 'ja', dir: 'ltr', scheme: 'dark' },
+];
+
+for (const language of LANGUAGES) {
+  await session(`10-${language.code}-desktop`, {
+    width: 1280,
+    height: 900,
+    scheme: language.scheme,
+    lang: language.code,
+    steps: async (page, name) => {
+      await fillSecrets(page);
+      await checkDocument(page, name, language.code, language.dir);
+      await checkNoOverflow(page, name);
+      await shoot(page, name);
+    },
+  });
+
+  await session(`11-${language.code}-mobil`, {
+    width: 375,
+    height: 812,
+    scheme: language.scheme,
+    lang: language.code,
+    steps: async (page, name) => {
+      await fillSecrets(page);
+      await checkNoOverflow(page, name);
+      await shoot(page, name);
+    },
+  });
+}
+
+/* ── 9. Dunkel, Desktop (deutsch) ─────────────────────────────────────────── */
 await session('02-dunkel-desktop', {
   width: 1280,
   height: 900,
   scheme: 'dark',
+  lang: 'de',
   steps: async (page, name) => {
     await fillSecrets(page);
     await shoot(page, name);
   },
 });
 
-/* ── 3. Mobil 375 px ──────────────────────────────────────────────────────── */
-await session('03-mobil-375', {
-  width: 375,
-  height: 812,
-  scheme: 'dark',
-  steps: async (page, name) => {
-    await fillSecrets(page);
-    await shoot(page, name);
-  },
-});
-
-/* ── 4. Leerzustand ───────────────────────────────────────────────────────── */
+/* ── 10. Leerzustand ──────────────────────────────────────────────────────── */
 await session('04-leer', {
   width: 1280,
   height: 900,
   scheme: 'light',
+  lang: 'de',
   steps: async (page, name) => {
     await shoot(page, name);
   },
 });
 
-/* ── 5. Ablaufzustand: die letzten Sekunden ───────────────────────────────── */
+/* ── 11. Ablaufzustand: die letzten Sekunden ──────────────────────────────── */
 await session('05-ablauf', {
   width: 1280,
   height: 700,
   scheme: 'dark',
+  lang: 'de',
   steps: async (page, name) => {
     await fillSecrets(page, 'RFC-Test: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ');
-    // Die Uhr auf 2 Sekunden vor dem Wechsel stellen und einen Tick auslösen.
-    await page.evaluate(() => {
+    // Den Zeiger auf zwei Sekunden vor dem Wechsel stellen. Der Zeiger sitzt in
+    // der Gruppe `.dialface__hand`; bis V2 stand hier `.scale` — eine Klasse,
+    // die es seit der Umbenennung auf Clockwork nicht mehr gab. Das `?.` hat den
+    // Fehler stillschweigend geschluckt, und das Bild zeigte den Zeiger an
+    // seiner echten Position statt an der gewünschten.
+    const moved = await page.evaluate(() => {
       const strip = document.querySelector('.strip');
-      const scale = strip?.querySelector('.scale');
-      strip?.classList.add('strip--expiring');
-      scale?.style.setProperty('--progress', '0.94');
+      const hand = strip?.querySelector('.dialface__hand');
       const seconds = strip?.querySelector('[data-seconds]');
-      if (seconds) seconds.textContent = '2';
+      if (!strip || !hand || !seconds) return false;
+      strip.classList.add('strip--expiring');
+      hand.style.setProperty('--progress', '0.94');
+      seconds.textContent = '2';
+      return true;
     });
+    if (!moved) problems.push('[05-ablauf] Zeiger oder Sekundenanzeige nicht gefunden');
     await shoot(page, name);
   },
 });
 
-/* ── 6. Tresor: offen ─────────────────────────────────────────────────────── */
+/* ── 12. Tresor: offen ────────────────────────────────────────────────────── */
 await session('06-tresor', {
   width: 1280,
   height: 1000,
   scheme: 'dark',
+  lang: 'de',
   steps: async (page, name) => {
     await fillSecrets(page, 'RFC-Test: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ');
     await page.fill('#vault-pass', 'ein-langes-passwort-42');
@@ -161,11 +245,12 @@ await session('06-tresor', {
   },
 });
 
-/* ── 7. Google-Authenticator-Import ───────────────────────────────────────── */
+/* ── 13. Google-Authenticator-Import ──────────────────────────────────────── */
 await session('07-import', {
   width: 1280,
   height: 900,
   scheme: 'light',
+  lang: 'de',
   steps: async (page, name) => {
     const EXPORT =
       'otpauth-migration://offline?data=' +
@@ -186,6 +271,46 @@ await session('07-import', {
     if (!value.includes('JBSWY3DPEHPK3PXP')) {
       problems.push('[import] Secret fehlt nach der Umwandlung');
     }
+    await shoot(page, name);
+  },
+});
+
+/* ── 14. Sprachwechsel zur Laufzeit ───────────────────────────────────────── */
+await session('08-sprachwechsel', {
+  width: 1280,
+  height: 900,
+  scheme: 'light',
+  lang: 'de',
+  steps: async (page, name) => {
+    await fillSecrets(page, 'RFC-Test: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ');
+
+    const before = await page.textContent('#zone-vault-label');
+    await page.selectOption('#lang-select', 'ar');
+    await page.waitForTimeout(300);
+
+    const after = await page.evaluate(() => ({
+      label: document.querySelector('#zone-vault-label')?.textContent,
+      dir: document.documentElement.dir,
+      hash: window.location.hash,
+      // Der Code muss lateinisch und linksläufig bleiben — er wird kopiert.
+      codeDir: document.querySelector('.dial')?.getAttribute('dir'),
+      code: document.querySelector('.dial')?.textContent?.trim(),
+      // Das Zifferblatt darf nicht spiegeln.
+      dialDirection: getComputedStyle(document.querySelector('.dialface')).direction,
+    }));
+
+    if (after.label === before) problems.push('[sprachwechsel] Beschriftung blieb stehen');
+    if (after.dir !== 'rtl') problems.push('[sprachwechsel] dir wurde nicht auf rtl gesetzt');
+    if (!after.hash.includes('lang=ar')) problems.push('[sprachwechsel] Hash nicht geschrieben');
+    if (after.codeDir !== 'ltr') problems.push('[sprachwechsel] Code ist nicht mehr linksläufig');
+    if (!/^[\d\s]+$/.test(after.code ?? '')) {
+      problems.push(`[sprachwechsel] Code nicht mehr lateinisch: ${after.code}`);
+    }
+    if (after.dialDirection !== 'ltr') {
+      problems.push('[sprachwechsel] Zifferblatt wurde gespiegelt');
+    }
+
+    await checkNoOverflow(page, name);
     await shoot(page, name);
   },
 });
