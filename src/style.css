@@ -535,7 +535,11 @@ code {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  /* Umbruch statt Überlauf: Passen Code und Knopf nicht nebeneinander (sehr
+     schmales Fenster mit achtstelligem Code), rutscht der Knopf darunter,
+     statt aus der Karte zu ragen. */
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
 }
 
 .card__code {
@@ -603,7 +607,8 @@ code {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.75rem;
   padding-top: 0.8rem;
   border-top: 1px solid var(--border);
 }
@@ -696,10 +701,6 @@ code {
 
   .button {
     flex: 1;
-  }
-
-  .card__params {
-    display: none; /* Platz für das Wesentliche: Code und Countdown */
   }
 }
 
