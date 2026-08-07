@@ -7,97 +7,247 @@
     <meta name="referrer" content="no-referrer" />
     <meta
       name="description"
-      content="TOTP-Codes lokal im Browser erzeugen — ohne Netzwerkanfragen, ohne Speicherung."
+      content="Clockwork — TOTP Authenticator. Erzeugt Zwei-Faktor-Codes vollständig im Browser, ohne Netzwerkanfragen."
     />
-    <title>2FA Live — TOTP-Codes lokal erzeugen</title>
+    <!-- Die Farbe der Browserleiste folgt dem Gehäuse: Papier bzw. Nacht. -->
+    <meta name="theme-color" content="#f5f3ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#131210" media="(prefers-color-scheme: dark)" />
+    <!--
+      Favicon als Inline-SVG: das C-Werk aus branding/clockwork-logo-b-cwerk.svg,
+      auf das Nötigste reduziert. Ohne diese Zeile fragt der Browser von sich aus
+      /favicon.ico an — das wäre eine Netzwerkanfrage, und genau die soll es hier
+      nicht geben.
+    -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20fill='%23131210'/%3E%3Cpath%20d='M46%2019a20%2020%200%201%200%200%2026'%20fill='none'%20stroke='%23f5f3ef'%20stroke-width='9'/%3E%3Ccircle%20cx='45'%20cy='32'%20r='5.5'%20fill='%23f05a28'/%3E%3C/svg%3E"
+    />
+    <title>Clockwork — TOTP Authenticator</title>
   </head>
 
   <body>
     <a class="skip" href="#zone-codes">Zu den Codes springen</a>
 
     <div class="device">
-      <!-- ══ Kopf: Gravur ══════════════════════════════════════════════ -->
+      <!-- ══ Kopf ══════════════════════════════════════════════════════ -->
       <header class="masthead">
-        <p class="wordmark"><span>2FA</span><i aria-hidden="true"></i><span>LIVE</span></p>
-        <p class="masthead__spec">Time-based One-Time Passwords · RFC 6238</p>
+        <!--
+          Wortmarke nach branding/clockwork-logo-c-wortmarke.svg, aber in der
+          UI-Schrift statt im Platzhalter-Schnitt: Beide O sind Zifferblätter,
+          das erste trägt den Signal-Index auf 12 Uhr. Die Ringe sind echte
+          Elemente, kein Bild — sie skalieren mit der Schriftgröße und tragen
+          im dunklen Modus dieselbe Tinte wie die Buchstaben.
+        -->
+        <h1 class="wordmark" translate="no">
+          <span class="sr-only">Clockwork</span>
+          <span class="wordmark__word" aria-hidden="true"
+            >CL<i class="wordmark__o wordmark__o--index"></i>CKW<i class="wordmark__o"></i>RK</span
+          >
+        </h1>
+        <p class="masthead__spec">TOTP Authenticator · RFC 6238</p>
         <p class="masthead__state">
           <span class="lamp" aria-hidden="true"></span>
           <span id="state-text">Offline · nichts gespeichert</span>
         </p>
       </header>
 
-      <!-- ══ Zone: Eingabe ═════════════════════════════════════════════ -->
-      <section class="zone" id="zone-input" aria-labelledby="zone-input-label">
-        <h2 class="zone__label" id="zone-input-label">Eingabe</h2>
-        <div class="zone__body">
-          <div class="slot">
-            <label class="slot__legend" for="secrets">Ein Eintrag pro Zeile</label>
-            <textarea
-              id="secrets"
-              class="slot__field"
-              rows="4"
-              spellcheck="false"
-              autocomplete="off"
-              autocapitalize="off"
-              autocorrect="off"
-              placeholder="JBSWY3DPEHPK3PXP&#10;GitHub: jbsw y3dp ehpk 3pxp&#10;otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP"
-            ></textarea>
-            <p class="slot__meter" id="entry-count"></p>
+      <main>
+        <!-- ══ Zone: Eingabe ═══════════════════════════════════════════ -->
+        <section class="zone" id="zone-input" aria-labelledby="zone-input-label">
+          <h2 class="zone__label" id="zone-input-label">Eingabe</h2>
+          <div class="zone__body">
+            <div class="slot">
+              <label class="slot__legend" for="secrets">Ein Eintrag pro Zeile</label>
+              <textarea
+                id="secrets"
+                class="field slot__field"
+                translate="no"
+                rows="4"
+                spellcheck="false"
+                autocomplete="off"
+                autocapitalize="off"
+                autocorrect="off"
+                placeholder="JBSWY3DPEHPK3PXP&#10;GitHub: jbsw y3dp ehpk 3pxp&#10;otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP"
+              ></textarea>
+              <p class="slot__meter" id="entry-count"></p>
+            </div>
+
+            <div class="keys">
+              <button type="button" class="key" id="key-demo">Demo einsetzen</button>
+              <button type="button" class="key" id="key-clear">Leeren</button>
+              <span class="keys__gap" aria-hidden="true"></span>
+              <button type="button" class="key" id="key-file">
+                <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M2.5 12.5v-9h5l1.5 2h4.5v7z" />
+                </svg>
+                QR aus Bild
+              </button>
+              <button type="button" class="key" id="key-camera">
+                <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M1.5 4.5h3l1-2h5l1 2h3v9h-13z" />
+                  <circle cx="8" cy="8.5" r="2.5" />
+                </svg>
+                Kamera
+              </button>
+              <input
+                type="file"
+                id="file-input"
+                accept="image/*"
+                class="sr-only"
+                tabindex="-1"
+                aria-hidden="true"
+              />
+            </div>
+
+            <!-- Kamerasucher. Die vier Eckwinkel sind kein Zierrat: Sie zeigen,
+                 wohin der QR-Code gehalten werden muss. -->
+            <div class="viewfinder" id="viewfinder" hidden>
+              <div class="viewfinder__frame">
+                <video id="viewfinder-video" class="viewfinder__video" playsinline muted></video>
+                <span class="viewfinder__mark" data-corner="tl" aria-hidden="true"></span>
+                <span class="viewfinder__mark" data-corner="tr" aria-hidden="true"></span>
+                <span class="viewfinder__mark" data-corner="bl" aria-hidden="true"></span>
+                <span class="viewfinder__mark" data-corner="br" aria-hidden="true"></span>
+              </div>
+              <div class="viewfinder__bar">
+                <p class="viewfinder__hint" id="viewfinder-hint">QR-Code in den Rahmen halten</p>
+                <button type="button" class="key" id="key-camera-stop">Kamera aus</button>
+              </div>
+            </div>
+
+            <p class="note" id="import-note" role="status" aria-live="polite"></p>
+
+            <p class="note">
+              Base32, <code translate="no">Name: SECRET</code> oder
+              <code translate="no">otpauth://…</code> — gemischt.
+              <code translate="no">#</code> beginnt eine Notiz. QR-Bilder lassen sich auch hierher
+              ziehen oder mit <kbd>Strg</kbd>+<kbd>V</kbd> einfügen; Google-Authenticator-Exporte
+              (<code translate="no">otpauth-migration://</code>) werden automatisch umgewandelt.
+            </p>
           </div>
+        </section>
 
-          <div class="keys">
-            <button type="button" class="key" id="key-demo">Demo einsetzen</button>
-            <button type="button" class="key" id="key-clear">Leeren</button>
+        <!-- ══ Zone: Tresor ════════════════════════════════════════════ -->
+        <section class="zone" id="zone-vault" aria-labelledby="zone-vault-label">
+          <h2 class="zone__label" id="zone-vault-label">Tresor</h2>
+          <div class="zone__body">
+            <div class="vault" id="vault" data-state="off">
+              <p class="vault__state">
+                <span class="vault__lamp" aria-hidden="true"></span>
+                <span id="vault-state-text">Aus — es wird nichts gespeichert</span>
+              </p>
+
+              <p class="note" id="vault-explain">
+                Standardmäßig speichert Clockwork nichts. Wer möchte, kann die Eingabe hier mit
+                einer Passphrase verschlüsselt ablegen: PBKDF2-SHA-256 mit 600&nbsp;000 Iterationen,
+                danach AES-256-GCM. Ohne die Passphrase ist der gespeicherte Block wertlos.
+              </p>
+
+              <form class="vault__form" id="vault-form">
+                <label class="slot__legend" for="vault-pass" id="vault-pass-label"
+                  >Passphrase</label
+                >
+                <div class="vault__row">
+                  <input
+                    type="password"
+                    id="vault-pass"
+                    class="field vault__pass"
+                    translate="no"
+                    autocomplete="current-password"
+                    spellcheck="false"
+                  />
+                  <button type="submit" class="key" id="vault-primary">
+                    Verschlüsselt speichern
+                  </button>
+                </div>
+                <p class="vault__error" id="vault-error" role="alert"></p>
+              </form>
+
+              <div class="keys" id="vault-actions">
+                <button type="button" class="key" id="vault-lock" hidden>Zusperren</button>
+                <button type="button" class="key" id="vault-update" hidden>Neu speichern</button>
+                <button type="button" class="key key--danger" id="vault-wipe" hidden>
+                  Alles löschen
+                </button>
+              </div>
+
+              <p class="vault__config">
+                <label for="vault-timeout">Sperrt automatisch nach</label>
+                <select id="vault-timeout" class="pick">
+                  <option value="60000">1 Minute</option>
+                  <option value="300000" selected>5 Minuten</option>
+                  <option value="900000">15 Minuten</option>
+                </select>
+                <label class="vault__check">
+                  <input type="checkbox" id="vault-hide-lock" checked />
+                  auch beim Verlassen des Tabs
+                </label>
+              </p>
+            </div>
           </div>
+        </section>
 
-          <p class="note">
-            Base32, <code>Name: SECRET</code> oder <code>otpauth://…</code> — gemischt.
-            <code>#</code> beginnt eine Notiz.
-          </p>
-        </div>
-      </section>
+        <!-- ══ Zone: Codes ═════════════════════════════════════════════ -->
+        <section class="zone" id="zone-codes" aria-labelledby="zone-codes-label">
+          <h2 class="zone__label" id="zone-codes-label">Codes</h2>
+          <div class="zone__body">
+            <div class="strips" id="strips"></div>
 
-      <!-- ══ Zone: Codes ═══════════════════════════════════════════════ -->
-      <section class="zone" id="zone-codes" aria-labelledby="zone-codes-label">
-        <h2 class="zone__label" id="zone-codes-label">Codes</h2>
-        <div class="zone__body">
-          <div class="strips" id="strips"></div>
-          <p class="vacant" id="vacant">
-            Keine Eingabe. Setze oben ein Secret ein — oder nimm mit
-            <button type="button" class="linkkey" id="vacant-demo">Demo einsetzen</button>
-            den Testschlüssel aus RFC 4226.
-          </p>
-        </div>
-      </section>
+            <!-- Leerzustand: das Emblem selbst, kein Platzhalter-Symbol. Es ist
+                 dieselbe Teilung, die gleich die Codes begleiten wird. -->
+            <div class="vacant" id="vacant">
+              <svg
+                class="dialface vacant__emblem"
+                id="vacant-dial"
+                aria-hidden="true"
+                focusable="false"
+              ></svg>
+              <p class="vacant__text">
+                Noch keine Eingabe. Setze oben ein Secret ein — oder nimm mit
+                <button type="button" class="linkkey" id="vacant-demo">Demo einsetzen</button>
+                den Testschlüssel aus RFC&nbsp;4226.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
 
-      <!-- ══ Fuß: Gravur ═══════════════════════════════════════════════ -->
+      <!-- ══ Fuß ═══════════════════════════════════════════════════════ -->
       <footer class="colophon">
-        <p class="colophon__specs">
+        <p class="colophon__specs" translate="no">
           <span>RFC 6238</span><span>RFC 4226</span><span>RFC 4648</span>
         </p>
         <p class="colophon__note">Kein Netzwerk · kein Speicher · HMAC über die Web Crypto API</p>
       </footer>
     </div>
 
-    <!-- Nur für Nutzeraktionen (Kopieren). Die rotierenden Codes sind
-         bewusst NICHT live — sonst läse ein Screenreader alle 30 Sekunden
-         jeden Code vor. -->
+    <!-- Nur für Nutzeraktionen (Kopieren, Import). Die rotierenden Codes sind
+         bewusst NICHT live — sonst läse ein Screenreader alle 30 Sekunden jeden
+         Code vor. -->
     <p class="sr-only" id="live-region" role="status" aria-live="polite"></p>
 
     <!--
-      Kanalzug pro Konto. Wird geklont statt per innerHTML gebaut: Alle Werte
-      aus der Eingabe gehen ausschließlich über textContent ins DOM und können
+      Kanalzug pro Konto. Wird geklont statt per innerHTML gebaut: Alle Werte aus
+      der Eingabe gehen ausschließlich über textContent ins DOM und können
       deshalb nie als HTML interpretiert werden.
     -->
     <template id="tpl-strip">
       <article class="strip">
+        <div class="gauge">
+          <svg class="dialface" data-gauge aria-hidden="true" focusable="false"></svg>
+          <p class="gauge__seconds">
+            <span data-seconds>–</span><abbr title="Sekunden">s</abbr>
+            <span class="sr-only">gültig</span>
+          </p>
+        </div>
+
         <p class="strip__id">
           <span class="strip__issuer" data-issuer></span>
           <span class="strip__account" data-account></span>
         </p>
-        <p class="strip__spec" data-spec></p>
+        <p class="strip__spec" data-spec translate="no"></p>
 
-        <output class="dial" data-dial aria-live="off"></output>
+        <output class="dial" data-dial aria-live="off" translate="no"></output>
 
         <button type="button" class="key key--copy" data-copy>
           <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
@@ -107,18 +257,10 @@
           <span data-copy-label>Kopieren</span>
         </button>
 
-        <div class="gauge">
-          <div class="scale" data-scale>
-            <div class="scale__row scale__row--spent" data-ticks-spent></div>
-            <div class="scale__row scale__row--left" data-ticks-left></div>
-            <div class="scale__index" data-index></div>
-          </div>
-          <p class="gauge__seconds"><span data-seconds>–</span><abbr title="Sekunden">s</abbr></p>
-          <p class="gauge__next">
-            <span class="gauge__nextLabel">folgt</span>
-            <span class="gauge__nextCode" data-next></span>
-          </p>
-        </div>
+        <p class="strip__next">
+          <span class="strip__nextLabel">folgt</span>
+          <span class="strip__nextCode" data-next translate="no"></span>
+        </p>
       </article>
     </template>
 
@@ -126,7 +268,7 @@
       <article class="strip strip--fault">
         <p class="strip__id">
           <span class="strip__issuer">Zeile nicht lesbar</span>
-          <span class="strip__account strip__account--src" data-source></span>
+          <span class="strip__account strip__account--src" data-source translate="no"></span>
         </p>
         <p class="fault__text" data-message></p>
       </article>

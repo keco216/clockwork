@@ -6,3 +6,5 @@ coverage/
 .vite/
 .DS_Store
 Thumbs.db
+lighthouse.json
+screenshots/

@@ -1,51 +1,63 @@
 /* =============================================================================
-   Design-Tokens — „Präzisionsinstrument"
+   Design-Tokens — Clockwork
 
-   Leitidee: Diese App ist ein Messgerät für Zeit, gestaltet im Geist von Dieter
-   Rams. Jedes Token hat eine Funktion; es gibt keine dekorativen Werte.
+   Leitidee: ein Messgerät für Zeit, gestaltet im Geist von Dieter Rams. Jedes
+   Token hat eine Funktion; es gibt keine dekorativen Werte.
 
    Regel für alles darunter: KEIN Bauteil setzt je eine feste Farbe, einen festen
-   Abstand oder eine feste Schriftgröße. Alles kommt aus diesen Tokens — sonst
+   Abstand oder eine feste Schriftgröße. Alles kommt aus dieser Datei — sonst
    bricht genau ein Theme, und zwar immer erst beim Nutzer.
    ========================================================================== */
 
 :root {
   color-scheme: light dark;
 
-  /* ── Flächen: helles Gerätegehäuse ────────────────────────────────────────
-     Kein Reinweiß. Braun-Geräte sind warmes Hellgrau; Weiß gibt es an einem
-     Gehäuse nicht, nur an Papier. */
-  --surface: #e6e2da; /* Frontplatte */
-  --surface-recessed: #d8d3c9; /* versenkte Flächen: Eingabeschlitz */
-  --surface-inverted: #1d1d1b; /* gedrückte Taste */
+  /* ── Markenpalette (verbindlich, branding/README-BRANDING.md) ─────────────
+        Tinte   #171614
+        Papier  #F5F3EF
+        Nacht   #131210
+        Signal  #F05A28
+     Genau ein Akzent. Alle weiteren Werte unten sind daraus ABGELEITET —
+     Zwischentöne für Nebenbeschriftung und versenkte Flächen, die eine
+     Vier-Farben-Palette naturgemäß nicht mitliefert. */
 
-  /* ── Ink: eingravierte bzw. gedruckte Markierungen ────────────────────── */
-  --ink: #1d1d1b; /* Hauptbeschriftung, die Ziffern */
-  --ink-2: #56534c; /* Nebenbeschriftung */
-  --ink-3: #837f76; /* Skalenteilung, Platzhalter */
-  --ink-on-inverted: #e6e2da;
+  /* Flächen: helles Gerätegehäuse. Kein Reinweiß — Papier, kein Bildschirm. */
+  --surface: #f5f3ef; /* Papier */
+  --surface-recessed: #e9e6e0; /* versenkt: Eingabeschlitz */
+  --surface-inverted: #171614; /* Tinte, für gedrückte Tasten */
 
-  /* ── Haarlinien: Fugen und Trennungen im Gehäuse ──────────────────────── */
-  --rule: rgb(29 29 27 / 20%);
-  --rule-strong: rgb(29 29 27 / 38%);
+  /* Ink: gedruckte und eingravierte Markierungen. */
+  --ink: #171614; /* Tinte */
+  --ink-2: #5c5852; /* Nebenbeschriftung — 6,3:1 auf Papier */
+  --ink-3: #6b665e; /* Skalenteilung, Platzhalter — 5,1:1 auf Papier */
+  --ink-on-inverted: #f5f3ef;
+
+  /* Haarlinien: Fugen im Gehäuse. */
+  --rule: rgb(23 22 20 / 18%);
+  --rule-strong: rgb(23 22 20 / 34%);
 
   /* ── Signal: der eine Akzent ──────────────────────────────────────────────
-     Orange wie der Einschalter eines Braun-Geräts. NUR für Zustände mit
-     Bedeutung: die letzten Sekunden, ein bestätigter Kopiervorgang, ein
-     entsperrter Tresor. Niemals als Dekoration, niemals für Flächen.
+     Nur für Zustände mit Bedeutung: der ablaufende Code, ein bestätigter
+     Kopiervorgang, ein offener Tresor, der Sucherrahmen. Nie als Dekoration.
 
-     Warum hell und dunkel verschiedene Werte? Weil ein einziges Orange auf
-     beiden Gründen nicht AA schafft. Auf #e6e2da erreicht #af3b06 4,74:1,
-     auf #191917 erreicht #ff6a1f 6,22:1 — beide für normalen Text ausreichend.
-     Gemessen, nicht geschätzt: siehe `npm run contrast`. */
-  --signal: #af3b06;
-  --signal-quiet: rgb(175 59 6 / 14%);
+     Zwei Token für eine Marke: `--signal` ist der verbindliche Markenwert und
+     steht überall dort, wo er als FLÄCHE oder MARKE erscheint — Zeiger,
+     Skalenmarke, Leuchte, Rahmen. Dort genügt 3:1, und #f05a28 erreicht auf
+     Papier 3,05:1.
+
+     Für kleine SCHRIFT auf Papier reicht das nicht (AA verlangt 4,5:1). Deshalb
+     gibt es `--signal-text`: derselbe Farbton, nur tiefer, gemessene 4,6:1. Auf
+     Nacht ist der Markenwert selbst mit 5,5:1 ausreichend — dort sind beide
+     Token identisch. Die Marke wird also nicht verwässert, sie bekommt für
+     Fließtext eine lesbare Variante. */
+  --signal: #f05a28;
+  --signal-text: #c4400f;
+  --signal-quiet: rgb(240 90 40 / 14%);
 
   /* ── Fehler ───────────────────────────────────────────────────────────────
      Bewusst NICHT der Signal-Akzent: Eine unlesbare Zeile ist kein
-     Betriebszustand des Geräts, sondern ein Eingabefehler. Ein zurückgenommenes
-     Rotbraun statt Alarmrot — die App schreit nicht. */
-  --fault: #8e2f24;
+     Betriebszustand des Geräts, sondern ein Eingabefehler. */
+  --fault: #9c2f1c;
 
   /* ── Typografie ───────────────────────────────────────────────────────────
      Genau zwei Schriften, beide lokal gebündelt (siehe fonts.css).
@@ -56,39 +68,37 @@
     sans-serif;
   --font-mono: 'Chivo Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, 'SF Mono', monospace;
 
-  /* Typo-Skala, gerastert auf 4 px — jede Stufe ist ein Vielfaches davon,
-     damit Zeilen über Spalten hinweg auf derselben Grundlinie sitzen. */
+  /* Typo-Skala, gerastert auf 4 px. */
   --t-micro: 0.6875rem; /* 11px — Gravur-Beschriftung, Versalien */
-  --t-small: 0.75rem; /*  12px — Nebenangaben */
+  --t-small: 0.75rem; /*   12px — Nebenangaben */
   --t-body: 0.875rem; /*  14px — Fließtext */
-  --t-lead: 1rem; /*  16px — Kontoname */
-  --t-dial-min: 2.25rem; /*  36px — Zifferblatt, Untergrenze */
+  --t-lead: 1rem; /*      16px — Kontoname */
+  --t-mark: 1.125rem; /*  18px — Wortmarke */
+  --t-dial-min: 2.25rem; /* 36px — Zifferblatt, Untergrenze */
   --t-dial-max: 4.25rem; /* 68px — Zifferblatt, Obergrenze */
 
   --lh-tight: 1.15;
   --lh-normal: 1.5;
 
-  --track-caps: 0.14em; /* Versalien-Gravur braucht Luft */
+  --track-caps: 0.14em;
   --track-dial: 0.015em;
+  --track-mark: 0.16em; /* Wortmarke */
 
   /* ── Raster: 4 px Basis, 8 px Haupttakt ────────────────────────────────── */
-  --sp-1: 0.25rem; /*  4px */
-  --sp-2: 0.5rem; /*   8px */
-  --sp-3: 0.75rem; /*  12px */
-  --sp-4: 1rem; /*    16px */
-  --sp-5: 1.5rem; /*  24px */
-  --sp-6: 2rem; /*    32px */
-  --sp-7: 3rem; /*    48px */
-  --sp-8: 4rem; /*    64px */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
 
-  /* Breite der Gravur-Spalte am linken Rand (die Zonen-Beschriftung). */
   --col-label: 6.5rem;
-  --measure: 62rem; /* Gerätebreite */
+  --measure: 62rem;
 
   /* ── Radien ───────────────────────────────────────────────────────────────
-     0 für Flächen: Ein Gehäuseausschnitt ist rechteckig.
-     2 px nur für Tasten — echte Braun-Tasten haben genau so viel Rundung,
-     dass der Finger sie als Objekt erkennt. */
+     0 für Flächen: Ein Gehäuseausschnitt ist rechteckig. 2 px nur für Tasten. */
   --radius-flat: 0;
   --radius-key: 2px;
 
@@ -98,35 +108,44 @@
   --dur-quick: 90ms; /* Tastendruck */
   --dur-calm: 200ms; /* Zustandswechsel */
   --ease-mech: cubic-bezier(0.2, 0.85, 0.3, 1);
-  --stagger-flap: 14ms; /* Versatz zwischen zwei umspringenden Ziffern */
+  --stagger-flap: 14ms;
 
-  /* Skala */
-  --tick-minor: 4px;
-  --tick-major: 9px;
-  --scale-height: 12px;
+  /* ── Zifferblatt: Proportionen aus dem Emblem ─────────────────────────────
+     branding/clockwork-logo-a-skala.svg: Außenradius 96, Marke 19,2 lang
+     (0,20 R), Signalzeiger 28,8 (0,30 R), Strichstärken 4,6 (0,048 R) und
+     7,0 (0,073 R), Nabe r = 5 (0,052 R), Teilung 12° = 30 Sekunden.
+
+     Diese Verhältnisse gelten hier unverändert: Das Instrument in der App IST
+     die Marke, nicht bloß etwas Ähnliches. */
+  --dial-size: 5rem;
+  --dial-tick-len: 0.2;
+  --dial-hand-len: 0.3;
+  --dial-tick-w: 0.048;
+  --dial-hand-w: 0.073;
+  --dial-hub: 0.052;
 }
 
 /* ── Dunkler Modus: mattschwarzes Gerät ──────────────────────────────────────
    Nicht die Umkehrung des hellen Themes, sondern dasselbe Gerät in einer
-   anderen Ausführung. Reines #000 wäre ein Loch im Bildschirm; ein mattes
-   Gehäuse hat immer etwas Eigenhelligkeit. */
+   anderen Ausführung. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --surface: #191917;
-    --surface-recessed: #0f0f0e;
-    --surface-inverted: #e8e4db;
+    --surface: #131210; /* Nacht */
+    --surface-recessed: #0a0908;
+    --surface-inverted: #f5f3ef;
 
-    --ink: #e8e4db;
-    --ink-2: #9d9890;
-    --ink-3: #6e6a63;
-    --ink-on-inverted: #191917;
+    --ink: #f5f3ef; /* Papier */
+    --ink-2: #9a948b; /* 6,2:1 auf Nacht */
+    --ink-3: #8a857c; /* 5,1:1 auf Nacht */
+    --ink-on-inverted: #131210;
 
-    --rule: rgb(232 228 219 / 17%);
-    --rule-strong: rgb(232 228 219 / 32%);
+    --rule: rgb(245 243 239 / 16%);
+    --rule-strong: rgb(245 243 239 / 30%);
 
-    --signal: #ff6a1f;
-    --signal-quiet: rgb(255 106 31 / 16%);
+    /* Auf Nacht trägt der Markenwert selbst — 5,5:1, also auch für Fließtext. */
+    --signal-text: #f05a28;
+    --signal-quiet: rgb(240 90 40 / 16%);
 
-    --fault: #e07a6a;
+    --fault: #e5806e;
   }
 }

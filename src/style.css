@@ -1,5 +1,7 @@
 @import './styles/tokens.css';
 @import './styles/fonts.css';
+@import './styles/mark.css';
+@import './styles/panels.css';
 
 /* =============================================================================
    2FA Live — Frontplatte
@@ -19,6 +21,18 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* Kein 300-ms-Warten auf einen möglichen Doppeltipp. Bei einem Code, der in
+     wenigen Sekunden abläuft, ist das keine Feinheit. */
+  touch-action: manipulation;
+  /* Der graue Blitz beim Antippen kommt sonst vom System und passt zu nichts.
+     Rückmeldung gibt hier der :active-Zustand der Taste. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Der Sprunglink zielt auf eine Zone — ohne diesen Abstand klebt deren
+   Überschrift nach dem Sprung am oberen Fensterrand. */
+:target {
+  scroll-margin-top: var(--sp-5);
 }
 
 body {
@@ -42,6 +56,13 @@ body {
 button {
   font: inherit;
   color: inherit;
+}
+
+/* Das `hidden`-Attribut setzt `display: none` nur über die Browser-Vorgabe.
+   Jede eigene display-Regel schlägt sie — und genau daran scheitern versteckte
+   Flex- und Grid-Elemente reihenweise. Deshalb steht das hier ein für alle Mal. */
+[hidden] {
+  display: none !important;
 }
 
 code {
@@ -112,11 +133,14 @@ abbr {
    Gehäuse
    ========================================================================== */
 
+/* `viewport-fit=cover` lässt die Seite unter Notch und Home-Indicator laufen.
+   Ohne diese Zuschläge stünde die Gravur am iPhone teils unter der Kerbe. */
 .device {
   max-width: var(--measure);
   margin-inline: auto;
-  padding-inline: var(--sp-5);
-  padding-block: var(--sp-6) var(--sp-8);
+  padding-inline: max(var(--sp-5), env(safe-area-inset-left))
+    max(var(--sp-5), env(safe-area-inset-right));
+  padding-block: var(--sp-6) calc(var(--sp-8) + env(safe-area-inset-bottom));
 }
 
 /* ── Kopf ─────────────────────────────────────────────────────────────────── */
@@ -127,24 +151,6 @@ abbr {
   align-items: baseline;
   gap: var(--sp-2) var(--sp-5);
   padding-bottom: var(--sp-4);
-}
-
-/* Die Wortmarke ist keine Überschrift, sondern eine Gravur: Versalien,
-   weit gesperrt, mit einem gefrästen Steg zwischen den beiden Hälften. */
-.wordmark {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  font-size: var(--t-lead);
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  line-height: var(--lh-tight);
-}
-
-.wordmark i {
-  width: var(--sp-4);
-  height: 1px;
-  background: var(--ink);
 }
 
 .masthead__spec {
@@ -169,6 +175,11 @@ abbr {
   background: var(--ink);
   border-radius: 50%;
   flex: none;
+}
+
+/* Offener Tresor: die einzige Stelle im Kopf, die Farbe zeigt. */
+.lamp--signal {
+  background: var(--signal);
 }
 
 /* ── Zonen ────────────────────────────────────────────────────────────────── */
@@ -243,10 +254,12 @@ abbr {
   color: var(--ink-3);
 }
 
-.slot__field {
+/* Gemeinsame Basis für alle Eingabefelder. Die Höhe steht bewusst NICHT hier:
+   Sonst müsste jedes abweichende Feld sie überschreiben — und zwei Klassen
+   gleicher Spezifität in verschiedenen Dateien entscheiden sich am Ende über
+   die Reihenfolge der @import-Zeilen. Das ist keine Gestaltung, das ist Zufall. */
+.field {
   width: 100%;
-  min-height: 6rem;
-  resize: vertical;
   padding: var(--sp-3);
   font-family: var(--font-mono);
   font-size: var(--t-body);
@@ -259,16 +272,22 @@ abbr {
   transition: border-color var(--dur-calm) var(--ease-mech);
 }
 
-.slot__field::placeholder {
+.field::placeholder {
   color: var(--ink-3);
 }
 
-.slot__field:hover {
+.field:hover {
   border-color: var(--rule-strong);
 }
 
-.slot__field:focus-visible {
+.field:focus-visible {
   outline-offset: -1px;
+}
+
+/* Nur das mehrzeilige Feld ist hoch und in der Höhe verstellbar. */
+.slot__field {
+  min-height: 6rem;
+  resize: vertical;
 }
 
 .slot__meter {
@@ -357,16 +376,71 @@ abbr {
 /* Keine Karte: keine Fläche, kein Rahmen, kein Radius, kein Schatten. Nur eine
    Haarlinie trennt zwei Kanäle — wie die Fuge zwischen zwei Modulen im Rack. */
 .strip {
-  /* Container fuer die cqi-Einheit des Zifferblatts: Die Codegroesse richtet
-     sich nach der Breite des Kanalzugs, nicht nach der des Fensters. */
+  /* Container für die cqi-Einheit des Codes: Die Ziffergröße richtet sich nach
+     der Breite des Kanalzugs, nicht nach der des Fensters. */
   container-type: inline-size;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'gauge id   spec'
+    'gauge code copy'
+    'gauge next next';
   align-items: baseline;
   column-gap: var(--sp-5);
   row-gap: var(--sp-2);
-  padding-block: var(--sp-4);
+  padding-block: var(--sp-5);
   border-top: 1px solid var(--rule);
+}
+
+/* Das Zifferblatt steht links und trägt alle drei Zeilen — die Anzeige gehört
+   zum ganzen Kanal, nicht zu einer seiner Zeilen. */
+.gauge {
+  grid-area: gauge;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.gauge__seconds {
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.gauge__seconds abbr {
+  color: var(--ink-3);
+  margin-left: 0.1em;
+}
+
+.strip--expiring .gauge__seconds {
+  color: var(--signal-text);
+}
+
+.strip__next {
+  grid-area: next;
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+
+.strip__nextLabel {
+  font-size: var(--t-micro);
+  font-weight: 500;
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.strip__nextCode {
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
 }
 
 .strip:first-child {
@@ -375,6 +449,7 @@ abbr {
 }
 
 .strip__id {
+  grid-area: id;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -404,6 +479,7 @@ abbr {
 }
 
 .strip__spec {
+  grid-area: spec;
   color: var(--ink-3);
   justify-self: end;
   white-space: nowrap;
@@ -412,7 +488,7 @@ abbr {
 /* ── Das Zifferblatt ──────────────────────────────────────────────────────── */
 
 .dial {
-  grid-column: 1;
+  grid-area: code;
   display: flex;
   align-items: baseline;
   font-family: var(--font-mono);
@@ -446,19 +522,19 @@ abbr {
 }
 
 .strip--copied .dial {
-  color: var(--signal);
+  color: var(--signal-text);
 }
 
 /* ── Kopiertaste ──────────────────────────────────────────────────────────── */
 
 .key--copy {
-  grid-column: 2;
-  grid-row: 2;
+  grid-area: copy;
   align-self: center;
+  justify-self: end;
 }
 
 .key--copy[data-state='done'] {
-  color: var(--signal);
+  color: var(--signal-text);
   border-color: var(--signal);
 }
 
@@ -467,135 +543,11 @@ abbr {
   border-color: var(--fault);
 }
 
-/* ── Messwerk: Skala, Restsekunden, Vorschau ──────────────────────────────── */
-
-/* Das Messwerk steht in Spalte 1, direkt unter dem Zifferblatt — Anzeige oben,
-   ihre Skala darunter, so wie an einem Gerät. Die Breitenbegrenzung ist kein
-   Zufallswert: Sie hält die Teilung dicht genug, um sie als Skala zu lesen
-   statt als gepunktete Linie. Der Weißraum rechts davon ist gewollt. */
-.gauge {
-  grid-column: 1;
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  max-width: 32rem;
-  padding-top: var(--sp-2);
-}
-
-/* Die Skala ist das Signaturelement der App.
-
-   Kein Ring, kein Balken, der sich füllt: eine geteilte Sekundenskala, wie sie
-   auf einem Messgerät eingraviert wäre — eine Marke pro Sekunde, jede fünfte
-   länger. Sie zeigt nicht nur „wie viel noch", sondern WIE VIELE SEKUNDEN, und
-   das ist die Information, um die es hier geht.
-
-   Aufbau: zwei identische Markenreihen übereinander. Die untere in heller Ink
-   (verbrauchte Sekunden), die obere in voller Ink, per clip-path auf den
-   verbleibenden Teil beschnitten. Dazu eine Indexmarke an der Grenze. Der
-   gesamte Zustand hängt an einer einzigen Custom Property `--progress`, die die
-   Uhr pro Frame setzt — es gibt kein DOM-Update pro Marke. */
-.scale {
-  position: relative;
-  flex: 1 1 auto;
-  min-width: 5rem;
-  height: var(--scale-height);
-}
-
-.scale__row {
-  position: absolute;
-  inset: 0;
-}
-
-.scale__row i {
-  position: absolute;
-  bottom: 0;
-  width: 1px;
-  height: var(--tick-minor);
-  /* Dieselbe Abbildung wie bei der Indexmarke, deshalb sitzt sie exakt auf
-     einer Teilung statt einen halben Pixel daneben. */
-  left: calc(var(--k) * (100% - 1px) / var(--n));
-  background: currentcolor;
-}
-
-.scale__row i[data-major] {
-  height: var(--tick-major);
-}
-
-.scale__row--spent {
-  color: var(--ink-3);
-  opacity: 0.45;
-}
-
-.scale__row--left {
-  color: var(--ink-2);
-  clip-path: inset(0 0 0 calc(var(--progress, 0) * 100%));
-}
-
-.scale__index {
-  position: absolute;
-  bottom: 0;
-  width: 2px;
-  height: var(--scale-height);
-  left: calc(var(--progress, 0) * (100% - 1px));
-  background: var(--ink);
-}
-
-.gauge__seconds {
-  font-family: var(--font-mono);
-  font-size: var(--t-small);
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-2);
-  white-space: nowrap;
-  min-width: 3ch;
-  text-align: right;
-}
-
-.gauge__seconds abbr {
-  color: var(--ink-3);
-  margin-left: 0.15em;
-}
-
-/* Die letzten Sekunden: der einzige Ort, an dem die App Signalfarbe zeigt,
-   ohne dass der Nutzer etwas getan hat. Genau dafür ist sie da. */
-/* Die Indexmarke ist eine Fläche und braucht `background`. Die Markenreihe ist
-   ein transparenter Container, dessen Marken ihre Farbe über `currentcolor`
-   beziehen — bekäme sie hier ein `background`, färbte sich das ganze Rechteck
-   und aus der Teilung würde ein Balken. */
-.strip--expiring .scale__index {
-  background: var(--signal);
-}
-
-.strip--expiring .scale__row--left {
-  color: var(--signal);
-}
-
-.strip--expiring .gauge__seconds {
-  color: var(--signal);
-}
-
-.gauge__next {
-  display: flex;
-  align-items: baseline;
-  gap: var(--sp-2);
-  margin-left: auto;
-  white-space: nowrap;
-}
-
-.gauge__nextLabel {
-  color: var(--ink-3);
-}
-
-.gauge__nextCode {
-  font-family: var(--font-mono);
-  font-size: var(--t-small);
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-2);
-}
-
 /* ── Fehlerhafte Zeile ────────────────────────────────────────────────────── */
 
 .strip--fault {
   grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'id' 'code';
   row-gap: var(--sp-1);
 }
 
@@ -611,6 +563,7 @@ abbr {
 }
 
 .fault__text {
+  grid-area: code;
   font-size: var(--t-small);
   color: var(--ink-2);
   max-width: 62ch;
@@ -619,18 +572,7 @@ abbr {
 
 /* ── Leerzustand ──────────────────────────────────────────────────────────── */
 
-/* Kein gestrichelter Kasten mit Wolken-Symbol. Ein Satz, der sagt, was zu tun
-   ist — mehr braucht ein leerer Zustand nicht. */
-.vacant {
-  font-size: var(--t-small);
-  color: var(--ink-3);
-  max-width: 60ch;
-  text-wrap: pretty;
-}
-
-.vacant[hidden] {
-  display: none;
-}
+/* Der Leerzustand steht in styles/mark.css — er ist ein Markenmoment. */
 
 /* =============================================================================
    Umbrüche

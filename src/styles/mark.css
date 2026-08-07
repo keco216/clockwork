@@ -1,0 +1,137 @@
+/* =============================================================================
+   Marke und Zifferblatt
+
+   Das Markensystem aus branding/ hat drei Zeichen mit einer gemeinsamen
+   Formsprache. Zwei davon leben hier im CSS:
+
+     C — Wortmarke   .wordmark   im Kopf, beide O als Zifferblätter
+     A — Skala       .dialface   das Zifferblatt neben jedem Code
+
+   Das dritte (B — C-Werk) ist Icon und Favicon und wird in scripts/icons.mjs
+   gezeichnet.
+
+   Die drei teilen dieselbe Logik: stumpfe Strichenden, präzise Geometrie, genau
+   ein Signalpunkt. Nichts davon ist weichgezeichnet.
+   ========================================================================== */
+
+/* ── C — Wortmarke ────────────────────────────────────────────────────────── */
+
+.wordmark {
+  margin: 0;
+  font-size: var(--t-mark);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.wordmark__word {
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: var(--track-mark);
+  text-transform: uppercase;
+}
+
+/* Die O sind Ringe, keine Buchstaben.
+   Maße aus der Wortmarke: Ring-Außendurchmesser 59,86 bei einer Versalhöhe von
+   rund 60 Einheiten — also praktisch versalhoch. Strichstärke 7,84, das sind
+   0,131 des Durchmessers. Beides hier als em-Werte, damit die Marke mit der
+   Schriftgröße mitwächst statt in einer festen Pixelgröße einzufrieren. */
+.wordmark__o {
+  position: relative;
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  border: 0.092em solid currentcolor;
+  border-radius: 50%;
+  /* Rechts kommt die Sperrung der Schrift dazu, links muss sie nachgebildet
+     werden — sonst klebt das O am vorigen Buchstaben. */
+  margin-left: var(--track-mark);
+}
+
+/* Der Signal-Index auf dem ersten O, auf 12 Uhr. Er läuft von außerhalb des
+   Rings bis in ihn hinein — genau wie in der Vorlage, wo er bei Radius 34,93
+   beginnt und bei 17,09 endet. Der einzige farbige Punkt der Marke. */
+.wordmark__o--index::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -0.1em;
+  width: 0.092em;
+  height: 0.3em;
+  background: var(--signal);
+  transform: translateX(-50%);
+}
+
+/* ── A — Skala: das Zifferblatt ───────────────────────────────────────────── */
+
+/* Gezeichnet wird in ui/gauge.ts, hier stehen nur Farbe und Bewegung.
+   `stroke-linecap` bleibt bei der Vorgabe `butt`: stumpfe Enden, keine
+   abgerundeten Striche. Das ist keine Kleinigkeit — ein runder Abschluss würde
+   aus der Gravur eine Zeichnung machen. */
+.dialface {
+  display: block;
+  width: var(--dial-size);
+  height: var(--dial-size);
+  flex: none;
+  overflow: visible;
+}
+
+.dialface__tick {
+  stroke: var(--ink-3);
+}
+
+.dialface__hub {
+  fill: var(--ink);
+}
+
+/* Der Zeiger. Eine Umdrehung pro Periode, angetrieben von `--progress`, das die
+   Uhr pro Frame setzt. Gedreht wird die Gruppe, nicht der Strich — die
+   Geometrie bleibt dadurch exakt die der Vorlage. */
+.dialface__hand {
+  transform: rotate(calc(var(--progress, 0) * 360deg));
+  transform-origin: 50% 50%;
+  transform-box: view-box;
+}
+
+.dialface__handMark {
+  stroke: var(--signal);
+}
+
+/* Die letzten Sekunden: Der Zeiger allein genügt nicht mehr, jetzt zieht auch
+   die Teilung an. Das ist der einzige Moment, in dem das Gerät von sich aus
+   Signalfarbe zeigt. */
+.strip--expiring .dialface__tick {
+  stroke: var(--signal);
+}
+
+/* ── Leerzustand: das Emblem in Ruhe ──────────────────────────────────────── */
+
+.vacant {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.vacant[hidden] {
+  display: none;
+}
+
+.vacant__emblem {
+  /* Etwas größer als am Kanalzug — hier ist es Marke, nicht Anzeige. */
+  width: calc(var(--dial-size) * 1.3);
+  height: calc(var(--dial-size) * 1.3);
+  opacity: 0.55;
+}
+
+.vacant__text {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  max-width: 52ch;
+  text-wrap: pretty;
+}
+
+@media (max-width: 34rem) {
+  .vacant {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

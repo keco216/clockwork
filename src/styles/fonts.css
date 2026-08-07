@@ -17,12 +17,21 @@
 
    Nur der Latin-Subset und nur die aufrechten Schnitte — Kursive braucht ein
    Messgerät nicht.
+
+   `font-display: swap` statt `block`: `block` verschweigt den Text bis zu drei
+   Sekunden lang, und genau das bemängelt Lighthouse zu Recht. Die Dateien liegen
+   auf demselben Origin und sind unter 30 kB groß — die Tauschphase ist damit
+   praktisch nicht wahrnehmbar.
+
+   Bewusst KEIN `<link rel="preload">`: Im Single-File-Build stecken die Schriften
+   als data:-URI im CSS. Ein Preload-Link würde dieselben Bytes ein zweites Mal in
+   die Datei schreiben und sie ohne Nutzen um rund 80 kB aufblähen.
    ========================================================================== */
 
 @font-face {
   font-family: 'Instrument Sans Variable';
   font-style: normal;
-  font-display: block; /* Kein FOUT: die Gravur soll nicht erst in Arial erscheinen */
+  font-display: swap;
   font-weight: 400 700;
   src: url('../assets/fonts/instrument-sans-latin-wght-normal.woff2') format('woff2-variations');
   unicode-range:
@@ -33,7 +42,7 @@
 @font-face {
   font-family: 'Chivo Mono Variable';
   font-style: normal;
-  font-display: block;
+  font-display: swap;
   font-weight: 300 700;
   src: url('../assets/fonts/chivo-mono-latin-wght-normal.woff2') format('woff2-variations');
   unicode-range:

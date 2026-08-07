@@ -25,7 +25,7 @@ import {
 import { generateTotpForCounter } from '../lib/totp';
 import { Dial } from './dial';
 import { cloneTemplate, copyText, requireElement } from './dom';
-import { buildScale } from './scale';
+import { buildGauge } from './gauge';
 
 /** Ab wie vielen Restsekunden das Gerät Signalfarbe zeigt. */
 const EXPIRING_SECONDS = 5;
@@ -58,7 +58,7 @@ class CodeStrip implements Strip {
 
   readonly #account: Account;
   readonly #dial: Dial;
-  readonly #scale: HTMLElement;
+  readonly #hand: SVGGElement;
   readonly #seconds: HTMLElement;
   readonly #next: HTMLElement;
   readonly #copyButton: HTMLButtonElement;
@@ -79,7 +79,7 @@ class CodeStrip implements Strip {
     this.element = cloneTemplate('tpl-strip');
 
     this.#dial = new Dial(requireElement(this.element, '[data-dial]'));
-    this.#scale = requireElement(this.element, '[data-scale]');
+
     this.#seconds = requireElement(this.element, '[data-seconds]');
     this.#next = requireElement(this.element, '[data-next]');
     this.#copyButton = requireElement<HTMLButtonElement>(this.element, '[data-copy]');
@@ -95,10 +95,10 @@ class CodeStrip implements Strip {
     // Beschriftung — sonst hört man bei zehn Konten zehnmal dasselbe Wort.
     this.#copyButton.setAttribute('aria-label', `Code für ${identity.title} kopieren`);
 
-    buildScale(this.#scale, account.period, [
-      requireElement(this.element, '[data-ticks-spent]'),
-      requireElement(this.element, '[data-ticks-left]'),
-    ]);
+    this.#hand = buildGauge(
+      requireElement<SVGSVGElement>(this.element, '[data-gauge]'),
+      account.period,
+    );
 
     this.#copyButton.addEventListener('click', this.#handleCopy);
   }
@@ -111,7 +111,7 @@ class CodeStrip implements Strip {
 
     // (1) Ein Zahlenwert pro Frame. Skalenbeschnitt, Zeigerposition und Farbe
     //     rechnet der Browser daraus selbst — kein DOM-Update pro Marke.
-    this.#scale.style.setProperty('--progress', (elapsed / period).toFixed(4));
+    this.#hand.style.setProperty('--progress', (elapsed / period).toFixed(4));
 
     // (2) Text nur bei echter Änderung anfassen: 60-mal pro Sekunde dieselbe
     //     Zahl zu schreiben kostet Layout und bringt nichts.
