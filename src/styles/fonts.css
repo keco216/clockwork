@@ -39,6 +39,37 @@
     U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/*
+  Latin-Extended — seit V3 dazugekommen (11 kB).
+
+  Elf der 37 Sprachen brauchen Zeichen außerhalb von Latin-1: Polnisch (ł ą ę ś
+  ż), Tschechisch und Slowakisch (č ř š ž ě), Ungarisch (ő ű), Slowenisch,
+  Kroatisch, Rumänisch (ă ș ț), Türkisch (ğ ş), Lettisch, Litauisch, Estnisch.
+  Ohne diesen Schnitt käme in einem polnischen Satz jedes zweite Wort aus einer
+  Ersatzschrift — der Text bestünde sichtbar aus zwei Schriften.
+
+  Der Browser lädt die Datei nur, wenn wirklich ein Zeichen aus diesem Bereich
+  vorkommt: Genau dafür ist `unicode-range` da. Eine deutsche oder englische
+  Sitzung zahlt also nichts. Im Single-File-Build steckt sie als data:-URI mit
+  drin und wird beim Parsen des CSS ohnehin nicht angefasst, solange kein
+  Zeichen sie anfordert.
+
+  Kyrillisch, Griechisch und Vietnamesisch fehlen weiterhin — für die bringt
+  Instrument Sans keinen Schnitt mit. Sie bekommen eine Systemschrift
+  (styles/scripts.css).
+*/
+@font-face {
+  font-family: 'Instrument Sans Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url('../assets/fonts/instrument-sans-latin-ext-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
 @font-face {
   font-family: 'Chivo Mono Variable';
   font-style: normal;

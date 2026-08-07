@@ -63,10 +63,28 @@
      Genau zwei Schriften, beide lokal gebündelt (siehe fonts.css).
      Instrument Sans: neutrale Grotesk, technisch, ohne Manierismen.
      Chivo Mono:      die Ziffern des Zifferblatts, gleichmäßig und geschlossen. */
-  --font-ui:
-    'Instrument Sans Variable', ui-sans-serif, system-ui, 'Segoe UI', Roboto, Helvetica, Arial,
-    sans-serif;
-  --font-mono: 'Chivo Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, 'SF Mono', monospace;
+  /* Der Rückfall des Systems. Ein eigenes Token, weil er als EINZIGER je nach
+     Schriftsystem wechselt (styles/scripts.css) — die beiden Familien darunter
+     erben ihn dann automatisch. Ohne das müsste man die Stacks doppelt pflegen,
+     und der Rückfall der Zifferblattschrift wäre dem Zufall überlassen: Ein
+     „秒" oder „ث" neben der Zahl käme dann aus irgendeiner Systemschrift statt
+     aus der, die den Rest der Oberfläche trägt. */
+  --font-system: ui-sans-serif, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  --font-ui: 'Instrument Sans Variable', var(--font-system);
+
+  /* Die generische Familie `monospace` steht ABSICHTLICH nicht am Ende: Eine
+     generische Familie trifft immer zu, alles dahinter wäre unerreichbar. Der
+     System-Stack muss davor stehen, damit die Einheitszeichen ihn erwischen. */
+  --font-mono:
+    'Chivo Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, 'SF Mono', var(--font-system);
+
+  /* Die Wortmarke bleibt in JEDER Sprache in der Markenschrift und lateinisch.
+     Ein Logo wird nicht übersetzt und nicht in die Systemschrift umgesetzt —
+     sonst wäre es in jedem Land ein anderes Zeichen. Deshalb ein eigenes Token
+     statt `--font-ui`: Das kippt bei nichtlateinischen Schriften weg (siehe
+     styles/scripts.css), diese Zeile nicht. */
+  --font-brand: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
 
   /* Typo-Skala, gerastert auf 4 px. */
   --t-micro: 0.6875rem; /* 11px — Gravur-Beschriftung, Versalien */
@@ -83,6 +101,11 @@
   --track-caps: 0.14em;
   --track-dial: 0.015em;
   --track-mark: 0.16em; /* Wortmarke */
+
+  /* Versalsatz der Gravur-Beschriftung. Als Token, weil er in Schriften ohne
+     Groß- und Kleinschreibung entfällt — zusammen mit der Sperrung darüber.
+     Siehe styles/scripts.css. */
+  --case-caps: uppercase;
 
   /* ── Raster: 4 px Basis, 8 px Haupttakt ────────────────────────────────── */
   --sp-1: 0.25rem;

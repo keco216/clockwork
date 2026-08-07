@@ -21,7 +21,7 @@
   font-size: var(--t-micro);
   font-weight: 500;
   letter-spacing: var(--track-caps);
-  text-transform: uppercase;
+  text-transform: var(--case-caps);
   color: var(--ink-2);
 }
 
@@ -174,7 +174,12 @@
 }
 
 /* Vier Eckwinkel statt eines Rahmens: Sie zeigen den Zielbereich, ohne das Bild
-   zu verdecken. Genau so sind Sucher an Messkameras markiert. */
+   zu verdecken. Genau so sind Sucher an Messkameras markiert.
+
+   Logische Eigenschaften, obwohl die vier Winkel zusammen symmetrisch sind und
+   ein Spiegeln nichts ändert: Damit gibt es in dieser Datei keine einzige
+   physische Richtungsangabe mehr, die man beim nächsten Mal übersehen könnte.
+   Die Kürzel tl/tr/bl/br meinen jetzt Block- und Inline-Anfang bzw. -Ende. */
 .viewfinder__mark {
   position: absolute;
   width: 18px;
@@ -183,31 +188,31 @@
 }
 
 .viewfinder__mark[data-corner='tl'] {
-  top: 12px;
-  left: 12px;
-  border-right: 0;
-  border-bottom: 0;
+  inset-block-start: 12px;
+  inset-inline-start: 12px;
+  border-inline-end: 0;
+  border-block-end: 0;
 }
 
 .viewfinder__mark[data-corner='tr'] {
-  top: 12px;
-  right: 12px;
-  border-left: 0;
-  border-bottom: 0;
+  inset-block-start: 12px;
+  inset-inline-end: 12px;
+  border-inline-start: 0;
+  border-block-end: 0;
 }
 
 .viewfinder__mark[data-corner='bl'] {
-  bottom: 12px;
-  left: 12px;
-  border-right: 0;
-  border-top: 0;
+  inset-block-end: 12px;
+  inset-inline-start: 12px;
+  border-inline-end: 0;
+  border-block-start: 0;
 }
 
 .viewfinder__mark[data-corner='br'] {
-  bottom: 12px;
-  right: 12px;
-  border-left: 0;
-  border-top: 0;
+  inset-block-end: 12px;
+  inset-inline-end: 12px;
+  border-inline-start: 0;
+  border-block-start: 0;
 }
 
 .viewfinder__bar {

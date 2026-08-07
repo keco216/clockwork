@@ -16,8 +16,13 @@
 
 /* ── C — Wortmarke ────────────────────────────────────────────────────────── */
 
+/* Die Marke steht in jeder Sprache lateinisch und in der Markenschrift — auch
+   auf Arabisch, Japanisch oder Griechisch. Ein Logo wird nicht übersetzt.
+   `--font-brand` kippt deshalb nicht mit dem Schriftsystem (styles/scripts.css),
+   und `dir="ltr"` steht am Element in index.html. */
 .wordmark {
   margin: 0;
+  font-family: var(--font-brand);
   font-size: var(--t-mark);
   font-weight: 600;
   line-height: 1;
@@ -43,13 +48,22 @@
   border: 0.092em solid currentcolor;
   border-radius: 50%;
   /* Rechts kommt die Sperrung der Schrift dazu, links muss sie nachgebildet
-     werden — sonst klebt das O am vorigen Buchstaben. */
+     werden — sonst klebt das O am vorigen Buchstaben.
+
+     Bewusst physisch und nicht `margin-inline-start`: Die Wortmarke ist per
+     `dir="ltr"` festgenagelt, „links" ist hier also keine Leserichtung, sondern
+     eine Stelle in einem Zeichen. */
   margin-left: var(--track-mark);
 }
 
 /* Der Signal-Index auf dem ersten O, auf 12 Uhr. Er läuft von außerhalb des
    Rings bis in ihn hinein — genau wie in der Vorlage, wo er bei Radius 34,93
-   beginnt und bei 17,09 endet. Der einzige farbige Punkt der Marke. */
+   beginnt und bei 17,09 endet. Der einzige farbige Punkt der Marke.
+
+   `left`/`top` sind hier die letzten physischen Angaben im ganzen Stylesheet
+   und bleiben es: Sie zentrieren einen Strich in einem Zeichen (zusammen mit
+   `translateX(-50%)`), sie richten nichts an einer Leserichtung aus. Die
+   Wortmarke ist ohnehin per `dir="ltr"` festgenagelt. */
 .wordmark__o--index::before {
   content: '';
   position: absolute;
@@ -67,8 +81,15 @@
    `stroke-linecap` bleibt bei der Vorgabe `butt`: stumpfe Enden, keine
    abgerundeten Striche. Das ist keine Kleinigkeit — ein runder Abschluss würde
    aus der Gravur eine Zeichnung machen. */
+/* `direction: ltr` ist hier kein Versehen und keine Kopie: Das Zifferblatt wird
+   in einer rechtsläufigen Oberfläche NICHT gespiegelt. Ein Messinstrument ist
+   richtungsneutral — Uhren laufen auch in Kairo und Tel Aviv im Uhrzeigersinn.
+   Ohne diese Zeile würde der SVG-Inhalt zwar nicht kippen, aber jede künftige
+   Positionierung darin wäre der Leserichtung ausgeliefert; so ist die Geometrie
+   ein für alle Mal festgenagelt. */
 .dialface {
   display: block;
+  direction: ltr;
   width: var(--dial-size);
   height: var(--dial-size);
   flex: none;

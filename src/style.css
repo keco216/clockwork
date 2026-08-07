@@ -1,16 +1,30 @@
 @import './styles/tokens.css';
+/* Muss NACH tokens.css stehen: kippt einzelne Tokens je Schriftsystem. */
+@import './styles/scripts.css';
 @import './styles/fonts.css';
 @import './styles/mark.css';
 @import './styles/panels.css';
 
 /* =============================================================================
-   2FA Live — Frontplatte
+   Clockwork — Frontplatte
 
    Aufbau von oben nach unten: Grundlagen, Gehäuse, Zonen, Bedienelemente,
    Kanalzug (der Kern), Zustände, Umbrüche.
 
    Kein Bauteil hier setzt einen Farb-, Abstands- oder Schriftwert direkt —
    alles kommt aus styles/tokens.css.
+
+   ── Leserichtung ───────────────────────────────────────────────────────────
+   Alle Abstände, Ränder und Positionen stehen in LOGISCHEN Eigenschaften
+   (`margin-inline-start` statt `margin-left`, `inset-inline-start` statt
+   `left`). Damit klappt das ganze Gehäuse für Arabisch und Hebräisch von selbst
+   um, ohne eine einzige Sonderregel.
+
+   Genau zwei Dinge spiegeln NICHT mit:
+     • Das Zifferblatt (styles/mark.css) — ein Messinstrument ist
+       richtungsneutral, und ein rückwärtslaufender Zeiger wäre schlicht falsch.
+     • Codes, Secrets und Eingabefelder — sie bleiben lateinisch und links­
+       läufig, weil sie so in fremde Anmeldefelder wandern.
    ========================================================================== */
 
 *,
@@ -75,6 +89,30 @@ abbr {
   text-decoration: none;
 }
 
+/* ── Bidi-Inseln ────────────────────────────────────────────────────────────
+   Alles hier drin ist lateinisch und linksläufig, egal welche Sprache die
+   Oberfläche gerade spricht: Codes, Secrets, URIs, Normnummern.
+
+   Der Grund ist nicht Ästhetik, sondern Richtigkeit. In einem rechtsläufigen
+   Absatz zieht der Bidi-Algorithmus neutrale Zeichen — Doppelpunkt,
+   Schrägstrich, Gleichheitszeichen — auf die andere Seite ihrer Nachbarn. Aus
+   `otpauth://totp/…?secret=X` würde sichtbar etwas anderes, als tatsächlich
+   dort steht. Wer das abtippt oder kopiert, kopiert dann den Fehler mit.
+
+   Die Elemente tragen zusätzlich `dir="ltr"` in index.html. Beides zusammen ist
+   Absicht: `dir` bindet die Richtung an den Inhalt, `isolate` verhindert, dass
+   der Kasten die Umgebung durcheinanderbringt. */
+.dial,
+.strip__nextCode,
+.strip__account--src,
+.slot__field,
+.vault__pass,
+.colophon__specs,
+code,
+kbd {
+  unicode-bidi: isolate;
+}
+
 /* Tastaturbedienung sichtbar machen — nie entfernen, nur präzisieren.
    Ein Messgerät zeigt immer an, welches Element gerade bedient wird. */
 :focus-visible {
@@ -96,21 +134,21 @@ abbr {
 
 .skip {
   position: absolute;
-  left: var(--sp-4);
-  top: calc(var(--sp-4) * -4);
+  inset-inline-start: var(--sp-4);
+  inset-block-start: calc(var(--sp-4) * -4);
   z-index: 10;
   padding: var(--sp-2) var(--sp-3);
   background: var(--surface-inverted);
   color: var(--ink-on-inverted);
   font-size: var(--t-micro);
   letter-spacing: var(--track-caps);
-  text-transform: uppercase;
+  text-transform: var(--case-caps);
   text-decoration: none;
-  transition: top var(--dur-quick) var(--ease-mech);
+  transition: inset-block-start var(--dur-quick) var(--ease-mech);
 }
 
 .skip:focus {
-  top: var(--sp-4);
+  inset-block-start: var(--sp-4);
 }
 
 /* Gravur-Beschriftung: kleine gesperrte Versalien, wie auf ein Gehäuse
@@ -122,11 +160,12 @@ abbr {
 .colophon__specs,
 .masthead__spec,
 .masthead__state,
+.colophon__langLabel,
 .key {
   font-size: var(--t-micro);
   font-weight: 500;
   letter-spacing: var(--track-caps);
-  text-transform: uppercase;
+  text-transform: var(--case-caps);
 }
 
 /* =============================================================================
@@ -230,7 +269,20 @@ abbr {
    zwischen den Angaben. */
 .colophon__specs span + span::before {
   content: '·';
-  margin-right: var(--sp-3);
+  margin-inline-end: var(--sp-3);
+}
+
+/* Die Sprachwahl steht im Fuß wie eine Angabe auf dem Typenschild: einmal
+   eingestellt, danach nie wieder angefasst. Sie bekommt deshalb dasselbe
+   `.pick` wie die Tresor-Zeitschaltung und kein eigenes Bauteil. */
+.colophon__lang {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.colophon__langLabel {
+  color: var(--ink-3);
 }
 
 .colophon__note {
@@ -413,7 +465,7 @@ abbr {
 
 .gauge__seconds abbr {
   color: var(--ink-3);
-  margin-left: 0.1em;
+  margin-inline-start: 0.1em;
 }
 
 .strip--expiring .gauge__seconds {
@@ -432,7 +484,7 @@ abbr {
   font-size: var(--t-micro);
   font-weight: 500;
   letter-spacing: var(--track-caps);
-  text-transform: uppercase;
+  text-transform: var(--case-caps);
   color: var(--ink-3);
 }
 
@@ -591,7 +643,7 @@ abbr {
   }
 
   .masthead__spec {
-    text-align: left;
+    text-align: start;
   }
 
   .masthead__state {
@@ -604,8 +656,25 @@ abbr {
     padding-inline: var(--sp-4);
   }
 
+  /* Der Kanalzug bekommt hier ein eigenes Raster: Das Zifferblatt bleibt neben
+     dem Code — es gehört zu ihm —, alles Übrige rückt darunter.
+
+     Bis V2 stand hier nur `grid-template-columns: minmax(0, 1fr)`. Das reicht
+     nicht, und zwar aus einem Grund, der leicht zu übersehen ist:
+     `grid-template-areas` legt die Spaltenzahl SELBST fest. Die drei Spalten
+     von oben blieben also stehen, die Parameterzeile (`white-space: nowrap`)
+     landete in der dritten und schob den Kanalzug bei 375 px rund 60 px über
+     den Gehäuserand hinaus. Sichtbar wurde das erst, als die Überlaufprüfung in
+     scripts/shoot.mjs dazukam — auf einem Standbild sieht man es nicht, die
+     Seite wird einfach seitlich scrollbar. */
   .strip {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'gauge id'
+      'gauge code'
+      'gauge spec'
+      'next next'
+      'copy copy';
   }
 
   .strip__spec {
@@ -613,18 +682,12 @@ abbr {
   }
 
   .key--copy {
-    grid-column: 1;
-    grid-row: auto;
     justify-self: start;
+    align-self: center;
   }
 
   .gauge {
     flex-wrap: wrap;
-  }
-
-  .gauge__next {
-    margin-left: 0;
-    width: 100%;
   }
 }
 
