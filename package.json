@@ -1,9 +1,9 @@
 {
-  "name": "2fa-live",
+  "name": "clockwork",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "TOTP-Generator (RFC 4226 / RFC 6238) — komplett clientseitig, ohne OTP-Bibliotheken.",
+  "description": "Clockwork — TOTP Authenticator. RFC 4226 / RFC 6238 selbst implementiert, vollstaendig clientseitig.",
   "scripts": {
     "dev": "vite",
     "build": "npm run typecheck && node scripts/build.mjs",
@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "shots": "node scripts/shoot.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -24,6 +25,7 @@
     "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.9.0",
+    "playwright": "^1.62.1",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.66.0",

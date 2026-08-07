@@ -36,6 +36,12 @@ export default tseslint.config(
     files: ['scripts/**/*.mjs', 'vite.config.ts', 'eslint.config.js'],
     languageOptions: { globals: globals.node },
   },
+  {
+    // Das Screenshot-Skript läuft in Node, schickt aber Rückrufe über
+    // `page.evaluate()` in den Browser — dort gibt es `document` und `window`.
+    files: ['scripts/shoot.mjs'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
+  },
 
   // Muss zuletzt stehen: schaltet alle Regeln ab, die Prettier ohnehin regelt.
   prettier,
