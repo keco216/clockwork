@@ -82,7 +82,7 @@ function injectContentSecurityPolicy(singleFile: boolean): Plugin {
  * Single-File-Build stecken die Schriften als data:-URI im CSS; ein
  * Preload-Link würde dieselben Bytes ein zweites Mal in die Datei schreiben.
  *
- * Mit den 37 Sprachkatalogen wiegt das Bündel aber rund 490 kB statt 160 kB.
+ * Mit den 37 Sprachkatalogen wiegt das Bündel aber rund 480 kB statt 160 kB.
  * Damit verschiebt sich die Reihenfolge: Der Browser malt einmal in der
  * Ersatzschrift, und wenn Instrument Sans nachrückt, springt der Umbruch —
  * Lighthouse maß dafür einen Layout-Shift von 0,13. Der Preload holt die
