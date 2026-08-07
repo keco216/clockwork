@@ -1,0 +1,4 @@
+# Im Repository liegt alles mit LF. Beim Auschecken unter Windows entscheidet
+# core.autocrlf; Prettier ist auf "endOfLine: lf" gestellt, damit beides passt.
+* text=auto eol=lf
+package-lock.json -diff
