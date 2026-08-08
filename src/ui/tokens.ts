@@ -12,6 +12,7 @@
  */
 
 const cache = new Map<string, number>();
+const easings = new Map<string, string>();
 
 /**
  * Liest ein Zeit-Token (`120ms` oder `0.12s`) als Millisekunden-Zahl.
@@ -36,5 +37,30 @@ export function motionToken(name: string, fallbackMs: number): number {
   }
 
   cache.set(name, value);
+  return value;
+}
+
+/**
+ * Liest eine Beschleunigungskurve (`cubic-bezier(…)`) als Zeichenkette.
+ *
+ * Aus demselben Grund wie die Dauer darüber: Bis V4 stand die Kurve der
+ * Fallblattanzeige als Literal im JavaScript und noch einmal als Token im CSS.
+ * Zwei Wahrheiten über dieselbe Bewegung — solange niemand beide ändert, fällt
+ * das nicht auf, und genau deshalb fällt es irgendwann teuer auf.
+ *
+ * Geprüft wird nur, dass überhaupt etwas dasteht: Was eine gültige Kurve ist,
+ * entscheidet die Web Animations API selbst, und ein leeres Token wäre der
+ * einzige Fall, in dem sie mit einem Fehler aussteigt statt zu animieren.
+ */
+export function easingToken(name: string, fallback: string): string {
+  const cached = easings.get(name);
+  if (cached !== undefined) {
+    return cached;
+  }
+
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const value = raw === '' ? fallback : raw;
+
+  easings.set(name, value);
   return value;
 }

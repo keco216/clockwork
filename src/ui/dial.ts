@@ -20,7 +20,7 @@
 
 import { groupDigits } from '../lib/format';
 import { prefersReducedMotion } from './dom';
-import { motionToken } from './tokens';
+import { easingToken, motionToken } from './tokens';
 
 /**
  * Die Bewegung des Blatts: aus der Mittelachse aufklappen.
@@ -30,9 +30,20 @@ import { motionToken } from './tokens';
  * dann für den Bruchteil einer Sekunde unlesbar, und das ist bei einem Code, den
  * jemand gerade abtippt, ein echter Nutzungsfehler und kein Charme. Angedeutet
  * heißt hier: Man sieht die Mechanik, ohne die Information zu verlieren.
+ *
+ * ── Was V5 daran geändert hat ──────────────────────────────────────────────
+ * Der Umsprung bleibt — er ist der Marken-Moment dieser App und wird nicht
+ * durch ein Ein-/Ausblenden ersetzt. Er landet nur weicher: dieselbe Bewegung,
+ * aber auf der Federkurve und über 190 statt 110 ms, mit einem
+ * Zwischenschritt, der die letzten Prozent auslaufen lässt statt sie
+ * anzustoßen.
+ *
+ * Die Deckkraft startet höher als vorher (0,7 statt 0,55): Bei der längeren
+ * Dauer wäre die alte Zahl als Blinzeln sichtbar geworden, und eine Ziffer, die
+ * blinzelt, während jemand sie abtippt, ist genau der Nutzungsfehler von oben.
  */
 const FLAP: Keyframe[] = [
-  { transform: 'scaleY(0.45)', opacity: 0.55 },
+  { transform: 'scaleY(0.45)', opacity: 0.7 },
   { transform: 'scaleY(1)', opacity: 1 },
 ];
 
@@ -66,8 +77,9 @@ export class Dial {
     }
 
     const animate = !prefersReducedMotion();
-    const duration = motionToken('--dur-snap', 130);
-    const stagger = motionToken('--stagger-flap', 18);
+    const duration = motionToken('--dur-snap', 190);
+    const stagger = motionToken('--stagger-flap', 16);
+    const easing = easingToken('--ease-spring', 'cubic-bezier(0.32, 0.72, 0, 1)');
     let flapped = 0;
 
     for (const [index, digit] of this.#digits.entries()) {
@@ -83,7 +95,7 @@ export class Dial {
         digit.animate(FLAP, {
           duration,
           delay: flapped * stagger,
-          easing: 'cubic-bezier(0.2, 0.85, 0.3, 1)',
+          easing,
           fill: 'backwards',
         });
       }
