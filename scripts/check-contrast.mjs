@@ -4,11 +4,16 @@
  *   node scripts/check-contrast.mjs [url]
  *
  * ── Warum das nicht aus den Tokens zu rechnen ist ──────────────────────────
- * Solange eine Fläche eine Farbe hat, könnte man den Kontrast aus zwei
- * Hex-Werten ausrechnen. Seit V5 gibt es eine Fläche, bei der das nicht mehr
- * geht: Der klebende Kopf ist halbdurchsichtig und weichgezeichnet
- * (`backdrop-filter`). Was hinter seinem Text liegt, entscheidet erst der
- * Browser beim Zeichnen — und es ändert sich, während man scrollt.
+ * Weil zwei Hex-Werte nicht sagen, was der Browser daraus macht. Halbdeckende
+ * Haarlinien, Deckungen, übereinanderliegende Flächen, geerbte Farben — was
+ * hinter einem Text liegt, entsteht erst beim Zeichnen.
+ *
+ * Bis V7 war der klebende Kopf der Grund dafür: halbdurchsichtig und
+ * weichgezeichnet, also ein Kontrast, der sich beim Scrollen ändert. Seit V8 ist
+ * er deckend, und man könnte meinen, damit sei die Pixelmessung überflüssig.
+ * Sie ist es nicht — sie beweist jetzt etwas anderes, nämlich dass er wirklich
+ * deckt (Abschnitt 5). Und die halbdeckenden Haarlinien der Flächenleiter
+ * (Abschnitt 7) lassen sich ohnehin nur so prüfen.
  *
  * Deshalb misst dieses Skript nicht Tokens, sondern PIXEL:
  *
@@ -43,9 +48,13 @@
  * scrollt dieses Skript vorher selbst und weiß danach, dass es gescrollt hat.
  *
  * Damit dieser Fehler nicht ein zweites Mal jahrelang unbemerkt bleibt, prüft
- * das Skript seinen eigenen Aufbau: Die Gegenprobe (Abschnitt 5) schwächt den
- * Frost absichtlich auf 30 % und verlangt, dass die Probe DURCHFÄLLT. Ein
- * Messgerät, das auch dann noch grün meldet, misst nicht das, was es soll.
+ * das Skript seinen eigenen Aufbau (Abschnitt 5). Die Form dieses Selbsttests
+ * hat sich mit V8 geändert, sein Zweck nicht: Bis V7 verdünnte er den Frost auf
+ * 30 % und verlangte, dass die Probe DURCHFÄLLT. Einen Frost gibt es nicht mehr,
+ * also wird jetzt seine Nachfolge-Eigenschaft geprüft — dass der Kopf über drei
+ * extrem verschiedenen Prüfflächen DENSELBEN Wert liefert. Ein Kopf, der deckt,
+ * kann keinen anderen zeigen; ein Kopf, den das Skript nicht sieht, zeigt drei
+ * verschiedene.
  *
  * ── Warum ein eigener PNG-Leser ────────────────────────────────────────────
  * Aus demselben Grund, aus dem scripts/icons.mjs seine PNGs selbst schreibt:
@@ -236,15 +245,8 @@ function visibleClip(rect, viewport) {
  * Misst ein Element: Textfarbe gegen das, was der Browser tatsächlich
  * dahinter gezeichnet hat. Gibt das Verhältnis zurück (oder `null`, wenn nicht
  * gemessen werden konnte).
- *
- * `expectFail` dreht das Urteil um: Dann gilt die Zeile als bestanden, wenn der
- * Wert UNTER dem Maß liegt. Das braucht die Gegenprobe, die nachweist, dass das
- * Skript den Frost überhaupt sieht.
  */
-async function measure(
-  page,
-  { label, selector, scheme, min = AA_TEXT, keepScroll = false, expectFail = false },
-) {
+async function measure(page, { label, selector, scheme, min = AA_TEXT, keepScroll = false }) {
   const handle = await page.$(selector);
   if (handle === null) {
     findings.push(`${scheme} · ${label}: Element nicht gefunden (${selector})`);
@@ -255,8 +257,9 @@ async function measure(
   // Falz liegt, hat zwar ein Kastenmaß, aber keinen Platz im Bild — also erst
   // hinscrollen.
   //
-  // Für die Frost-Messungen ist genau das verboten: Dort IST die Scrollposition
-  // der Messgegenstand. Der Kopf klebt ohnehin oben und ist immer sichtbar.
+  // Für die Messungen am klebenden Kopf ist genau das verboten: Dort IST die
+  // Scrollposition der Messgegenstand. Der Kopf klebt ohnehin oben und ist immer
+  // sichtbar.
   if (!keepScroll) {
     await handle.scrollIntoViewIfNeeded();
     await page.waitForTimeout(120);
@@ -299,23 +302,12 @@ async function measure(
 
   const background = averageColour(decodePng(shot));
   const ratio = contrast(foreground, background);
-  const ok = expectFail ? ratio < min : ratio >= min;
+  const ok = ratio >= min;
 
-  rows.push({
-    scheme,
-    label,
-    ratio: ratio.toFixed(2),
-    min: min.toFixed(1),
-    expectFail,
-    ok,
-  });
+  rows.push({ scheme, label, ratio: ratio.toFixed(2), min: min.toFixed(1), ok });
 
   if (!ok) {
-    findings.push(
-      expectFail
-        ? `${scheme} · ${label}: ${ratio.toFixed(2)}:1 — mit halb durchsichtigem Kopf MUSS die Probe unter ${min}:1 fallen. Tut sie das nicht, misst das Skript den Frost nicht mit.`
-        : `${scheme} · ${label}: ${ratio.toFixed(2)}:1 — verlangt sind ${min}:1`,
-    );
+    findings.push(`${scheme} · ${label}: ${ratio.toFixed(2)}:1 — verlangt sind ${min}:1`);
   }
 
   return ratio;
@@ -373,7 +365,7 @@ async function measureEdge(page, { label, selector, scheme, min = 1.25 }) {
   }
 
   const ok = best >= min;
-  rows.push({ scheme, label, ratio: best.toFixed(2), min: min.toFixed(2), expectFail: false, ok });
+  rows.push({ scheme, label, ratio: best.toFixed(2), min: min.toFixed(2), ok });
   if (!ok) {
     findings.push(
       `${scheme} · ${label}: staerkster Sprung ueber die Kante ${best.toFixed(2)}:1 — verlangt sind ${min}:1`,
@@ -465,8 +457,10 @@ for (const scheme of ['light', 'dark']) {
      Hier ist er noch flach und liegt auf dem blanken Untergrund. */
   await measure(page, { scheme, label: 'Kopf: Marke, ungescrollt', selector: '.masthead__spec' });
 
-  /* ── 3. Der klebende Kopf über der Gehäusegruppe ────────────────────────
-     Jetzt trägt er Frost, und dahinter läuft eine helle Panelfläche durch. */
+  /* ── 3. Der klebende Kopf, gescrollt ────────────────────────────────────
+     Jetzt liegt eine Panelfläche unter ihm. Seit V8 ändert das an seinem Grund
+     nichts mehr — er ist deckend. Gemessen wird es trotzdem, denn „ändert
+     nichts" ist genau die Zusage, die hier geprüft wird. */
   await page.evaluate(() => {
     window.scrollTo(0, 400);
   });
@@ -474,28 +468,29 @@ for (const scheme of ['light', 'dark']) {
 
   // Die Messregion verifizieren, bevor irgendetwas gemessen wird. Ohne diesen
   // Griff steht in der Ausgabe eine ordentliche Zahl, die eine ganz andere
-  // Fläche beschreibt: Trägt der Kopf kein Material, misst „Kopf auf Frost"
-  // schlicht den Untergrund — und meldet dafür anstandslos AA. Genau so blieb
-  // der Messfehler aus V6 ein halbes Release lang unsichtbar.
+  // Fläche beschreibt — genau so blieb der Messfehler aus V6 ein halbes Release
+  // lang unsichtbar. Die Klasse schaltet seit V8 kein Material mehr, sondern
+  // Kante und Schatten; als Nachweis, DASS gescrollt wurde und der Kopf über
+  // etwas liegt, taugt sie unverändert.
   const grip = await page.evaluate(() => ({
     y: Math.round(window.scrollY),
     lifted: document.querySelector('.masthead')?.classList.contains('masthead--lifted') ?? false,
   }));
   if (!grip.lifted) {
     findings.push(
-      `${scheme} · Messaufbau: Der Kopf traegt bei y=${grip.y} kein Frost-Material — alle Frost-Werte darunter sind wertlos.`,
+      `${scheme} · Messaufbau: Der Kopf liegt bei y=${grip.y} ueber nichts — er klebt nicht, oder die Seite ist nicht gescrollt.`,
     );
   }
 
   await measure(page, {
     scheme,
-    label: 'Kopf auf Frost ueber Panel',
+    label: 'Kopf ueber Panel: Marke',
     selector: '.masthead__spec',
     keepScroll: true,
   });
   await measure(page, {
     scheme,
-    label: 'Kopf auf Frost: Wortmarke',
+    label: 'Kopf ueber Panel: Zustand',
     selector: '#state-text',
     keepScroll: true,
   });
@@ -505,22 +500,20 @@ for (const scheme of ['light', 'dark']) {
      lässt: Gehäusegruppen und Untergrund. Diese Werte MÜSSEN AA erfüllen —
      sie kommen vor.
 
-     Jetzt kommt, was nicht vorkommt. Der Auftrag nennt als schlimmsten Fall
-     eine Signal-Orange-Fläche unter dem Kopf; die gibt es hier nicht, weil die
-     Signalfarbe in diesem Gerät nur Marken und Schrift trägt und nie eine
-     Fläche. Gemessen wird sie trotzdem, zusammen mit Tinte und Papier — den
-     beiden Enden der Palette.
+     Jetzt kommt, was nicht vorkommt: Signal-Orange, Tinte und Papier unter dem
+     Kopf, also die Enden der Palette.
 
-     Der Maßstab ist hier bewusst 3:1 und nicht 4,5:1, und das ist kein
-     Weichspülen, sondern die Frage, die hier zählt: Nicht „ist dieser Text
+     ── Warum die Probe bleibt, obwohl der Kopf jetzt deckt ────────────────
+     Weil sie mit V5 einen echten Fehler gefunden hat (2,78:1 bei 72 % Deckung),
+     und weil „der Kopf ist deckend" eine Behauptung über Code ist, die ein
+     Token, ein Rückfall oder ein `@supports` jederzeit wieder umdrehen kann.
+     Ein deckender Kopf besteht diese Probe mühelos — genau das ist der Punkt.
+     Der Wächter kostet drei Messungen und meldet sich, sobald irgendwer die
+     Fläche wieder durchsichtig macht.
+
+     Der Maßstab bleibt 3:1 und nicht 4,5:1: Gefragt ist nicht „ist dieser Text
      bequem zu lesen" — er steht nie auf so einem Grund —, sondern „wie viel
-     Reserve hat das Material, bevor es zusammenbricht". 3:1 ist die Schwelle,
-     unter der Schrift aufhört, erkennbar zu sein.
-
-     Wollte man auch hier 4,5:1, müsste die Deckung auf über 90 % steigen.
-     Dann wäre der Weichzeichner wirkungslos und die Fläche schlicht
-     undurchsichtig — ein Material, das einen Fall besteht, den es nie erlebt,
-     indem es aufhört, ein Material zu sein. */
+     Reserve hat die Fläche, bevor sie zusammenbricht". */
   const HARD = [
     { name: 'Signal-Orange', colour: '#f05a28' },
     { name: 'Tinte', colour: '#171614' },
@@ -547,7 +540,7 @@ for (const scheme of ['light', 'dark']) {
       patch.style.background = value;
     }, colour);
 
-  let orange = null;
+  const reserve = [];
 
   for (const probe of HARD) {
     await setProbe(probe.colour);
@@ -559,77 +552,67 @@ for (const scheme of ['light', 'dark']) {
       keepScroll: true,
       min: AA_LARGE,
     });
-    if (probe.name === 'Signal-Orange') orange = ratio;
+    if (ratio !== null) reserve.push({ name: probe.name, ratio });
   }
 
-  /* ── 5. Die Gegenprobe: misst dieses Skript den Frost überhaupt? ─────────
+  /* ── 5. Der Selbsttest: deckt der Kopf wirklich? ─────────────────────────
      Alles bis hierher ist eine Behauptung über eine Fläche, die es ohne den
      Browser gar nicht gibt. Wenn der Messaufbau kaputtgeht, bricht er nicht
-     laut zusammen — er liefert weiter Zahlen, nur eben von der falschen
-     Fläche. Genau das ist in V6 passiert, und genau deshalb steht hier eine
-     Probe, die durchfallen MUSS.
+     laut zusammen — er liefert weiter Zahlen, nur eben von der falschen Fläche.
+     Genau das ist in V6 passiert.
 
-     Der Frost wird auf 30 % Deckung geschwächt. Eine so dünne Fläche kann
-     Signal-Orange nicht mehr tragen; sie muss unter 3:1 rutschen. Tut sie das
-     nicht, sieht das Skript den Kopf nicht — dann sind auch alle grünen Zeilen
-     darüber wertlos, und diese Zeile ist die einzige, die das merkt.
+     Bis V7 stand hier eine Gegenprobe, die durchfallen MUSSTE: Frost auf 30 %
+     verdünnt, und wenn die Probe dann noch bestand, sah das Skript den Kopf
+     nicht. Mit einem deckenden Kopf gibt es nichts mehr zu verdünnen — aber
+     einen Beweis derselben Art, und zwar einen strengeren.
 
-     ── Warum 30 % und nicht 50 % ─────────────────────────────────────────
-     Weil 50 % nachgemessen nicht reichen. Die Kurve über Signal-Orange, hell:
+     Ein deckender Kopf muss über Signal-Orange, Tinte und Papier DENSELBEN Wert
+     liefern. Drei Prüfflächen, die weiter auseinander liegen könnten es nicht,
+     und trotzdem ein Wert: Das kann nur herauskommen, wenn zwischen Text und
+     Prüffläche wirklich eine deckende Fläche liegt.
 
-       78 % → 4,81   60 % → 3,81   50 % → 3,37   40 % → 2,98   30 % → 2,65
-                                                  0 % → 2,04
+     Der Test ist strenger als die alte Gegenprobe, weil er beide Fehlerarten
+     zugleich fängt:
 
-     Bei 50 % steht der helle Kopf noch bei 3,37:1 — er BESTEHT die Probe, und
-     eine Gegenprobe, die besteht, beweist nichts. Erst unter 40 % fällt sie in
-     beiden Themes durch, und 30 % lässt genug Luft, dass eine spätere
-     Palettenänderung sie nicht zufällig wieder über die Schwelle hebt.
+       • Der Kopf ist versehentlich durchsichtig geworden → die drei Werte gehen
+         auseinander, denn die Prüfflächen schlagen durch.
+       • Das Skript sieht den Kopf gar nicht (der V6-Fehler) → die drei Werte
+         gehen ebenfalls auseinander, denn dann MISST es die Prüfflächen.
 
-     Die 0 %-Zeile derselben Reihe ist der Beweis in die andere Richtung: 2,04
-     hell und 1,15 dunkel sind exakt die Werte, die das kaputte Skript vorher
-     lieferte. Es hat also nicht „ungenau" gemessen — es hat den Kopf gar nicht
-     gesehen.
+     Ein einziger Grenzwert würde nur den ersten Fall fangen, und auch den nur,
+     solange die Palette sich nicht bewegt. Eine Streuung braucht keine
+     Palettenannahme.
 
-     Der Wert wird auf dem Wurzelelement gesetzt und danach wieder entfernt:
-     Das Theme selbst (styles/tokens.css) bleibt unberührt, und die nächste
-     Sitzung im selben Browser misst wieder das echte Material. */
-  const frost = await page.evaluate(() => {
-    const root = document.documentElement;
-    // Ein nicht angemeldetes Custom Property kommt so zurück, wie es notiert
-    // wurde — hier also `rgb(245 243 239 / 78%)`. Die vierte Zahl ist die
-    // Deckung; sie wird nur gelesen, damit der Bericht sagen kann, wovon er
-    // ausgeht, statt eine Zahl aus der Doku zu wiederholen.
-    const numbers = getComputedStyle(root)
-      .getPropertyValue('--frost-surface')
-      .match(/[\d.]+/g);
-    const [r, g, b, alpha] = numbers ?? ['0', '0', '0', '100'];
-    root.style.setProperty('--frost-surface', `rgb(${r} ${g} ${b} / 30%)`);
-    return Math.round(Number(alpha) <= 1 ? Number(alpha) * 100 : Number(alpha));
-  });
-  await setProbe('#f05a28');
-  await page.waitForTimeout(300);
-  const thin = await measure(page, {
+     0,15 ist die zugelassene Streuung. Sie ist nicht Null, weil der Kopf eine
+     Haarlinie, einen Schatten und gerundete Ecken hat: Der Ausschnitt liegt an
+     der Textzeile, nicht am Rand, aber die Kantenglättung der Glyphenfläche
+     lässt ein paar Zehntelpixel Rest. Gemessen liegt die Streuung bei 0,00 —
+     0,15 ist Luft, nicht Toleranz für ein bekanntes Problem. */
+  const spread =
+    reserve.length < 2
+      ? 0
+      : Math.max(...reserve.map((r) => r.ratio)) - Math.min(...reserve.map((r) => r.ratio));
+
+  const SPREAD_MAX = 0.15;
+  rows.push({
     scheme,
-    label: `Gegenprobe: 30 % statt ${frost} % Deckung`,
-    selector: '.masthead__spec',
-    keepScroll: true,
-    min: AA_LARGE,
-    expectFail: true,
+    label: 'Selbsttest: Streuung der drei Reserveproben',
+    ratio: spread.toFixed(2),
+    min: SPREAD_MAX.toFixed(2),
+    ok: spread <= SPREAD_MAX,
+    isSpread: true,
   });
 
-  // Die zweite Hälfte des Beweises, und die eigentlich tragende: Der Wert muss
-  // sich beim Verdünnen ÜBERHAUPT bewegen. Eine feste Schwelle könnte eine
-  // Palettenänderung eines Tages von allein unterschreiten; ein Abstand kann
-  // das nicht. Bleibt er aus, misst das Skript eine Fläche, an der der Kopf
-  // nichts ändert — also nicht den Kopf.
-  if (orange !== null && thin !== null && orange - thin < 1) {
+  if (spread > SPREAD_MAX) {
     findings.push(
-      `${scheme} · Messaufbau: Verduennen des Frostes von ${frost} % auf 30 % aendert den Wert nur um ${(orange - thin).toFixed(2)} — der Kopf geht in diese Messung nicht ein.`,
+      `${scheme} · Messaufbau: Die drei Reserveproben streuen um ${spread.toFixed(2)} ` +
+        `(${reserve.map((r) => `${r.name} ${r.ratio.toFixed(2)}`).join(', ')}). ` +
+        `Ein deckender Kopf kann das nicht — entweder ist er durchsichtig geworden, ` +
+        `oder das Skript misst die Pruefflaeche statt den Kopf.`,
     );
   }
 
   await page.evaluate(() => {
-    document.documentElement.style.removeProperty('--frost-surface');
     document.getElementById('contrast-probe')?.remove();
   });
 
@@ -676,14 +659,19 @@ for (const row of rows) {
     last = row.scheme;
   }
   const mark = row.ok ? '✓' : '✗';
-  // Die Gegenprobe hat das umgekehrte Ziel — sie soll darunter liegen. Stünde
-  // dort dasselbe „>=" wie überall, läse sich eine bestandene Zeile wie ein
-  // Widerspruch.
-  const aim = row.expectFail ? `<  ${row.min}` : `>= ${row.min}`;
-  console.log(`  ${mark} ${row.label.padEnd(width)}  ${row.ratio.padStart(6)}:1  (${aim})`);
+  // Der Selbsttest hat das umgekehrte Ziel — seine Streuung soll KLEIN sein.
+  // Stünde dort dasselbe „>=" wie überall, läse sich eine bestandene Zeile wie
+  // ein Widerspruch. Und er ist kein Kontrastverhältnis, also kein „:1".
+  if (row.isSpread) {
+    console.log(`  ${mark} ${row.label.padEnd(width)}  ${row.ratio.padStart(6)}   (<= ${row.min})`);
+  } else {
+    console.log(
+      `  ${mark} ${row.label.padEnd(width)}  ${row.ratio.padStart(6)}:1  (>= ${row.min})`,
+    );
+  }
 }
 
-const proofs = rows.filter((row) => row.expectFail).length;
+const proofs = rows.filter((row) => row.isSpread).length;
 
 if (findings.length > 0) {
   console.error('\nBefunde:');
@@ -691,7 +679,7 @@ if (findings.length > 0) {
   process.exitCode = 1;
 } else {
   console.log(
-    `\n✓ Alle ${rows.length - proofs} gemessenen Paare erfuellen WCAG AA.` +
-      `\n✓ ${proofs} Gegenproben zeigen, dass dabei wirklich der Frost gemessen wurde.`,
+    `\n✓ Alle ${rows.length - proofs} gemessenen Paare erfuellen ihr Maß.` +
+      `\n✓ ${proofs} Selbsttests zeigen, dass dabei wirklich der Kopf gemessen wurde.`,
   );
 }

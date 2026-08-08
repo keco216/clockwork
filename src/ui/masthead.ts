@@ -1,16 +1,20 @@
 /**
- * Der klebende Kopf und sein Material.
+ * Der klebende Kopf und seine Ebene.
  *
  * Seit V5 klebt die Kopfzeile oben. Sie ist damit die einzige Fläche der App,
- * unter der tatsächlich etwas durchläuft — und deshalb die einzige, die ein
- * Frost-Material trägt (`backdrop-filter`, siehe styles/tokens.css).
+ * unter der tatsächlich etwas durchläuft.
  *
- * ── Warum das Material nicht immer da ist ──────────────────────────────────
- * Am Seitenanfang liegt unter dem Kopf nichts als der blanke Untergrund. Eine
- * Fläche, die dort schon schwebt, behauptet eine Erhebung, die es nicht gibt:
- * kein verdeckter Inhalt, kein Grund für einen Schatten, und der Weichzeichner
- * hat nichts zu zeichnen. Also bekommt der Kopf sein Material genau dann, wenn
- * er anfängt, etwas zu verdecken.
+ * Bis V7 schaltete dieses Modul ein Frost-Material (`backdrop-filter`). Seit V8
+ * ist der Kopf deckend — die Begründung steht bei `.masthead` in src/style.css.
+ * Geschaltet wird deshalb kein Material mehr, sondern nur noch, was eine Ebene
+ * ausmacht: die Kante nach unten und der Schatten.
+ *
+ * ── Warum das nicht immer da ist ───────────────────────────────────────────
+ * Am Seitenanfang liegt unter dem Kopf nichts als das Gehäuse, dessen Ton er
+ * selbst trägt. Eine Fläche, die dort schon schwebt, behauptet eine Erhebung,
+ * die es nicht gibt: kein verdeckter Inhalt, kein Grund für einen Schatten.
+ * Also bekommt der Kopf seine Ebene genau dann, wenn er anfängt, etwas zu
+ * verdecken.
  *
  * ── Warum ein Beobachter und kein Scroll-Rückruf ───────────────────────────
  * Ein `scroll`-Listener liefe bei jedem Bild und müsste jedes Mal eine Position
@@ -20,16 +24,16 @@
  * Messung übernimmt der Compositor.
  *
  * Der Fühler ist ein Pixel am Dokumentanfang. Er entsteht hier und nicht in
- * index.html, weil er reine Darstellung ist: Ohne JavaScript gäbe es auch kein
- * Material, das er schalten könnte — dann steht der Kopf schlicht flach da, und
- * die Seite funktioniert vollständig.
+ * index.html, weil er reine Darstellung ist: Ohne JavaScript gibt es auch keine
+ * Ebene, die er schalten könnte — dann steht der Kopf schlicht flach da, und die
+ * Seite funktioniert vollständig.
  */
 
 const LIFTED = 'masthead--lifted';
 
 export function startMasthead(masthead: HTMLElement): void {
   // Ohne Beobachter (sehr alte Stände) bleibt der Kopf flach. Das ist der
-  // richtige Rückfall: lieber gar kein Material als eines, das nie wieder
+  // richtige Rückfall: lieber gar keine Erhebung als eine, die nie wieder
   // verschwindet.
   if (typeof IntersectionObserver !== 'function') {
     return;

@@ -339,9 +339,14 @@
 /* Die aktive Zeile — die, auf der Tastatur oder Maus gerade steht. Ein
    Flächenton, kein Rahmen: Ein Rahmen würde die Zeile um einen Pixel
    verschieben, und eine Liste, in der die Zeilen beim Durchgehen wackeln, ist
-   schwer zu lesen. */
+   schwer zu lesen.
+
+   Seit V8 die dafür gemachte Sprosse und nicht mehr `--surface-recessed`. Das
+   war der Fehler, den die neue Leiter aufräumt: Derselbe Ton stand für
+   „versenkt" und für „berührt" — also für eine Fläche, die zurückweicht, und
+   eine, die entgegenkommt. */
 .listbox__option.is-active {
-  background: var(--surface-recessed);
+  background: var(--surface-active);
   color: var(--ink);
 }
 

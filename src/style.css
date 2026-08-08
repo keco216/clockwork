@@ -227,13 +227,31 @@ kbd {
 
 /* ── Kopf ─────────────────────────────────────────────────────────────────── */
 
-/* Der Kopf klebt seit V5 oben. Er ist damit die einzige Fläche der App, unter
-   der wirklich etwas durchläuft — und deshalb die einzige, an der ein
-   Frost-Material etwas zu tun hat (siehe .masthead--lifted weiter unten).
+/* Der Kopf klebt seit V5 oben und ist damit die einzige Fläche der App, unter
+   der wirklich etwas durchläuft.
+
+   ── Warum er seit V8 opak ist ─────────────────────────────────────────────
+   Bis V7 war das der Ort des einen Frost-Materials: halbdurchsichtig,
+   weichgezeichnet, Deckung nachgemessen auf 78 % bzw. 84 %. Das hat drei
+   Versionen lang funktioniert und war teuer — eine eigene Messstrecke in
+   scripts/check-contrast.mjs, eine Gegenprobe, die absichtlich durchfallen muss,
+   und ein Rückfall für Browser ohne `backdrop-filter`.
+
+   Bezahlt wurde das für eine Fläche, die nichts trägt, was eine deckende nicht
+   auch trüge. Der Kopf ist die DECKPLATTE des Geräts; eine Deckplatte, durch die
+   man hindurchsieht, ist keine. Und der Frost war der dritte Stapel über Korn
+   und Panelton — zusammen genau der „Matsch", den die V8-Diagnose benennt.
+
+   Deckend hat er außerdem eine Eigenschaft, die der Frost nie hatte: Sein
+   Kontrast ist NACHRECHENBAR, weil er nicht mehr davon abhängt, was gerade
+   darunter durchfährt. Er trägt den Gehäuseton, und die Panels, die unter ihm
+   verschwinden, liegen in beiden Themes höher auf der Leiter — die Kante ist
+   damit in jedem Zustand da, nicht nur ab einer bestimmten Scrollposition.
 
    Der Sprunglink zielt an ihm vorbei auf die Codes-Zone; damit deren Überschrift
    danach nicht unter dem Kopf klemmt, liegt --scroll-anchor unten am :target. */
 .masthead {
+  background: var(--case);
   position: sticky;
   inset-block-start: 0;
   z-index: 5;
@@ -255,35 +273,26 @@ kbd {
      Gehäuses, nicht als Kachel darin. */
   border-radius: var(--radius-panel) var(--radius-panel) 0 0;
   border: 1px solid transparent;
-  border-block-end-color: var(--rule);
+  border-block-end-color: transparent;
   /* Ohne Erhebung, solange nichts darunter liegt. Erst beim Scrollen wird
-     daraus Material — siehe unten. */
+     daraus eine Ebene — siehe unten. */
   transition:
-    background-color var(--dur-calm) var(--ease-spring),
     border-color var(--dur-calm) var(--ease-spring),
     box-shadow var(--dur-calm) var(--ease-spring);
 }
 
-/* Ab hier liegt der Kopf über etwas — und erst ab hier bekommt er Material.
-   Die Klasse setzt ui/masthead.ts über einen Beobachter am Seitenanfang, nicht
-   ein Scroll-Rückruf: Ein Schatten ohne Erhebung wäre eine Behauptung, und eine
-   Fläche, die IMMER schwebt, behauptet sie durchgehend. */
-.masthead--lifted {
-  background: var(--frost-surface);
-  backdrop-filter: var(--frost-filter);
-  -webkit-backdrop-filter: var(--frost-filter);
-  border-color: var(--rule);
-  box-shadow: var(--elev-2);
-}
+/* Ab hier liegt der Kopf über etwas — und erst ab hier bekommt er eine Kante und
+   einen Schatten. Die Klasse setzt ui/masthead.ts über einen Beobachter am
+   Seitenanfang, nicht ein Scroll-Rückruf: Ein Schatten ohne Erhebung wäre eine
+   Behauptung, und eine Fläche, die IMMER schwebt, behauptet sie durchgehend.
 
-/* Kein backdrop-filter (ältere Firefox-Stände, abgeschaltete Beschleunigung):
-   dann eben deckend. Halbtransparent OHNE Blur wäre der schlechteste aller
-   Zustände — der Text bekäme wechselnde Untergründe und niemand könnte den
-   Kontrast noch zusagen. */
-@supports not (backdrop-filter: blur(1px)) {
-  .masthead--lifted {
-    background: var(--surface);
-  }
+   Am Seitenanfang ist der Kopf deshalb nicht unsichtbar, sondern ununterscheidbar
+   — er trägt denselben Ton wie das Gehäuse und ist dort einfach ein Stück
+   Gehäuse. Das ist der Zustand, den er haben soll: Eine Deckplatte hebt sich vom
+   Gerät nicht ab, solange nichts unter ihr durchläuft. */
+.masthead--lifted {
+  border-block-end-color: var(--rule);
+  box-shadow: var(--elev-2);
 }
 
 /* Der Fühler, an dem der Beobachter hängt: ein Pixel ganz oben im Dokument.
@@ -298,13 +307,15 @@ kbd {
   pointer-events: none;
 }
 
-/* Als einziger Gravurtext NICHT in --ink-3, sondern eine Stufe kräftiger.
-   Der Grund ist gemessen: Dieser Text sitzt auf der halbdurchsichtigen
-   Kopffläche, und was hinter ihr durchläuft, wechselt beim Scrollen. Die
-   leiseste Graustufe der Palette hat dort keine Reserve — auf einer Fläche mit
-   wechselndem Grund gehört der Text eine Stufe fester. */
+/* Bis V7 stand hier eine Stufe kräftiger als bei jedem anderen Gravurtext, und
+   der Grund war gemessen: Der Text saß auf der halbdurchsichtigen Kopffläche,
+   und was hinter ihr durchlief, wechselte beim Scrollen — die leiseste
+   Graustufe hatte dort keine Reserve.
+
+   Mit dem opaken Kopf ist der Grund bekannt und fest (--case), und alle drei
+   Textstufen halten darauf AA. Die Ausnahme entfällt, wie die bei .zone__label. */
 .masthead__spec {
-  color: var(--ink-2);
+  color: var(--ink-3);
   text-align: center;
 }
 
@@ -359,20 +370,20 @@ kbd {
   min-width: 0;
 }
 
-/* ── Warum die Gravur auf dem Gehäuse eine Stufe kräftiger ist ─────────────
-   Bis V6 stand hier --ink-3, und das war richtig: Der Untergrund lag damals
-   bei #eae7e0, und die leiseste Graustufe erreichte darauf 4,61:1.
+/* ── Und warum die Sonderregel dafür seit V8 weg ist ───────────────────────
+   V7 brauchte hier eine Ausnahme: Text auf dem GEHÄUSE trug --ink-2, Text auf
+   einem PANEL --ink-3 — weil --ink-3 auf dem dunkleren Gehäuseton nur noch
+   4,00:1 erreichte und AA riss.
 
-   Seit V7 ist das Gehäuse dunkler (#ded9cf) — genau darum ging es, das Gerät
-   soll sich vom Tisch abheben. Derselbe Ton kommt darauf nur noch auf 4,00:1
-   und reißt AA. Gemessen von scripts/check-contrast.mjs, nicht geschätzt.
+   Die neuen Textstufen sind so gewählt, dass alle drei auf JEDER Fläche der
+   Leiter mindestens 4,5:1 halten (siehe styles/tokens.css). Damit ist die
+   Ausnahme unnötig geworden, und die Gravur trägt überall dieselbe Farbe.
+   Gemessen: 5,02:1 auf dem Gehäuse, 6,37:1 auf einem Panel.
 
-   Ein dunklerer Grund braucht mehr Tinte. Die Regel dahinter ist keine
-   Ausnahme, sondern eine Konsequenz: --ink-3 ist die Farbe für Text auf einem
-   PANEL, --ink-2 die für Text auf dem GEHÄUSE. Dieselbe Unterscheidung, die es
-   für den klebenden Kopf seit V5 gibt. */
+   Das ist der Unterschied zwischen einer Regel und einem Flicken: Der Flicken
+   hätte hier stehen bleiben können, ohne dass es auffällt. */
 .zone__label {
-  color: var(--ink-2);
+  color: var(--ink-3);
 }
 
 /* ── Die Gehäusegruppe ─────────────────────────────────────────────────────
@@ -404,53 +415,34 @@ kbd {
     inset 0 1px 0 var(--edge-inner);
 }
 
-/* ── Korn ──────────────────────────────────────────────────────────────────
-   Als Pseudo-Element und nicht als zweiter `background-image`-Eintrag: So
-   lässt sich die Deckung getrennt von der Fläche steuern, und der Radius
-   beschneidet das Korn über `border-radius: inherit`.
-
-   `pointer-events: none` ist Pflicht, nicht Vorsicht: Ohne das läge eine
-   unsichtbare Fläche über dem ganzen Panel und schluckte jeden Klick auf die
-   Bedienelemente darunter. */
-.zone__body::after,
-.device::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background-image: var(--grain);
-  opacity: var(--grain-opacity);
-  pointer-events: none;
-  /* Das Korn ist Material, kein Inhalt — es hat für Screenreader nichts zu
-     sagen und darf auch beim Drucken wegbleiben. */
-  z-index: 0;
-}
-
 .device {
   position: relative;
 }
 
-/* Das Korn des Gehäuses folgt seiner Rundung. */
-.device::after {
-  border-radius: inherit;
-}
+/* ── Korn: nur noch auf der Werkbank ───────────────────────────────────────
+   V6 legte es auf drei Flächen — Panels, Gehäuse und Werkbank. Seit V8 liegt es
+   auf einer, und zwar auf der einzigen, von der man nichts abliest.
 
-/* Die Werkbank bekommt dasselbe Korn, damit die Tischplatte nicht glatter wirkt
-   als das Gerät darauf.
+   Der Grund ist die Arbeitsteilung, die dieses Projekt seit V5 trägt: Was man
+   anfasst, wird weich; was man abliest, bleibt scharf. Ein Panel liest man. Korn
+   darauf ist kein Material, sondern eine feine Unruhe hinter jeder Ziffer — und
+   zusammen mit der halbdurchsichtigen Kopffläche war es der Stapel, den die
+   V8-Diagnose „Matsch" nennt. Die Werkbank liest niemand; dort macht dieselbe
+   Textur aus einer leeren Fläche einen Tisch.
 
    `fixed` und nicht `absolute`: Eine Tischplatte scrollt nicht mit. `z-index:
    -1` legt sie hinter den Inhalt, aber vor den Seitengrund — `body` hat keinen
    eigenen Stapelzusammenhang, deshalb genügt das.
 
-   Auf der Werkbank leiser als auf dem Gerät: Sie ist die größte Fläche im Bild,
-   und was auf einem Panel Materialität ist, wird über eine ganze Wand Unruhe. */
+   `pointer-events: none` ist Pflicht, nicht Vorsicht: Ohne das läge eine
+   unsichtbare Fläche über der ganzen Seite und schluckte jeden Klick. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   background-image: var(--grain);
-  opacity: calc(var(--grain-opacity) * 0.6);
+  opacity: var(--grain-opacity);
   pointer-events: none;
 }
 
@@ -507,9 +499,14 @@ body::before {
   display: none;
 }
 
-/* Der Inhalt muss über dem Korn liegen. Ohne das legt sich die Textur über die
-   Codes — sichtbar wird das erst bei größeren Deckungen, und dann sucht man
-   lange.
+/* Zonen und Fuß liegen auf Ebene 1 — über der Werkbank samt Korn, unter dem
+   Kopf. Bis V7 war das nötig, damit die Textur nicht über den Codes lag; seit
+   V8 trägt nur noch die Werkbank Korn, und die liegt ohnehin auf z-index −1.
+
+   Die Regel bleibt trotzdem stehen, denn sie ordnet mehr als das Korn: Sie ist
+   die Ebene, gegen die scripts/check-contrast.mjs seine Prüffläche einschiebt
+   (z-index 2, also über dem Inhalt und unter dem Kopf). Ohne sie hätte die
+   Reserveprobe keine definierte Lage mehr.
 
    Der Kopf steht hier ausdrücklich NICHT mit dabei, und das ist keine
    Nachlässigkeit: Er hat weiter oben bereits `position: sticky` und
@@ -939,12 +936,12 @@ body::before {
 @media (hover: hover) {
   .strip:hover {
     transform: translateY(-1px);
-    background: var(--surface-recessed);
+    background: var(--surface-active);
   }
 }
 
 .strip:focus-within {
-  background: var(--surface-recessed);
+  background: var(--surface-active);
 }
 
 /* Der Flächenton läuft über die volle Panelbreite, nicht nur über den
@@ -1339,8 +1336,9 @@ body::before {
   }
 
   body::before {
-    /* Ohne Gehäuse gibt es keinen Unterschied mehr zwischen Werkbank und Gerät,
-       den ein zweites Korn ausdrücken könnte — das Panel-Korn genügt. */
+    /* Ohne Gehäuse gibt es keine Werkbank: Das Gerät füllt hier den Schirm, und
+       der Seitengrund IST der Gehäuseton. Korn darauf wäre Korn auf dem Gerät —
+       genau das, was V8 abgeschafft hat. */
     display: none;
   }
 
@@ -1352,10 +1350,6 @@ body::before {
     border: 0;
     border-radius: 0;
     box-shadow: none;
-  }
-
-  .device::after {
-    display: none;
   }
 
   /* Der Kopf ist hier keine Deckplatte mehr, sondern wieder ein Riegel, der
