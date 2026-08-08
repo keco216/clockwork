@@ -37,9 +37,9 @@ export default tseslint.config(
     languageOptions: { globals: globals.node },
   },
   {
-    // Das Screenshot-Skript läuft in Node, schickt aber Rückrufe über
+    // Die beiden Playwright-Skripte laufen in Node, schicken aber Rückrufe über
     // `page.evaluate()` in den Browser — dort gibt es `document` und `window`.
-    files: ['scripts/shoot.mjs'],
+    files: ['scripts/shoot.mjs', 'scripts/check-contrast.mjs'],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
 
