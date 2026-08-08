@@ -3,6 +3,7 @@ import { defineConfig, type Plugin } from 'vitest/config';
 // Mit Dateiendung, anders als überall sonst im Projekt: Vite lädt seine
 // Konfiguration künftig über Nodes eigenen TypeScript-Modus, und der verlangt
 // den vollständigen Pfad. Ohne die Endung warnt Vite schon heute.
+import { contentSecurityPolicy } from './scripts/csp.ts';
 import { ENV_KEY, requestedLocales, subsetLocalePlugin } from './scripts/locale-subset.ts';
 
 /**
@@ -19,50 +20,6 @@ const SINGLE_FILE = process.env['BUILD_SINGLEFILE'] === '1';
  * Build-Ziele.
  */
 const LOCALE_SELECTION = requestedLocales(process.env[ENV_KEY]);
-
-/**
- * Content-Security-Policy.
- *
- * `default-src 'none'` ist der eigentliche Gewinn: Die Seite darf von sich aus
- * nichts laden und nichts senden. Alles Erlaubte steht danach einzeln da — wer
- * die Policy liest, sieht die vollständige Liste dessen, was diese App tun kann.
- *
- * Zwei Varianten, weil die beiden Builds unterschiedlich funktionieren:
- *
- *   Normal (PWA)  Skript, Stil, Schriften und Icons liegen als eigene Dateien
- *                 auf demselben Origin. `worker-src` und `manifest-src` sind
- *                 nötig, sonst blockiert `default-src 'none'` den Service Worker
- *                 und das Manifest. `connect-src 'self'` erlaubt dem
- *                 Update-Mechanismus, den Worker nachzuladen — same-origin, mehr
- *                 nicht.
- *
- *   Single-File   Alles steckt inline bzw. als data:-URI in der einen Datei.
- *                 Kein Service Worker, kein Manifest — und deshalb
- *                 `connect-src 'none'`: Diese Datei kann nachweislich keine
- *                 einzige Netzwerkverbindung aufbauen.
- *
- * `'unsafe-inline'` bei Skript und Stil ist für den Single-File-Build
- * unvermeidbar (dort ist alles inline) und hier unkritisch: Es gibt kein `eval`
- * (`'unsafe-eval'` ist bewusst nicht gesetzt), keine fremde Datenquelle, und
- * sämtliche Nutzereingaben landen ausschließlich über `textContent` im DOM.
- *
- * Nicht enthalten: `frame-ancestors`. Die Direktive wirkt nur als HTTP-Header;
- * in einem <meta>-Tag ignoriert der Browser sie und loggt eine Warnung.
- */
-function contentSecurityPolicy(singleFile: boolean): string {
-  return [
-    "default-src 'none'",
-    "script-src 'self' 'unsafe-inline'",
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data:",
-    // Im Single-File-Build stecken die woff2-Dateien als data:-URI im CSS.
-    singleFile ? "font-src 'self' data:" : "font-src 'self'",
-    singleFile ? "connect-src 'none'" : "connect-src 'self'",
-    ...(singleFile ? [] : ["worker-src 'self'", "manifest-src 'self'"]),
-    "base-uri 'none'",
-    "form-action 'none'",
-  ].join('; ');
-}
 
 /**
  * Hängt die CSP nur in den *Build* ein. Im Dev-Server bliebe sonst der

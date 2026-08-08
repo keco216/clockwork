@@ -25,7 +25,7 @@ await mkdir(outDir, { recursive: true });
 const DEMO = [
   'RFC-Test: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ',
   'otpauth://totp/ACME%20Co:kevin@example.com?secret=JBSWY3DPEHPK3PXP&issuer=ACME%20Co',
-  'otpauth://totp/Google:kevin@gmail.com?secret=GEZDGNBVGY3TQOJQ&issuer=Google&algorithm=SHA256&digits=8&period=60',
+  'otpauth://totp/Google:kevin@example.com?secret=GEZDGNBVGY3TQOJQ&issuer=Google&algorithm=SHA256&digits=8&period=60',
   'JBSW0Y3DPEHPK3PXP',
 ].join('\n');
 
@@ -314,6 +314,25 @@ await session('08-sprachwechsel', {
     await shoot(page, name);
   },
 });
+
+/* ── 9. Aufnahmen fuers README ─────────────────────────────────────────────
+   Englisch, hell und dunkel, gleicher Ausschnitt. Diese beiden landen als
+   einzige Bilder im Repo (docs/), deshalb bekommen sie eine eigene Sitzung
+   statt aus der Sprachmatrix ausgeliehen zu werden: Was im README steht, soll
+   sich nicht aendern, nur weil dort jemand eine Sprache umsortiert. */
+
+for (const scheme of ['light', 'dark']) {
+  await session(`20-readme-${scheme}`, {
+    width: 1280,
+    height: 900,
+    scheme,
+    lang: 'en',
+    steps: async (page, name) => {
+      await fillSecrets(page);
+      await shoot(page, name);
+    },
+  });
+}
 
 await browser.close();
 

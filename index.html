@@ -18,6 +18,40 @@
     <!-- Die Farbe der Browserleiste folgt dem Gehäuse: Papier bzw. Nacht. -->
     <meta name="theme-color" content="#f5f3ef" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#131210" media="(prefers-color-scheme: dark)" />
+
+    <!--
+      Angaben für geteilte Links. Sie bleiben englisch, auch wenn die Oberfläche
+      umschaltet: Was ein Vorschau-Dienst zu sehen bekommt, ist das ausgelieferte
+      HTML, und das ist die Basissprache.
+
+      Ein <meta>-Tag lädt nichts — die Adressen hier sind Angaben über die Seite,
+      keine Anfragen. Die Zusage „keine fremde Netzwerkanfrage" bleibt davon
+      unberührt, auch in der Single-File-Datei.
+    -->
+    <link rel="canonical" href="https://clockwork.vercel.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Clockwork" />
+    <meta property="og:url" content="https://clockwork.vercel.app/" />
+    <meta property="og:title" content="Clockwork — TOTP Authenticator" />
+    <meta
+      property="og:description"
+      content="Two-factor codes generated entirely in your browser. No network requests, nothing stored by default, RFC 4226/6238 implemented from scratch."
+    />
+    <meta property="og:image" content="https://clockwork.vercel.app/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="The Clockwork emblem: a dial of 30 marks with one orange mark at twelve o'clock, on a dark ground."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Clockwork — TOTP Authenticator" />
+    <meta
+      name="twitter:description"
+      content="Two-factor codes generated entirely in your browser. No network requests, nothing stored by default."
+    />
+    <meta name="twitter:image" content="https://clockwork.vercel.app/og-image.png" />
     <!--
       Favicon als Inline-SVG: das C-Werk aus branding/clockwork-logo-b-cwerk.svg,
       auf das Nötigste reduziert. Ohne diese Zeile fragt der Browser von sich aus

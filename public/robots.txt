@@ -1,3 +1,5 @@
-# Clockwork laeuft lokal und hat nichts, was indexiert werden sollte.
+# Clockwork — TOTP authenticator. Everything here is public and static.
 User-agent: *
-Disallow:
+Allow: /
+
+Sitemap: https://clockwork.vercel.app/sitemap.xml
