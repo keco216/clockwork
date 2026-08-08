@@ -643,6 +643,119 @@ for (const scheme of ['light', 'dark']) {
     selector: '.device',
   });
 
+  /* ── 7. Kanten an den Bauteilen ─────────────────────────────────────────
+     Der V8-Auftrag nennt die Borders „fast unsichtbar". Die Ursache lag nicht
+     bei ihnen, sondern an der Fläche darunter (siehe --rule in tokens.css) — aber
+     eine Behauptung über eine Kante gehört gemessen, nicht erklärt.
+
+     Gemessen wird wie bei den Geräteflächen der stärkste Sprung über die
+     Oberkante. 1,3 ist die Zahl, die dieses Projekt sich gibt: Eine Kante, die
+     unter 1,3 liegt, findet das Auge nicht mehr, ohne danach zu suchen.
+
+     Der Umriss-Knopf ist hier der interessante Fall: Er trug bis V7 1 px in der
+     Fugenfarbe und war damit als Bauteil gezeichnet wie eine Trennlinie. */
+  await measureEdge(page, {
+    scheme,
+    label: 'Kante: Eingabefeld',
+    selector: '#secrets',
+    min: 1.3,
+  });
+  await measureEdge(page, {
+    scheme,
+    label: 'Kante: Umriss-Knopf',
+    selector: '#key-file',
+    min: 1.3,
+  });
+  await measureEdge(page, {
+    scheme,
+    label: 'Kante: Chip',
+    selector: '.strip__spec',
+    min: 1.3,
+  });
+
+  /* ── 8. Die Matrix: jede Textstufe auf jeder Fläche ──────────────────────
+     Abschnitt 1 misst, was die App WIRKLICH zeigt — dort steht jede Zeile für
+     ein Bauteil, das es gibt. Das ist die wichtigere Hälfte und bleibt vorn.
+
+     Hier steht die andere: die ZUSAGE. styles/tokens.css behauptet, dass alle
+     drei Textstufen auf jeder Fläche der Leiter mindestens 4,5:1 halten, und
+     genau darauf beruht die Aufräumarbeit von V8 — zwei Sonderregeln aus V7
+     („auf dem Gehäuse eine Stufe kräftiger", „im Kopf noch eine") sind
+     gestrichen worden, weil die Zusage gilt. Eine gestrichene Ausnahme ist nur
+     so viel wert wie die Regel, die sie ersetzt.
+
+     Geprüft wird deshalb das ganze Kreuz, auch die Paare, die heute nirgends
+     vorkommen: vier Flächen × fünf Farben. Wer morgen einen Hinweistext auf die
+     berührte Fläche legt, soll das tun können, ohne nachzumessen.
+
+     Die Prüffläche steht dafür im Dokument und trägt echte Tokens — gerechnet
+     wird auch hier an gezeichneten Pixeln, nicht an Hex-Werten. Der Unterschied
+     ist nicht Pedanterie: `--rule` und `--edge-*` sind halbdeckend, und was
+     daraus auf einer Fläche wird, weiß nur der Browser. */
+  const SURFACES = [
+    ['Gehaeuse', '--case'],
+    ['versenkt', '--surface-recessed'],
+    ['beruehrt', '--surface-active'],
+    ['Panel', '--surface'],
+  ];
+  const INKS = [
+    ['ink', '--ink', AA_TEXT],
+    ['ink-2', '--ink-2', AA_TEXT],
+    ['ink-3', '--ink-3', AA_TEXT],
+    // Der Akzent für Schrift und feine Marken. Derselbe Maßstab wie Text: Er
+    // trägt den ablaufenden Code und die Tresor-Statuszeile.
+    ['signal-text', '--signal-text', AA_TEXT],
+    ['fault', '--fault', AA_TEXT],
+  ];
+
+  await page.evaluate(
+    ([surfaces, inks]) => {
+      const grid = document.createElement('div');
+      grid.id = 'token-matrix';
+      grid.style.position = 'fixed';
+      grid.style.insetInlineStart = '0';
+      grid.style.insetBlockStart = '0';
+      // Über allem, damit nichts anderes in den Ausschnitt gerät.
+      grid.style.zIndex = '9999';
+      grid.style.display = 'flex';
+      grid.style.flexWrap = 'wrap';
+
+      for (const [surfaceName, surfaceToken] of surfaces) {
+        for (const [inkName, inkToken] of inks) {
+          const cell = document.createElement('span');
+          cell.dataset['probe'] = `${surfaceName}/${inkName}`;
+          cell.style.background = `var(${surfaceToken})`;
+          cell.style.color = `var(${inkToken})`;
+          // Gross genug, dass der Ausschnitt sicher Pixel hat, und ohne Rand:
+          // Ein Rahmen käme in den Mittelwert und würde das Ergebnis verfälschen.
+          cell.style.padding = '10px 14px';
+          cell.style.fontSize = '14px';
+          cell.textContent = 'Agmw 0123';
+          grid.append(cell);
+        }
+      }
+      document.body.append(grid);
+    },
+    [SURFACES, INKS],
+  );
+  await page.waitForTimeout(200);
+
+  for (const [surfaceName] of SURFACES) {
+    for (const [inkName, , min] of INKS) {
+      await measure(page, {
+        scheme,
+        label: `Matrix: ${inkName} auf ${surfaceName}`,
+        selector: `[data-probe="${surfaceName}/${inkName}"]`,
+        min,
+        keepScroll: true,
+      });
+    }
+  }
+
+  await page.evaluate(() => {
+    document.getElementById('token-matrix')?.remove();
+  });
+
   await context.close();
 }
 

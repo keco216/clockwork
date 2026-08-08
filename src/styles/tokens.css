@@ -170,6 +170,23 @@
      Token ohne Bauteil ist eine Einladung, es irgendwo zu benutzen. */
   --border-2: 2px;
 
+  /* ── Gesperrt ─────────────────────────────────────────────────────────────
+     HeroUIs `disabledOpacity`, unverändert übernommen: 0,5.
+
+     Bis V7 gab es das nicht — und das war kein Verzicht, sondern eine Lücke.
+     `ui/vault-panel.ts` sperrt den Tresor-Knopf, solange der Schlüssel aus der
+     Passphrase abgeleitet wird (600 000 Iterationen, im Browser ein knappes
+     Vielfaches der gemessenen 77 ms). Der Knopf sah in dieser Zeit aus wie
+     vorher: gleiche Farbe, gleiche Kante, nur ohne Wirkung. Aufgefallen ist es
+     beim Statesheet — vier Zustände nebeneinander zu fotografieren zeigt sofort,
+     wenn zwei davon dasselbe Bild sind.
+
+     Deckkraft ist hier ausdrücklich das richtige Mittel, obwohl sie den
+     Textkontrast mitnimmt: Ein gesperrtes Bedienelement ist von WCAG 1.4.3
+     ausgenommen, und genau das soll es aussagen — hier ist gerade nichts zu
+     holen. */
+  --opacity-disabled: 0.5;
+
   /* ── Korn ─────────────────────────────────────────────────────────────────
      Papier und mattschwarzes Gehäuse sind keine Bildschirmflächen. Ein Hauch
      Korn macht aus einer Farbfläche ein Material.
@@ -224,9 +241,16 @@
      den tieferen Ton; gemessen 5,04 bis 5,41 auf der Panelfamilie.
 
      Die Marke wird dadurch nicht verwässert — #f05a28 bleibt der verbindliche
-     Wert und steht überall dort, wo er groß genug ist, um zu tragen. */
+     Wert und steht überall dort, wo er groß genug ist, um zu tragen.
+
+     Der Wert ist zweimal nachgezogen worden, und beide Male hat es die
+     Matrixprüfung in scripts/check-contrast.mjs verlangt: #c4400f aus V7 hält auf
+     der versenkten Fläche nur 4,12:1, #b23a0d auf dem Gehäuse nur 4,26. #a8360c
+     hält auf ALLEN vier Flächen der Leiter mindestens 4,67 — gemessen, und ohne
+     Ausnahmefeld in der Matrix. Der Farbton ist derselbe (dieselbe Hue-Achse wie
+     #f05a28), nur tiefer. */
   --signal: #f05a28;
-  --signal-text: #b23a0d;
+  --signal-text: #a8360c;
   --signal-quiet: rgb(240 90 40 / 14%);
 
   /* ── Fehler ───────────────────────────────────────────────────────────────
@@ -300,15 +324,45 @@
      Siehe styles/scripts.css. */
   --case-caps: uppercase;
 
-  /* ── Raster: 4 px Basis, 8 px Haupttakt ────────────────────────────────── */
-  --sp-1: 0.25rem;
-  --sp-2: 0.5rem;
-  --sp-3: 0.75rem;
-  --sp-4: 1rem;
-  --sp-5: 1.5rem;
-  --sp-6: 2rem;
-  --sp-7: 3rem;
-  --sp-8: 4rem;
+  /* ── Raster: 4 px Basis, 8 px Haupttakt ──────────────────────────────────
+     Acht Sprossen, und keine dazwischen: 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64.
+     Nachgeprüft von scripts/check-tokens.mjs am Quelltext und von
+     `checkSpacingScale` in scripts/shoot.mjs am gerechneten Ergebnis — ein
+     Abstand kann auch aus zwei richtigen Tokens falsch zusammengesetzt sein. */
+  --sp-1: 0.25rem; /*   4px */
+  --sp-2: 0.5rem; /*    8px */
+  --sp-3: 0.75rem; /*  12px */
+  --sp-4: 1rem; /*     16px */
+  --sp-5: 1.5rem; /*   24px */
+  --sp-6: 2rem; /*     32px */
+  --sp-7: 3rem; /*     48px */
+  --sp-8: 4rem; /*     64px */
+
+  /* ── Abstände nach ROLLE ──────────────────────────────────────────────────
+     Die Skala darüber sagt, welche Werte es gibt. Diese drei sagen, wofür — und
+     sie sind der Grund, dass zwei gleiche Beziehungen im Gerät nie zwei
+     verschiedene Lücken bekommen.
+
+     Genau daran hat es bis hierher gefehlt. Der Stapelabstand IN einem Panel
+     stand an vier Stellen in drei Werten: 16 px in `.zone__body`, 12 px in
+     `.vault` und `.vault__panel`, 8 px in `.vault__intro`. Jeder einzelne Wert
+     lag auf der Skala, jeder war für sich begründbar — und zusammen ergaben sie
+     keinen Takt. Ein Rhythmus entsteht nicht daraus, dass jeder Abstand erlaubt
+     ist, sondern daraus, dass gleiche Dinge gleich weit auseinanderstehen.
+
+       --gap-pair    was zusammengehört: Beschriftung und ihr Feld, Feld und
+                     Knopf, Tasten in einer Zeile, die Zeilen einer Karte,
+                     Sektionsgravur über ihrem Panel
+       --gap-stack   Geschwister in einem Panel
+       --gap-group   zwischen Panels — und der Innenabstand eines Panels, denn
+                     der Rand zum Gehäuse ist derselbe Abstand wie der zum
+                     Nachbarn
+
+     Drei Werte, drei Ebenen, 8 → 16 → 24. Wer eine vierte braucht, braucht
+     eigentlich eine Begründung. */
+  --gap-pair: var(--sp-2);
+  --gap-stack: var(--sp-4);
+  --gap-group: var(--sp-5);
 
   /* `--col-label` ist mit V7 entfallen: Die Zonenbeschriftung steht nicht mehr
      als eigene Rasterspalte daneben, sondern über ihrem Panel (siehe
@@ -361,20 +415,24 @@
      Trefferfläche — und in einer 40-px-Zeile hat sie neben dem Text noch Platz. */
   --chip-h: 1.5rem; /*       24px */
 
-  /* Innenabstand jeder Gehäusegruppe. Als eigenes Token, weil zwei Dinge sich
-     danach richten müssen, die nicht im Panel liegen: die Filterzeile (sie
-     zieht sich um genau diesen Betrag über den Rand hinaus) und der klebende
-     Kopf. */
-  --panel-pad: 1.5rem;
+  /* Innenabstand jeder Gehäusegruppe — derselbe Wert wie der Abstand zwischen
+     zwei Panels. Ein eigener Name bleibt er trotzdem, weil zwei Dinge sich
+     danach richten müssen, die nicht im Panel liegen: die Filterzeile (sie zieht
+     sich um genau diesen Betrag über den Rand hinaus) und der klebende Kopf. */
+  --panel-pad: var(--gap-group);
   /* Innenabstand des Gehäuses zum Fensterrand. Ebenfalls ein eigenes Token,
      weil der klebende Kopf sich per negativem Außenabstand genau darum wieder
      herauszieht — und ein Wert, der beim Umbruch auseinanderläuft, erzeugt
      dort waagerechten Überlauf. */
-  --device-pad: 1.5rem;
+  --device-pad: var(--gap-group);
   /* Wie weit ein Sprungziel unter dem klebenden Kopf durchrutschen darf.
      Grob dessen Höhe plus Luft — lieber etwas zu viel als eine Überschrift,
-     die halb unter dem Riegel klemmt. */
-  --scroll-anchor: 5.5rem;
+     die halb unter dem Riegel klemmt.
+
+     Als SUMME zweier Sprossen und nicht als 5,5 rem: 88 px liegen auf keiner
+     Sprosse der Skala, und ein Wert, der neben der Skala steht, steht auch
+     neben dem Takt. 64 + 24 ist derselbe Betrag, nur nachvollziehbar. */
+  --scroll-anchor: calc(var(--sp-8) + var(--sp-5));
 
   /* ── Radien ───────────────────────────────────────────────────────────────
      Bis V4 stand hier 0 für Flächen und 2 px für Tasten: ein gefräster

@@ -616,8 +616,15 @@
         <p class="strip__meta">
           <span class="strip__metaLabel" data-i18n="strip.next">next</span>
           <span class="strip__nextCode" data-next translate="no" dir="ltr"></span>
-          <span class="strip__secs" dir="ltr">
-            <span data-seconds>–</span
+          <!-- Der Einzug steckt IM Tag und nicht zwischen den Tags: Ein Umbruch
+               nach `>` wäre ein Textknoten, und der wird zu einem Leerzeichen
+               hinter dem gesetzten Trennpunkt (styles/style.css,
+               .strip__secs::before). Zusammen mit dessen Abstand stünde dahinter
+               mehr Luft als davor — ein Trenner, der nicht mittig sitzt.
+               Nachgemessen sind es jetzt 8 px vor und 8 px nach dem Punkt,
+               dieselben wie um den Trenner im Fuß. -->
+          <span class="strip__secs" dir="ltr"
+            ><span data-seconds>–</span
             ><abbr
               data-i18n="strip.seconds.abbr"
               data-i18n-attr="title=strip.seconds.title"

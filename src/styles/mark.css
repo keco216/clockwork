@@ -28,9 +28,23 @@
   line-height: 1;
 }
 
+/* ── Warum das hier kein inline-flex mehr ist ──────────────────────────────
+   Weil ein inline-flex mit `align-items: center` keine echte Schrift-Grundlinie
+   hat. Der Browser setzt für so einen Kasten eine ERSATZ-Grundlinie an seine
+   Unterkante — und die liegt nicht dort, wo die Buchstaben stehen.
+
+   Der Kopf richtet seine drei Angaben über `align-items: baseline` aus (Wortmarke,
+   Markenzeile, Zustand). Mit der Ersatz-Grundlinie hat das Raster die Wortmarke
+   also an einer Linie ausgerichtet, die es im Zeichen nicht gibt: Gemessen lagen
+   die drei Grundlinien 7 und 1 px auseinander, obwohl das CSS sie auf eine legte.
+
+   Als gewöhnlicher Inline-Text hat die Wortmarke eine echte Grundlinie, und die
+   Ringe brauchen den Flexkasten nicht: Ein `inline-block` sitzt von sich aus mit
+   der Unterkante auf der Grundlinie, und bei 0,7 em Höhe reicht er damit genau
+   bis zur Versalhöhe — das ist die Stellung, die die Vorlage vorgibt („praktisch
+   versalhoch"). Der Flexkasten hat dieselbe Stellung mühsam nachgebaut und dabei
+   die Grundlinie verloren. */
 .wordmark__word {
-  display: inline-flex;
-  align-items: center;
   letter-spacing: var(--track-mark);
   text-transform: uppercase;
 }
@@ -157,7 +171,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--sp-4);
+  gap: var(--gap-stack);
   padding-block-end: var(--sp-6);
   text-align: center;
 }

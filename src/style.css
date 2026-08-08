@@ -149,6 +149,41 @@ kbd {
   border: 0;
 }
 
+/* ── Leere Live-Regionen ──────────────────────────────────────────────────
+   Zwei Meldungsfelder sind die meiste Zeit leer: die Import-Rückmeldung im
+   Eingabe-Panel (`role="status"`) und die Tresor-Fehlerzeile (`role="alert"`).
+
+   Leer haben sie die Höhe 0 — und trotzdem Platz gekostet. Der Grund ist
+   `gap`: Ein Flexkind der Höhe 0 ist immer noch ein Kind, und die Fuge fällt vor
+   ihm an. Gemessen waren das 16 px im Eingabe-Panel und 8 px im Tresor, beide
+   unterhalb des letzten Bedienelements — also genau dort, wo eine Lücke wie ein
+   Fehler aussieht. Vorher stand hier `min-height: 0`, was die Höhe wegnahm und
+   die Fuge stehen ließ.
+
+   ── Warum nicht `display: none` ────────────────────────────────────────────
+   Weil das die Region aus dem Zugänglichkeitsbaum nimmt. Eine Live-Region muss
+   DA sein, bevor Text hineinkommt — wird sie im selben Moment eingeblendet und
+   gefüllt, meldet ein Screenreader die Änderung nicht zuverlässig. Genau das ist
+   der Sinn der beiden Elemente: Wer nicht hinsieht, soll erfahren, dass zwei
+   Konten importiert wurden oder die Passphrase falsch war.
+
+   Also aus dem FLUSS statt aus dem BAUM: dasselbe Verfahren wie bei `.sr-only`.
+   Die Region bleibt gerendert und ansprechbar, hat aber keinen Platz im
+   Flexkasten und damit auch keine Fuge. Sobald Text kommt, greift `:empty` nicht
+   mehr, und das Feld steht wieder im Fluss. */
+.note:empty,
+.vault__error:empty {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  /* Ohne das läge ein unsichtbarer Punkt über dem Panel und könnte einen Klick
+     schlucken — dieselbe Falle wie beim Korn bis V7. */
+  pointer-events: none;
+}
+
 .skip {
   position: absolute;
   inset-inline-start: var(--sp-4);
@@ -270,7 +305,7 @@ kbd {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: baseline;
-  gap: var(--sp-2) var(--sp-5);
+  gap: var(--gap-pair) var(--gap-group);
   /* Der Riegel ist breiter als sein Inhalt: Er muss bis an den Gehäuserand
      reichen, sonst schiebt sich ein Kanalzug seitlich an ihm vorbei ins Bild.
      Negative Außenabstände statt eines eigenen Elements — das Raster darüber
@@ -331,10 +366,12 @@ kbd {
   text-align: center;
 }
 
+/* Dieselbe Sache wie bei der Wortmarke: Ein Flexkasten mit `align-items: center`
+   hat keine Schrift-Grundlinie, und der Kopf richtet seine drei Angaben genau
+   daran aus. Als Block hat diese Zeile eine echte Grundlinie; die Leuchte hängt
+   als `inline-block` daran und wird über `vertical-align` auf die Mitte der
+   Kleinbuchstaben gehoben, statt über einen Flexkasten zentriert zu werden. */
 .masthead__state {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
   color: var(--ink-2);
   justify-self: end;
 }
@@ -343,16 +380,35 @@ kbd {
    hat genau eine Akzentfarbe, und der Normalzustand ist kein Alarm. Also eine
    kleine ausgefüllte Marke in Ink — sie zeigt „Gerät in Betrieb", nicht mehr. */
 .lamp {
+  display: inline-block;
   width: 6px;
   height: 6px;
   background: var(--ink);
   border-radius: 50%;
-  flex: none;
+  /* Auf die Mitte der Kleinbuchstaben, nicht auf die Grundlinie: Eine Leuchte,
+     die auf der Grundlinie sitzt, sieht aus wie ein Punkt am Satzende. 0,26 em
+     ist die halbe x-Höhe der Oberflächenschrift minus dem halben Durchmesser der
+     Leuchte — ein optischer Wert, der mit der Schriftgröße mitwandert, und
+     deshalb in em und nicht auf der Abstandsskala. */
+  vertical-align: 0.26em;
+  margin-inline-end: var(--gap-pair);
 }
 
-/* Offener Tresor: die einzige Stelle im Kopf, die Farbe zeigt. */
+/* Offener Tresor: die einzige Stelle im Kopf, die Farbe zeigt.
+
+   ── Warum hier der tiefere Signal-Ton steht ───────────────────────────────
+   Weil die Leuchte 6 px groß ist und auf dem GEHÄUSE sitzt, nicht auf einem
+   Panel. Der Markenwert #f05a28 kommt auf dem Gehäuseton auf 2,41:1 — unter den
+   3:1, die WCAG für eine Marke verlangt, die Information trägt. Und diese trägt
+   welche: Sie ist die Auskunft „der Tresor ist offen", die man am Kopf ablesen
+   soll, ohne nach unten zu scrollen.
+
+   Aufgefallen ist das nicht am Bild, sondern an der Matrixprüfung in
+   scripts/check-contrast.mjs: Sie hat für signal-text auf dem Gehäuse 4,26
+   gemeldet und damit die Frage aufgeworfen, was dort überhaupt in Signalfarbe
+   steht. Der Fehler ist älter als V8 — nur gemessen hat ihn niemand. */
 .lamp--signal {
-  background: var(--signal);
+  background: var(--signal-text);
 }
 
 /* ── Zonen ────────────────────────────────────────────────────────────────── */
@@ -378,7 +434,7 @@ kbd {
 .zone {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
   min-width: 0;
 }
 
@@ -410,7 +466,7 @@ kbd {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--sp-4);
+  gap: var(--gap-stack);
   min-width: 0;
   padding: var(--panel-pad);
   background: var(--surface);
@@ -549,7 +605,7 @@ body::before {
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--sp-2) var(--sp-5);
+  gap: var(--gap-pair) var(--gap-group);
   margin-inline: calc(var(--device-pad) * -1);
   padding: var(--sp-4) var(--device-pad);
   border-block-start: 1px solid var(--rule);
@@ -591,15 +647,20 @@ body::before {
 
 .colophon__specs {
   display: flex;
-  gap: var(--sp-3);
+  gap: var(--gap-pair);
   color: var(--ink-2);
 }
 
 /* Die Trennzeichen sind gesetzt, nicht getippt — so sitzen sie exakt mittig
-   zwischen den Angaben. */
+   zwischen den Angaben.
+
+   Derselbe Betrag vor und hinter dem Punkt, und derselbe wie in der Metazeile
+   der Karte (.strip__secs::before): Die App hat zwei Stellen mit gesetzten
+   Trennern, und ein Trenner, der an zwei Stellen anders atmet, ist zwei
+   verschiedene Zeichen. */
 .colophon__specs span + span::before {
   content: '·';
-  margin-inline-end: var(--sp-3);
+  margin-inline-end: var(--gap-pair);
 }
 
 /* Die Sprachwahl steht im Fuß wie eine Angabe auf dem Typenschild: einmal
@@ -608,7 +669,7 @@ body::before {
 .colophon__lang {
   display: flex;
   align-items: center;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
 }
 
 .colophon__langLabel {
@@ -642,7 +703,7 @@ body::before {
 .slot {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
 }
 
 .slot__legend {
@@ -731,7 +792,7 @@ body::before {
 .keys {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
 }
 
 /* Die Basis trägt nur Geometrie und Druckpunkt, kein Fell. Sonst muss jede
@@ -741,7 +802,7 @@ body::before {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
   min-height: var(--control-h);
   /* Eine Pille braucht mehr Luft an den Seiten als ein Rechteck: Die Rundung
      frisst an den Enden Fläche, die dem Text sonst fehlt. */
@@ -762,6 +823,18 @@ body::before {
 
 .key:active {
   transform: scale(0.97);
+}
+
+/* Gesperrt: halb durchsichtig, kein Zeiger, kein Druckpunkt. Der Zustand kommt
+   nur an einer Stelle vor — der Tresor-Knopf, solange der Schlüssel abgeleitet
+   wird —, und bis V8 sah er dort aus wie ein bedienbarer Knopf. */
+.key:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+.key:disabled:active {
+  transform: none;
 }
 
 /* Die Mindestbreite kommt aus HeroUI (`md: min-w-20`, also 80 px) und hat einen
@@ -893,13 +966,27 @@ body::before {
    Ausdrücklich KEIN Bedienelement: kein Hover, kein Fokus, keine Trefferfläche.
    Deshalb auch seine eigene Höhe (--chip-h) und nicht die der Tastenleiter —
    HeroUI führt für Chips aus demselben Grund eine eigene Skala. */
+/* `inline-block` mit einer Zeilenhöhe von genau der Chiphöhe, NICHT `inline-flex`
+   mit `align-items: center`. Beides sieht gleich aus und ist es nicht: Ein
+   Flexkasten mit zentrierten Kindern hat keine Schrift-Grundlinie, sondern eine
+   Ersatzlinie an seiner Unterkante. Der Chip steht neben dem Kontonamen, und der
+   Kartenkopf richtet die zwei über ihre Grundlinien aus — mit der Ersatzlinie
+   blieben gemessene 4 px Abstand, obwohl das CSS sie auf eine Linie legte.
+
+   Dieselbe Falle wie bei der Wortmarke (styles/mark.css). Eine Zeilenhöhe zentriert
+   den Text genauso mittig und lässt die Grundlinie, wo sie hingehört. */
 .chip {
-  display: inline-flex;
-  align-items: center;
+  display: inline-block;
   min-height: var(--chip-h);
+  line-height: var(--chip-h);
   padding: 0 var(--sp-2);
   background: var(--surface-recessed);
-  border: 1px solid var(--rule);
+  /* Die Kante als Innenschatten und nicht als Rahmen — dieselbe Technik wie die
+     Lichtkante an erhobenen Flächen, und hier aus demselben Grund plus einem
+     zweiten: Ein Rahmen käme zur Zeilenhöhe DAZU. Gemessen war der Chip damit
+     26 px hoch, also 2 px neben seiner Sprosse. Ein Innenschatten belegt keinen
+     Platz im Boxmodell, folgt dem Radius und sieht genauso aus. */
+  box-shadow: inset 0 0 0 1px var(--rule);
   border-radius: var(--radius-inset);
   color: var(--ink-3);
   font-size: var(--t-micro);
@@ -960,7 +1047,7 @@ body::before {
 .reveal__summary {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
   font-size: var(--t-small);
   color: var(--ink-3);
   cursor: pointer;
@@ -1014,7 +1101,7 @@ body::before {
 .reveal__body {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
   padding-block-start: var(--sp-2);
 }
 
@@ -1067,12 +1154,29 @@ body::before {
   position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
+  /* ── Warum Blatt und Taste nur in der CODE-Zeile stehen ──────────────────
+     Weil sie zum Code gehören und nicht zur Karte. Bis zum Feinpass liefen beide
+     über alle drei Zeilen und waren in diesem Feld senkrecht zentriert — also auf
+     der Mitte von Kopfzeile, Code und Metazeile zusammen. Die drei Zeilen sind
+     aber nicht symmetrisch: Über dem Code stehen Kopfzeile und Fuge (28,5 + 8),
+     darunter Fuge und Metazeile (8 + 21). Gemessen lag der Code damit 4,5 px
+     unter der Mitte, auf der Blatt und Taste standen.
+
+     4,5 px sieht niemand und jeder: Das Zifferblatt zeigt, wie lange DIESER Code
+     noch gilt, und die Taste kopiert IHN — die drei müssen auf einer Achse
+     liegen, sonst liest sich die Karte als drei Dinge nebeneinander statt als
+     eines.
+
+     In der Code-Zeile lösen sich beide von selbst: Die Zeile wird so hoch wie
+     ihr größtes Element (das Blatt), und `align-self: center` setzt alle drei auf
+     dieselbe Mitte. Kein Ausgleichswert, den man beim nächsten Schriftwechsel
+     nachrechnen müsste. */
   grid-template-areas:
-    'gauge head copy'
+    '.     head .'
     'gauge code copy'
-    'gauge meta copy';
-  column-gap: var(--sp-5);
-  row-gap: var(--sp-2);
+    '.     meta .';
+  column-gap: var(--gap-group);
+  row-gap: var(--gap-pair);
   padding-block: var(--sp-5);
   /* Wie weit die Fuge einrückt. Als eigene Eigenschaft, weil die Fehlerzeile
      kein Zifferblatt hat und ihre Fuge deshalb durchlaufen muss. */
@@ -1162,7 +1266,7 @@ body::before {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0 var(--sp-2);
+  gap: 0 var(--gap-pair);
   min-width: 0;
 }
 
@@ -1232,13 +1336,21 @@ body::before {
 .strip__head {
   grid-area: head;
   display: flex;
-  align-items: center;
+  /* Grundlinie statt Mitte: Der Kontoname steht in 19 px, der Chip in 12 px.
+     Zentriert man die beiden KÄSTEN, liegen ihre Schriften nicht auf einer Linie
+     — gemessen 5,75 px Abstand zwischen den Grundlinien, weil eine Grundlinie um
+     so viel tiefer unter der Kastenmitte sitzt, wie die Schrift groß ist. Auf
+     einer Grundlinie ausgerichtet lesen Name und Chip als eine Zeile.
+
+     Der Chip sitzt dadurch ein paar Pixel tiefer im Kasten. Das ist richtig: Um
+     eine Kleinschrift ist über der Grundlinie mehr Luft als darunter. */
+  align-items: baseline;
   /* Umbrechend, und das ist die tragende Eigenschaft: Wird es eng, rutscht der
      CHIP in eine eigene Zeile — er ist die Nebenangabe. Ohne `wrap` bleibt beides
      in einer Zeile, und weil der Chip `flex: none` trägt, schrumpft stattdessen
      der Name bis zur Ellipse. Gemessen: bis auf 0 px. */
   flex-wrap: wrap;
-  gap: var(--sp-1) var(--sp-3);
+  gap: var(--sp-1) var(--gap-pair);
   min-width: 0;
 }
 
@@ -1249,7 +1361,7 @@ body::before {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0 var(--sp-2);
+  gap: 0 var(--gap-pair);
   flex: 1 1 8rem;
   min-width: 0;
 }
@@ -1288,6 +1400,11 @@ body::before {
 
 .dial {
   grid-area: code;
+  /* Die Code-Zeile ist so hoch wie das Zifferblatt daneben (also höher als der
+     Code selbst). Ohne diese Zeile streckte sich der Code auf die Zeilenhöhe und
+     seine Ziffern hingen oben — die Achse, auf der Blatt, Code und Taste liegen
+     sollen, wäre wieder weg. */
+  align-self: center;
   display: flex;
   align-items: baseline;
   font-family: var(--font-mono);
@@ -1409,7 +1526,7 @@ body::before {
 .rail {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-5);
+  gap: var(--gap-group);
   min-width: 0;
 }
 
@@ -1421,7 +1538,7 @@ body::before {
   .device[data-stage='working'] main {
     display: grid;
     grid-template-columns: var(--rail-w) minmax(0, 1fr);
-    gap: var(--sp-5);
+    gap: var(--gap-group);
     /* Beide Spalten oben ausrichten. Ohne das streckt sich die kürzere auf die
        Höhe der längeren, und der Tresor stünde in einem Panel, das bis zum
        letzten Konto hinunterreicht. */
@@ -1480,7 +1597,13 @@ body::before {
      Flächenton über die volle Panelbreite laufen — sonst schöbe sich beim
      Scrollen ein Kanalzug seitlich daran vorbei. */
   margin: calc(var(--panel-pad) * -1) calc(var(--panel-pad) * -1) 0;
-  padding: var(--panel-pad) var(--panel-pad) var(--sp-3);
+  /* Oben und an den Seiten der Innenabstand des Panels, weil die Zeile ihn
+     überdeckt. Unten eine Paarfuge: Zusammen mit der Stapelfuge des Panels
+     stehen damit 24 px zwischen Filterzeile und erstem Kanalzug — dieselbe
+     Gruppenfuge wie zwischen zwei Panels, denn Filter und Liste sind zwei
+     Gruppen. Vorher standen hier 12, und mit der Stapelfuge ergab das 28: ein
+     Wert, der auf keiner Sprosse liegt. */
+  padding: var(--panel-pad) var(--panel-pad) var(--gap-pair);
   background: var(--surface);
   border-radius: var(--radius-panel) var(--radius-panel) 0 0;
 }
@@ -1494,6 +1617,10 @@ body::before {
    ist. Dieselbe Begründung wie bei `.vault__pass` in panels.css. */
 .stage__field {
   min-height: var(--control-h);
+  /* Wie beim Passwortfeld: `min-height` ist eine Untergrenze, und die 12 px
+     Innenabstand aus der `.field`-Basis schieben das einzeilige Feld darüber
+     hinaus. Siehe .vault__pass in styles/panels.css. */
+  padding-block: 0;
   line-height: 1.4;
   font-family: var(--font-ui);
   /* Ein Suchfeld über die volle Bühnenbreite wäre auf 1500 px ein Balken, in
@@ -1674,7 +1801,7 @@ body::before {
      sich ist „rechts ausgerichtet" nichts als eine Lücke davor. */
   .strip__head {
     flex-wrap: wrap;
-    gap: var(--sp-1) var(--sp-3);
+    gap: var(--sp-1) var(--gap-pair);
   }
 
   .strip__spec {

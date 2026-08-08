@@ -72,6 +72,7 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
   const passLabel = requireElement(document, '#vault-pass-label');
   const primary = requireElement<HTMLButtonElement>(document, '#vault-primary');
   const errorText = requireElement(document, '#vault-error');
+  const actions = requireElement(document, '#vault-actions');
   const lockButton = requireElement<HTMLButtonElement>(document, '#vault-lock');
   const updateButton = requireElement<HTMLButtonElement>(document, '#vault-update');
   const wipeButton = requireElement<HTMLButtonElement>(document, '#vault-wipe');
@@ -124,6 +125,11 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
     lockButton.hidden = state !== 'open';
     updateButton.hidden = state !== 'open';
     wipeButton.hidden = !hasEnvelope;
+    // Die Hülle mit: Ein leerer Flexkasten hat die Höhe 0 und trotzdem eine
+    // Fuge vor sich — gemessen 12 px unterhalb des letzten Knopfes, also genau
+    // dort, wo eine Lücke wie ein Fehler aussieht. Alle drei Tasten sind
+    // versteckt, solange es keinen Umschlag gibt.
+    actions.hidden = !hasEnvelope;
     form.hidden = state === 'open';
 
     switch (state) {
