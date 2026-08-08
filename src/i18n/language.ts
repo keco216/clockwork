@@ -22,7 +22,7 @@
  */
 
 import { CATALOGUE } from './catalogue';
-import { BASE_LOCALE, isKnownLocale, resolveLocale } from './registry';
+import { BASE_LOCALE, isBundledLocale, resolveLocale } from './registry';
 import { getLocale, installCatalogue, setLocale } from './runtime';
 
 const HASH_KEY = 'lang';
@@ -34,7 +34,7 @@ function localeFromHash(): string | null {
     return null;
   }
   const requested = new URLSearchParams(raw).get(HASH_KEY);
-  if (requested === null || !isKnownLocale(requested)) {
+  if (requested === null || !isBundledLocale(requested)) {
     return null;
   }
   // Über den Registry-Weg, damit die Schreibweise stimmt: `#lang=zh-hans` soll
@@ -84,7 +84,7 @@ export function initLanguage(): void {
 
 /** Der Nutzer hat im Umschalter etwas gewählt. */
 export function chooseLanguage(code: string): void {
-  if (!isKnownLocale(code)) {
+  if (!isBundledLocale(code)) {
     return;
   }
   writeHash(code);

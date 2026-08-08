@@ -27,6 +27,11 @@
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "moduleDetection": "force",
+    /* Erlaubt den Import mit `.ts`-Endung. Gebraucht wird das an genau einer
+       Stelle: vite.config.ts lädt scripts/locale-subset.ts, und Vites künftiger
+       Config-Loader (Nodes eigener TypeScript-Modus) verlangt dort den
+       vollständigen Pfad. */
+    "allowImportingTsExtensions": true,
 
     /* Vite erzeugt das JS, tsc prüft nur die Typen. */
     "noEmit": true,

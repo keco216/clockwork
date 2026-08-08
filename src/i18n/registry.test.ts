@@ -6,9 +6,25 @@
  * chinesische Schriftformen, veraltete ISO-Codes und Unbekanntes.
  */
 
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
-import { BASE_LOCALE, isKnownLocale, localeMeta, LOCALES, resolveLocale } from './registry';
+import {
+  BASE_LOCALE,
+  bundledLocales,
+  isBundledLocale,
+  localeMeta,
+  LOCALES,
+  resolveLocale,
+  restrictToBundled,
+} from './registry';
+
+const ALL = LOCALES.map((locale) => locale.code);
+
+// `restrictToBundled()` ist Zustand im Modul. Nach jedem Test wieder auf
+// „alles da" stellen, sonst färbt ein Teil-Bündel auf den nächsten Test ab.
+afterEach(() => {
+  restrictToBundled(ALL);
+});
 
 describe('resolveLocale()', () => {
   it('nimmt einen Volltreffer', () => {
@@ -90,8 +106,8 @@ describe('Registry', () => {
 
   it('liefert Metadaten unabhängig von der Schreibweise', () => {
     expect(localeMeta('ZH-hANT').code).toBe('zh-Hant');
-    expect(isKnownLocale('pt-br')).toBe(true);
-    expect(isKnownLocale('kl')).toBe(false);
+    expect(isBundledLocale('pt-br')).toBe(true);
+    expect(isBundledLocale('kl')).toBe(false);
   });
 
   it('kennt für jede Sprache gültige Intl-Daten', () => {
@@ -103,5 +119,59 @@ describe('Registry', () => {
         locale.code.split('-')[0]?.toLowerCase() ?? '',
       );
     }
+  });
+});
+
+/**
+ * Ein Bündel, das über `CLOCKWORK_LANGS` beschnitten wurde (siehe
+ * scripts/locale-subset.ts). Die Metadaten-Tabelle bleibt dabei vollständig —
+ * beschnitten ist der Katalog, und `installCatalogue()` meldet das hierher.
+ */
+describe('Teil-Bündel', () => {
+  it('bietet nur an, was mitgekommen ist', () => {
+    restrictToBundled(['de', 'en', 'fr']);
+    expect(bundledLocales().map((locale) => locale.code)).toEqual(['de', 'en', 'fr']);
+    expect(isBundledLocale('de')).toBe(true);
+    expect(isBundledLocale('ja')).toBe(false);
+  });
+
+  it('behält die Reihenfolge der Tabelle, nicht die der Meldung', () => {
+    restrictToBundled(['ja', 'fr', 'en']);
+    expect(bundledLocales().map((locale) => locale.code)).toEqual(['en', 'fr', 'ja']);
+  });
+
+  it('schickt eine fehlende Sprache nach Englisch statt ins Leere', () => {
+    restrictToBundled(['de', 'en', 'fr']);
+    expect(resolveLocale(['ja'])).toBe(BASE_LOCALE);
+    expect(resolveLocale(['ja-JP', 'de-AT'])).toBe('de');
+    expect(resolveLocale(['de'])).toBe('de');
+  });
+
+  it('nimmt die verwandte Variante, bevor es zu Englisch greift', () => {
+    // Für einen brasilianischen Browser ist europäisches Portugiesisch die
+    // deutlich bessere Antwort als Englisch — und umgekehrt.
+    restrictToBundled(['en', 'pt-PT']);
+    expect(resolveLocale(['pt-BR'])).toBe('pt-PT');
+    restrictToBundled(['en', 'pt-BR']);
+    expect(resolveLocale(['pt-PT'])).toBe('pt-BR');
+
+    restrictToBundled(['en', 'zh-Hant']);
+    expect(resolveLocale(['zh-CN'])).toBe('zh-Hant');
+    restrictToBundled(['en', 'zh-Hans']);
+    expect(resolveLocale(['zh-TW'])).toBe('zh-Hans');
+  });
+
+  it('läuft mit einer einzigen Sprache immer noch', () => {
+    restrictToBundled(['en']);
+    expect(bundledLocales().map((locale) => locale.code)).toEqual(['en']);
+    expect(resolveLocale(['de-AT', 'fr'])).toBe('en');
+  });
+
+  it('lässt die Metadaten aller Sprachen unangetastet', () => {
+    // Die Tabelle wird nicht beschnitten: `resolveLocale()` braucht sie ganz,
+    // um pt-BR und pt-PT überhaupt als Geschwister zu erkennen.
+    restrictToBundled(['en']);
+    expect(LOCALES).toHaveLength(37);
+    expect(localeMeta('ja').name).toBe('日本語');
   });
 });

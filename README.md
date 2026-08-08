@@ -25,7 +25,7 @@ mitgebündelt und ohne eine einzige Netzwerkanfrage — auch die
 ```bash
 npm install      # einmalig
 npm run dev      # Dev-Server, danach http://localhost:5173 öffnen
-npm test         # 467 Tests
+npm test         # 490 Tests
 npm run build    # dist/ (PWA) + dist/clockwork.html (eine Datei)
 ```
 
@@ -207,6 +207,70 @@ draufschauen lassen würde: Sprachen mit reicher Formenlehre, in denen die
 Mehrzahlform vom Kasus abhängt (Lettisch, Litauisch, Slowenisch mit seinem Dual,
 Kroatisch, Rumänisch), und solche, deren Software-Wortschatz weniger festgefahren
 ist als der deutsche oder französische.
+
+### Nur bestimmte Sprachen bauen
+
+Alle 37 Sprachen sind die Voreinstellung und bleiben es. Wer die App für sich
+selbst baut, kann den Katalog beim Bauen aber kürzen:
+
+```bash
+CLOCKWORK_LANGS=de,en,fr npm run build
+```
+
+In PowerShell:
+
+```powershell
+$env:CLOCKWORK_LANGS = 'de,en,fr'; npm run build
+```
+
+Gemessen an der einen Datei:
+
+| Bau                       | `dist/clockwork.html` | gzip   |
+| ------------------------- | --------------------- | ------ |
+| ohne Angabe (37 Sprachen) | 599 kB                | 216 kB |
+| `de,en,fr`                | 310 kB                | 145 kB |
+| nur `en`                  | 294 kB                | 140 kB |
+
+Drei Sprachen kosten also 289 kB weniger als alle 37. Die übrigen 294 kB sind
+Schriften, jsQR und die App selbst — daran ändert die Auswahl nichts.
+
+**Was dabei gilt:**
+
+- **Englisch kommt immer mit**, auch ungefragt. Auf diese Sprache fällt `t()`
+  zurück, und bei ihr landet die Erkennung, wenn nichts passt.
+- **Ein unbekannter Sprachcode bricht den Bau ab** und listet die gültigen.
+  Ein Tippfehler in einer Umgebungsvariablen soll nicht in einem Bündel enden,
+  dem stillschweigend eine Sprache fehlt.
+- **Am Offline-Versprechen ändert sich nichts.** Es wird nichts nachgeladen und
+  nichts nachladbar gemacht; die CSP ist Zeichen für Zeichen dieselbe.
+- **Die Oberfläche zieht mit.** Der Umschalter bietet nur an, was da ist; bei
+  einer einzigen Sprache verschwindet er samt Beschriftung. Ein `#lang=ja` in
+  einem Bündel ohne Japanisch wird übergangen — es gilt dann die erkannte
+  Sprache, statt dass eine halb übersetzte Seite entsteht.
+- **Verwandtes vor Englisch.** Fehlt `pt-BR`, bekommt ein brasilianischer
+  Browser europäisches Portugiesisch statt Englisch; dasselbe gilt für die
+  beiden chinesischen Schriftformen.
+- **Dev-Server und Tests sehen weiterhin alle 37 — auch mit gesetzter
+  Variablen.** Das ist Absicht: Die Auswahl greift ausschließlich beim Bauen.
+  Eine Vollständigkeitsprüfung, die sich per Umgebungsvariable abschalten lässt,
+  prüft keine Vollständigkeit; `catalogue.test.ts` sähe sonst je nach Umgebung
+  mal 37 und mal 3 Sprachen. `CLOCKWORK_LANGS=de npm run dev` zeigt deshalb
+  ebenfalls alle 37 — wer ein Teil-Bündel ansehen will, öffnet die gebaute
+  `dist/clockwork.html`.
+
+**Wie es funktioniert** (`scripts/locale-subset.ts`): Nachladen scheidet aus —
+ein `import()` je Sprache wäre eine Netzwerkanfrage. Es muss also schon beim
+Bauen feststehen, was überhaupt in den Modulgraphen gerät. Ein Vite-Bauteil
+leert deshalb in `catalogue.ts` die Import-Zeile und den Objekteintrag jeder
+abgewählten Sprache; was niemand mehr importiert, nimmt Rollup nicht mit. Die
+Datei auf der Platte bleibt unberührt — die Änderung lebt nur im Speicher des
+Bauvorgangs.
+
+Das ist Textarbeit an Quelltext und damit nur so gut wie ihre Annahmen über
+dessen Form. Deshalb bricht jeder Schritt bei Unstimmigkeit ab, und am Ende
+steht eine Gegenprobe mit demselben Leser: Was übrig blieb, muss genau die
+gewünschte Liste sein. Der stille Fehlgriff — Muster passt nicht mehr, Bündel
+enthält doch alle 37 — ist der einzige, der hier wirklich wehtäte.
 
 ### Neue Sprache in drei Schritten
 
@@ -716,23 +780,24 @@ berechnet wird und der dadurch von selbst auf die Sekundengrenze einrastet.
 npm test
 ```
 
-467 Tests. Die wichtigsten stammen unverändert aus den Standards:
+490 Tests. Die wichtigsten stammen unverändert aus den Standards:
 
-| Datei                 | Tests | Inhalt                                                                              |
-| --------------------- | ----- | ----------------------------------------------------------------------------------- |
-| `catalogue.test.ts`   | 187   | Jede der 37 Sprachen: Schlüssel, Platzhalter, Mehrzahl-Kategorien                   |
-| `hotp.test.ts`        | 42    | Alle 10 Vektoren aus RFC 4226 Anhang D, geprüft auf drei Ebenen                     |
-| `lib-text.test.ts`    | 36    | Jeder erreichbare Fehlerpfad aus `src/lib`, wirklich ausgelöst                      |
-| `totp.test.ts`        | 30    | Alle 18 Vektoren aus RFC 6238 Anhang B (SHA-1/256/512)                              |
-| `google-auth.test.ts` | 30    | Dokumentierter Beispiel-Export, selbst gebaute Exporte, Protobuf-Leser              |
-| `base32.test.ts`      | 29    | RFC 4648 Abschnitt 10, Round-trip 1–40, Toleranz, Laufzeit-Regression               |
-| `vault.test.ts`       | 24    | Roundtrip, falsche Passphrase, manipuliertes Chiffrat, heruntergesetzte Iterationen |
-| `otpauth-uri.test.ts` | 22    | URIs von GitHub, Google, Microsoft, AWS; Parameter; Fehlerfälle                     |
-| `runtime.test.ts`     | 14    | Einsetzen, Zahlen, Mehrzahl bei 0/1/2/5/21 in pl, ru, cs und ar                     |
-| `ui-literals.test.ts` | 14    | Steht in `src/ui` noch Text, der nicht durch `t()` läuft?                           |
-| `accounts.test.ts`    | 14    | Gemischte mehrzeilige Eingaben, Kommentare, kaputte Zeilen                          |
-| `registry.test.ts`    | 13    | Sprach-Matching: `de-AT`→`de`, `zh-TW`→`zh-Hant`, `xx`→`en`, alte ISO-Codes         |
-| `format.test.ts`      | 12    | Ziffern-Gruppierung, Kartentitel, Kürzung                                           |
+| Datei                   | Tests | Inhalt                                                                              |
+| ----------------------- | ----- | ----------------------------------------------------------------------------------- |
+| `catalogue.test.ts`     | 187   | Jede der 37 Sprachen: Schlüssel, Platzhalter, Mehrzahl-Kategorien                   |
+| `hotp.test.ts`          | 42    | Alle 10 Vektoren aus RFC 4226 Anhang D, geprüft auf drei Ebenen                     |
+| `lib-text.test.ts`      | 36    | Jeder erreichbare Fehlerpfad aus `src/lib`, wirklich ausgelöst                      |
+| `totp.test.ts`          | 30    | Alle 18 Vektoren aus RFC 6238 Anhang B (SHA-1/256/512)                              |
+| `google-auth.test.ts`   | 30    | Dokumentierter Beispiel-Export, selbst gebaute Exporte, Protobuf-Leser              |
+| `base32.test.ts`        | 29    | RFC 4648 Abschnitt 10, Round-trip 1–40, Toleranz, Laufzeit-Regression               |
+| `vault.test.ts`         | 24    | Roundtrip, falsche Passphrase, manipuliertes Chiffrat, heruntergesetzte Iterationen |
+| `otpauth-uri.test.ts`   | 22    | URIs von GitHub, Google, Microsoft, AWS; Parameter; Fehlerfälle                     |
+| `registry.test.ts`      | 19    | Sprach-Matching: `de-AT`→`de`, `zh-TW`→`zh-Hant`, `xx`→`en`; Teil-Bündel            |
+| `locale-subset.test.ts` | 17    | Sprachauswahl zur Bauzeit — inklusive eines echten Subset-Builds                    |
+| `runtime.test.ts`       | 14    | Einsetzen, Zahlen, Mehrzahl bei 0/1/2/5/21 in pl, ru, cs und ar                     |
+| `ui-literals.test.ts`   | 14    | Steht in `src/ui` noch Text, der nicht durch `t()` läuft?                           |
+| `accounts.test.ts`      | 14    | Gemischte mehrzeilige Eingaben, Kommentare, kaputte Zeilen                          |
+| `format.test.ts`        | 12    | Ziffern-Gruppierung, Kartentitel, Kürzung                                           |
 
 Die HOTP-Vektoren werden auf drei Ebenen geprüft — HMAC, Truncation und Endcode.
 Geht etwas kaputt, sagt der Test sofort, _welcher_ Schritt schuld ist.
@@ -744,6 +809,13 @@ Secrets (20/32/64 Byte). Nur mit denen kommen die Testwerte heraus.
 Der Protobuf-Leser wird gegen einen **eigenen Schreiber** im Test geprüft, der
 keine Zeile Code mit ihm teilt — sonst würde ein Vorzeichenfehler auf beiden
 Seiten gleich passieren und der Test bliebe grün.
+
+`locale-subset.test.ts` **baut wirklich** (rund eine Zehntelsekunde) und sieht in
+der entstandenen Datei nach. Der Grund ist derselbe: Dass der Katalog im
+Quelltext kürzer wurde, sagt noch nichts darüber, ob die Bytes auch aus dem
+Bündel verschwunden sind. Geprüft wird deshalb am Ergebnis — Texte der gewählten
+Sprachen sind da, die der übrigen nicht, die Datei ist unter 400 kB, und die CSP
+steht unverändert drin.
 
 Dazu prüft `npm run shots` über Playwright die ganze App im Browser: Tresor
 speichern/zusperren/falsche Passphrase/aufsperren/löschen, Google-Import und
@@ -810,10 +882,14 @@ Was das praktisch heißt:
 **Was nicht gemacht wurde und warum:** Sprachen einzeln nachladen wäre die
 naheliegende Kur und ist hier ausgeschlossen — ein `import()` je Sprache ist eine
 Netzwerkanfrage, und die Single-File-Datei verbietet sie per CSP
-(`connect-src 'none'`). Offline schlägt Bundle-Größe. Wer die 342 kB wirklich
-nicht will, hat genau eine sinnvolle Stellschraube: weniger Sprachen. Die
-Architektur macht das leicht — eine Zeile aus `catalogue.ts` und eine aus
-`registry.ts`, und die Sprache ist weg.
+(`connect-src 'none'`). Offline schlägt Bundle-Größe.
+
+**Was stattdessen geht:** weniger Sprachen, entschieden beim Bauen statt beim
+Laden. `CLOCKWORK_LANGS=de,en,fr npm run build` liefert dieselbe App in 310 kB
+statt 599 kB (Einzelheiten oben unter [Sprachen](#nur-bestimmte-sprachen-bauen)).
+Das ist kein Widerspruch zur Voreinstellung, sondern ihre Ergänzung: Wer die
+Datei weitergibt, will alle 37 Sprachen; wer sie für den eigenen USB-Stick baut,
+meistens zwei.
 
 ---
 

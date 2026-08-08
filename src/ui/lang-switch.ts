@@ -15,15 +15,17 @@
  */
 
 import { chooseLanguage } from '../i18n/language';
-import { LOCALES } from '../i18n/registry';
+import { bundledLocales } from '../i18n/registry';
 import { getLocale, onLocaleChange } from '../i18n/runtime';
 import { requireElement } from './dom';
 
 export function startLanguageSwitch(): void {
   const select = requireElement<HTMLSelectElement>(document, '#lang-select');
 
+  // Angeboten wird, was dieses Bündel hat — nicht, was das Projekt kennt. Nach
+  // einer Auswahl zur Bauzeit (CLOCKWORK_LANGS) sind das weniger als 37.
   const collator = new Intl.Collator('en', { sensitivity: 'base' });
-  const ordered = [...LOCALES].sort((a, b) => collator.compare(a.name, b.name));
+  const ordered = [...bundledLocales()].sort((a, b) => collator.compare(a.name, b.name));
 
   for (const locale of ordered) {
     const option = document.createElement('option');
@@ -36,6 +38,16 @@ export function startLanguageSwitch(): void {
   }
 
   select.value = getLocale();
+
+  // Ein Bündel mit nur einer Sprache braucht keine Wahl. Dann verschwindet die
+  // ganze Zeile samt Beschriftung: Ein Bedienelement, das nur eine Möglichkeit
+  // anbietet, ist ein Knopf, der nichts tut.
+  if (ordered.length < 2) {
+    const row = select.closest('.colophon__lang');
+    if (row instanceof HTMLElement) {
+      row.hidden = true;
+    }
+  }
 
   select.addEventListener('change', () => {
     chooseLanguage(select.value);

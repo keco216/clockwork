@@ -1,6 +1,7 @@
 node_modules/
 dist/
 dist-single/
+dist-test/
 coverage/
 package-lock.json
 branding/

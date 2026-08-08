@@ -1,11 +1,24 @@
 import { defineConfig, type Plugin } from 'vitest/config';
 
+// Mit Dateiendung, anders als überall sonst im Projekt: Vite lädt seine
+// Konfiguration künftig über Nodes eigenen TypeScript-Modus, und der verlangt
+// den vollständigen Pfad. Ohne die Endung warnt Vite schon heute.
+import { ENV_KEY, requestedLocales, subsetLocalePlugin } from './scripts/locale-subset.ts';
+
 /**
  * Der Single-File-Build wird von scripts/build.mjs über diese Umgebungsvariable
  * angekündigt. Vite lädt die Konfigurationsdatei für jeden `build()`-Aufruf neu,
  * deshalb wirkt die Umschaltung auch beim zweiten Lauf im selben Prozess.
  */
 const SINGLE_FILE = process.env['BUILD_SINGLEFILE'] === '1';
+
+/**
+ * Die Sprachauswahl zur Bauzeit (`CLOCKWORK_LANGS=de,en,fr npm run build`).
+ * `null` heißt: alle 37. Gelesen wird beim Laden der Konfiguration — und weil
+ * Vite sie je `build()`-Aufruf neu lädt, gilt dieselbe Auswahl für beide
+ * Build-Ziele.
+ */
+const LOCALE_SELECTION = requestedLocales(process.env[ENV_KEY]);
 
 /**
  * Content-Security-Policy.
@@ -127,7 +140,11 @@ function preloadLatinFonts(singleFile: boolean): Plugin {
 export default defineConfig({
   // Relative Pfade, damit `dist/index.html` auch direkt per file:// funktioniert.
   base: './',
-  plugins: [injectContentSecurityPolicy(SINGLE_FILE), preloadLatinFonts(SINGLE_FILE)],
+  plugins: [
+    injectContentSecurityPolicy(SINGLE_FILE),
+    preloadLatinFonts(SINGLE_FILE),
+    subsetLocalePlugin(LOCALE_SELECTION),
+  ],
   build: {
     target: 'es2022',
     outDir: 'dist',
@@ -147,6 +164,8 @@ export default defineConfig({
     // Alle Tests sind reine Logik-Tests. `crypto.subtle` gibt es in Node global,
     // deshalb brauchen wir kein jsdom.
     environment: 'node',
-    include: ['src/**/*.test.ts'],
+    // Auch `scripts/`: Die Sprachauswahl zur Bauzeit ist Werkzeug, kein
+    // App-Code, hat aber genauso Fehler wie alles andere.
+    include: ['src/**/*.test.ts', 'scripts/**/*.test.ts'],
   },
 });

@@ -105,8 +105,40 @@ export function localeMeta(code: string): LocaleMeta {
   return found;
 }
 
-export function isKnownLocale(code: string): boolean {
-  return BY_CODE.has(code.toLowerCase());
+/* ── Was in DIESEM Bündel steckt ───────────────────────────────────────────
+   Die Tabelle oben beschreibt alle Sprachen, die das Projekt kennt. Wie viele
+   davon ein einzelner Build wirklich mitbringt, entscheidet die Auswahl zur
+   Bauzeit (`CLOCKWORK_LANGS`, siehe scripts/locale-subset.ts) — und das weiß
+   allein der Katalog. `installCatalogue()` meldet es hier an; solange niemand
+   etwas meldet, gilt: alles.
+
+   Warum die Tabelle trotzdem vollständig bleibt, auch wenn nur drei Sprachen
+   gebaut wurden: Sie wiegt fast nichts (Name, Richtung, Schriftsystem), und
+   `resolveLocale()` braucht sie ganz. Nur wer weiß, dass `pt-BR` und `pt-PT`
+   Geschwister sind, kann jemanden mit brasilianischem Browser bei einem Bündel
+   ohne `pt-BR` auf europäisches Portugiesisch schicken statt auf Englisch. */
+
+let bundled: ReadonlySet<string> = new Set(BY_CODE.keys());
+
+/** Meldet, welche Sprachen dieser Build tatsächlich enthält. */
+export function restrictToBundled(codes: readonly string[]): void {
+  bundled = new Set(codes.map((code) => code.toLowerCase()));
+}
+
+/** Die Sprachen, die dieser Build anbieten kann — in der Reihenfolge der Tabelle. */
+export function bundledLocales(): readonly LocaleMeta[] {
+  return LOCALES.filter((locale) => bundled.has(locale.code.toLowerCase()));
+}
+
+/**
+ * Ist diese Sprache hier wählbar?
+ *
+ * Bewusst nicht „kennt das Projekt sie", sondern „ist sie mitgekommen": Ein
+ * `#lang=ja` in einem Bündel ohne Japanisch darf nicht zu einer Oberfläche
+ * führen, die sich für japanisch hält und englisch dasteht.
+ */
+export function isBundledLocale(code: string): boolean {
+  return bundled.has(code.toLowerCase());
 }
 
 /**
@@ -138,18 +170,61 @@ const CHINESE_BY_REGION: Readonly<Record<string, string>> = {
 };
 
 /**
- * Sucht zu einer Liste von Wunschsprachen die beste vorhandene aus.
- *
- * Die Liste kommt aus `navigator.languages` und ist bereits nach Vorliebe
- * sortiert — wir gehen sie der Reihe nach durch und nehmen den ersten Treffer.
- * Pro Eintrag in dieser Reihenfolge:
+ * Was für einen einzelnen Wunsch-Tag in Frage kommt — die beste Wahl zuerst.
  *
  *   1. Volltreffer auf den ganzen Tag        `pt-BR` → `pt-BR`
  *   2. Sonderfälle Chinesisch und Portugiesisch (Schrift bzw. Region)
- *   3. Treffer auf die Basissprache          `de-AT` → `de`
+ *   3. die jeweils andere Variante davon
+ *   4. Treffer auf die Basissprache          `de-AT` → `de`
+ *
+ * Schritt 3 ist nur für Teil-Bündel da. Sind alle 37 Sprachen dabei, greift
+ * immer schon Schritt 1 oder 2, und die Liste ist einen Eintrag lang. Fehlt
+ * aber `pt-BR`, dann ist europäisches Portugiesisch für einen brasilianischen
+ * Browser die deutlich bessere Antwort als Englisch — dasselbe gilt für die
+ * beiden chinesischen Schriftformen.
+ */
+function candidatesFor(tag: string): readonly string[] {
+  const found: string[] = [];
+  const add = (code: string | undefined): void => {
+    if (code !== undefined && !found.includes(code)) {
+      found.push(code);
+    }
+  };
+
+  add(BY_CODE.get(tag)?.code);
+
+  const parts = tag.split('-');
+  const language = LEGACY_ALIASES[parts[0] ?? ''] ?? parts[0] ?? '';
+
+  if (language === 'zh') {
+    const script = parts.find((part) => part === 'hans' || part === 'hant');
+    const region = parts[parts.length - 1] ?? '';
+    let wanted = CHINESE_BY_REGION[region] ?? 'zh-Hans';
+    if (script === 'hans') wanted = 'zh-Hans';
+    if (script === 'hant') wanted = 'zh-Hant';
+    add(wanted);
+    add(wanted === 'zh-Hans' ? 'zh-Hant' : 'zh-Hans');
+  } else if (language === 'pt') {
+    const wanted = parts.includes('br') ? 'pt-BR' : 'pt-PT';
+    add(wanted);
+    add(wanted === 'pt-BR' ? 'pt-PT' : 'pt-BR');
+  } else {
+    add(BY_CODE.get(language)?.code);
+  }
+
+  return found;
+}
+
+/**
+ * Sucht zu einer Liste von Wunschsprachen die beste vorhandene aus.
+ *
+ * Die Liste kommt aus `navigator.languages` und ist bereits nach Vorliebe
+ * sortiert — wir gehen sie der Reihe nach durch und nehmen den ersten Treffer,
+ * der in diesem Bündel auch wirklich steckt.
  *
  * Findet sich gar nichts, gilt {@link BASE_LOCALE}. Das ist bewusst Englisch und
- * nicht Deutsch: Wer keine der 37 Sprachen spricht, kommt mit Englisch weiter.
+ * nicht Deutsch: Wer keine der gebauten Sprachen spricht, kommt mit Englisch
+ * weiter.
  */
 export function resolveLocale(requested: readonly string[]): string {
   for (const raw of requested) {
@@ -157,28 +232,10 @@ export function resolveLocale(requested: readonly string[]): string {
     if (tag === '') {
       continue;
     }
-
-    if (BY_CODE.has(tag)) {
-      return BY_CODE.get(tag)?.code ?? BASE_LOCALE;
-    }
-
-    const parts = tag.split('-');
-    const language = LEGACY_ALIASES[parts[0] ?? ''] ?? parts[0] ?? '';
-
-    if (language === 'zh') {
-      const script = parts.find((part) => part === 'hans' || part === 'hant');
-      if (script === 'hans') return 'zh-Hans';
-      if (script === 'hant') return 'zh-Hant';
-      const region = parts[parts.length - 1] ?? '';
-      return CHINESE_BY_REGION[region] ?? 'zh-Hans';
-    }
-
-    if (language === 'pt') {
-      return parts.includes('br') ? 'pt-BR' : 'pt-PT';
-    }
-
-    if (BY_CODE.has(language)) {
-      return BY_CODE.get(language)?.code ?? BASE_LOCALE;
+    for (const candidate of candidatesFor(tag)) {
+      if (bundled.has(candidate.toLowerCase())) {
+        return candidate;
+      }
     }
   }
 

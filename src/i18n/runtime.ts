@@ -25,7 +25,7 @@
  * erhalten.
  */
 
-import { BASE_LOCALE, localeMeta } from './registry';
+import { BASE_LOCALE, localeMeta, restrictToBundled } from './registry';
 import type { PluralKey, Strings, TextKey } from './strings';
 
 export type Params = Readonly<Record<string, string | number>>;
@@ -47,6 +47,13 @@ export function installCatalogue(all: Catalogue): void {
   catalogue = all;
   base = all[BASE_LOCALE];
   current = all[currentCode] ?? base;
+
+  // Der Katalog ist die Wahrheit darüber, was dieser Build kann: Nach einer
+  // Auswahl zur Bauzeit (CLOCKWORK_LANGS) stehen hier weniger Sprachen als in
+  // der Registry-Tabelle. Damit Erkennung und Umschalter nichts anbieten, was
+  // gar nicht mitgekommen ist, erfährt die Registry es an genau dieser Stelle —
+  // der einzigen, an der beides zusammentrifft.
+  restrictToBundled(Object.keys(all));
 }
 
 export function getLocale(): string {
