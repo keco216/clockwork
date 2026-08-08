@@ -78,9 +78,14 @@ export default {
   'vault.state.locked': 'Gesperrt — Passphrase nötig',
   'vault.state.open': 'Offen — Secrets liegen im Textfeld',
   'vault.explain':
-    'Standardmäßig speichert Clockwork nichts. Wer möchte, kann die Eingabe hier mit einer ' +
-    'Passphrase verschlüsselt ablegen: PBKDF2-SHA-256 mit {iterations} Iterationen, danach ' +
-    'AES-256-GCM. Ohne die Passphrase ist der gespeicherte Block wertlos.',
+    'Standardmäßig speichert Clockwork nichts. Wer den Tresor einschaltet, lässt die ' +
+    'Eingabe hier mit seiner Passphrase verschlüsselt liegen — ohne sie ist der ' +
+    'gespeicherte Block wertlos.',
+  'vault.explain.crypto':
+    'Den Schlüssel leitet PBKDF2-SHA-256 mit {iterations} Iterationen aus der Passphrase ' +
+    'ab, verschlüsselt wird mit AES-256-GCM. Gespeichert wird nur der versiegelte ' +
+    'Umschlag: nie der Klartext, nie die Passphrase, nie der abgeleitete Schlüssel.',
+  'vault.explain.more': 'Alle Details',
   'vault.pass.new': 'Neue Passphrase',
   'vault.pass.existing': 'Passphrase',
   'vault.action.seal': 'Verschlüsselt speichern',

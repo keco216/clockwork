@@ -71,9 +71,13 @@ export default {
   'vault.state.locked': 'Låst — der skal bruges en adgangssætning',
   'vault.state.open': 'Åben — dine secrets ligger i tekstfeltet',
   'vault.explain':
-    'Som udgangspunkt gemmer Clockwork ingenting. Den, der vil, kan lade indtastningen blive ' +
-    'her krypteret med en adgangssætning: PBKDF2-SHA-256 med {iterations} gentagelser og ' +
-    'derefter AES-256-GCM. Uden adgangssætningen er den gemte blok værdiløs.',
+    'Som standard gemmer Clockwork ingenting. Slår du boksen til, bliver det indtastede ' +
+    'liggende her krypteret med din adgangssætning — uden den er den gemte blok værdiløs.',
+  'vault.explain.crypto':
+    'Nøglen udledes af adgangssætningen med PBKDF2-SHA-256 og {iterations} iterationer, ' +
+    'og AES-256-GCM står for krypteringen. Kun den lukkede kuvert gemmes: aldrig ' +
+    'klartekst, aldrig adgangssætningen, aldrig den udledte nøgle.',
+  'vault.explain.more': 'Alle detaljer',
   'vault.pass.new': 'Ny adgangssætning',
   'vault.pass.existing': 'Adgangssætning',
   'vault.action.seal': 'Gem krypteret',

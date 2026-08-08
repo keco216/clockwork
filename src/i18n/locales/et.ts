@@ -72,9 +72,13 @@ export default {
   'vault.state.locked': 'Lukus — vaja on paroolifraasi',
   'vault.state.open': 'Avatud — secretid on tekstiväljal',
   'vault.explain':
-    'Vaikimisi ei salvesta Clockwork midagi. Kes soovib, võib sisendi siia jätta ' +
-    'paroolifraasiga krüptituna: PBKDF2-SHA-256 {iterations} kordusega, seejärel ' +
-    'AES-256-GCM. Ilma paroolifraasita on salvestatud plokk väärtusetu.',
+    'Vaikimisi ei salvesta Clockwork midagi. Kui lülitad seifi sisse, jääb sisestatu siia ' +
+    'sinu paroolifraasiga krüpteerituna — ilma selleta on salvestatud plokk väärtusetu.',
+  'vault.explain.crypto':
+    'Võti tuletatakse paroolifraasist PBKDF2-SHA-256-ga ja {iterations} iteratsiooniga, ' +
+    'krüpteerib AES-256-GCM. Salvestatakse ainult pitseeritud ümbrik: mitte kunagi avatud ' +
+    'tekst, mitte paroolifraas, mitte tuletatud võti.',
+  'vault.explain.more': 'Kõik üksikasjad',
   'vault.pass.new': 'Uus paroolifraas',
   'vault.pass.existing': 'Paroolifraas',
   'vault.action.seal': 'Salvesta krüptitult',

@@ -70,9 +70,13 @@ export default {
   'vault.state.locked': 'Låst — lösenfras behövs',
   'vault.state.open': 'Öppet — dina secrets ligger i textfältet',
   'vault.explain':
-    'Som standard sparar Clockwork ingenting. Den som vill kan låta inmatningen ligga kvar ' +
-    'här krypterad med en lösenfras: PBKDF2-SHA-256 med {iterations} iterationer, sedan ' +
-    'AES-256-GCM. Utan lösenfrasen är det sparade blocket värdelöst.',
+    'Som standard sparar Clockwork ingenting. Slår du på kassaskåpet ligger inmatningen ' +
+    'kvar här krypterad med din lösenfras — utan den är det sparade blocket värdelöst.',
+  'vault.explain.crypto':
+    'Nyckeln härleds ur lösenfrasen med PBKDF2-SHA-256 och {iterations} iterationer, och ' +
+    'AES-256-GCM sköter krypteringen. Bara det förseglade kuvertet sparas: aldrig ' +
+    'klartexten, aldrig lösenfrasen, aldrig den härledda nyckeln.',
+  'vault.explain.more': 'Alla detaljer',
   'vault.pass.new': 'Ny lösenfras',
   'vault.pass.existing': 'Lösenfras',
   'vault.action.seal': 'Spara krypterat',

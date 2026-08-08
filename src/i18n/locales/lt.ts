@@ -88,9 +88,13 @@ export default {
   'vault.state.locked': 'Užrakintas — reikia slaptafrazės',
   'vault.state.open': 'Atrakintas — secret yra teksto lauke',
   'vault.explain':
-    'Numatytai Clockwork neįrašo nieko. Kas nori, gali palikti įvestį čia užšifruotą ' +
-    'slaptafraze: PBKDF2-SHA-256 su {iterations} iteracijų, paskui AES-256-GCM. Be ' +
-    'slaptafrazės įrašytas blokas nieko nevertas.',
+    'Pagal nutylėjimą Clockwork nieko nesaugo. Įjungus seifą, įvestis lieka čia ' +
+    'užšifruota tavo slaptafraze — be jos išsaugotas blokas nieko nevertas.',
+  'vault.explain.crypto':
+    'Raktas iš slaptafrazės išvedamas PBKDF2-SHA-256 su {iterations} iteracijų, o ' +
+    'šifruoja AES-256-GCM. Saugomas tik užklijuotas vokas: niekada atviras tekstas, ' +
+    'niekada slaptafrazė, niekada išvestas raktas.',
+  'vault.explain.more': 'Visa informacija',
   'vault.pass.new': 'Nauja slaptafrazė',
   'vault.pass.existing': 'Slaptafrazė',
   'vault.action.seal': 'Įrašyti užšifruotą',

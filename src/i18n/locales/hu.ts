@@ -74,9 +74,13 @@ export default {
   'vault.state.locked': 'Zárva — jelmondat kell',
   'vault.state.open': 'Nyitva — a secretek a szövegmezőben vannak',
   'vault.explain':
-    'Alapértelmezés szerint a Clockwork semmit sem tárol. Aki szeretné, itt hagyhatja a ' +
-    'bevitelt jelmondattal titkosítva: PBKDF2-SHA-256 {iterations} iterációval, utána ' +
-    'AES-256-GCM. A jelmondat nélkül a tárolt blokk semmit sem ér.',
+    'A Clockwork alapértelmezésben semmit nem tárol. Ha bekapcsolja a páncélszekrényt, a ' +
+    'bevitel itt marad, a jelmondatával titkosítva — nélküle a tárolt blokk értéktelen.',
+  'vault.explain.crypto':
+    'A kulcsot PBKDF2-SHA-256 származtatja a jelmondatból {iterations} iterációval, a ' +
+    'titkosítást az AES-256-GCM végzi. Csak a lezárt boríték kerül tárolásra: sem a nyílt ' +
+    'szöveg, sem a jelmondat, sem a származtatott kulcs.',
+  'vault.explain.more': 'Minden részlet',
   'vault.pass.new': 'Új jelmondat',
   'vault.pass.existing': 'Jelmondat',
   'vault.action.seal': 'Titkosítva tárol',

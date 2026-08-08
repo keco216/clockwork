@@ -88,9 +88,13 @@ export default {
   'vault.state.locked': 'Zamčeno — je potřeba heslová fráze',
   'vault.state.open': 'Otevřeno — secrety jsou v textovém poli',
   'vault.explain':
-    'Ve výchozím nastavení Clockwork neukládá nic. Kdo chce, může tu vstup nechat zašifrovaný ' +
-    'heslovou frází: PBKDF2-SHA-256 s {iterations} iteracemi, poté AES-256-GCM. Bez heslové ' +
-    'fráze je uložený blok bezcenný.',
+    'Clockwork ve výchozím nastavení neukládá nic. Když zapnete trezor, zůstane zadání ' +
+    'zde zašifrované vaší heslovou frází — bez ní je uložený blok bezcenný.',
+  'vault.explain.crypto':
+    'Klíč vzniká z heslové fráze pomocí PBKDF2-SHA-256 s {iterations} iteracemi, šifruje ' +
+    'AES-256-GCM. Ukládá se jen zapečetěná obálka: nikdy otevřený text, nikdy heslová ' +
+    'fráze, nikdy odvozený klíč.',
+  'vault.explain.more': 'Všechny podrobnosti',
   'vault.pass.new': 'Nová heslová fráze',
   'vault.pass.existing': 'Heslová fráze',
   'vault.action.seal': 'Uložit zašifrovaně',

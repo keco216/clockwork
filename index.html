@@ -175,7 +175,11 @@
                   autocorrect="off"
                   placeholder="JBSWY3DPEHPK3PXP&#10;GitHub: jbsw y3dp ehpk 3pxp&#10;otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP"
                 ></textarea>
-                <p class="slot__meter" id="entry-count"></p>
+                <!-- Die Bilanzzeile ist seit V8 ein Chip: „8 Konten" ist eine
+                     Angabe zum Feld darüber, kein Fließtext. Die Hülle
+                     reserviert die Höhe, damit die Tastenzeile beim ersten
+                     Eintrag nicht nach unten rutscht. -->
+                <p class="slot__meter"><span class="chip" id="entry-count"></span></p>
               </div>
 
               <!--
@@ -216,7 +220,7 @@
                   überschreiben könnte. Der Handler prüft zusätzlich auf ein
                   leeres Feld.
                 -->
-                <button type="button" class="key" id="key-demo">
+                <button type="button" class="key key--solid key--lg" id="key-demo">
                   <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                     <path d="M8 3.25v9.5M3.25 8h9.5" />
                   </svg>
@@ -233,7 +237,7 @@
                 keinen Ordner, er nimmt ein Bild entgegen; ein Ordnersymbol
                 versprach die falsche Handlung.
               -->
-                <button type="button" class="key" id="key-file">
+                <button type="button" class="key key--bordered" id="key-file">
                   <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                     <rect x="2" y="3" width="12" height="10" rx="2.75" />
                     <circle cx="5.6" cy="6.4" r="1" />
@@ -243,7 +247,7 @@
                      das Icon mit wegwischen. -->
                   <span data-i18n="key.qrImage">QR from image</span>
                 </button>
-                <button type="button" class="key" id="key-camera">
+                <button type="button" class="key key--bordered" id="key-camera">
                   <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                     <rect x="1.75" y="4.4" width="12.5" height="9.1" rx="2.75" />
                     <path d="M5.5 4.4 6.4 2.5h3.2l.9 1.9" />
@@ -275,7 +279,12 @@
                   <p class="viewfinder__hint" id="viewfinder-hint" data-i18n="viewfinder.hint">
                     Hold the QR code inside the frame
                   </p>
-                  <button type="button" class="key" id="key-camera-stop" data-i18n="key.cameraStop">
+                  <button
+                    type="button"
+                    class="key key--bordered"
+                    id="key-camera-stop"
+                    data-i18n="key.cameraStop"
+                  >
                     Camera off
                   </button>
                 </div>
@@ -363,22 +372,53 @@
 
                   <div class="vault__panel">
                     <!--
-                Der Text wird von vault-panel.ts gesetzt — er enthält die
-                Iterationszahl, und die will lokalisiert gruppiert sein
-                (600,000 / 600.000 / 600 000).
+                Zwei Sätze, und der Rest liegt im Aufklapper darunter. Bis V7
+                standen hier vier Zeilen mit Verfahrensnamen und Iterationszahl —
+                über einem Passwortfeld, in einer Rail von 368 px. Wer den Tresor
+                einschaltet, muss zwei Dinge wissen: dass nichts gespeichert wird,
+                solange er es nicht will, und dass ohne die Passphrase nichts
+                davon zu gebrauchen ist. Welches KDF dabei mitläuft, ist für die
+                Entscheidung nicht nötig — nachlesen kann man es trotzdem, einen
+                Klick tiefer.
 
-                Trotzdem steht er hier ausgeschrieben, und das ist kein
-                Widerspruch: Das Bündel wiegt seit V3 rund 480 kB, der Browser
-                malt also einmal, BEVOR das Skript läuft. Ein leerer Absatz an
-                dieser Stelle wächst danach um drei Zeilen und schiebt die halbe
-                Seite nach unten — gemessen als Layout-Shift von 0,16. Steht der
-                Platz von Anfang an, bleibt vom Sprung nichts übrig.
+                Der Text steht hier ausgeschrieben, obwohl vault-panel.ts ihn
+                setzt: Das Bündel wiegt rund 620 kB, der Browser malt also einmal,
+                BEVOR das Skript läuft. Ein leerer Absatz an dieser Stelle wächst
+                danach um Zeilen und schiebt die halbe Seite nach unten.
               -->
-                    <p class="note" id="vault-explain">
-                      By default Clockwork stores nothing. If you want to, you can keep the input
-                      here encrypted with a passphrase: PBKDF2-SHA-256 with 600,000 iterations, then
-                      AES-256-GCM. Without the passphrase the stored block is worthless.
-                    </p>
+                    <!-- Erklärung und Einzelheiten in EINER Hülle: Beide gelten
+                         nur, solange der Tresor aus ist, und ein Zustand, der an
+                         zwei Stellen geschaltet wird, läuft irgendwann
+                         auseinander. -->
+                    <div class="vault__intro" id="vault-intro">
+                      <p class="note" id="vault-explain">
+                        By default Clockwork stores nothing. If you switch the vault on, the input
+                        here is encrypted with your passphrase — without it, the stored block is
+                        worthless.
+                      </p>
+
+                      <!--
+                Die Einzelheiten. Derselbe Aufklapper wie bei den
+                Eingabeformaten: `<details>` bringt Zustand, Tastaturbedienung
+                und Screenreader-Ansage mit und braucht keine Zeile JavaScript.
+
+                Die Iterationszahl steht darin, deshalb setzt vault-panel.ts
+                auch diesen Absatz — sie will lokalisiert gruppiert sein
+                (600,000 / 600.000 / 600 000).
+              -->
+                      <details class="reveal">
+                        <summary class="reveal__summary" data-i18n="vault.explain.more">
+                          All details
+                        </summary>
+                        <div class="reveal__body">
+                          <p class="note" id="vault-crypto">
+                            The key comes from your passphrase via PBKDF2-SHA-256 with 600,000
+                            iterations; AES-256-GCM does the encrypting. Only the sealed envelope is
+                            stored — never plaintext, never the passphrase, never the derived key.
+                          </p>
+                        </div>
+                      </details>
+                    </div>
 
                     <form class="vault__form" id="vault-form">
                       <label class="slot__legend" for="vault-pass" id="vault-pass-label"
@@ -394,7 +434,11 @@
                           autocomplete="current-password"
                           spellcheck="false"
                         />
-                        <button type="submit" class="key" id="vault-primary">
+                        <!-- Die Haupthandlung des Panels, also solid. Die Höhe
+                             bleibt die mittlere: Der Knopf steht neben dem
+                             Passwortfeld, und zwei Bauteile in einer Zeile
+                             haben dieselbe Höhe, weil sie dieselbe HABEN. -->
+                        <button type="submit" class="key key--solid" id="vault-primary">
                           Store encrypted
                         </button>
                       </div>
@@ -404,7 +448,7 @@
                     <div class="keys" id="vault-actions">
                       <button
                         type="button"
-                        class="key"
+                        class="key key--bordered"
                         id="vault-lock"
                         hidden
                         data-i18n="vault.action.lock"
@@ -413,7 +457,7 @@
                       </button>
                       <button
                         type="button"
-                        class="key"
+                        class="key key--bordered"
                         id="vault-update"
                         hidden
                         data-i18n="vault.action.update"
@@ -541,9 +585,38 @@
     -->
     <template id="tpl-strip">
       <article class="strip">
+        <!-- Das Zifferblatt ist seit V8 eine reine Zone: nur das Blatt, kein Text
+             darunter. Die Sekundenzahl stand bis V7 hier und hat die Gruppe
+             höher gemacht als das Blatt selbst — damit stand das Blatt nicht
+             mehr in der senkrechten Mitte der Karte. Sie steht jetzt in der
+             Metazeile bei den anderen Nebenangaben. -->
         <div class="gauge">
           <svg class="dialface" data-gauge aria-hidden="true" focusable="false"></svg>
-          <p class="gauge__seconds" dir="ltr">
+        </div>
+
+        <!-- Kopfzeile: Name links, Parameter-Chip rechts. -->
+        <div class="strip__head">
+          <p class="strip__id">
+            <span class="strip__issuer" data-issuer></span>
+            <span class="strip__account" data-account></span>
+          </p>
+          <p class="chip strip__spec" data-spec translate="no"></p>
+        </div>
+
+        <output class="dial" data-dial aria-live="off" translate="no" dir="ltr"></output>
+
+        <!-- „FOLGT 483 232 · 17 s". Zwei Nebenangaben, die bis V7 an zwei Stellen
+             standen. Der Trennpunkt ist gesetzt, nicht getippt (styles/style.css)
+             — beide Angaben sind eigenständig, keine Sprache braucht sie in
+             anderer Reihenfolge.
+
+             `dir="ltr"` sitzt an den beiden lateinischen Stücken und nicht an der
+             ganzen Zeile: „folgt" ist übersetzter Text und gehört in die
+             Leserichtung der Oberfläche. -->
+        <p class="strip__meta">
+          <span class="strip__metaLabel" data-i18n="strip.next">next</span>
+          <span class="strip__nextCode" data-next translate="no" dir="ltr"></span>
+          <span class="strip__secs" dir="ltr">
             <span data-seconds>–</span
             ><abbr
               data-i18n="strip.seconds.abbr"
@@ -552,18 +625,10 @@
               >s</abbr
             >
             <span class="sr-only" data-i18n="strip.seconds.valid">valid</span>
-          </p>
-        </div>
-
-        <p class="strip__id">
-          <span class="strip__issuer" data-issuer></span>
-          <span class="strip__account" data-account></span>
+          </span>
         </p>
-        <p class="strip__spec" data-spec translate="no"></p>
 
-        <output class="dial" data-dial aria-live="off" translate="no" dir="ltr"></output>
-
-        <button type="button" class="key key--copy" data-copy>
+        <button type="button" class="key key--bordered key--copy" data-copy>
           <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
             <rect x="5.6" y="5.6" width="8.2" height="8.2" rx="2.25" />
             <path
@@ -572,25 +637,22 @@
           </svg>
           <span data-copy-label data-i18n="key.copy">Copy</span>
         </button>
-
-        <p class="strip__next">
-          <span class="strip__nextLabel" data-i18n="strip.next">next</span>
-          <span class="strip__nextCode" data-next translate="no" dir="ltr"></span>
-        </p>
       </article>
     </template>
 
     <template id="tpl-fault">
       <article class="strip strip--fault">
-        <p class="strip__id">
-          <span class="strip__issuer" data-i18n="fault.title">Line not readable</span>
-          <span
-            class="strip__account strip__account--src"
-            data-source
-            translate="no"
-            dir="ltr"
-          ></span>
-        </p>
+        <div class="strip__head">
+          <p class="strip__id">
+            <span class="strip__issuer" data-i18n="fault.title">Line not readable</span>
+            <span
+              class="strip__account strip__account--src"
+              data-source
+              translate="no"
+              dir="ltr"
+            ></span>
+          </p>
+        </div>
         <p class="fault__text" data-message></p>
       </article>
     </template>

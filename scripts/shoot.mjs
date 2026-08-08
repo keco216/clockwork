@@ -226,16 +226,20 @@ await session('05-ablauf', {
   },
 });
 
-/* ── 11b. Der klebende Kopf mit Material ──────────────────────────────────
-   Seit V5 trägt der Kopf Frost — aber erst, wenn etwas unter ihm liegt. Auf
+/* ── 11b. Der klebende Kopf als Ebene ─────────────────────────────────────
+   Der Kopf bekommt Kante und Schatten erst, wenn etwas unter ihm liegt. Auf
    jedem gewöhnlichen Standbild steht die Seite ganz oben, und dann ist er
    flach: Der interessante Zustand wäre nie zu sehen.
 
+   Bis V7 schaltete die Klasse ein Frost-Material; seit V8 ist der Kopf deckend
+   und sie schaltet nur noch die Erhebung (siehe .masthead in src/style.css). Der
+   Griff bleibt derselbe und ist genauso nötig: Ein Beobachter, der nie auslöst,
+   fällt auf einem Standbild nicht auf — die Seite sieht bloß etwas flacher aus.
+
    Geprüft wird deshalb beides an einer Stelle: dass die Klasse oben NICHT und
-   nach dem Scrollen SCHON gesetzt ist. Ein Beobachter, der nie auslöst, fällt
-   sonst nicht auf — die Seite sieht ja bloß etwas flacher aus. */
+   nach dem Scrollen SCHON gesetzt ist. */
 for (const scheme of ['light', 'dark']) {
-  await session(`09-frost-${scheme}`, {
+  await session(`09-kopf-${scheme}`, {
     width: 1280,
     height: 720,
     scheme,
@@ -247,7 +251,7 @@ for (const scheme of ['light', 'dark']) {
         () => !document.querySelector('.masthead')?.classList.contains('masthead--lifted'),
       );
       if (!flatAtTop) {
-        problems.push(`[${name}] Kopf traegt schon oben Material — Fuehler loest zu frueh aus`);
+        problems.push(`[${name}] Kopf ist schon oben erhoben — Fuehler loest zu frueh aus`);
       }
 
       await page.evaluate(() => {
@@ -262,7 +266,7 @@ for (const scheme of ['light', 'dark']) {
         problems.push(`[${name}] Kopf bleibt beim Scrollen flach — Fuehler loest nicht aus`);
       }
 
-      // Bewusst NICHT fullPage: Der Frost lebt von der Scrollposition, und ein
+      // Bewusst NICHT fullPage: Der Zustand hängt an der Scrollposition, und ein
       // Ganzseitenbild scrollt sie weg.
       const file = path.join(outDir, `${name}.png`);
       await page.screenshot({ path: file });
@@ -404,7 +408,10 @@ await session('08-sprachwechsel', {
       375  Handy
 
    Acht Konten, damit Filterzeile und zweite Spalte überhaupt vorkommen — beide
-   hängen an dieser Zahl (ui/app.ts, DENSE_FROM). */
+   hängen an dieser Zahl (ui/app.ts, DENSE_FROM). Die BREITE, ab der zwei Spalten
+   erlaubt sind, liegt seit V8 bei 98 rem statt 87,5: Die Karte hat jetzt eine
+   feste Geometrie mit einer Mindestbreite. Die Begründung samt Rechnung steht bei
+   `.strips--dense` in src/style.css; geprüft wird sie in Abschnitt 16. */
 const CHAIN_DEMO = [
   'otpauth://totp/ACME%20Co:kevin@example.com?secret=JBSWY3DPEHPK3PXP&issuer=ACME%20Co',
   'otpauth://totp/Google:kevin@example.com?secret=GEZDGNBVGY3TQOJQ&issuer=Google&algorithm=SHA256&digits=8&period=60',
@@ -469,6 +476,50 @@ for (const skin of CHAIN_SKINS) {
         }
         if (shell.cased !== wide) {
           problems.push(`[${name}] Gehaeuse ${shell.cased ? 'da' : 'weg'} — erwartet anders`);
+        }
+
+        /* ── Die Karte muss in ihre Spalte passen ──────────────────────────
+           Seit V8 hat der Kanalzug eine feste Geometrie: Zifferblatt links,
+           Kopiertaste rechts, beide in eigenen Spalten. Eine feste Geometrie hat
+           eine Mindestbreite, und wenn sie fehlt, geht nichts kaputt — es wird
+           bloß der Kontoname weggekürzt, bis nur der erste Buchstabe übrig ist.
+
+           Genau das ist beim Bau passiert: Bei 1440 px war die Namensspalte 0 px
+           breit, und aus „Google" wurde „G". Kein Überlauf, keine Fehlermeldung,
+           auf einem verkleinerten Standbild kaum zu sehen. Deshalb steht die
+           Prüfung hier und nicht im Auge.
+
+           Zwei Fragen: Ist ein Name gekürzt, der nicht gekürzt sein müsste? Und
+           steht der Code noch in seiner Zelle? */
+        const fit = await page.evaluate(() => {
+          const clipped = [...document.querySelectorAll('.strip__issuer')]
+            .filter((el) => el.scrollWidth > el.clientWidth + 1)
+            .map((el) => el.textContent.trim());
+          const escaped = [...document.querySelectorAll('.dial')].filter((code) => {
+            const box = code.getBoundingClientRect();
+            const strip = code.closest('.strip').getBoundingClientRect();
+            return box.right > strip.right + 1 || box.left < strip.left - 1;
+          }).length;
+          const strips = document.querySelector('.strips');
+          return {
+            clipped,
+            escaped,
+            dense: getComputedStyle(strips).gridTemplateColumns.split(' ').length === 2,
+          };
+        });
+
+        // 98 rem sind bei 16 px Grundschrift 1568 px.
+        const shouldBeDense = size.width >= 1568;
+        if (fit.dense !== shouldBeDense) {
+          problems.push(
+            `[${name}] Buehne ist ${fit.dense ? 'zwei' : 'ein'}spaltig — bei ${size.width} px erwartet: ${shouldBeDense ? 'zwei' : 'ein'}spaltig`,
+          );
+        }
+        if (fit.clipped.length > 0) {
+          problems.push(`[${name}] Kontoname gekuerzt: ${fit.clipped.join(', ')}`);
+        }
+        if (fit.escaped > 0) {
+          problems.push(`[${name}] ${fit.escaped} Code(s) laufen aus ihrer Zelle`);
         }
 
         await shoot(page, name);

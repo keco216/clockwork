@@ -170,11 +170,23 @@ kbd {
 }
 
 /* Gravur-Beschriftung: kleine gesperrte Versalien, wie auf ein Gehäuse
-   siebgedruckt. Das ist die einzige Textauszeichnung, die die App kennt. */
+   siebgedruckt. Das ist die einzige Textauszeichnung, die die App kennt.
+
+   Zwei Einträge sind mit V8 herausgefallen, und beide aus einem Grund, den man
+   nachmessen konnte:
+
+   `.strip__spec` ist ein Chip geworden. Ein Chip steht in jeder Zeile und trägt
+   drei Angaben; Versalsatz und Sperrung haben ihn auf 212 px getrieben und dem
+   Kontonamen in einer 458 px breiten Karte 0 px übrig gelassen. Die Begründung
+   steht ausführlich bei `.chip`.
+
+   `.gauge__nextLabel` gab es nicht mehr — die Klasse heißt seit dem Umbau der
+   Karte `.strip__metaLabel`, und dieser Eintrag zeigte ins Leere. Genau die
+   Sorte Regel, die niemandem auffällt: Sie tut nichts und schadet nichts, bis
+   jemand sie für einen Beweis nimmt, dass ein Bauteil ausgezeichnet ist. */
 .zone__label,
 .slot__legend,
-.strip__spec,
-.gauge__nextLabel,
+.strip__metaLabel,
 .colophon__specs,
 .masthead__spec,
 .masthead__state,
@@ -491,7 +503,7 @@ body::before {
 
 /* Das Feld ist im Leerzustand das Angebot und darf entsprechend atmen. */
 .device[data-stage='vacant'] .slot__field {
-  min-height: 9rem;
+  min-height: 11rem;
 }
 
 .vacant[hidden],
@@ -649,11 +661,17 @@ body::before {
   line-height: 1.7;
   color: var(--ink);
   background: var(--surface-recessed);
-  border: 1px solid var(--rule);
-  /* Die dunklere Oberkante bleibt: Sie ist der ganze Unterschied zwischen
-     „versenkt" und „aufgeklebt", und ein Radius nimmt ihr davon nichts. */
-  border-top-color: var(--rule-strong);
+  /* Seit V8 die kräftigere Haarlinie, und rundum dieselbe. Das Feld ist ein
+     Bedienelement und keine Fuge — 18 % genügen für eine Trennlinie zwischen
+     zwei Flächen, nicht für die Kante eines Schlitzes, in den man etwas
+     hineinschreibt. */
+  border: 1px solid var(--rule-strong);
   border-radius: var(--radius-field);
+  /* Die Fräsung: eine dunklere Oberkante INNEN. Sie ist der ganze Unterschied
+     zwischen „versenkt" und „aufgeklebt" und die genaue Umkehrung der
+     Lichtkante an erhobenen Flächen. Bis V7 stand sie als `border-top-color`
+     und hellte im dunklen Modus auf — siehe --edge-sunk in styles/tokens.css. */
+  box-shadow: inset 0 1px 0 var(--edge-sunk);
   transition: border-color var(--dur-calm) var(--ease-spring);
 }
 
@@ -662,51 +680,77 @@ body::before {
 }
 
 .field:hover {
-  border-color: var(--rule-strong);
+  border-color: var(--ink-3);
 }
 
-.field:focus-visible {
-  outline-offset: -1px;
-}
+/* Der Fokus-Ring ist derselbe wie überall: 2 px in Signalfarbe, 2 px Abstand.
+   Bis V7 zog `outline-offset: -1px` ihn beim Feld nach innen, als einziges
+   Bauteil der App. Es gab keinen Grund dafür außer Vorsicht — und ein Ring, der
+   an einer Stelle anders sitzt, ist einer, den man an dieser Stelle nicht
+   wiedererkennt. */
 
-/* Nur das mehrzeilige Feld ist hoch und in der Höhe verstellbar. */
+/* Nur das mehrzeilige Feld ist hoch und in der Höhe verstellbar.
+
+   8 rem statt 6: Das Feld ist im Arbeitszustand die Stelle, an der das
+   Schlüsselmaterial steht, und eine `otpauth://`-Zeile ist lang. Bei sechs
+   Zeilen Höhe sieht man von acht Konten drei. */
 .slot__field {
-  min-height: 6rem;
+  min-height: 8rem;
   resize: vertical;
 }
 
+/* Die Hülle reserviert die Höhe, der Chip darin trägt die Zahl. Getrennt, weil
+   ein leerer Chip nichts anzeigen soll, der Platz aber trotzdem stehen muss —
+   sonst springt die Tastenzeile beim ersten Eintrag um eine Chiphöhe nach unten.
+   Genau die Sorte Layout-Sprung, die V7 aus dem Startzustand geräumt hat. */
 .slot__meter {
-  font-family: var(--font-mono);
-  font-size: var(--t-small);
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-3);
-  min-height: 1.2em; /* Platz reservieren, damit nichts springt */
+  display: flex;
+  min-height: var(--chip-h);
 }
 
-/* Taste: ein Objekt mit Kante, seit V5 als Pille.
+/* ── Tasten: drei Varianten auf einer Höhenleiter ──────────────────────────
+   Bis V7 gab es EINE Taste. Rangordnung drückte sie über die Kante aus, und für
+   die leiseste Stufe blieb nur „keine Kante" — also nackter Text. Genau das
+   nennt die V8-Diagnose: „‚Leeren' als nackter Text, blasse Outline-Pillen".
 
-   Gedrückt passieren zwei Dinge gleichzeitig, und beide sind Absicht:
-   Die Taste KEHRT SICH UM — das ist die Antwort dieses Geräts auf „gedrückt",
-   sie stammt aus V2 und bleibt — und sie GIBT NACH, um 3 %. Das eine ist die
-   Marke, das andere die Physik, die Apple jedem Knopf mitgibt. Zusammen fühlt
-   sich die Taste an wie eine, die man wirklich hinunterdrückt. */
+   HeroUI führt zwei UNABHÄNGIGE Achsen (`button.variant` und `button.size`), und
+   das ist der eigentliche Griff: Wie laut ein Knopf ist, und wie schwer er ist,
+   sind zwei Fragen.
+
+     Rang (Fell)          --solid     die eine Haupthandlung eines Panels
+                          --bordered  gleichrangige Angebote
+                          --quiet     leise, aber immer noch ein Knopf
+
+     Gewicht (Höhe)       Vorgabe     --control-h     40 px
+                          --lg        --control-h-lg  48 px
+
+   Der Druckpunkt bleibt, was er seit V2 ist: Die Taste KEHRT SICH UM und GIBT
+   um 3 % NACH. Das eine ist die Marke, das andere die Physik. Eine solide Taste
+   kann sich nicht umkehren — sie ist schon umgekehrt —, deshalb bleibt ihr das
+   Nachgeben allein. */
 .keys {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2);
 }
 
+/* Die Basis trägt nur Geometrie und Druckpunkt, kein Fell. Sonst muss jede
+   Variante erst zurücknehmen, was die Basis behauptet — und dann entscheidet
+   die Reihenfolge der Regeln, wer gewinnt. */
 .key {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--sp-2);
-  min-height: var(--control-h); /* Zielgröße für Finger und Maus */
+  min-height: var(--control-h);
   /* Eine Pille braucht mehr Luft an den Seiten als ein Rechteck: Die Rundung
      frisst an den Enden Fläche, die dem Text sonst fehlt. */
   padding: 0 var(--sp-4);
   color: var(--ink-2);
   background: transparent;
-  border: 1px solid var(--rule-strong);
+  /* Die Stärke steht IMMER, auch bei durchsichtiger Kante: Sonst springt die
+     Taste beim Wechsel der Variante oder beim Überfahren um zwei Pixel. */
+  border: var(--border-2) solid transparent;
   border-radius: var(--radius-key);
   cursor: pointer;
   transition:
@@ -716,39 +760,98 @@ body::before {
     transform var(--dur-quick) var(--ease-snap);
 }
 
-.key:hover {
+.key:active {
+  transform: scale(0.97);
+}
+
+/* Die Mindestbreite kommt aus HeroUI (`md: min-w-20`, also 80 px) und hat einen
+   Zweck: Zwei Knöpfe nebeneinander mit „OK" und „Abbrechen" sollen nicht
+   verschieden breit sein, nur weil ein Wort kürzer ist. Die leise Taste bekommt
+   sie NICHT — sie ist ein Textknopf und darf so breit sein wie ihr Wort. */
+.key--solid,
+.key--bordered {
+  min-width: 5rem;
+}
+
+.key--lg {
+  min-height: var(--control-h-lg);
+  min-width: 6rem;
+  padding-inline: var(--sp-5);
+}
+
+/* ── solid ────────────────────────────────────────────────────────────────
+   Die eine Haupthandlung. Beim Überfahren rückt sie eine INK-Stufe vor, so wie
+   eine Fläche eine Flächenstufe vorrückt — und der Text bleibt dabei messbar
+   lesbar: --ink-on-inverted auf --ink-2 sind in beiden Themes 6,15:1.
+
+   HeroUI löst denselben Hover über `hoverOpacity` (.8 hell / .9 dunkel). Das
+   wäre hier der falsche Griff: Deckkraft nimmt auch die Schrift mit, und ein
+   Kontrast, der von einer Deckung abhängt, ist einer, den man nachmessen muss,
+   statt ihn zu kennen. */
+.key--solid {
+  background: var(--surface-inverted);
+  border-color: var(--surface-inverted);
+  color: var(--ink-on-inverted);
+}
+
+.key--solid:hover {
+  background: var(--ink-2);
+  border-color: var(--ink-2);
+}
+
+/* ── bordered ─────────────────────────────────────────────────────────────
+   Zwei Pixel, nicht einer. Das ist der Wert aus HeroUI (`bordered` ist
+   `border-medium`), und er ist der Grund, warum diese Pillen vorher blass
+   wirkten: Sie trugen dieselbe Stärke und dieselbe Farbe wie eine Panelfuge —
+   ein Bedienelement, gezeichnet wie eine Trennlinie. */
+.key--bordered {
+  border-color: var(--rule-strong);
+}
+
+.key--bordered:hover {
   color: var(--ink);
   border-color: var(--ink-3);
 }
 
-.key:active {
+.key--bordered:active {
   background: var(--surface-inverted);
   border-color: var(--surface-inverted);
   color: var(--ink-on-inverted);
-  transform: scale(0.97);
 }
 
-/* ── Die leise Taste ──────────────────────────────────────────────────────
-   Für „Leeren": dieselbe Trefferfläche, dieselbe Schrift, aber keine Kante.
+/* ── quiet ────────────────────────────────────────────────────────────────
+   Für „Leeren". Das ist keine Kosmetik, sondern eine Rangordnung: „Leeren"
+   wirft Schlüsselmaterial weg, „QR aus Bild" und „Kamera" holen welches herein.
+   Drei gleich aussehende Pillen behaupten drei gleichwertige Angebote — und die
+   zerstörerische darf nicht die sein, die man aus Versehen zuerst trifft.
 
-   Das ist keine Kosmetik, sondern eine Rangordnung. „Leeren" wirft
-   Schlüsselmaterial weg; „QR aus Bild" und „Kamera" holen welches herein. Drei
-   gleich aussehende Pillen nebeneinander behaupten, das seien drei gleichwertige
-   Angebote. Sie sind es nicht — und die zerstörerische darf nicht die sein, die
-   man aus Versehen zuerst trifft.
+   HeroUIs `light` ist im Ruhezustand vollständig durchsichtig. Hier trägt die
+   Variante trotzdem die versenkte Fläche, und zwar auf Anweisung: „leise, aber
+   als Knopf erkennbar, nicht als nackter Text". Eine Tastenkappe ohne Kante ist
+   noch eine Tastenkappe; ein Wort ohne alles ist ein Wort.
 
    Der doppelte Klassenname aus demselben Grund wie bei `.key.key--danger` in
-   panels.css: `.key` steht in dieser Datei NACH allen @import-Regeln und
-   gewönne bei gleicher Spezifität. Diese Regel steht zwar in derselben Datei
-   und wäre auch so sicher — aber ein Bauteil, dessen Richtigkeit an seiner
-   Zeilennummer hängt, ist eins, das beim nächsten Verschieben kaputtgeht. */
+   panels.css: Ein Bauteil, dessen Richtigkeit an seiner Zeilennummer hängt, ist
+   eins, das beim nächsten Verschieben kaputtgeht. */
 .key.key--quiet {
-  border-color: transparent;
+  background: var(--surface-recessed);
   padding-inline: var(--sp-3);
 }
 
+/* Beim Überfahren bekommt sie die Kante, die sie im Ruhezustand nicht hat —
+   und nicht eine hellere Fläche. Die nächste Sprosse liegt im hellen Modus
+   NÄHER am Panel als die versenkte, ein Hover in diese Richtung würde die Taste
+   also unauffälliger machen statt deutlicher. Die Kante hat diese Schwierigkeit
+   nicht: Sie zeigt in jedem Theme in dieselbe Richtung. */
 .key.key--quiet:hover {
   border-color: var(--rule-strong);
+  color: var(--ink);
+}
+
+.key.key--quiet:active {
+  background: var(--surface-inverted);
+  border-color: var(--surface-inverted);
+  color: var(--ink-on-inverted);
 }
 
 /* ── Icons ────────────────────────────────────────────────────────────────
@@ -775,6 +878,56 @@ body::before {
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+/* ── Chip ─────────────────────────────────────────────────────────────────
+   Eine Angabe, die zu einem Objekt gehört, aber nicht sein Titel ist: die
+   Parameter eines Kontos, die Zahl der Einträge im Feld.
+
+   Bis V7 stand beides als Streutext in einer Ecke — die Parameterzeile oben
+   rechts im Kanalzug, in der leisesten Graustufe, in 11 px. Genau das nennt die
+   V8-Diagnose „Karten-Metadaten als Streutext in der Ecke". Der Unterschied ist
+   nicht die Größe, sondern die Fassung: Ein Wert mit Fläche und Kante ist eine
+   Angabe, dieselben Zeichen ohne beides sind Kleingedrucktes am Rand.
+
+   Ausdrücklich KEIN Bedienelement: kein Hover, kein Fokus, keine Trefferfläche.
+   Deshalb auch seine eigene Höhe (--chip-h) und nicht die der Tastenleiter —
+   HeroUI führt für Chips aus demselben Grund eine eigene Skala. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--chip-h);
+  padding: 0 var(--sp-2);
+  background: var(--surface-recessed);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-inset);
+  color: var(--ink-3);
+  font-size: var(--t-micro);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ── Warum ein Chip KEINE Gravur ist ──────────────────────────────────────
+   Der erste Anlauf hat ihm die Gravur-Auszeichnung mitgegeben — Versalien plus
+   0,14 em Sperrung, wie bei jeder anderen Kleinbeschriftung der App. Gemessen
+   wurde daraus ein 212 px breites Bauteil, und in einer 458 px breiten Karte
+   blieb für den Kontonamen genau 0 px. Aus „ACME Co" wurde „A…", aus „Google"
+   ein „G".
+
+   Gravur ist Beschriftung AUF dem Gehäuse: Sie steht selten, kurz und darf
+   Platz kosten. Ein Chip steht in jeder Zeile und trägt drei Angaben — Versalsatz
+   und Sperrung machen ihn ein Drittel breiter, ohne ihn lesbarer zu machen. Ohne
+   beides bleibt er bei rund 150 px, und der Name behält seinen Platz.
+
+   Es ist derselbe Fehler in klein, den V7 mit der Gravur-Spalte gemacht hat:
+   eine Auszeichnung weitergetragen an eine Stelle, an der ihr Grund nicht mehr
+   gilt. */
+
+/* Ein Chip ohne Inhalt ist keine leere Angabe, sondern gar keine. Der Platz
+   bleibt trotzdem reserviert — das macht die Hülle (.slot__meter), nicht der
+   Chip selbst, sonst springt die Zeile beim ersten Eintrag. */
+.chip:empty {
+  display: none;
 }
 
 .note {
@@ -815,8 +968,9 @@ body::before {
      er durch denselben Winkel, den auch das Auswahlfeld trägt (panels.css). */
   list-style: none;
   /* Trefferfläche wie beim Tresor-Aufklapper: Auch ein leiser Kleintext ist ein
-     Bedienelement, sobald man ihn antippen soll. */
-  min-height: var(--control-h);
+     Bedienelement, sobald man ihn antippen soll. Und wie dort die 44 statt der
+     40 aus der Tastenleiter — eine breite Zeile kostet keine Höhe. */
+  min-height: var(--touch-min);
   margin-inline: calc(var(--sp-2) * -1);
   padding-inline: var(--sp-2);
   border-radius: var(--radius-inset);
@@ -884,6 +1038,28 @@ body::before {
    zum Kanal, also läuft die Fuge nicht durch sie hindurch. Dasselbe Detail
    benutzt iOS in gruppierten Listen — hier fällt es mit der Rack-Fuge zusammen,
    die vor dem ersten Bedienelement beginnt. */
+/* ── Die Geometrie der Karte ───────────────────────────────────────────────
+   Drei Spalten, drei Zeilen, und jede Zelle hat eine Aufgabe:
+
+     gauge  head  copy      Zifferblatt · Name und Chip · Kopieren
+     gauge  code  copy      Zifferblatt · der Code      · Kopieren
+     gauge  meta  copy      Zifferblatt · folgt … · … s · Kopieren
+
+   Bis V7 sah das anders aus, und die V8-Diagnose benennt beide Fehler: Die
+   Parameterzeile saß als Streutext in der Kopfzeile rechts, und die Kopiertaste
+   teilte ihre Zeile mit dem Code. Bei einem achtstelligen Code (SHA-256, 8
+   Stellen — die Beispieldaten haben so ein Konto) stieß die Zahl dann an die
+   Taste. Zwei Bauteile in einer Zelle, deren Breite von der Eingabe abhängt: Das
+   ist keine feste Geometrie, das ist eine Wette.
+
+   Jetzt hat die Taste eine eigene Spalte über alle drei Zeilen und steht darin
+   senkrecht in der Mitte. Der Code hat seine Zeile für sich und kann so breit
+   werden, wie die Mittelspalte hergibt.
+
+   `align-items: baseline` ist bewusst WEG: Es hat die drei Zeilen an ihren
+   Schriftlinien ausgerichtet, und weil das Zifferblatt über alle drei läuft,
+   hing es an der Grundlinie der ersten. Jetzt richtet jede Zelle sich selbst
+   aus — das Zifferblatt und die Taste über `align-self: center`. */
 .strip {
   /* Container für die cqi-Einheit des Codes: Die Ziffergröße richtet sich nach
      der Breite des Kanalzugs, nicht nach der des Fensters. */
@@ -892,10 +1068,9 @@ body::before {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas:
-    'gauge id   spec'
+    'gauge head copy'
     'gauge code copy'
-    'gauge next next';
-  align-items: baseline;
+    'gauge meta copy';
   column-gap: var(--sp-5);
   row-gap: var(--sp-2);
   padding-block: var(--sp-5);
@@ -958,46 +1133,42 @@ body::before {
 }
 
 /* Das Zifferblatt steht links und trägt alle drei Zeilen — die Anzeige gehört
-   zum ganzen Kanal, nicht zu einer seiner Zeilen. */
+   zum ganzen Kanal, nicht zu einer seiner Zeilen.
+
+   Seit V8 ist es eine reine Zone: nur das Blatt, kein Text darunter. Die
+   Sekundenzahl stand bis V7 als eigene Zeile unter der Skala und hat zwei Dinge
+   angerichtet — sie hat das Blatt aus der senkrechten Mitte gezogen (die Gruppe
+   war höher als das Blatt), und sie hat dieselbe Auskunft zweimal gegeben, die
+   das Blatt ohnehin zeigt. Sie steht jetzt in der Metazeile, wo die anderen
+   Nebenangaben stehen.
+
+   Damit kann das Blatt tun, was es soll: groß sein und in der Mitte stehen. */
 .gauge {
   grid-area: gauge;
   align-self: center;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sp-1);
 }
 
-.gauge__seconds {
-  font-family: var(--font-mono);
-  font-size: var(--t-small);
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-2);
-  white-space: nowrap;
-}
+/* ── Die Metazeile ────────────────────────────────────────────────────────
+   „FOLGT 483 232 · 17 s". Zwei Nebenangaben, die vorher an zwei Stellen standen.
 
-.gauge__seconds abbr {
-  color: var(--ink-3);
-  margin-inline-start: 0.1em;
-}
-
-.strip--expiring .gauge__seconds {
-  color: var(--signal-text);
-}
-
-.strip__next {
-  grid-area: next;
+   Der Trennpunkt ist gesetzt und nicht getippt — dieselbe Lösung wie im Fuß
+   (.colophon__specs). Er steht als Zeichen im CSS und nicht im Katalog, weil
+   hier nichts umzustellen ist: Beide Angaben sind eigenständig, und keine
+   Sprache braucht sie in anderer Reihenfolge. Wo eine Sprache umstellen können
+   MUSS, steht der Punkt mitsamt Platzhaltern im Katalog. */
+.strip__meta {
+  grid-area: meta;
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: var(--sp-2);
+  gap: 0 var(--sp-2);
   min-width: 0;
 }
 
-.strip__nextLabel {
-  font-size: var(--t-micro);
-  font-weight: 500;
-  letter-spacing: var(--track-caps);
-  text-transform: var(--case-caps);
+/* Größe, Gewicht, Sperrung und Versalsatz kommen aus der Gravur-Sammelregel
+   ganz oben — hier steht nur, was diesem Bauteil eigen ist. */
+.strip__metaLabel {
   color: var(--ink-3);
 }
 
@@ -1006,6 +1177,31 @@ body::before {
   font-size: var(--t-small);
   font-variant-numeric: tabular-nums;
   color: var(--ink-2);
+}
+
+.strip__secs {
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.strip__secs::before {
+  content: '·';
+  margin-inline-end: var(--sp-2);
+  color: var(--ink-3);
+}
+
+.strip__secs abbr {
+  color: var(--ink-3);
+  margin-inline-start: 0.1em;
+}
+
+/* Die letzten fünf Sekunden. Einer der vier Zustände, für die es die
+   Signalfarbe gibt — und der einzige, der von selbst eintritt. */
+.strip--expiring .strip__secs {
+  color: var(--signal-text);
 }
 
 /* Erster und letzter Kanal stoßen an den Innenabstand der Gruppe — dort braucht
@@ -1028,12 +1224,33 @@ body::before {
   padding-bottom: 0;
 }
 
+/* Die Kopfzeile der Karte: Name links, Chip rechts. Ein eigener Kasten und
+   nicht zwei Rasterzellen — sonst müsste die Spaltenbreite entscheiden, wie viel
+   Platz der Name bekommt, und ein langer Kontoname würde den Chip erdrücken oder
+   umgekehrt. In einem Flex-Kasten schrumpft nur der Name (`min-width: 0` plus
+   Ellipse), der Chip behält seine Breite. */
+.strip__head {
+  grid-area: head;
+  display: flex;
+  align-items: center;
+  /* Umbrechend, und das ist die tragende Eigenschaft: Wird es eng, rutscht der
+     CHIP in eine eigene Zeile — er ist die Nebenangabe. Ohne `wrap` bleibt beides
+     in einer Zeile, und weil der Chip `flex: none` trägt, schrumpft stattdessen
+     der Name bis zur Ellipse. Gemessen: bis auf 0 px. */
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  min-width: 0;
+}
+
+/* Der Name darf schrumpfen, aber nicht beliebig: Unter 8 rem hört eine Ellipse
+   auf, ein gekürzter Name zu sein, und wird ein Buchstabe mit Punkten. Ab dieser
+   Grenze weicht lieber der Chip in die nächste Zeile. */
 .strip__id {
-  grid-area: id;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0 var(--sp-2);
+  flex: 1 1 8rem;
   min-width: 0;
 }
 
@@ -1058,11 +1275,13 @@ body::before {
   display: none;
 }
 
+/* Der Chip trägt sein Aussehen selbst (.chip). Hier steht nur, wo er sitzt:
+   am Ende der Kopfzeile. `auto` als Außenabstand und nicht `justify-content:
+   space-between` am Elternteil — so bleibt der Abstand zwischen Name und Chip
+   erhalten, wenn der Chip einmal fehlt. */
 .strip__spec {
-  grid-area: spec;
-  color: var(--ink-3);
-  justify-self: end;
-  white-space: nowrap;
+  margin-inline-start: auto;
+  flex: none;
 }
 
 /* ── Das Zifferblatt ──────────────────────────────────────────────────────── */
@@ -1127,10 +1346,18 @@ body::before {
 
 .strip--fault {
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'id' 'code';
+  grid-template-areas: 'head' 'code';
   row-gap: var(--sp-1);
   /* Ohne Zifferblatt gibt es nichts, hinter dem die Fuge anfangen könnte. */
   --strip-rule-inset: 0;
+}
+
+/* Eine Fehlerzeile hat keinen Chip und deshalb auch keinen Grund, ihre
+   Kopfzeile in einer Zeile zu halten: Die Quellzeile darf umbrechen, sie ist
+   das, was man lesen muss, um den Fehler zu finden. */
+.strip--fault .strip__head {
+  align-items: baseline;
+  flex-wrap: wrap;
 }
 
 .strip--fault .strip__issuer {
@@ -1282,17 +1509,43 @@ body::before {
 }
 
 /* ── Zwei Spalten auf der Bühne ───────────────────────────────────────────
-   Zwei Bedingungen, und beide müssen stimmen: genug Platz (ab 1400 px) UND
-   genug Konten (ab acht, gesetzt von ui/app.ts als `.strips--dense`).
+   Zwei Bedingungen, und beide müssen stimmen: genug Platz UND genug Konten (ab
+   acht, gesetzt von ui/app.ts als `.strips--dense`).
 
    Die zweite ist die wichtigere. Drei Kanalzüge in zwei Spalten sind kein
    Raster, sondern eine angefangene Zeile — und die Lücke daneben sieht aus wie
-   ein Fehler. Erst ab acht wird aus der Aufteilung eine Fläche. */
-@media (min-width: 87.5rem) {
+   ein Fehler. Erst ab acht wird aus der Aufteilung eine Fläche.
+
+   ── Warum die Schwelle seit V8 bei 98 rem liegt und nicht bei 87,5 ─────────
+   Weil die Karte jetzt eine feste Geometrie hat, und eine feste Geometrie hat
+   eine Mindestbreite. V7 hatte keine: Dort teilten Code und Kopiertaste eine
+   Zelle, und die Parameterzeile stand als `nowrap`-Text in der Ecke — was nicht
+   passte, überlappte einfach. Auf einem Standbild sah das nach Layout aus.
+
+   Nachgemessen bei 1440 px, also der alten Schwelle plus etwas: Der Kanalzug war
+   458 px breit, davon Zifferblatt 120, Kopiertaste 132 und zwei Fugen 48 — für
+   Name, Code und Chip blieben 158 px. Der Chip allein wollte 212.
+
+   Der Bedarf, ausgerechnet statt geschätzt: Zifferblatt 104 + Fuge 24 + Code
+   (achtstellig, ~225) + Fuge 24 + Kopiertaste 132 = 509 px je Karte. Zwei davon
+   plus Spaltenfuge und Panelrand sind 1120 px Bühne; dazu Rail 368, Fuge 24 und
+   Gehäuserand 48 — zusammen 1560 px. Aufgerundet 98 rem.
+
+   Zwischen 1400 und 1568 px steht die Bühne jetzt einspaltig. Das ist kein
+   Verlust: Eine Spalte mit ganzen Kontonamen ist mehr wert als zwei mit „G…". */
+@media (min-width: 98rem) {
   .strips--dense {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: var(--sp-6);
+  }
+
+  /* Im Zweispalter bleibt das Zifferblatt bei 6,5 rem: Die Stufe auf 7,5 rem ab
+     1440 px gilt für eine Karte, die die ganze Bühne hat. In einer halben Bühne
+     sind 120 px Anzeige neben einem 44-px-Code kein Verhältnis mehr, sondern ein
+     Platzproblem. */
+  .strips--dense .strip {
+    --dial-size: 6.5rem;
   }
 
   /* Die Fuge trennt Zeilen, nicht Spalten: In zwei Spalten besteht die oberste
@@ -1403,24 +1656,33 @@ body::before {
   .strip {
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
-      'gauge id'
+      'gauge head'
       'gauge code'
-      'gauge spec'
-      'next next'
-      'copy copy';
+      'meta  meta'
+      'copy  copy';
+  }
+
+  /* Ein 104-px-Blatt neben einem Code auf 375 px lässt für den Namen nichts
+     übrig. Das Zifferblatt bleibt die größte Anzeige im Kanal, aber es muss
+     nicht auf dem Handy dieselben Millimeter haben wie auf einem 27-Zöller. */
+  :root {
+    --dial-size: 5rem;
+  }
+
+  /* Name und Chip nebeneinander brauchen Breite, die hier keiner hat. Der Chip
+     rutscht deshalb unter den Namen — links, nicht rechts: Auf einer Zeile für
+     sich ist „rechts ausgerichtet" nichts als eine Lücke davor. */
+  .strip__head {
+    flex-wrap: wrap;
+    gap: var(--sp-1) var(--sp-3);
   }
 
   .strip__spec {
-    justify-self: start;
+    margin-inline-start: 0;
   }
 
   .key--copy {
     justify-self: start;
-    align-self: center;
-  }
-
-  .gauge {
-    flex-wrap: wrap;
   }
 }
 

@@ -61,7 +61,12 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
   const panel = requireElement(document, '#vault');
   const disclosure = requireElement<HTMLDetailsElement>(document, '#vault-disclosure');
   const stateText = requireElement(document, '#vault-state-text');
+  // Erklärung samt Aufklapper in einer Hülle: Beide gelten nur, solange der
+  // Tresor aus ist. Ein Zustand, der an zwei Stellen geschaltet wird, läuft
+  // irgendwann auseinander.
+  const intro = requireElement(document, '#vault-intro');
   const explain = requireElement(document, '#vault-explain');
+  const cryptoNote = requireElement(document, '#vault-crypto');
   const form = requireElement<HTMLFormElement>(document, '#vault-form');
   const passField = requireElement<HTMLInputElement>(document, '#vault-pass');
   const passLabel = requireElement(document, '#vault-pass-label');
@@ -94,7 +99,13 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
    * „5 Minuten", auf Polnisch „5 minutach".
    */
   function paintLabels(): void {
-    explain.textContent = t('vault.explain', { iterations: formatNumber(PBKDF2_ITERATIONS) });
+    // Seit V8 zwei Absätze: Der erste sagt, was der Tresor für einen tut, der
+    // zweite womit. Die Iterationszahl steht im zweiten — sie ist die Sorte
+    // Auskunft, für die es den Aufklapper gibt.
+    explain.textContent = t('vault.explain');
+    cryptoNote.textContent = t('vault.explain.crypto', {
+      iterations: formatNumber(PBKDF2_ITERATIONS),
+    });
     for (const option of timeoutSelect.options) {
       option.textContent = tn('vault.timeout.minutes', Number(option.value) / 60_000);
     }
@@ -121,14 +132,14 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
         passLabel.textContent = t('vault.pass.new');
         passField.autocomplete = 'new-password';
         primary.textContent = t('vault.action.seal');
-        explain.hidden = false;
+        intro.hidden = false;
         break;
       case 'locked':
         stateText.textContent = t('vault.state.locked');
         passLabel.textContent = t('vault.pass.existing');
         passField.autocomplete = 'current-password';
         primary.textContent = t('vault.action.unseal');
-        explain.hidden = true;
+        intro.hidden = true;
         // Ein gesperrter Tresor ist der einzige Zustand, in dem der Aufklapper
         // von selbst aufgeht — und zwar der wichtigste Fall überhaupt: Beim
         // Laden der Seite ist das Textfeld leer, weil der Inhalt hier drin
@@ -138,7 +149,7 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
         break;
       case 'open':
         stateText.textContent = t('vault.state.open');
-        explain.hidden = true;
+        intro.hidden = true;
         break;
     }
   }

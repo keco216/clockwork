@@ -76,9 +76,14 @@ export default {
   'vault.state.locked': 'Verrouillé — phrase secrète requise',
   'vault.state.open': 'Ouvert — les secrets sont dans le champ de texte',
   'vault.explain':
-    'Par défaut, Clockwork n’enregistre rien. Si vous le souhaitez, la saisie peut être ' +
-    'conservée ici, chiffrée par une phrase secrète : PBKDF2-SHA-256 avec {iterations} ' +
-    'itérations, puis AES-256-GCM. Sans la phrase secrète, le bloc enregistré ne vaut rien.',
+    'Par défaut, Clockwork ne conserve rien. Si vous activez le coffre, la saisie reste ' +
+    'ici chiffrée par votre phrase secrète — sans elle, le bloc enregistré ne vaut rien.',
+  'vault.explain.crypto':
+    'La clé est dérivée de la phrase secrète par PBKDF2-SHA-256 avec {iterations} ' +
+    'itérations, et AES-256-GCM assure le chiffrement. Seule l’enveloppe scellée est ' +
+    'enregistrée : jamais le texte en clair, jamais la phrase secrète, jamais la clé ' +
+    'dérivée.',
+  'vault.explain.more': 'Tous les détails',
   'vault.pass.new': 'Nouvelle phrase secrète',
   'vault.pass.existing': 'Phrase secrète',
   'vault.action.seal': 'Enregistrer chiffré',

@@ -74,9 +74,14 @@ export default {
   'vault.state.locked': 'Terkunci — perlu frasa sandi',
   'vault.state.open': 'Terbuka — secret ada di bidang teks',
   'vault.explain':
-    'Secara bawaan Clockwork tidak menyimpan apa pun. Kalau mau, masukan bisa ditinggal di ' +
-    'sini dalam keadaan terenkripsi dengan frasa sandi: PBKDF2-SHA-256 dengan {iterations} ' +
-    'iterasi, lalu AES-256-GCM. Tanpa frasa sandi, blok yang tersimpan tidak ada gunanya.',
+    'Secara bawaan Clockwork tidak menyimpan apa pun. Jika lemari besi dinyalakan, ' +
+    'masukan tetap di sini terenkripsi dengan frasa sandi Anda — tanpa itu blok yang ' +
+    'tersimpan tidak berguna.',
+  'vault.explain.crypto':
+    'Kunci diturunkan dari frasa sandi lewat PBKDF2-SHA-256 dengan {iterations} iterasi, ' +
+    'dan AES-256-GCM yang mengenkripsi. Hanya amplop tersegel yang disimpan: tidak pernah ' +
+    'teks terbuka, tidak pernah frasa sandi, tidak pernah kunci turunan.',
+  'vault.explain.more': 'Semua detail',
   'vault.pass.new': 'Frasa sandi baru',
   'vault.pass.existing': 'Frasa sandi',
   'vault.action.seal': 'Simpan terenkripsi',

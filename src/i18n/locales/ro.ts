@@ -74,9 +74,13 @@ export default {
   'vault.state.locked': 'Încuiat — este nevoie de fraza de acces',
   'vault.state.open': 'Deschis — secretele sunt în câmpul de text',
   'vault.explain':
-    'În mod implicit Clockwork nu salvează nimic. Cine dorește poate lăsa intrarea aici ' +
-    'criptată cu o frază de acces: PBKDF2-SHA-256 cu {iterations} iterații, apoi ' +
-    'AES-256-GCM. Fără fraza de acces, blocul salvat nu valorează nimic.',
+    'În mod implicit Clockwork nu păstrează nimic. Dacă porniți seiful, ce ați introdus ' +
+    'rămâne aici criptat cu fraza de acces — fără ea blocul păstrat nu valorează nimic.',
+  'vault.explain.crypto':
+    'Cheia este derivată din fraza de acces prin PBKDF2-SHA-256 cu {iterations} iterații, ' +
+    'iar AES-256-GCM face criptarea. Se păstrează doar plicul sigilat: niciodată textul ' +
+    'în clar, niciodată fraza de acces, niciodată cheia derivată.',
+  'vault.explain.more': 'Toate detaliile',
   'vault.pass.new': 'Frază de acces nouă',
   'vault.pass.existing': 'Frază de acces',
   'vault.action.seal': 'Salvează criptat',

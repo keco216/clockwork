@@ -76,9 +76,14 @@ export default {
   'vault.state.locked': 'Cerrada — hace falta la frase de contraseña',
   'vault.state.open': 'Abierta — los secrets están en el campo de texto',
   'vault.explain':
-    'De forma predeterminada Clockwork no guarda nada. Si se quiere, la entrada puede quedar ' +
-    'aquí cifrada con una frase de contraseña: PBKDF2-SHA-256 con {iterations} iteraciones y ' +
-    'luego AES-256-GCM. Sin la frase de contraseña, el bloque guardado no vale nada.',
+    'Por defecto Clockwork no guarda nada. Si activas la caja fuerte, lo introducido ' +
+    'queda aquí cifrado con tu frase de contraseña: sin ella el bloque guardado no vale ' +
+    'nada.',
+  'vault.explain.crypto':
+    'La clave se deriva de la frase de contraseña con PBKDF2-SHA-256 y {iterations} ' +
+    'iteraciones, y AES-256-GCM se encarga del cifrado. Solo se guarda el sobre sellado: ' +
+    'nunca el texto en claro, nunca la frase de contraseña, nunca la clave derivada.',
+  'vault.explain.more': 'Todos los detalles',
   'vault.pass.new': 'Nueva frase de contraseña',
   'vault.pass.existing': 'Frase de contraseña',
   'vault.action.seal': 'Guardar cifrado',

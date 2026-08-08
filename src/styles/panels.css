@@ -38,8 +38,12 @@
      dem Daumen nicht.
 
      Die negativen Außenabstände plus derselbe Innenabstand: Die Trefferfläche
-     wächst, der Text bleibt, wo er im Raster steht. */
-  min-height: var(--control-h);
+     wächst, der Text bleibt, wo er im Raster steht.
+
+     44 px und nicht die 40 der Tastenleiter: Diese Zeile ist über die ganze
+     Panelbreite anklickbar, Höhe kostet hier also nichts. Wo sie nichts kostet,
+     nimmt man die AAA-Zielgröße. */
+  min-height: var(--touch-min);
   margin: calc(var(--sp-2) * -1) calc(var(--sp-2) * -1);
   padding: var(--sp-2);
   border-radius: var(--radius-inset);
@@ -77,10 +81,29 @@
   padding-block-start: var(--sp-3);
 }
 
-/* Die Zustandsleuchte ist die einzige Stelle, an der eine Fläche Farbe trägt.
-   Aus = leerer Ring, gesperrt = gefüllt in Ink, offen = gefüllt in Signal.
-   Damit ist der Zustand auch ohne den Text ablesbar — aber nie NUR über Farbe:
-   Ring gegen Fläche ist ein Formunterschied. */
+/* Erklärung und Aufklapper als eine Einheit — sie erscheinen und verschwinden
+   zusammen (siehe ui/vault-panel.ts). */
+.vault__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/* ── Die drei Zustände, in Form UND Farbe ──────────────────────────────────
+   Aus = leerer Ring, gesperrt = gefüllt in Ink, offen = gefüllt im Akzent.
+   Nie NUR über Farbe: Ring gegen Fläche ist ein Formunterschied, und der bleibt
+   auch für jemanden lesbar, der die beiden Töne nicht unterscheiden kann.
+
+   Seit V8 zieht die Statuszeile mit. Bis V7 stand sie in allen drei Zuständen in
+   derselben Graustufe, und nur die 8-px-Leuchte davor sagte, was gilt — für die
+   wichtigste Auskunft des Panels („liegt hier etwas gespeichert?") war das der
+   leiseste verfügbare Ton.
+
+   Die Leiter geht mit dem Gewicht der Auskunft:
+
+     aus       --ink-3           es gibt nichts zu wissen
+     gesperrt  --ink             hier liegt etwas, und es ist zu
+     offen     --signal-text     einer der vier Zustände mit Bedeutung */
 .vault__lamp {
   width: 8px;
   height: 8px;
@@ -91,17 +114,27 @@
 }
 
 .vault[data-state='locked'] .vault__lamp {
-  background: var(--ink-3);
-  border-color: var(--ink-3);
+  background: var(--ink);
+  border-color: var(--ink);
 }
 
+.vault[data-state='locked'] .vault__state {
+  color: var(--ink);
+}
+
+/* Der Akzent, aber im tieferen der beiden Signal-Token. Eine 8-px-Scheibe ist
+   feine Geometrie, und für die gilt seit V8 dieselbe Grenze wie für Schrift:
+   Der Markenwert #f05a28 kommt auf Papier nur auf 3,06:1 und auf jeder
+   dunkleren Fläche der hellen Leiter darunter. Bis V7 stand hier `--signal`
+   auch für den TEXT der Statuszeile — das waren gemessene 3,06:1 für eine
+   Kleinschrift, die 4,5 braucht. */
 .vault[data-state='open'] .vault__lamp {
-  background: var(--signal);
-  border-color: var(--signal);
+  background: var(--signal-text);
+  border-color: var(--signal-text);
 }
 
 .vault[data-state='open'] .vault__state {
-  color: var(--signal);
+  color: var(--signal-text);
 }
 
 .vault__form {
@@ -164,7 +197,12 @@
 
    Der doppelte Klassenname hebt die Spezifität auf (0,2,0) und macht das
    Bauteil damit unabhängig von der Import-Reihenfolge. Das ist die Sorte
-   Wiederholung, die man schreibt, weil ihre Abwesenheit teuer war. */
+   Wiederholung, die man schreibt, weil ihre Abwesenheit teuer war.
+
+   Die Kantenstärke kommt seit V8 aus der Basis (--border-2, also 2 px): Der
+   Löschknopf ist ein Umriss-Knopf wie „Zusperren" daneben, nur in der
+   Fehlerfarbe. Er soll sich von seinen Geschwistern durch die FARBE
+   unterscheiden, nicht durch die Strichstärke. */
 .key.key--danger {
   color: var(--fault);
   border-color: color-mix(in oklab, var(--fault) 45%, var(--rule-strong));
@@ -257,9 +295,15 @@
   background: var(--surface-recessed);
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-inset);
+  /* Dieselbe Fräsung wie am Eingabefeld: Ein Auswahlfeld ist eine versenkte
+     Fläche, in der etwas steht. */
+  box-shadow: inset 0 1px 0 var(--edge-sunk);
   /* Rechts Platz für den Winkel. */
   padding: 0.2rem var(--sp-6) 0.2rem var(--sp-3);
-  min-height: 2.25rem;
+  /* Die kleinste Sprosse der Höhenleiter, und sie hat hier ihren Grund: Sprache
+     und Sperrzeit stellt man einmal ein und fasst sie danach nie wieder an.
+     Was man einmal bedient, braucht keine Daumengröße. */
+  min-height: var(--control-h-sm);
   width: 100%;
   cursor: pointer;
   transition: border-color var(--dur-quick) var(--ease-snap);

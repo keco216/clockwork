@@ -72,9 +72,14 @@ export default {
   'vault.state.locked': 'Låst — passordfrase trengs',
   'vault.state.open': 'Åpen — dine secrets ligger i tekstfeltet',
   'vault.explain':
-    'Som standard lagrer Clockwork ingenting. Den som vil, kan la inndataene bli liggende her ' +
-    'kryptert med en passordfrase: PBKDF2-SHA-256 med {iterations} runder, deretter ' +
-    'AES-256-GCM. Uten passordfrasen er den lagrede blokken verdiløs.',
+    'Som standard lagrer Clockwork ingenting. Slår du på safen, blir det du skrev ' +
+    'liggende her kryptert med passordfrasen din — uten den er den lagrede blokken ' +
+    'verdiløs.',
+  'vault.explain.crypto':
+    'Nøkkelen utledes fra passordfrasen med PBKDF2-SHA-256 og {iterations} iterasjoner, ' +
+    'og AES-256-GCM gjør krypteringen. Bare den lukkede konvolutten lagres: aldri ' +
+    'klartekst, aldri passordfrasen, aldri den utledede nøkkelen.',
+  'vault.explain.more': 'Alle detaljer',
   'vault.pass.new': 'Ny passordfrase',
   'vault.pass.existing': 'Passordfrase',
   'vault.action.seal': 'Lagre kryptert',

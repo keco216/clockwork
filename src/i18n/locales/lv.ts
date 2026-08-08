@@ -74,9 +74,13 @@ export default {
   'vault.state.locked': 'Aizslēgts — vajadzīga paroles frāze',
   'vault.state.open': 'Atvērts — secret ir teksta laukā',
   'vault.explain':
-    'Pēc noklusējuma Clockwork nesaglabā neko. Kas vēlas, var atstāt ievadi šeit šifrētu ar ' +
-    'paroles frāzi: PBKDF2-SHA-256 ar {iterations} iterācijām, pēc tam AES-256-GCM. Bez ' +
-    'paroles frāzes saglabātais bloks nav nekā vērts.',
+    'Pēc noklusējuma Clockwork nesaglabā neko. Ja ieslēdz seifu, ievadītais paliek šeit ' +
+    'šifrēts ar tavu paroles frāzi — bez tās saglabātais bloks nav nekā vērts.',
+  'vault.explain.crypto':
+    'Atslēgu no paroles frāzes atvasina PBKDF2-SHA-256 ar {iterations} iterācijām, bet ' +
+    'šifrē AES-256-GCM. Saglabā tikai aizzīmogoto aploksni: nekad atklāto tekstu, nekad ' +
+    'paroles frāzi, nekad atvasināto atslēgu.',
+  'vault.explain.more': 'Visa informācija',
   'vault.pass.new': 'Jauna paroles frāze',
   'vault.pass.existing': 'Paroles frāze',
   'vault.action.seal': 'Saglabāt šifrētu',

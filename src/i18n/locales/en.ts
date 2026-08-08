@@ -72,9 +72,14 @@ export default {
   'vault.state.locked': 'Locked — passphrase required',
   'vault.state.open': 'Open — secrets are in the text field',
   'vault.explain':
-    'By default Clockwork stores nothing. If you want to, you can keep the input here ' +
-    'encrypted with a passphrase: PBKDF2-SHA-256 with {iterations} iterations, then ' +
-    'AES-256-GCM. Without the passphrase the stored block is worthless.',
+    'By default Clockwork stores nothing. If you switch the vault on, what you typed ' +
+    'stays here encrypted with your passphrase — without it the stored block is ' +
+    'worthless.',
+  'vault.explain.crypto':
+    'The key is derived from your passphrase by PBKDF2-SHA-256 with {iterations} ' +
+    'iterations, and AES-256-GCM does the encrypting. Only the sealed envelope is stored: ' +
+    'never the plaintext, never the passphrase, never the derived key.',
+  'vault.explain.more': 'All details',
   'vault.pass.new': 'New passphrase',
   'vault.pass.existing': 'Passphrase',
   'vault.action.seal': 'Store encrypted',

@@ -74,9 +74,11 @@ export default {
   'vault.state.locked': '已鎖 —— 需要密碼短語',
   'vault.state.open': '已開 —— secret 在文字方塊裡',
   'vault.explain':
-    'Clockwork 預設什麼都不儲存。願意的話，可以把輸入用密碼短語加密後留在這裡：' +
-    'PBKDF2-SHA-256 迭代 {iterations} 次，然後 AES-256-GCM。沒有密碼短語，儲存下來的那一' +
-    '塊毫無價值。',
+    'Clockwork 預設什麼都不儲存。打開保險箱後，輸入的內容會用你的密碼短語加密後留在這裡；沒有密碼短語，儲存下來的那一塊毫無價值。',
+  'vault.explain.crypto':
+    '金鑰由密碼短語經 PBKDF2-SHA-256 迭代 {iterations} 次導出，加密由 AES-256-GCM ' +
+    '完成。儲存的只有封好的信封：明文、密碼短語和導出的金鑰都不會存下來。',
+  'vault.explain.more': '全部細節',
   'vault.pass.new': '新的密碼短語',
   'vault.pass.existing': '密碼短語',
   'vault.action.seal': '加密儲存',

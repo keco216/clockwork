@@ -90,9 +90,13 @@ export default {
   'vault.state.locked': 'Zamknięty — potrzebne hasło',
   'vault.state.open': 'Otwarty — secrety są w polu tekstowym',
   'vault.explain':
-    'Domyślnie Clockwork nie zapisuje niczego. Kto chce, może przechować tu wpisy ' +
-    'zaszyfrowane hasłem: PBKDF2-SHA-256 z {iterations} iteracjami, potem AES-256-GCM. Bez ' +
-    'hasła zapisany blok jest bezwartościowy.',
+    'Domyślnie Clockwork nie zapisuje niczego. Po włączeniu sejfu wpisane dane zostają ' +
+    'tutaj zaszyfrowane hasłem — bez niego zapisany blok jest bezwartościowy.',
+  'vault.explain.crypto':
+    'Klucz powstaje z hasła przez PBKDF2-SHA-256 z {iterations} iteracjami, a szyfruje ' +
+    'AES-256-GCM. Zapisywana jest tylko zamknięta koperta: nigdy jawny tekst, nigdy ' +
+    'hasło, nigdy wyprowadzony klucz.',
+  'vault.explain.more': 'Wszystkie szczegóły',
   'vault.pass.new': 'Nowe hasło',
   'vault.pass.existing': 'Hasło',
   'vault.action.seal': 'Zapisz zaszyfrowane',

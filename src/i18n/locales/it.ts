@@ -75,9 +75,14 @@ export default {
   'vault.state.locked': 'Chiusa — serve la passphrase',
   'vault.state.open': 'Aperta — i secret sono nel campo di testo',
   'vault.explain':
-    'Come impostazione predefinita Clockwork non salva nulla. Volendo, l’inserimento può ' +
-    'restare qui cifrato con una passphrase: PBKDF2-SHA-256 con {iterations} iterazioni, poi ' +
-    'AES-256-GCM. Senza la passphrase il blocco salvato non vale nulla.',
+    'Per impostazione predefinita Clockwork non salva nulla. Se attivi la cassaforte, ciò ' +
+    'che hai inserito resta qui cifrato con la tua passphrase: senza di essa il blocco ' +
+    'salvato non vale niente.',
+  'vault.explain.crypto':
+    'La chiave viene derivata dalla passphrase con PBKDF2-SHA-256 e {iterations} ' +
+    'iterazioni, mentre AES-256-GCM esegue la cifratura. Viene salvata solo la busta ' +
+    'sigillata: mai il testo in chiaro, mai la passphrase, mai la chiave derivata.',
+  'vault.explain.more': 'Tutti i dettagli',
   'vault.pass.new': 'Nuova passphrase',
   'vault.pass.existing': 'Passphrase',
   'vault.action.seal': 'Salva cifrato',

@@ -71,9 +71,13 @@ export default {
   'vault.state.locked': 'Zaključan — potrebna je zaporka',
   'vault.state.open': 'Otvoren — secreti su u tekstnom polju',
   'vault.explain':
-    'Clockwork prema zadanome ne sprema ništa. Tko želi, može unos ostaviti ovdje šifriran ' +
-    'zaporkom: PBKDF2-SHA-256 s {iterations} ponavljanja, zatim AES-256-GCM. Bez zaporke ' +
-    'spremljeni blok ne vrijedi ništa.',
+    'Clockwork zadano ne pohranjuje ništa. Uključite li sef, unos ostaje ovdje šifriran ' +
+    'vašom zaporkom — bez nje je pohranjeni blok bezvrijedan.',
+  'vault.explain.crypto':
+    'Ključ se izvodi iz zaporke pomoću PBKDF2-SHA-256 s {iterations} iteracija, a šifrira ' +
+    'AES-256-GCM. Pohranjuje se samo zapečaćena omotnica: nikad otvoreni tekst, nikad ' +
+    'zaporka, nikad izvedeni ključ.',
+  'vault.explain.more': 'Svi detalji',
   'vault.pass.new': 'Nova zaporka',
   'vault.pass.existing': 'Zaporka',
   'vault.action.seal': 'Spremi šifrirano',

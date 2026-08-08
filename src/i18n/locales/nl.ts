@@ -73,9 +73,13 @@ export default {
   'vault.state.locked': 'Op slot — wachtwoordzin nodig',
   'vault.state.open': 'Open — de secrets staan in het tekstveld',
   'vault.explain':
-    'Standaard bewaart Clockwork niets. Wie dat wil, kan de invoer hier versleuteld met een ' +
-    'wachtwoordzin bewaren: PBKDF2-SHA-256 met {iterations} iteraties, daarna AES-256-GCM. ' +
-    'Zonder de wachtwoordzin is het bewaarde blok waardeloos.',
+    'Standaard slaat Clockwork niets op. Zet je de kluis aan, dan blijft de invoer hier ' +
+    'versleuteld met je wachtwoordzin — zonder die zin is het opgeslagen blok waardeloos.',
+  'vault.explain.crypto':
+    'De sleutel komt uit de wachtwoordzin via PBKDF2-SHA-256 met {iterations} iteraties, ' +
+    'en AES-256-GCM doet het versleutelen. Alleen de gesloten envelop wordt opgeslagen: ' +
+    'nooit de leesbare tekst, nooit de wachtwoordzin, nooit de afgeleide sleutel.',
+  'vault.explain.more': 'Alle details',
   'vault.pass.new': 'Nieuwe wachtwoordzin',
   'vault.pass.existing': 'Wachtwoordzin',
   'vault.action.seal': 'Versleuteld bewaren',

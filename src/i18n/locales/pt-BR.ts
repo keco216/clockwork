@@ -75,9 +75,13 @@ export default {
   'vault.state.locked': 'Trancado — é preciso a frase secreta',
   'vault.state.open': 'Aberto — os secrets estão no campo de texto',
   'vault.explain':
-    'Por padrão o Clockwork não salva nada. Se quiser, a entrada pode ficar aqui ' +
-    'criptografada com uma frase secreta: PBKDF2-SHA-256 com {iterations} iterações e depois ' +
-    'AES-256-GCM. Sem a frase secreta, o bloco salvo não vale nada.',
+    'Por padrão o Clockwork não guarda nada. Se você ligar o cofre, o que digitou fica ' +
+    'aqui criptografado com a sua frase secreta: sem ela o bloco guardado não vale nada.',
+  'vault.explain.crypto':
+    'A chave é derivada da frase secreta por PBKDF2-SHA-256 com {iterations} iterações, e ' +
+    'o AES-256-GCM faz a criptografia. Só o envelope selado é guardado: nunca o texto em ' +
+    'claro, nunca a frase secreta, nunca a chave derivada.',
+  'vault.explain.more': 'Todos os detalhes',
   'vault.pass.new': 'Nova frase secreta',
   'vault.pass.existing': 'Frase secreta',
   'vault.action.seal': 'Salvar criptografado',

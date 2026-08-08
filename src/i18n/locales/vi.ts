@@ -75,9 +75,14 @@ export default {
   'vault.state.locked': 'Đã khoá — cần cụm mật khẩu',
   'vault.state.open': 'Đang mở — các secret nằm trong ô văn bản',
   'vault.explain':
-    'Mặc định Clockwork không lưu gì. Ai muốn thì có thể để phần nhập ở đây dưới dạng mã hoá ' +
-    'bằng một cụm mật khẩu: PBKDF2-SHA-256 với {iterations} vòng lặp, rồi AES-256-GCM. ' +
-    'Không có cụm mật khẩu thì khối đã lưu chẳng có giá trị gì.',
+    'Theo mặc định Clockwork không lưu gì cả. Nếu bật hầm, phần đã nhập sẽ ở lại đây dưới ' +
+    'dạng mã hoá bằng cụm mật khẩu của bạn — không có nó thì khối đã lưu chẳng có giá ' +
+    'trị.',
+  'vault.explain.crypto':
+    'Khoá được suy ra từ cụm mật khẩu bằng PBKDF2-SHA-256 với {iterations} lần lặp, còn ' +
+    'AES-256-GCM lo việc mã hoá. Chỉ phong bì đã niêm phong được lưu: không bao giờ là ' +
+    'văn bản rõ, không bao giờ là cụm mật khẩu, không bao giờ là khoá dẫn xuất.',
+  'vault.explain.more': 'Mọi chi tiết',
   'vault.pass.new': 'Cụm mật khẩu mới',
   'vault.pass.existing': 'Cụm mật khẩu',
   'vault.action.seal': 'Lưu đã mã hoá',

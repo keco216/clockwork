@@ -139,6 +139,22 @@
      ganze Erhebung. */
   --edge-inner: rgb(255 255 255 / 55%);
 
+  /* ── Die Oberkante einer VERSENKTEN Fläche ────────────────────────────────
+     Das Gegenstück zu --edge-inner, und seit V8 ein eigener Wert.
+
+     Bis V7 machte das `border-top-color: var(--rule-strong)` am Feld. Im hellen
+     Modus war das richtig — dort ist --rule-strong ein dunkler Tintenton. Im
+     dunklen ist es eine HELLE Linie, und eine helle Oberkante heißt „erhoben".
+     Das Eingabefeld behauptete dort also das Gegenteil von dem, was es ist. Ein
+     Vorzeichenfehler, den man nicht sieht, weil man beide Themes selten
+     nebeneinander hat.
+
+     Ein Innenschatten statt einer Rahmenfarbe, aus denselben zwei Gründen wie
+     bei --edge-inner: Er folgt dem Radius, und er lässt die Rahmenfarbe für den
+     Rahmen frei. Beide Werte dunkeln, in beiden Themes — eine Fräsung ist ein
+     Schatten, und ein Schatten wird nicht hell, wenn man das Licht ausmacht. */
+  --edge-sunk: rgb(23 22 20 / 26%);
+
   /* ── Kantenstärken ────────────────────────────────────────────────────────
      HeroUI führt drei (`borderWidth` 1/2/3 px) und benutzt für einen
      Umriss-Knopf ausdrücklich die MITTLERE: `bordered` ist `border-medium`,
@@ -320,17 +336,30 @@
      „Leeren" wurde dadurch zum nackten Text: leise, aber nicht mehr als Knopf
      erkennbar. Drei Varianten geben den Rang, drei Höhen das Gewicht.
 
-     ── Warum 44 px trotzdem nicht verschwindet ───────────────────────────
-     Weil die Leiter Geometrie beschreibt und nicht Trefferfläche. Apple und die
-     WCAG nennen beide 44 px als Zielgröße für einen Finger; ein 32-px-Knopf
-     wäre für die Maus richtig und für den Daumen zu klein. Beides ist
-     gleichzeitig zu haben — die sichtbare Pille bleibt 32 px hoch, ihre
-     Trefferfläche wächst über ein Pseudo-Element auf --touch-min. Dieselbe
-     Trennung, die V7 schon für die beiden Aufklapper gemacht hat. */
-  --control-h-sm: 2rem; /*   32px — Chips, Auswahlfeld, leise Tasten */
+     ── Warum keine Taste 32 px hoch ist ──────────────────────────────────
+     Weil die Leiter drei Höhen ANBIETET und nicht drei Höhen vorschreibt. Eine
+     32-px-Taste ist für die Maus richtig und für den Daumen zu klein; ihre
+     Trefferfläche über ein Pseudo-Element aufzublasen wäre der bekannte Trick
+     und hier ein Eigentor: Bei 8 px Abstand überlappen sich zwei um je 6 px
+     vergrößerte Flächen, und dann trifft man beim Danebentippen den Nachbarn
+     statt gar nichts.
+
+     Die Tasten stehen deshalb auf 40 oder 48. Die 32 gehören den Bauteilen, die
+     man EINMAL einstellt und danach nie wieder anfasst (Auswahlfeld), die 44 den
+     breiten Zeilen, bei denen Höhe nichts kostet — den beiden Aufklappern.
+
+     WCAG 2.5.8 verlangt 24 × 24 px, die 44 sind die AAA-Zielgröße aus 2.5.5. Die
+     Leiter erfüllt damit überall AA und dort AAA, wo es ohne Nebenwirkung geht. */
+  --control-h-sm: 2rem; /*   32px — Auswahlfeld: einmal einstellen, dann nie */
   --control-h: 2.5rem; /*    40px — der Normalfall */
   --control-h-lg: 3rem; /*   48px — die eine Haupthandlung je Panel */
-  --touch-min: 2.75rem; /*   44px — Trefferfläche, nie kleiner */
+  --touch-min: 2.75rem; /*   44px — breite Zeilen: die beiden Aufklapper */
+
+  /* Chips sind keine Bedienelemente und stehen deshalb nicht auf der
+     Tastenleiter. HeroUI führt sie aus demselben Grund getrennt (`chip.size.sm`
+     ist `h-6`, also 24 px). Eine Angabe, die man liest, braucht keine
+     Trefferfläche — und in einer 40-px-Zeile hat sie neben dem Text noch Platz. */
+  --chip-h: 1.5rem; /*       24px */
 
   /* Innenabstand jeder Gehäusegruppe. Als eigenes Token, weil zwei Dinge sich
      danach richten müssen, die nicht im Panel liegen: die Filterzeile (sie
@@ -494,6 +523,10 @@
        die Gerätekante zu finden. */
     --edge-lit: rgb(245 243 239 / 28%);
     --edge-inner: rgb(245 243 239 / 9%);
+    /* Deutlich kräftiger als im Hellen: Ein Schatten auf einer dunklen Fläche
+       hat weniger Weg nach unten, also braucht er mehr Deckung, um überhaupt
+       eine Kante zu sein. Dieselbe Asymmetrie wie bei --elev-1 und beim Korn. */
+    --edge-sunk: rgb(0 0 0 / 60%);
 
     /* Nacht nimmt gut das Doppelte an Korn, bevor es auffällt — und die
        Werkbank ist im Dunkeln die einzige Fläche, die es überhaupt noch trägt.

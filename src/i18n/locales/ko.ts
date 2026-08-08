@@ -73,9 +73,12 @@ export default {
   'vault.state.locked': '잠김 — 암호 문구 필요',
   'vault.state.open': '열림 — 시크릿이 텍스트 칸에 있음',
   'vault.explain':
-    'Clockwork 는 기본적으로 아무것도 저장하지 않는다. 원한다면 입력한 내용을 암호 문구로 ' +
-    '암호화해 여기에 남겨 둘 수 있다. PBKDF2-SHA-256 을 {iterations}회 돌린 뒤 AES-256-GCM. ' +
-    '암호 문구가 없으면 저장된 덩어리는 아무 쓸모가 없다.',
+    'Clockwork는 기본적으로 아무것도 저장하지 않는다. 금고를 켜면 입력한 내용이 암호 문구로 암호화된 상태로 이곳에 남는다. 암호 문구가 없으면 ' +
+    '저장된 덩어리는 아무 가치가 없다.',
+  'vault.explain.crypto':
+    '키는 암호 문구에서 PBKDF2-SHA-256을 {iterations}회 거쳐 유도하고, 암호화는 AES-256-GCM이 맡는다. 저장되는 것은 봉인된 ' +
+    '봉투뿐이며, 평문도 암호 문구도 유도된 키도 남지 않는다.',
+  'vault.explain.more': '모든 세부 정보',
   'vault.pass.new': '새 암호 문구',
   'vault.pass.existing': '암호 문구',
   'vault.action.seal': '암호화해 저장',

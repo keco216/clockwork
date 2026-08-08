@@ -73,9 +73,11 @@ export default {
   'vault.state.locked': '已锁 —— 需要密码短语',
   'vault.state.open': '已开 —— secret 在文本框里',
   'vault.explain':
-    'Clockwork 默认什么都不保存。愿意的话，可以把输入用密码短语加密后留在这里：' +
-    'PBKDF2-SHA-256 迭代 {iterations} 次，然后 AES-256-GCM。没有密码短语，保存下来的那一' +
-    '块毫无价值。',
+    'Clockwork 默认什么都不保存。打开保险箱后，输入的内容会用你的密码短语加密后留在这里；没有密码短语，保存下来的那一块毫无价值。',
+  'vault.explain.crypto':
+    '密钥由密码短语经 PBKDF2-SHA-256 迭代 {iterations} 次导出，加密由 AES-256-GCM ' +
+    '完成。保存的只有封好的信封：明文、密码短语和导出的密钥都不会存下来。',
+  'vault.explain.more': '全部细节',
   'vault.pass.new': '新的密码短语',
   'vault.pass.existing': '密码短语',
   'vault.action.seal': '加密保存',

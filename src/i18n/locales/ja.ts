@@ -75,9 +75,11 @@ export default {
   'vault.state.locked': '施錠中 — パスフレーズが必要',
   'vault.state.open': '解錠中 — シークレットはテキスト欄にある',
   'vault.explain':
-    'Clockwork は既定では何も保存しない。望むなら、入力をパスフレーズで暗号化してここに' +
-    '置いておける。PBKDF2-SHA-256 を {iterations} 回、続いて AES-256-GCM。パスフレーズが' +
-    'なければ、保存された塊には何の価値もない。',
+    'Clockwork は既定では何も保存しない。金庫を入れれば、入力はパスフレーズで暗号化されたままここに残る。パスフレーズがなければ、保存された塊には何の価値もない。',
+  'vault.explain.crypto':
+    '鍵はパスフレーズから PBKDF2-SHA-256 を {iterations} 回かけて導き、暗号化は AES-256-GCM ' +
+    'が担う。保存されるのは封をした包みだけで、平文もパスフレーズも導いた鍵も残らない。',
+  'vault.explain.more': '詳細をすべて表示',
   'vault.pass.new': '新しいパスフレーズ',
   'vault.pass.existing': 'パスフレーズ',
   'vault.action.seal': '暗号化して保存',

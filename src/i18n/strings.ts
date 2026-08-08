@@ -133,8 +133,16 @@ export interface Strings {
   'vault.state.off': string;
   'vault.state.locked': string;
   'vault.state.open': string;
-  /** `{iterations}` ist die PBKDF2-Iterationszahl, lokalisiert gruppiert. */
+  /**
+   * Zwei Sätze: was der Tresor tut und was ohne Passphrase daraus wird. Die
+   * Verfahrensnamen stehen absichtlich NICHT hier, sondern in
+   * `vault.explain.crypto` — sie sind für die Entscheidung nicht nötig.
+   */
   'vault.explain': string;
+  /** `{iterations}` ist die PBKDF2-Iterationszahl, lokalisiert gruppiert. */
+  'vault.explain.crypto': string;
+  /** Beschriftung des Aufklappers über `vault.explain.crypto`. */
+  'vault.explain.more': string;
   'vault.pass.new': string;
   'vault.pass.existing': string;
   'vault.action.seal': string;

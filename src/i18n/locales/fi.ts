@@ -73,9 +73,13 @@ export default {
   'vault.state.locked': 'Lukossa — salauslause tarvitaan',
   'vault.state.open': 'Auki — secretit ovat tekstikentässä',
   'vault.explain':
-    'Oletuksena Clockwork ei tallenna mitään. Halutessaan syötteen voi jättää tähän ' +
-    'salattuna salauslauseella: PBKDF2-SHA-256 ja {iterations} kierrosta, sitten ' +
-    'AES-256-GCM. Ilman salauslausetta tallennettu lohko on arvoton.',
+    'Oletuksena Clockwork ei tallenna mitään. Jos otat kassakaapin käyttöön, syöte jää ' +
+    'tänne salauslauseellasi salattuna — ilman sitä tallennettu lohko on arvoton.',
+  'vault.explain.crypto':
+    'Avain johdetaan salauslauseesta PBKDF2-SHA-256:lla ja {iterations} kierroksella, ja ' +
+    'salauksen tekee AES-256-GCM. Vain sinetöity kirjekuori tallennetaan: ei koskaan ' +
+    'selkokielistä tekstiä, ei salauslausetta, ei johdettua avainta.',
+  'vault.explain.more': 'Kaikki yksityiskohdat',
   'vault.pass.new': 'Uusi salauslause',
   'vault.pass.existing': 'Salauslause',
   'vault.action.seal': 'Tallenna salattuna',
