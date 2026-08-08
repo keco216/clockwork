@@ -21,8 +21,20 @@
      Zwischentöne für Nebenbeschriftung und versenkte Flächen, die eine
      Vier-Farben-Palette naturgemäß nicht mitliefert. */
 
-  /* Flächen: helles Gerätegehäuse. Kein Reinweiß — Papier, kein Bildschirm. */
-  --surface: #f5f3ef; /* Papier */
+  /* Flächen: helles Gerätegehäuse. Kein Reinweiß — Papier, kein Bildschirm.
+
+     Seit V5 gibt es zwei Ebenen statt einer. Der Grund ist nicht Geschmack: Eine
+     Erhebung, die man sehen soll, braucht etwas, worüber sie sich erhebt. Läge
+     das Gerät auf derselben Fläche, aus der es besteht, bliebe vom Schatten nur
+     ein Schmutzrand.
+
+     Die Rollenverteilung folgt der Marke, nicht der Bequemlichkeit: Papier und
+     Nacht sind laut branding/README-BRANDING.md die GEHÄUSEFLÄCHEN — sie liegen
+     deshalb auf den Panels, also dort, wo das Gerät ist. Der Grund darunter ist
+     ein abgeleiteter Ton, so wie --ink-2 und --ink-3 auch: die Tischplatte,
+     auf der das Gerät liegt. */
+  --ground: #eae7e0; /* Untergrund — eine Stufe unter Papier */
+  --surface: #f5f3ef; /* Papier — die Gehäusefläche selbst */
   --surface-recessed: #e9e6e0; /* versenkt: Eingabeschlitz */
   --surface-inverted: #171614; /* Tinte, für gedrückte Tasten */
 
@@ -35,6 +47,16 @@
   /* Haarlinien: Fugen im Gehäuse. */
   --rule: rgb(23 22 20 / 18%);
   --rule-strong: rgb(23 22 20 / 34%);
+
+  /* Die Oberkante einer erhobenen Fläche.
+     Im Hellen trägt der Schatten die Erhebung, hier genügt die normale
+     Haarlinie. Im Dunkeln kippt das (siehe unten): Dort ist ein Schatten auf
+     fast schwarzem Grund kaum noch möglich, und die Kante muss LEUCHTEN statt
+     zu schatten — so, wie Licht von oben auf eine Kante fällt.
+
+     Es ist genau die Umkehrung der Fräsung am Eingabefeld: Versenktes hat eine
+     dunklere Oberkante, Erhobenes eine hellere. Zwei Bauteile, eine Regel. */
+  --edge-lit: var(--rule);
 
   /* ── Signal: der eine Akzent ──────────────────────────────────────────────
      Nur für Zustände mit Bedeutung: der ablaufende Code, ein bestätigter
@@ -90,17 +112,26 @@
   --t-micro: 0.6875rem; /* 11px — Gravur-Beschriftung, Versalien */
   --t-small: 0.75rem; /*   12px — Nebenangaben */
   --t-body: 0.875rem; /*  14px — Fließtext */
-  --t-lead: 1rem; /*      16px — Kontoname */
+  --t-lead: 1.0625rem; /* 17px — Kontoname */
   --t-mark: 1.125rem; /*  18px — Wortmarke */
-  --t-dial-min: 2.25rem; /* 36px — Zifferblatt, Untergrenze */
-  --t-dial-max: 4.25rem; /* 68px — Zifferblatt, Obergrenze */
+  --t-dial-min: 2.5rem; /*  40px — Zifferblatt, Untergrenze */
+  --t-dial-max: 4.5rem; /*  72px — Zifferblatt, Obergrenze */
 
   --lh-tight: 1.15;
   --lh-normal: 1.5;
 
   --track-caps: 0.14em;
-  --track-dial: 0.015em;
+  --track-dial: 0.005em;
   --track-mark: 0.16em; /* Wortmarke */
+  /* Große Schrift wirkt bei gleicher Spurung lockerer als kleine — deshalb wird
+     sie enger gestellt, nicht weiter. Rund −1,5 %: spürbar, aber noch keine
+     Schlagzeilen-Enge. Fließtext bleibt bei 0; dort kostet Enge Lesbarkeit. */
+  --track-lead: -0.015em;
+
+  /* Optisches Gewicht des Zifferblatts. Eine Variable Font macht daraus keine
+     zweite Schrift, sondern eine Nuance: 450 steht satter im großen Grad, ohne
+     dass die Ziffern fett wirken. */
+  --wght-dial: 450;
 
   /* Versalsatz der Gravur-Beschriftung. Als Token, weil er in Schriften ohne
      Groß- und Kleinschreibung entfällt — zusammen mit der Sperrung darüber.
@@ -120,18 +151,91 @@
   --col-label: 6.5rem;
   --measure: 62rem;
 
+  /* Höhe jedes Bedienelements — Taste, einzeiliges Feld, Auswahl.
+     2,75 rem sind 44 px und damit die Zielgröße, die sowohl Apple als auch die
+     WCAG für einen Finger nennen. Bis V4 waren es 36 px: für die Maus genug,
+     für den Daumen knapp. Als Token, weil Taste und Feld nebeneinanderstehen
+     und jede Abweichung sofort als schiefe Zeile sichtbar wird. */
+  --control-h: 2.75rem;
+
+  /* Innenabstand jeder Gehäusegruppe. Als eigenes Token, weil zwei Dinge sich
+     danach richten müssen, die nicht im Panel liegen: die Gravur-Spalte
+     daneben (sie muss auf die erste Zeile IM Panel treffen) und der klebende
+     Kopf (er zieht sich um genau diesen Betrag über den Rand hinaus). */
+  --panel-pad: 1.5rem;
+  /* Innenabstand des Gehäuses zum Fensterrand. Ebenfalls ein eigenes Token,
+     weil der klebende Kopf sich per negativem Außenabstand genau darum wieder
+     herauszieht — und ein Wert, der beim Umbruch auseinanderläuft, erzeugt
+     dort waagerechten Überlauf. */
+  --device-pad: 1.5rem;
+  /* Wie weit ein Sprungziel unter dem klebenden Kopf durchrutschen darf.
+     Grob dessen Höhe plus Luft — lieber etwas zu viel als eine Überschrift,
+     die halb unter dem Riegel klemmt. */
+  --scroll-anchor: 5.5rem;
+
   /* ── Radien ───────────────────────────────────────────────────────────────
-     0 für Flächen: Ein Gehäuseausschnitt ist rechteckig. 2 px nur für Tasten. */
-  --radius-flat: 0;
-  --radius-key: 2px;
+     Bis V4 stand hier 0 für Flächen und 2 px für Tasten: ein gefräster
+     Gehäuseausschnitt. V5 rundet großzügig und durchgehend — die Härte weicht,
+     das Instrument bleibt.
+
+     Es gibt genau drei Werte, und sie stehen für drei Bauteilsorten. Ein
+     vierter „irgendwas dazwischen" wäre der Anfang vom Ende: Radien, die
+     niemand mehr begründen kann, sehen aus wie Radien, die niemand gewählt hat. */
+  --radius-panel: 18px; /* Gehäusegruppe — Eingabe, Tresor, Codes */
+  --radius-field: 12px; /* Eingabefeld, Sucherrahmen */
+  --radius-inset: 8px; /* Kleinteile im Feld: Tastenkappe, Auswahl */
+  /* Pille. Bewusst kein Prozentwert: `50%` würde bei breiten Tasten eine
+     Ellipse ergeben, ein großer Pixelwert klemmt immer auf die halbe Höhe. */
+  --radius-key: 999px;
+
+  /* ── Erhebung ─────────────────────────────────────────────────────────────
+     Zwei Ebenen, mehr nicht. Jede weitere Ebene ist eine Behauptung über
+     Reihenfolge, die niemand nachprüfen kann.
+
+       1 — das Gerät liegt auf dem Grund   (Panels, Kanalzug-Gruppe)
+       2 — etwas liegt über dem Gerät      (klebender Kopf, offener Tresor)
+
+     Weich und großflächig statt hart und nah, macOS-Fenster statt
+     Material-Design-Karte: zwei Lagen je Ebene, eine ganz kurze für die Kante
+     und eine sehr weite für die Diffusion. Ein Glow ist das ausdrücklich nicht —
+     es gibt keinen Schatten in Signalfarbe und keinen, der nach außen leuchtet.
+
+     Dazu immer eine Haarlinie: Ein Schatten allein trägt die Kante nicht, sobald
+     jemand den Kontrast hochdreht oder das Bild ausdruckt. */
+  --elev-1: 0 1px 2px rgb(23 22 20 / 5%), 0 8px 28px rgb(23 22 20 / 6%);
+  --elev-2: 0 2px 6px rgb(23 22 20 / 7%), 0 16px 48px rgb(23 22 20 / 11%);
+
+  /* ── Frost ────────────────────────────────────────────────────────────────
+     Das eine Apple-Material, das hier etwas zu suchen hat — und nur dort, wo
+     tatsächlich etwas dahinter durchläuft (siehe styles/panels.css). Die
+     Sättigung ist kein Effekt, sondern die Korrektur: Blur allein wäscht die
+     Farbe hinter der Fläche aus, `saturate` holt sie zurück.
+
+     Die Deckung ist NACHGEMESSEN, nicht geschätzt: 72 % sahen gut aus und
+     rissen im Härtetest von scripts/check-contrast.mjs die AA-Schwelle, sobald
+     eine kontrastreiche Fläche darunter lag. 78 % halten sie — und mehr wäre
+     keine Sicherheit mehr, sondern nur noch eine deckende Fläche mit einem
+     Weichzeichner, der nichts mehr zu tun hat. */
+  --frost-surface: rgb(245 243 239 / 78%);
+  --frost-filter: blur(20px) saturate(180%);
 
   /* ── Bewegung ─────────────────────────────────────────────────────────────
-     Kurz und mechanisch. Nichts schwebt, nichts federt nach. */
-  --dur-snap: 110ms; /* Fallblatt-Umsprung */
-  --dur-quick: 90ms; /* Tastendruck */
-  --dur-calm: 200ms; /* Zustandswechsel */
-  --ease-mech: cubic-bezier(0.2, 0.85, 0.3, 1);
-  --stagger-flap: 14ms;
+     Bis V4: kurz und mechanisch, nichts federt nach. V5 federt — aber nur die
+     Oberfläche. Das Instrument selbst (Zeiger, Skala) rechnet weiter linear mit
+     der Uhr; eine Federkurve auf einer Zeitanzeige wäre eine Lüge über die Zeit.
+
+     Die Feder ist Apples Standardkurve: schnell los, lange auslaufend, ohne
+     Überschwinger. Kein `bounce` — ein überschwingendes Bauteil behauptet Masse,
+     die ein Messgerät nicht hat. */
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Für den Tastendruck: kürzer und straffer, damit der Druckpunkt sitzt. */
+  --ease-snap: cubic-bezier(0.2, 0.85, 0.3, 1);
+
+  --dur-quick: 150ms; /* Tastendruck, Hover */
+  --dur-snap: 190ms; /* Fallblatt-Umsprung */
+  --dur-calm: 250ms; /* Zustandswechsel */
+  --dur-sheet: 350ms; /* Panel öffnet, Kanalzug kommt dazu */
+  --stagger-flap: 16ms;
 
   /* ── Zifferblatt: Proportionen aus dem Emblem ─────────────────────────────
      branding/clockwork-logo-a-skala.svg: Außenradius 96, Marke 19,2 lang
@@ -153,7 +257,12 @@
    anderen Ausführung. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --surface: #131210; /* Nacht */
+    /* Deutlich tiefer als im ersten Anlauf (#0b0a09). Der Grund: Im Dunkeln
+       muss der TONWERTUNTERSCHIED die Arbeit machen, die im Hellen der Schatten
+       leistet — zwei fast gleiche Schwarztöne ergeben keine Erhebung, sondern
+       eine Fläche mit einem Kratzer darin. */
+    --ground: #070706; /* Untergrund — deutlich unter Nacht */
+    --surface: #131210; /* Nacht — die Gehäusefläche selbst */
     --surface-recessed: #0a0908;
     --surface-inverted: #f5f3ef;
 
@@ -164,11 +273,31 @@
 
     --rule: rgb(245 243 239 / 16%);
     --rule-strong: rgb(245 243 239 / 30%);
+    /* Hier leuchtet die Oberkante — sie trägt die Erhebung, die der Schatten
+       auf diesem Grund nicht mehr tragen kann. */
+    --edge-lit: rgb(245 243 239 / 28%);
 
     /* Auf Nacht trägt der Markenwert selbst — 5,5:1, also auch für Fließtext. */
     --signal-text: #f05a28;
     --signal-quiet: rgb(240 90 40 / 16%);
 
     --fault: #e5806e;
+
+    /* ── Erhebung im Dunkeln ──────────────────────────────────────────────
+       Ein Schatten ist dunkler als sein Grund. Auf Nacht gibt es dafür kaum
+       noch Spielraum — deshalb wird er hier tiefer angesetzt UND darf sich
+       nicht allein darauf verlassen: Die Kante trägt im dunklen Modus
+       hauptsächlich die Haarlinie, der Schatten setzt das Gerät nur ab.
+
+       Genau die umgekehrte Gewichtung wie im hellen Modus, und genau das ist
+       die Falle, in die ein bloß invertiertes Theme läuft: Es kopiert die
+       Schattenwerte und wundert sich, dass nichts mehr schwebt. */
+    --elev-1: 0 1px 2px rgb(0 0 0 / 44%), 0 8px 28px rgb(0 0 0 / 34%);
+    --elev-2: 0 2px 8px rgb(0 0 0 / 52%), 0 16px 48px rgb(0 0 0 / 44%);
+
+    /* Vibrancy-Falle: Dieselbe Deckung wie im Hellen lässt im Dunkeln zu viel
+       durch, und der Text auf der Frostfläche verliert seinen Grund. Deshalb
+       hier undurchsichtiger, nicht durchsichtiger — auch das nachgemessen. */
+    --frost-surface: rgb(19 18 16 / 84%);
   }
 }

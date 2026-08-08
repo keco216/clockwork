@@ -15,9 +15,13 @@
       name="description"
       content="Clockwork — TOTP authenticator. Generates two-factor codes entirely in the browser, without any network requests."
     />
-    <!-- Die Farbe der Browserleiste folgt dem Gehäuse: Papier bzw. Nacht. -->
-    <meta name="theme-color" content="#f5f3ef" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#131210" media="(prefers-color-scheme: dark)" />
+    <!--
+      Die Farbe der Browserleiste folgt dem Untergrund, auf dem das Gerät liegt
+      (--ground), nicht der Gehäusefläche darauf. Seit V5 sind das zwei
+      verschiedene Töne, und die Leiste grenzt an den Untergrund.
+    -->
+    <meta name="theme-color" content="#eae7e0" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#070706" media="(prefers-color-scheme: dark)" />
 
     <!--
       Angaben für geteilte Links. Sie bleiben englisch, auch wenn die Oberfläche
@@ -128,9 +132,22 @@
             <div class="keys">
               <button type="button" class="key" id="key-clear" data-i18n="key.clear">Clear</button>
               <span class="keys__gap" aria-hidden="true"></span>
+              <!--
+                Die Bedien-Icons sind seit V5 in der Handschrift von SF Symbols
+                gezeichnet: runde Ecken, weiche Verbindungen, 1,5 px Strich
+                (styles/style.css, .key__icon). Das gilt ausdrücklich NUR für
+                Zeichen, die man antippt — Skala, Zeiger und Nabe behalten
+                stumpfe Enden und exakte Geometrie.
+
+                Aus dem Ordner ist ein Bildrahmen geworden. Der Knopf öffnet
+                keinen Ordner, er nimmt ein Bild entgegen; ein Ordnersymbol
+                versprach die falsche Handlung.
+              -->
               <button type="button" class="key" id="key-file">
                 <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                  <path d="M2.5 12.5v-9h5l1.5 2h4.5v7z" />
+                  <rect x="2" y="3" width="12" height="10" rx="2.75" />
+                  <circle cx="5.6" cy="6.4" r="1" />
+                  <path d="M2.6 11.4 6 8.4l2.3 2 2.3-2.4 2.8 3" />
                 </svg>
                 <!-- Eigener span: data-i18n setzt textContent, das würde sonst
                      das Icon mit wegwischen. -->
@@ -138,8 +155,9 @@
               </button>
               <button type="button" class="key" id="key-camera">
                 <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                  <path d="M1.5 4.5h3l1-2h5l1 2h3v9h-13z" />
-                  <circle cx="8" cy="8.5" r="2.5" />
+                  <rect x="1.75" y="4.4" width="12.5" height="9.1" rx="2.75" />
+                  <path d="M5.5 4.4 6.4 2.5h3.2l.9 1.9" />
+                  <circle cx="8" cy="8.95" r="2.35" />
                 </svg>
                 <span data-i18n="key.camera">Camera</span>
               </button>
@@ -275,12 +293,18 @@
                 >
                 <!-- Beschriftet werden die Einträge in vault-panel.ts über die
                      Mehrzahlregeln. Der Text hier ist der Platzhalter für den
-                     ersten Anstrich, damit das Feld nicht nachträglich wächst. -->
-                <select id="vault-timeout" class="pick">
-                  <option value="60000">1 minute</option>
-                  <option value="300000" selected>5 minutes</option>
-                  <option value="900000">15 minutes</option>
-                </select>
+                     ersten Anstrich, damit das Feld nicht nachträglich wächst.
+
+                     Die Hülle trägt den eigenen Winkel: `appearance: none`
+                     räumt den Systempfeil weg, und ein <select> kann kein
+                     Pseudo-Element tragen. Siehe styles/panels.css. -->
+                <span class="pick-shell">
+                  <select id="vault-timeout" class="pick">
+                    <option value="60000">1 minute</option>
+                    <option value="300000" selected>5 minutes</option>
+                    <option value="900000">15 minutes</option>
+                  </select>
+                </span>
                 <label class="vault__check">
                   <input type="checkbox" id="vault-hide-lock" checked />
                   <span data-i18n="vault.lockOnHide">and when the tab is left</span>
@@ -326,12 +350,14 @@
           <label for="lang-select" class="colophon__langLabel" data-i18n="lang.label"
             >Language</label
           >
-          <select
-            id="lang-select"
-            class="pick"
-            data-i18n-attr="aria-label=lang.aria"
-            aria-label="Choose language"
-          ></select>
+          <span class="pick-shell">
+            <select
+              id="lang-select"
+              class="pick"
+              data-i18n-attr="aria-label=lang.aria"
+              aria-label="Choose language"
+            ></select>
+          </span>
         </p>
 
         <p class="colophon__note" data-i18n="colophon.note">
@@ -380,8 +406,10 @@
 
         <button type="button" class="key key--copy" data-copy>
           <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-            <rect x="5.5" y="5.5" width="8" height="8" />
-            <path d="M10.5 3.5v-1h-8v8h1" />
+            <rect x="5.6" y="5.6" width="8.2" height="8.2" rx="2.25" />
+            <path
+              d="M10.6 3.4v-.65a1.5 1.5 0 0 0-1.5-1.5H3.7a1.5 1.5 0 0 0-1.5 1.5v5.4a1.5 1.5 0 0 0 1.5 1.5h.7"
+            />
           </svg>
           <span data-copy-label data-i18n="key.copy">Copy</span>
         </button>

@@ -106,14 +106,15 @@ one of them will be turned down even if the code is good.
 
 ## Design system
 
-The guiding idea is a **precision instrument** in the spirit of Dieter Rams.
-No cards, no gradients, no glow, no glassmorphism. Accounts are channel strips
-separated by hairlines.
+The guiding idea is a **precision instrument** in the spirit of Dieter Rams,
+softened since v5 by Apple's sense of material. The one rule that decided every
+detail: **what you touch is soft, what you read is sharp.**
 
 - **Every value comes from `src/styles/tokens.css`.** No component ever sets its
-  own colour, size or spacing.
+  own colour, size, radius, shadow or easing.
 - **The palette is binding:** ink `#171614`, paper `#F5F3EF`, night `#131210`,
-  signal `#F05A28`.
+  signal `#F05A28`. Paper and night sit on the panels — they are the _housing_.
+  `--ground` underneath them is a derived tone, the desk the device rests on.
 - **Two signal tokens:** `--signal` (brand value, for marks and areas, 3:1 is
   enough) and `--signal-text` (deeper, 4.6:1, for small text on paper).
 - **Exactly one accent**, only for states that mean something: the last five
@@ -122,6 +123,40 @@ separated by hairlines.
   interface, Chivo Mono for the codes. No Google Fonts link.
 - **No donut ring.** The countdown is a radial 30-mark scale with a rotating
   hand — the same geometry as the brand emblem.
+- **Three radii and no more:** `--radius-panel` (18 px) for housing groups,
+  `--radius-field` (12 px) for inputs, `--radius-inset` (8 px) for small parts,
+  plus `--radius-key` for the pill every button is.
+- **Two elevation levels and no more:** level 1 is a housing group on the
+  ground, level 2 is the sticky masthead above everything. Every raised surface
+  also carries a hairline — a shadow alone does not survive a high-contrast
+  setting or a printout.
+- **Accounts are still not cards.** The _group_ is rounded and raised; the
+  channel strips inside it stay strips, separated by hairlines that start
+  behind the dial. Turning each account into its own card would undo the whole
+  idea.
+- **`backdrop-filter` appears exactly once**, on the sticky masthead, and only
+  once something is actually behind it. A frosted surface with nothing to blur
+  is a layer without a purpose. The vault deliberately does not have one.
+- **No gradients, no glow.** Soft diffusion yes, glowing no. There is no shadow
+  in the signal colour.
+- **Springs for the surface, linear for the instrument.** UI motion uses
+  `--ease-spring` at 150–350 ms. The countdown hand keeps computing linearly
+  from the clock: a spring curve on a time display is a lie about time.
+
+### Measure it, do not eyeball it
+
+Two scripts exist because two claims cannot be checked by looking:
+
+```bash
+node scripts/check-bundle.mjs      # the offline promise, measured on the bundle
+node scripts/check-contrast.mjs    # WCAG AA, measured on rendered pixels
+```
+
+`check-contrast.mjs` reads the pixels the browser actually painted — including
+blur, saturation and opacity — rather than computing from tokens, because the
+masthead's background is decided at paint time and changes as you scroll. It
+measures 42 pairs across both colour schemes. Run it after any change to
+colours, opacity or the frosted surface. It needs a server on port 5180.
 
 ## Traps that have already caught someone
 

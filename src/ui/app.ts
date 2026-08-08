@@ -19,10 +19,12 @@ import { parseEntries, type ParsedEntry } from '../lib/accounts';
 import { isMigrationUri, MigrationError, parseMigrationUri } from '../lib/google-auth';
 import { createStrip, type Strip, type StripContext } from './strip';
 import { startClock } from './clock';
-import { requireElement } from './dom';
+import { prefersReducedMotion, requireElement } from './dom';
 import { buildGauge } from './gauge';
 import { startLanguageSwitch } from './lang-switch';
+import { startMasthead } from './masthead';
 import { startScanner } from './scan';
+import { easingToken, motionToken } from './tokens';
 import { startVaultPanel } from './vault-panel';
 
 /**
@@ -73,12 +75,22 @@ export function startApp(): void {
   function render(entries: ParsedEntry[]): void {
     const next = new Map<string, Strip>();
     const ordered = document.createDocumentFragment();
+    const fresh: HTMLElement[] = [];
 
     entries.forEach((entry, index) => {
       // Bestehenden Kanalzug wiederverwenden, wenn die Zeile unverändert ist.
       // Das verhindert vor allem ein Flackern der Codes bei jedem Tastendruck in
       // einer anderen Zeile.
-      const strip = strips.get(entry.key) ?? createStrip(entry, index, context);
+      const existing = strips.get(entry.key);
+      const strip = existing ?? createStrip(entry, index, context);
+      // Nur wirklich neue Kanalzüge federn ein. Der Unterschied ist wichtig:
+      // `replaceChildren` hängt unten ALLE Elemente neu ein, und eine
+      // CSS-Animation würde dadurch bei jedem Tastendruck auf der ganzen Liste
+      // neu starten. Deshalb wird hier gemerkt, wer neu ist, und die Bewegung
+      // läuft danach gezielt über die Web Animations API.
+      if (existing === undefined) {
+        fresh.push(strip.element);
+      }
       next.set(entry.key, strip);
       ordered.append(strip.element);
     });
@@ -98,6 +110,7 @@ export function startApp(): void {
     // Sofort ein Tick, damit frische Kanalzüge nicht bis zum nächsten Frame
     // leer dastehen.
     tick(Date.now());
+    revealStrips(fresh);
   }
 
   function tick(nowMs: number): void {
@@ -242,6 +255,7 @@ export function startApp(): void {
   });
 
   startLanguageSwitch();
+  startMasthead(requireElement(document, '.masthead'));
 
   // Der Leerzustand trägt das Emblem — dieselbe Teilung, die gleich die Codes
   // begleitet. Es steht still: Es gibt noch nichts zu messen.
@@ -264,6 +278,44 @@ export function startApp(): void {
 
   startClock(tick);
   reparse();
+}
+
+/**
+ * Wie ein neuer Kanalzug ins Gehäuse kommt.
+ *
+ * Sechs Pixel von unten und aus der Durchsicht heraus, auf der Federkurve —
+ * gerade genug, dass das Auge die Stelle findet, an der etwas dazugekommen ist.
+ * Ein Aufklappen der Höhe wäre die naheliegende Alternative und wäre falsch:
+ * Das animiert Layout statt Compositor und schiebt bei jedem Bild alles
+ * darunter neu.
+ *
+ * Der Versatz je Kanal ist bei sechs gedeckelt. Wer einen Google-Export mit
+ * dreißig Konten einfügt, soll nicht eine Sekunde lang beim Aufbauen zusehen.
+ */
+const ENTER: Keyframe[] = [
+  { opacity: 0, transform: 'translateY(6px)' },
+  { opacity: 1, transform: 'none' },
+];
+
+const MAX_STAGGERED = 6;
+
+function revealStrips(elements: HTMLElement[]): void {
+  if (elements.length === 0 || prefersReducedMotion()) {
+    return;
+  }
+
+  const duration = motionToken('--dur-sheet', 350);
+  const stagger = motionToken('--stagger-flap', 16);
+  const easing = easingToken('--ease-spring', 'cubic-bezier(0.32, 0.72, 0, 1)');
+
+  elements.forEach((element, index) => {
+    element.animate(ENTER, {
+      duration,
+      delay: Math.min(index, MAX_STAGGERED) * stagger * 2,
+      easing,
+      fill: 'backwards',
+    });
+  });
 }
 
 /** „2 Konten · 1 Fehler" — die Bilanz unter dem Eingabefeld. */

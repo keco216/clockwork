@@ -62,17 +62,26 @@
   display: none;
 }
 
+/* `center` statt `stretch`: Gestreckt zog der Knopf sich auf die Höhe des
+   Feldes, und eine Pille von 3 rem Höhe ist keine Taste mehr, sondern eine
+   Kapsel. Beide stehen jetzt auf derselben Höhe, weil beide dieselbe Höhe
+   HABEN — nicht, weil einer den anderen mitzieht. */
 .vault__row {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2);
-  align-items: stretch;
+  align-items: center;
 }
 
 .vault__pass {
   flex: 1 1 16rem;
   min-width: 0;
-  min-height: 2.25rem;
+  /* Dieselbe Höhe wie eine Taste. Die gemeinsame `.field`-Basis bringt bewusst
+     keine mit (sonst entscheidet die @import-Reihenfolge, welche gewinnt), also
+     steht sie hier — und `line-height` muss mit, sonst treibt die 1,7 aus der
+     Basis das einzeilige Feld wieder auseinander. */
+  min-height: var(--control-h);
+  line-height: 1.4;
   font-family: var(--font-mono);
 }
 
@@ -86,17 +95,39 @@
   min-height: 0;
 }
 
-.key--danger {
+/* ── Warum hier .key.key--danger steht und nicht .key--danger ──────────────
+   Weil das Einfache nicht funktioniert hat, und zwar seit V2 unbemerkt.
+
+   `.key` (style.css) und `.key--danger` (diese Datei) haben dieselbe
+   Spezifität. Welche gewinnt, entscheidet dann die Reihenfolge — und
+   `@import`-Regeln stehen IMMER vor den eigenen Regeln der importierenden
+   Datei. Also gewann `.key { color: var(--ink-2) }`, und der Löschknopf trug
+   dieselbe Farbe wie jeder andere: gemessen `rgb(92, 88, 82)` statt `#9c2f1c`.
+
+   Gesehen hat das keiner, weil der Knopf nur bei offenem Tresor auftaucht und
+   dort neben zwei gleich aussehenden Geschwistern steht. Genau die
+   Kaskaden-Kollision, die in diesem Projekt schon einmal zugeschlagen hat —
+   damals war ein Passwortfeld 6 rem hoch, diesmal war eine Warnfarbe
+   unsichtbar.
+
+   Der doppelte Klassenname hebt die Spezifität auf (0,2,0) und macht das
+   Bauteil damit unabhängig von der Import-Reihenfolge. Das ist die Sorte
+   Wiederholung, die man schreibt, weil ihre Abwesenheit teuer war. */
+.key.key--danger {
   color: var(--fault);
   border-color: color-mix(in oklab, var(--fault) 45%, var(--rule-strong));
 }
 
-.key--danger:hover {
+.key.key--danger:hover {
   color: var(--fault);
   border-color: var(--fault);
 }
 
-.key--danger[data-armed] {
+/* Der scharfgestellte Zustand hatte durch das Attribut schon genug Gewicht und
+   war deshalb nie kaputt. Er trägt die doppelte Klasse trotzdem — sonst steht
+   in einer Datei zweierlei Schreibweise für dasselbe Bauteil, und die nächste
+   Person muss raten, welche gilt. */
+.key.key--danger[data-armed] {
   background: var(--fault);
   border-color: var(--fault);
   color: var(--surface);
@@ -115,16 +146,75 @@
   display: none; /* Ohne Tresor gibt es nichts zu sperren. */
 }
 
-/* Auswahlfeld im selben Stil wie eine Taste — es ist auch eines. */
+/* ── Auswahlfeld ──────────────────────────────────────────────────────────
+   Ein `<select>` bleibt ein `<select>`: echtes Bedienelement, echte
+   Tastaturbedienung, echte Systemliste beim Aufklappen. Getauscht wird nur das
+   Aussehen der geschlossenen Fläche — und mit ihr der Pfeil.
+
+   Warum überhaupt: Der Systempfeil ist auf jeder Plattform ein anderes Zeichen
+   und auf Windows ein hartes Dreieck. Neben Pillen mit 1,5-px-Rundstrich sieht
+   das aus wie ein Formularfeld, das jemand vergessen hat. Der eigene Winkel
+   stammt aus derselben Strichlogik wie die Bedien-Icons.
+
+   Die Hülle trägt den Pfeil, nicht das Feld selbst: `appearance: none` räumt
+   den Systempfeil weg, aber ein `<select>` kann kein Pseudo-Element tragen. */
+.pick-shell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Der Winkel. Zwei Striche als CSS-Kante, damit kein Bild und keine zweite
+   Datei nötig ist — und weil er so dieselbe Stärke hat wie alles andere.
+
+   ── Warum hier physische Kanten stehen ────────────────────────────────────
+   Die POSITION des Winkels ist eine Leserichtung: Er sitzt am Ende des Feldes,
+   also rechts im Deutschen und links im Arabischen — dafür `inset-inline-end`.
+
+   Seine FORM ist keine. Ein Winkel, der „nach unten" zeigt, zeigt in jeder
+   Sprache nach unten. Mit `border-inline-end` wurden daraus im Arabischen die
+   linke und die untere Kante, und nach der 45°-Drehung zeigte er nach links —
+   aus „aufklappen" wurde „zurück". Gesehen auf dem RTL-Screenshot, nicht
+   gedacht.
+
+   Es ist dieselbe Unterscheidung wie beim Zifferblatt und beim Signal-Index in
+   styles/mark.css: Was eine Leserichtung hat, steht logisch; was eine
+   Geometrie ist, steht physisch. */
+.pick-shell::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: var(--sp-3);
+  inset-block-start: calc(50% - 0.22em);
+  width: 0.42em;
+  height: 0.42em;
+  border-right: 1.5px solid var(--ink-3);
+  border-bottom: 1.5px solid var(--ink-3);
+  border-bottom-right-radius: 1px;
+  transform: translateY(-25%) rotate(45deg);
+  pointer-events: none;
+}
+
 .pick {
+  appearance: none;
   font: inherit;
   font-size: var(--t-small);
   color: var(--ink-2);
+  /* Ausdrücklich gesetzt, nicht geerbt: Ein `<select>` ohne eigene Farbangabe
+     zieht sich unter Windows im dunklen Modus die Systemfarben und steht dann
+     als weißer Kasten in einem schwarzen Gerät. */
   background: var(--surface-recessed);
   border: 1px solid var(--rule-strong);
-  border-radius: var(--radius-key);
-  padding: 0.15rem var(--sp-2);
-  min-height: 1.75rem;
+  border-radius: var(--radius-inset);
+  /* Rechts Platz für den Winkel. */
+  padding: 0.2rem var(--sp-6) 0.2rem var(--sp-3);
+  min-height: 2.25rem;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color var(--dur-quick) var(--ease-snap);
+}
+
+.pick:hover {
+  border-color: var(--ink-3);
 }
 
 .vault__check {
@@ -133,14 +223,68 @@
   gap: var(--sp-2);
 }
 
-/* Bewusst NICHT in Signalfarbe: Eine angehakte Einstellung ist kein
-   Betriebszustand. Das Orange bleibt den vier Stellen vorbehalten, an denen es
-   etwas bedeutet — ablaufender Code, bestätigtes Kopieren, offener Tresor,
-   Sucherrahmen. */
+/* ── Schalter ─────────────────────────────────────────────────────────────
+   Ein iOS-naher Kippschalter, gezeichnet auf dem echten `<input
+   type="checkbox">`. Kein nachgebautes div mit `role="switch"`: Das Original
+   bringt Fokus, Tastatur, Beschriftungsbindung und den Zustand für
+   Screenreader schon mit, und alles davon müsste man sonst von Hand nachbauen
+   und dabei etwas vergessen.
+
+   Bewusst NICHT in Signalfarbe, wenn er an ist: Eine angehakte Einstellung ist
+   kein Betriebszustand. Das Orange bleibt den vier Stellen vorbehalten, an
+   denen es etwas bedeutet — ablaufender Code, bestätigtes Kopieren, offener
+   Tresor, Sucherrahmen. Der Schalter zeigt „an" in Tinte. */
 .vault__check input {
-  accent-color: var(--ink);
-  width: 1rem;
-  height: 1rem;
+  appearance: none;
+  position: relative;
+  flex: none;
+  width: 1.75rem;
+  height: 1.0625rem;
+  margin: 0;
+  background: var(--surface-recessed);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-key);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-calm) var(--ease-spring),
+    border-color var(--dur-calm) var(--ease-spring);
+}
+
+.vault__check input::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 1px;
+  inset-inline-start: 1px;
+  width: 0.8125rem;
+  height: 0.8125rem;
+  border-radius: 50%;
+  background: var(--ink-3);
+  /* Der Knopf fährt, er blendet nicht um: `translate` statt `inset-inline-start`
+     bleibt auf dem Compositor und läuft auch auf einem müden Gerät flüssig. */
+  transition:
+    transform var(--dur-calm) var(--ease-spring),
+    background-color var(--dur-calm) var(--ease-spring);
+}
+
+.vault__check input:checked {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.vault__check input:checked::before {
+  background: var(--surface);
+  /* Bahnbreite minus Knopf minus beide Ränder. */
+  transform: translateX(0.6875rem);
+}
+
+/* Rechtsläufig fährt der Knopf nach links — sonst säße er im eingeschalteten
+   Zustand auf der falschen Seite der Bahn. */
+:root[dir='rtl'] .vault__check input:checked::before {
+  transform: translateX(-0.6875rem);
+}
+
+.vault__check input:hover {
+  border-color: var(--ink-3);
 }
 
 /* ── Kamerasucher ─────────────────────────────────────────────────────────── */
@@ -163,7 +307,12 @@
   aspect-ratio: 1;
   background: var(--surface-recessed);
   border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-panel);
   overflow: hidden;
+  /* Ohne das schaut das Video an den vier Ecken unter der Rundung hervor:
+     `overflow: hidden` allein beschneidet in manchen Browsern kein Video-
+     Element, das seinen eigenen Renderpfad hat. */
+  isolation: isolate;
 }
 
 .viewfinder__video {
@@ -188,29 +337,29 @@
 }
 
 .viewfinder__mark[data-corner='tl'] {
-  inset-block-start: 12px;
-  inset-inline-start: 12px;
+  inset-block-start: 18px;
+  inset-inline-start: 18px;
   border-inline-end: 0;
   border-block-end: 0;
 }
 
 .viewfinder__mark[data-corner='tr'] {
-  inset-block-start: 12px;
-  inset-inline-end: 12px;
+  inset-block-start: 18px;
+  inset-inline-end: 18px;
   border-inline-start: 0;
   border-block-end: 0;
 }
 
 .viewfinder__mark[data-corner='bl'] {
-  inset-block-end: 12px;
-  inset-inline-start: 12px;
+  inset-block-end: 18px;
+  inset-inline-start: 18px;
   border-inline-end: 0;
   border-block-start: 0;
 }
 
 .viewfinder__mark[data-corner='br'] {
-  inset-block-end: 12px;
-  inset-inline-end: 12px;
+  inset-block-end: 18px;
+  inset-inline-end: 18px;
   border-inline-start: 0;
   border-block-start: 0;
 }
@@ -231,10 +380,15 @@
 
 /* Kein Overlay, keine Wolke, kein gestrichelter Kasten über der ganzen Seite:
    Das Gerät bekommt eine Kante in Signalfarbe. Mehr braucht die Rückmeldung
-   „hier kannst du loslassen" nicht. */
+   „hier kannst du loslassen" nicht.
+
+   `outline` folgt seit V5 dem Radius der Panels darunter — der Browser rundet
+   eine Kontur automatisch mit, wenn das Element eine hat; hier braucht sie eine
+   eigene, weil `.device` selbst keine trägt. */
 .is-dropping .device {
   outline: 2px solid var(--signal);
   outline-offset: var(--sp-3);
+  border-radius: var(--radius-panel);
 }
 
 /* ── Kleinigkeiten ────────────────────────────────────────────────────────── */
@@ -244,12 +398,14 @@
   min-width: var(--sp-2);
 }
 
+/* Die Tastenkappe im Fließtext bekommt --radius-inset und nicht die Pille: Eine
+   Kappe mit halbrunden Enden sähe aus wie ein Etikett, nicht wie eine Taste. */
 kbd {
   font-family: var(--font-mono);
   font-size: 0.9em;
   border: 1px solid var(--rule-strong);
-  border-radius: var(--radius-key);
-  padding: 0.05em 0.3em;
+  border-radius: var(--radius-inset);
+  padding: 0.05em 0.35em;
   color: var(--ink-2);
 }
 

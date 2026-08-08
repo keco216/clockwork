@@ -203,6 +203,51 @@ await session('05-ablauf', {
   },
 });
 
+/* ── 11b. Der klebende Kopf mit Material ──────────────────────────────────
+   Seit V5 trägt der Kopf Frost — aber erst, wenn etwas unter ihm liegt. Auf
+   jedem gewöhnlichen Standbild steht die Seite ganz oben, und dann ist er
+   flach: Der interessante Zustand wäre nie zu sehen.
+
+   Geprüft wird deshalb beides an einer Stelle: dass die Klasse oben NICHT und
+   nach dem Scrollen SCHON gesetzt ist. Ein Beobachter, der nie auslöst, fällt
+   sonst nicht auf — die Seite sieht ja bloß etwas flacher aus. */
+for (const scheme of ['light', 'dark']) {
+  await session(`09-frost-${scheme}`, {
+    width: 1280,
+    height: 720,
+    scheme,
+    lang: 'de',
+    steps: async (page, name) => {
+      await fillSecrets(page);
+
+      const flatAtTop = await page.evaluate(
+        () => !document.querySelector('.masthead')?.classList.contains('masthead--lifted'),
+      );
+      if (!flatAtTop) {
+        problems.push(`[${name}] Kopf traegt schon oben Material — Fuehler loest zu frueh aus`);
+      }
+
+      await page.evaluate(() => {
+        window.scrollTo(0, 420);
+      });
+      await page.waitForTimeout(400);
+
+      const lifted = await page.evaluate(() =>
+        document.querySelector('.masthead')?.classList.contains('masthead--lifted'),
+      );
+      if (!lifted) {
+        problems.push(`[${name}] Kopf bleibt beim Scrollen flach — Fuehler loest nicht aus`);
+      }
+
+      // Bewusst NICHT fullPage: Der Frost lebt von der Scrollposition, und ein
+      // Ganzseitenbild scrollt sie weg.
+      const file = path.join(outDir, `${name}.png`);
+      await page.screenshot({ path: file });
+      shots.push(file);
+    },
+  });
+}
+
 /* ── 12. Tresor: offen ────────────────────────────────────────────────────── */
 await session('06-tresor', {
   width: 1280,
