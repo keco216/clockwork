@@ -35,6 +35,18 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* Der klebende Kopf verdeckt seit V5 die oberste Zeile des Bildes. Das ist
+     beim Lesen egal und beim Bedienen nicht: Wer sich mit der Tabulatortaste
+     durch die Seite arbeitet, bekommt das nächste Element vom Browser ins Bild
+     gescrollt — und der Browser weiß nichts von einem Riegel darüber. Das
+     fokussierte Feld läge dann halb dahinter.
+
+     `scroll-padding` sagt es ihm. Es wirkt auf JEDEN Scroll, den der Browser
+     selbst auslöst — Tabulator, Sprunglink, `scrollIntoView` —, und zwar ohne
+     dass ein einziges Ziel etwas davon wissen muss. Das `:target` weiter unten
+     bleibt trotzdem stehen: Es deckt den Fall ab, dass die Seite mit einem
+     Anker in der Adresse GELADEN wird. */
+  scroll-padding-block-start: var(--scroll-anchor);
   /* Kein 300-ms-Warten auf einen möglichen Doppeltipp. Bei einem Code, der in
      wenigen Sekunden abläuft, ist das keine Feinheit. */
   touch-action: manipulation;
@@ -44,16 +56,21 @@ html {
 }
 
 /* Der Sprunglink zielt auf eine Zone — ohne diesen Abstand klebt deren
-   Überschrift nach dem Sprung am oberen Fensterrand. */
+   Überschrift nach dem Sprung am oberen Fensterrand. Seit V5 klebt dort
+   zusätzlich der Kopf, also muss auch dessen Höhe hinein. */
 :target {
-  scroll-margin-top: var(--sp-5);
+  scroll-margin-top: var(--scroll-anchor);
 }
 
 body {
   margin: 0;
   /* Explizit gesetzt: Ein transparenter Body übernimmt sonst den Grund des
-     umgebenden Kontexts, und dann steht ein Theme auf dem falschen Untergrund. */
-  background: var(--surface);
+     umgebenden Kontexts, und dann steht ein Theme auf dem falschen Untergrund.
+
+     Seit V5 der Untergrund, nicht die Gehäusefläche: Das Gerät LIEGT auf etwas.
+     Ohne diesen Unterschied gäbe es nichts, worüber sich ein Panel erheben
+     könnte, und jeder Schatten wäre bloß ein grauer Rand. */
+  background: var(--ground);
   color: var(--ink);
   font-family: var(--font-ui);
   font-size: var(--t-body);
@@ -144,7 +161,8 @@ kbd {
   letter-spacing: var(--track-caps);
   text-transform: var(--case-caps);
   text-decoration: none;
-  transition: inset-block-start var(--dur-quick) var(--ease-mech);
+  border-radius: var(--radius-key);
+  transition: inset-block-start var(--dur-calm) var(--ease-spring);
 }
 
 .skip:focus {
@@ -177,23 +195,88 @@ kbd {
 .device {
   max-width: var(--measure);
   margin-inline: auto;
-  padding-inline: max(var(--sp-5), env(safe-area-inset-left))
-    max(var(--sp-5), env(safe-area-inset-right));
-  padding-block: var(--sp-6) calc(var(--sp-8) + env(safe-area-inset-bottom));
+  padding-inline: max(var(--device-pad), env(safe-area-inset-left))
+    max(var(--device-pad), env(safe-area-inset-right));
+  padding-block: var(--sp-5) calc(var(--sp-8) + env(safe-area-inset-bottom));
 }
 
 /* ── Kopf ─────────────────────────────────────────────────────────────────── */
 
+/* Der Kopf klebt seit V5 oben. Er ist damit die einzige Fläche der App, unter
+   der wirklich etwas durchläuft — und deshalb die einzige, an der ein
+   Frost-Material etwas zu tun hat (siehe .masthead--lifted weiter unten).
+
+   Der Sprunglink zielt an ihm vorbei auf die Codes-Zone; damit deren Überschrift
+   danach nicht unter dem Kopf klemmt, liegt --scroll-anchor unten am :target. */
 .masthead {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 5;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: baseline;
   gap: var(--sp-2) var(--sp-5);
-  padding-bottom: var(--sp-4);
+  /* Der Riegel ist breiter als sein Inhalt: Er muss bis an den Gehäuserand
+     reichen, sonst schiebt sich ein Kanalzug seitlich an ihm vorbei ins Bild.
+     Negative Außenabstände statt eines eigenen Elements — das Raster darüber
+     bleibt so, wie es ist.
+
+     Der Betrag MUSS --device-pad sein und nicht irgendein Wert: Ist er größer
+     als der Innenabstand des Gehäuses, läuft die Seite waagerecht über. Genau
+     das prüft scripts/shoot.mjs bei 375 px mit, wo --device-pad kleiner ist. */
+  margin-inline: calc(var(--device-pad) * -1);
+  padding: var(--sp-4) var(--device-pad);
+  border-radius: var(--radius-panel);
+  border: 1px solid transparent;
+  /* Ohne Erhebung, solange nichts darunter liegt. Erst beim Scrollen wird
+     daraus Material — siehe unten. */
+  transition:
+    background-color var(--dur-calm) var(--ease-spring),
+    border-color var(--dur-calm) var(--ease-spring),
+    box-shadow var(--dur-calm) var(--ease-spring);
 }
 
+/* Ab hier liegt der Kopf über etwas — und erst ab hier bekommt er Material.
+   Die Klasse setzt ui/masthead.ts über einen Beobachter am Seitenanfang, nicht
+   ein Scroll-Rückruf: Ein Schatten ohne Erhebung wäre eine Behauptung, und eine
+   Fläche, die IMMER schwebt, behauptet sie durchgehend. */
+.masthead--lifted {
+  background: var(--frost-surface);
+  backdrop-filter: var(--frost-filter);
+  -webkit-backdrop-filter: var(--frost-filter);
+  border-color: var(--rule);
+  box-shadow: var(--elev-2);
+}
+
+/* Kein backdrop-filter (ältere Firefox-Stände, abgeschaltete Beschleunigung):
+   dann eben deckend. Halbtransparent OHNE Blur wäre der schlechteste aller
+   Zustände — der Text bekäme wechselnde Untergründe und niemand könnte den
+   Kontrast noch zusagen. */
+@supports not (backdrop-filter: blur(1px)) {
+  .masthead--lifted {
+    background: var(--surface);
+  }
+}
+
+/* Der Fühler, an dem der Beobachter hängt: ein Pixel ganz oben im Dokument.
+   Verlässt er das Bild, liegt etwas unter dem Kopf. Das kostet genau zwei
+   Rückrufe pro Scrollrichtung statt eines pro Scroll-Ereignis — und vor allem
+   keine Layout-Abfrage im laufenden Bild. */
+.scroll-sentinel {
+  position: absolute;
+  inset-block-start: 0;
+  block-size: 1px;
+  inline-size: 1px;
+  pointer-events: none;
+}
+
+/* Als einziger Gravurtext NICHT in --ink-3, sondern eine Stufe kräftiger.
+   Der Grund ist gemessen: Dieser Text sitzt auf der halbdurchsichtigen
+   Kopffläche, und was hinter ihr durchläuft, wechselt beim Scrollen. Die
+   leiseste Graustufe der Palette hat dort keine Reserve — auf einer Fläche mit
+   wechselndem Grund gehört der Text eine Stufe fester. */
 .masthead__spec {
-  color: var(--ink-3);
+  color: var(--ink-2);
   text-align: center;
 }
 
@@ -226,37 +309,62 @@ kbd {
 /* Der linke Streifen mit der Zonenbeschriftung ist das tragende Layout-Element
    der App: Er benennt Funktionsbereiche, so wie ein Gerät seine Bedienfelder
    beschriftet. Er ist kein Dekorstreifen — jede Zeile darin steht für einen
-   echten Funktionsblock. */
+   echten Funktionsblock.
+
+   Bis V4 trennte eine Haarlinie oben die Zonen. Seit V5 trennt sie der Abstand
+   zwischen zwei erhobenen Gruppen: Wo eine Kante sichtbar ist, braucht es
+   keinen Strich, der sie zusätzlich behauptet. */
 .zone {
   display: grid;
   grid-template-columns: var(--col-label) minmax(0, 1fr);
   gap: var(--sp-5);
-  padding-block: var(--sp-5);
-  border-top: 1px solid var(--rule-strong);
+  padding-block: var(--sp-3);
 }
 
 .zone__label {
   color: var(--ink-3);
-  padding-top: 0.2em; /* auf die erste Grundlinie der Zone ausrichten */
+  /* Auf die erste Zeile IM Panel treffen, nicht auf dessen Oberkante — deshalb
+     der Innenabstand der Gruppe plus der übliche Versatz auf die Grundlinie. */
+  padding-top: calc(var(--panel-pad) + 0.2em);
 }
 
+/* ── Die Gehäusegruppe ─────────────────────────────────────────────────────
+   Eine Fläche je Zone, gerundet, mit Haarlinie und genau einer Erhebung.
+
+   Was hier ausdrücklich NICHT passiert: aus jedem Konto eine eigene Karte
+   machen. Die Konten bleiben Kanalzüge in EINEM Gehäuse, getrennt durch
+   Haarlinien — das ist die Identität dieser App, und drei Dutzend schwebende
+   Kärtchen wären das genaue Gegenteil davon. Gerundet und erhoben ist die
+   Gruppe, nicht ihr Inhalt. */
 .zone__body {
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
   min-width: 0;
+  padding: var(--panel-pad);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  /* Die Lichtkante. Im hellen Modus derselbe Wert wie ringsum, im dunklen
+     heller — siehe --edge-lit in styles/tokens.css. */
+  border-top-color: var(--edge-lit);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--elev-1);
 }
 
 /* ── Fuß: Seriennummern-Gravur ────────────────────────────────────────────── */
 
+/* Der Fuß steht als einziger Block NICHT auf einer Gehäusegruppe, sondern auf
+   dem blanken Untergrund — wie das Typenschild auf der Rückseite, nicht auf der
+   Frontplatte. Deshalb auch keine Trennlinie mehr: Zwischen ihm und dem letzten
+   Panel liegt bereits eine sichtbare Kante. */
 .colophon {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--sp-2) var(--sp-5);
-  padding-top: var(--sp-5);
-  border-top: 1px solid var(--rule-strong);
+  padding-block-start: var(--sp-6);
+  padding-inline: var(--panel-pad);
 }
 
 .colophon__specs {
@@ -288,9 +396,12 @@ kbd {
 /* Feste Breite, nicht inhaltsabhängig: Das Feld ist beim ersten Anstrich leer
    und bekommt seine 37 Einträge erst vom Skript. Ohne feste Breite würde es in
    dem Moment aufspringen und den Fuß verschieben. Die Breite fasst den längsten
-   Eigennamen („Português (Portugal)"). */
-.colophon__lang .pick {
-  width: 11rem;
+   Eigennamen („Português (Portugal)") plus den Platz für den Winkel.
+
+   Seit V5 hängt sie an der Hülle, nicht am Feld: Das Feld füllt seine Hülle
+   aus, und der Winkel sitzt an deren Rand. */
+.colophon__lang .pick-shell {
+  width: 12rem;
 }
 
 .colophon__note {
@@ -327,9 +438,11 @@ kbd {
   color: var(--ink);
   background: var(--surface-recessed);
   border: 1px solid var(--rule);
+  /* Die dunklere Oberkante bleibt: Sie ist der ganze Unterschied zwischen
+     „versenkt" und „aufgeklebt", und ein Radius nimmt ihr davon nichts. */
   border-top-color: var(--rule-strong);
-  border-radius: var(--radius-flat);
-  transition: border-color var(--dur-calm) var(--ease-mech);
+  border-radius: var(--radius-field);
+  transition: border-color var(--dur-calm) var(--ease-spring);
 }
 
 .field::placeholder {
@@ -358,8 +471,13 @@ kbd {
   min-height: 1.2em; /* Platz reservieren, damit nichts springt */
 }
 
-/* Taste: ein Objekt mit Kante. Gedrückt kehrt sie sich um — genau das macht
-   eine echte Taste sichtbar, ganz ohne Schatten oder Animation. */
+/* Taste: ein Objekt mit Kante, seit V5 als Pille.
+
+   Gedrückt passieren zwei Dinge gleichzeitig, und beide sind Absicht:
+   Die Taste KEHRT SICH UM — das ist die Antwort dieses Geräts auf „gedrückt",
+   sie stammt aus V2 und bleibt — und sie GIBT NACH, um 3 %. Das eine ist die
+   Marke, das andere die Physik, die Apple jedem Knopf mitgibt. Zusammen fühlt
+   sich die Taste an wie eine, die man wirklich hinunterdrückt. */
 .keys {
   display: flex;
   flex-wrap: wrap;
@@ -370,17 +488,20 @@ kbd {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
-  min-height: 2.25rem; /* Zielgröße für Finger und Maus */
-  padding: 0 var(--sp-3);
+  min-height: var(--control-h); /* Zielgröße für Finger und Maus */
+  /* Eine Pille braucht mehr Luft an den Seiten als ein Rechteck: Die Rundung
+     frisst an den Enden Fläche, die dem Text sonst fehlt. */
+  padding: 0 var(--sp-4);
   color: var(--ink-2);
   background: transparent;
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-key);
   cursor: pointer;
   transition:
-    color var(--dur-quick) var(--ease-mech),
-    border-color var(--dur-quick) var(--ease-mech),
-    background-color var(--dur-quick) var(--ease-mech);
+    color var(--dur-quick) var(--ease-snap),
+    border-color var(--dur-quick) var(--ease-snap),
+    background-color var(--dur-quick) var(--ease-snap),
+    transform var(--dur-quick) var(--ease-snap);
 }
 
 .key:hover {
@@ -392,17 +513,33 @@ kbd {
   background: var(--surface-inverted);
   border-color: var(--surface-inverted);
   color: var(--ink-on-inverted);
+  transform: scale(0.97);
 }
 
+/* ── Icons ────────────────────────────────────────────────────────────────
+   Hier liegt die Mischung von V5 am dichtesten beieinander, deshalb steht sie
+   ausgeschrieben da:
+
+   BEDIEN-Icons — Ordner, Kamera, Kopieren — bekommen runde Ecken und runde
+   Verbindungen, 1,5 px Strich. Das ist die Handschrift von SF Symbols:
+   freundliche Geometrie, weil man diese Zeichen antippt.
+
+   INSTRUMENT-Elemente — Skalenmarken, Zeiger, Nabe — behalten stumpfe Enden
+   und exakte Geometrie (styles/mark.css). Sie werden nicht bedient, sie werden
+   ABGELESEN, und ein abgerundeter Strich auf einer Teilung ist eine ungenaue
+   Angabe.
+
+   Diese Trennung ist der Kern der Sache und darf nicht verwaschen: Was man
+   anfasst, ist weich. Was man abliest, ist scharf. */
 .key__icon {
-  width: 13px;
-  height: 13px;
+  width: 15px;
+  height: 15px;
   flex: none;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.25;
-  stroke-linecap: square;
-  stroke-linejoin: miter;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .note {
@@ -420,12 +557,22 @@ kbd {
   flex-direction: column;
 }
 
-/* Keine Karte: keine Fläche, kein Rahmen, kein Radius, kein Schatten. Nur eine
-   Haarlinie trennt zwei Kanäle — wie die Fuge zwischen zwei Modulen im Rack. */
+/* Immer noch keine Karte: kein eigener Rahmen, kein eigener Radius, kein
+   eigener Schatten. Ein Kanalzug ist ein Modul IM Gehäuse, keine Kachel auf dem
+   Tisch. Die Erhebung trägt die Gruppe (.zone__body), nicht der einzelne Kanal —
+   sonst schwebten drei Dutzend Kärtchen nebeneinander und die Rack-Idee wäre
+   weg.
+
+   Getrennt wird weiter durch eine Haarlinie. Neu ist nur, wo sie anfängt: nicht
+   mehr an der Gehäusekante, sondern hinter dem Zifferblatt. Die Anzeige gehört
+   zum Kanal, also läuft die Fuge nicht durch sie hindurch. Dasselbe Detail
+   benutzt iOS in gruppierten Listen — hier fällt es mit der Rack-Fuge zusammen,
+   die vor dem ersten Bedienelement beginnt. */
 .strip {
   /* Container für die cqi-Einheit des Codes: Die Ziffergröße richtet sich nach
      der Breite des Kanalzugs, nicht nach der des Fensters. */
   container-type: inline-size;
+  position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas:
@@ -436,7 +583,18 @@ kbd {
   column-gap: var(--sp-5);
   row-gap: var(--sp-2);
   padding-block: var(--sp-5);
-  border-top: 1px solid var(--rule);
+  /* Wie weit die Fuge einrückt. Als eigene Eigenschaft, weil die Fehlerzeile
+     kein Zifferblatt hat und ihre Fuge deshalb durchlaufen muss. */
+  --strip-rule-inset: calc(var(--dial-size) + var(--sp-5));
+}
+
+.strip::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: var(--strip-rule-inset) 0;
+  block-size: 1px;
+  background: var(--rule);
 }
 
 /* Das Zifferblatt steht links und trägt alle drei Zeilen — die Anzeige gehört
@@ -490,9 +648,18 @@ kbd {
   color: var(--ink-2);
 }
 
+/* Erster und letzter Kanal stoßen an den Innenabstand der Gruppe — dort braucht
+   es weder Fuge noch zusätzliche Luft. */
 .strip:first-child {
-  border-top: 0;
   padding-top: 0;
+}
+
+.strip:first-child::before {
+  display: none;
+}
+
+.strip:last-child {
+  padding-bottom: 0;
 }
 
 .strip__id {
@@ -507,7 +674,7 @@ kbd {
 .strip__issuer {
   font-size: var(--t-lead);
   font-weight: 600;
-  letter-spacing: -0.005em;
+  letter-spacing: var(--track-lead);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -540,8 +707,8 @@ kbd {
   align-items: baseline;
   font-family: var(--font-mono);
   font-size: var(--t-dial-min);
-  font-size: clamp(var(--t-dial-min), 9.5cqi, var(--t-dial-max));
-  font-weight: 400;
+  font-size: clamp(var(--t-dial-min), 10cqi, var(--t-dial-max));
+  font-weight: var(--wght-dial);
   line-height: var(--lh-tight);
   letter-spacing: var(--track-dial);
   /* Ziffern dürfen beim Wechsel nicht wackeln. Bei einer Monospace ohnehin
@@ -596,6 +763,8 @@ kbd {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas: 'id' 'code';
   row-gap: var(--sp-1);
+  /* Ohne Zifferblatt gibt es nichts, hinter dem die Fuge anfangen könnte. */
+  --strip-rule-inset: 0;
 }
 
 .strip--fault .strip__issuer {
@@ -647,8 +816,12 @@ kbd {
 }
 
 @media (max-width: 34rem) {
-  .device {
-    padding-inline: var(--sp-4);
+  /* Beides zusammen, nicht einzeln: Das Gehäuse rückt näher an den Rand, und
+     der klebende Kopf zieht sich um genau denselben Betrag heraus. Würde hier
+     nur eins der beiden stehen, liefe die Seite bei 375 px waagerecht über. */
+  :root {
+    --device-pad: var(--sp-4);
+    --panel-pad: var(--sp-4);
   }
 
   /* Der Kanalzug bekommt hier ein eigenes Raster: Das Zifferblatt bleibt neben
