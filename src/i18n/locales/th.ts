@@ -40,7 +40,6 @@ export default {
   'input.count.errors': { other: 'ผิดพลาด {n} รายการ' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'ใส่ตัวอย่าง',
   'key.clear': 'ล้าง',
   'key.qrImage': 'QR จากภาพ',
   'key.camera': 'กล้อง',
@@ -119,15 +118,11 @@ export default {
   'import.unnamed': 'ไม่มีชื่อ',
   'import.unreadable': 'ไฟล์ส่งออกอ่านไม่ออก',
 
-  'vacant.text':
-    'ยังไม่ได้ป้อนอะไร ใส่ secret ไว้ด้านบน — หรือหยิบกุญแจทดสอบจาก RFC 4226 ด้วย {demo}',
+  'vacant.text': 'ยังไม่ได้ป้อนอะไร ใส่ secret ไว้ด้านบน',
   'colophon.note': 'ไม่มีเครือข่าย · ไม่มีที่เก็บ · HMAC ผ่าน Web Crypto API',
 
   'lang.label': 'ภาษา',
   'lang.aria': 'เลือกภาษา',
-
-  'demo.comment': '# กุญแจทดสอบจาก RFC 4226 — secret คือข้อความ “12345678901234567890”',
-  'demo.label': 'ทดสอบ RFC',
 
   'err.base32.paddingInside': 'อักขระ “=” วางได้เฉพาะท้ายสุด (เป็นเพียงตัวเติมเท่านั้น)',
   'err.base32.empty': 'กุญแจ secret ว่างเปล่า',

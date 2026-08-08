@@ -41,7 +41,6 @@ export default {
   'input.count.errors': { other: '{n}處錯誤' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': '插入範例',
   'key.clear': '清空',
   'key.qrImage': '從圖片讀 QR 碼',
   'key.camera': '相機',
@@ -121,14 +120,11 @@ export default {
   'import.unnamed': '未命名',
   'import.unreadable': '匯出無法讀取。',
 
-  'vacant.text': '還沒有輸入。在上面放一個 secret —— 或者用 {demo} 取 RFC 4226 的測試金鑰。',
+  'vacant.text': '還沒有輸入。在上面放一個 secret。',
   'colophon.note': '無網路 · 無儲存 · HMAC 經由 Web Crypto API',
 
   'lang.label': '語言',
   'lang.aria': '選擇語言',
-
-  'demo.comment': '# RFC 4226 的測試金鑰 —— secret 是文字「12345678901234567890」',
-  'demo.label': 'RFC 測試',
 
   'err.base32.paddingInside': '字元「=」只能放在末尾（它不過是填充）。',
   'err.base32.empty': 'secret 金鑰是空的。',

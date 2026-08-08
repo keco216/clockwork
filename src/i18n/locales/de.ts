@@ -45,7 +45,6 @@ export default {
   'input.count.errors': { one: '{n} Fehler', other: '{n} Fehler' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Demo einsetzen',
   'key.clear': 'Leeren',
   'key.qrImage': 'QR aus Bild',
   'key.camera': 'Kamera',
@@ -132,16 +131,11 @@ export default {
   'import.unnamed': 'Unbenannt',
   'import.unreadable': 'Export unlesbar.',
 
-  'vacant.text':
-    'Noch keine Eingabe. Setze oben ein Secret ein — oder nimm mit {demo} den Testschlüssel ' +
-    'aus RFC 4226.',
+  'vacant.text': 'Noch keine Eingabe. Setze oben ein Secret ein.',
   'colophon.note': 'Kein Netzwerk · kein Speicher · HMAC über die Web Crypto API',
 
   'lang.label': 'Sprache',
   'lang.aria': 'Sprache wählen',
-
-  'demo.comment': '# Testschlüssel aus RFC 4226 — das Secret ist der Text „12345678901234567890“',
-  'demo.label': 'RFC-Test',
 
   'err.base32.paddingInside': 'Das Zeichen »=« darf nur am Ende stehen (es ist nur Auffüllung).',
   'err.base32.empty': 'Der Secret-Key ist leer.',

@@ -39,7 +39,6 @@ export default {
   'input.count.errors': { one: '{n} त्रुटि', other: '{n} त्रुटियाँ' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'नमूना डालें',
   'key.clear': 'खाली करें',
   'key.qrImage': 'चित्र से QR',
   'key.camera': 'कैमरा',
@@ -126,15 +125,11 @@ export default {
   'import.unnamed': 'बिना नाम',
   'import.unreadable': 'निर्यात पढ़ा नहीं जा सकता.',
 
-  'vacant.text':
-    'अभी कुछ नहीं डाला गया. ऊपर कोई सीक्रेट रखें — या {demo} से RFC 4226 की परीक्षण कुंजी लें.',
+  'vacant.text': 'अभी कुछ नहीं डाला गया. ऊपर कोई सीक्रेट रखें.',
   'colophon.note': 'कोई नेटवर्क नहीं · कोई भंडारण नहीं · HMAC Web Crypto API से',
 
   'lang.label': 'भाषा',
   'lang.aria': 'भाषा चुनें',
-
-  'demo.comment': '# RFC 4226 की परीक्षण कुंजी — सीक्रेट पाठ “12345678901234567890” है',
-  'demo.label': 'RFC परीक्षण',
 
   'err.base32.paddingInside': 'अक्षर “=” केवल अंत में आ सकता है (वह मात्र भराव है).',
   'err.base32.empty': 'सीक्रेट कुंजी खाली है.',

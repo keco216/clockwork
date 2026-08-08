@@ -51,7 +51,6 @@ export default {
   },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Vložiť ukážku',
   'key.clear': 'Vyprázdniť',
   'key.qrImage': 'QR z obrázka',
   'key.camera': 'Kamera',
@@ -152,16 +151,11 @@ export default {
   'import.unnamed': 'Bez názvu',
   'import.unreadable': 'Export nečitateľný.',
 
-  'vacant.text':
-    'Zatiaľ nič zadané. Vložte hore secret — alebo si cez {demo} vezmite testovací kľúč ' +
-    'z RFC 4226.',
+  'vacant.text': 'Zatiaľ nič zadané. Vložte hore secret.',
   'colophon.note': 'Žiadna sieť · žiadne úložisko · HMAC cez Web Crypto API',
 
   'lang.label': 'Jazyk',
   'lang.aria': 'Zvoliť jazyk',
-
-  'demo.comment': '# Testovací kľúč z RFC 4226 — secret je text „12345678901234567890“',
-  'demo.label': 'Test RFC',
 
   'err.base32.paddingInside': 'Znak „=“ smie stáť len na konci (je to iba výplň).',
   'err.base32.empty': 'Kľúč secret je prázdny.',

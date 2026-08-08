@@ -40,7 +40,6 @@ export default {
   'input.count.errors': { one: '{n} fout', other: '{n} fouten' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Demo invoegen',
   'key.clear': 'Leegmaken',
   'key.qrImage': 'QR uit afbeelding',
   'key.camera': 'Camera',
@@ -128,16 +127,11 @@ export default {
   'import.unnamed': 'Naamloos',
   'import.unreadable': 'Export onleesbaar.',
 
-  'vacant.text':
-    'Nog geen invoer. Zet hierboven een secret neer — of neem met {demo} de testsleutel uit ' +
-    'RFC 4226.',
+  'vacant.text': 'Nog geen invoer. Zet hierboven een secret neer.',
   'colophon.note': 'Geen netwerk · geen opslag · HMAC via de Web Crypto API',
 
   'lang.label': 'Taal',
   'lang.aria': 'Taal kiezen',
-
-  'demo.comment': '# Testsleutel uit RFC 4226 — het secret is de tekst ‘12345678901234567890’',
-  'demo.label': 'RFC-test',
 
   'err.base32.paddingInside':
     'Het teken ‘=’ mag alleen aan het eind staan (het is niet meer dan opvulling).',

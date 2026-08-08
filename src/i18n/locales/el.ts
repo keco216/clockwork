@@ -41,7 +41,6 @@ export default {
   'input.count.errors': { one: '{n} σφάλμα', other: '{n} σφάλματα' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Εισαγωγή επίδειξης',
   'key.clear': 'Άδειασμα',
   'key.qrImage': 'QR από εικόνα',
   'key.camera': 'Κάμερα',
@@ -132,17 +131,11 @@ export default {
   'import.unnamed': 'Χωρίς όνομα',
   'import.unreadable': 'Η εξαγωγή δεν διαβάζεται.',
 
-  'vacant.text':
-    'Δεν υπάρχει ακόμη είσοδος. Βάλτε πιο πάνω ένα secret — ή πάρτε με το {demo} το δοκιμαστικό ' +
-    'κλειδί από το RFC 4226.',
+  'vacant.text': 'Δεν υπάρχει ακόμη είσοδος. Βάλτε πιο πάνω ένα secret.',
   'colophon.note': 'Χωρίς δίκτυο · χωρίς αποθήκευση · HMAC μέσω του Web Crypto API',
 
   'lang.label': 'Γλώσσα',
   'lang.aria': 'Επιλογή γλώσσας',
-
-  'demo.comment':
-    '# Δοκιμαστικό κλειδί από το RFC 4226 — το secret είναι το κείμενο «12345678901234567890»',
-  'demo.label': 'Δοκιμή RFC',
 
   'err.base32.paddingInside':
     'Ο χαρακτήρας «=» επιτρέπεται μόνο στο τέλος (δεν είναι παρά γέμισμα).',

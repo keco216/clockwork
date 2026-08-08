@@ -33,18 +33,6 @@ import { startVaultPanel } from './vault-panel';
  */
 const INPUT_DEBOUNCE_MS = 220;
 
-/** Der Testschlüssel aus RFC 4226, Base32-codiert. Kein Text, keine Sprache. */
-const DEMO_SECRET = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
-
-/** Eine Beispiel-URI, wie sie aus einem QR-Code käme. Ebenfalls sprachfrei. */
-const DEMO_URI =
-  'otpauth://totp/ACME%20Co:kevin@example.com?secret=JBSWY3DPEHPK3PXP&issuer=ACME%20Co';
-
-/** Was „Demo einsetzen" einfügt — Kommentar und Kontoname in der Oberflächensprache. */
-function demoContent(): string {
-  return [t('demo.comment'), `${t('demo.label')}: ${DEMO_SECRET}`, DEMO_URI].join('\n');
-}
-
 export function startApp(): void {
   const input = requireElement<HTMLTextAreaElement>(document, '#secrets');
   const stripHost = requireElement(document, '#strips');
@@ -122,14 +110,6 @@ export function startApp(): void {
     render(parseEntries(input.value));
   }
 
-  function insertDemo(): void {
-    const existing = input.value.trim();
-    const demo = demoContent();
-    input.value = existing === '' ? demo : `${existing}\n${demo}`;
-    input.focus();
-    reparse();
-  }
-
   input.addEventListener('input', () => {
     window.clearTimeout(debounceTimer);
     debounceTimer = window.setTimeout(reparse, INPUT_DEBOUNCE_MS);
@@ -145,9 +125,6 @@ export function startApp(): void {
       reparse();
     }, 0);
   });
-
-  requireElement<HTMLButtonElement>(document, '#key-demo').addEventListener('click', insertDemo);
-  requireElement<HTMLButtonElement>(document, '#vacant-demo').addEventListener('click', insertDemo);
 
   requireElement<HTMLButtonElement>(document, '#key-clear').addEventListener('click', () => {
     input.value = '';

@@ -41,7 +41,6 @@ export default {
   'input.count.errors': { one: '{n} hiba', other: '{n} hiba' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Bemutató beszúrása',
   'key.clear': 'Ürítés',
   'key.qrImage': 'QR képből',
   'key.camera': 'Kamera',
@@ -129,16 +128,11 @@ export default {
   'import.unnamed': 'Névtelen',
   'import.unreadable': 'Az export olvashatatlan.',
 
-  'vacant.text':
-    'Még nincs bevitel. Tegyen fentre egy secretet — vagy vegye elő a {demo} gombbal az ' +
-    'RFC 4226 tesztkulcsát.',
+  'vacant.text': 'Még nincs bevitel. Tegyen fentre egy secretet.',
   'colophon.note': 'Nincs hálózat · nincs tárolás · HMAC a Web Crypto API-n keresztül',
 
   'lang.label': 'Nyelv',
   'lang.aria': 'Nyelv választása',
-
-  'demo.comment': '# Tesztkulcs az RFC 4226-ból — a secret a „12345678901234567890” szöveg',
-  'demo.label': 'RFC-teszt',
 
   'err.base32.paddingInside': 'Az „=” jel csak a végén állhat (nem más, mint kitöltés).',
   'err.base32.empty': 'A secret kulcs üres.',

@@ -50,7 +50,6 @@ export default {
   },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'הוספת הדגמה',
   'key.clear': 'ריקון',
   'key.qrImage': 'QR מתמונה',
   'key.camera': 'מצלמה',
@@ -150,14 +149,11 @@ export default {
   'import.unnamed': 'ללא שם',
   'import.unreadable': 'הייצוא אינו קריא.',
 
-  'vacant.text': 'עוד לא הוזן דבר. הכניסו למעלה סוד — או קחו עם {demo} את מפתח הבדיקה מ‑RFC 4226.',
+  'vacant.text': 'עוד לא הוזן דבר. הכניסו למעלה סוד.',
   'colophon.note': 'בלי רשת · בלי אחסון · HMAC דרך Web Crypto API',
 
   'lang.label': 'שפה',
   'lang.aria': 'בחירת שפה',
-
-  'demo.comment': '# מפתח בדיקה מ‑RFC 4226 — הסוד הוא הטקסט „12345678901234567890”',
-  'demo.label': 'בדיקת RFC',
 
   'err.base32.paddingInside': 'התו „=” מותר רק בסוף (הוא ריפוד ותו לא).',
   'err.base32.empty': 'מפתח הסוד ריק.',

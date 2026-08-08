@@ -77,7 +77,6 @@ export interface Strings {
 
   /* ── Tasten ──────────────────────────────────────────────────────────── */
 
-  'key.demo': string;
   'key.clear': string;
   'key.qrImage': string;
   'key.camera': string;
@@ -174,7 +173,6 @@ export interface Strings {
 
   /* ── Leerzustand und Fuß ─────────────────────────────────────────────── */
 
-  /** `{demo}` ist der eingebettete Knopf „Demo einsetzen". */
   'vacant.text': string;
   'colophon.note': string;
 
@@ -182,13 +180,6 @@ export interface Strings {
 
   'lang.label': string;
   'lang.aria': string;
-
-  /* ── Demo-Inhalt ─────────────────────────────────────────────────────── */
-
-  /** Kommentarzeile, die „Demo einsetzen" mit einfügt. */
-  'demo.comment': string;
-  /** Kontoname des Demo-Eintrags. */
-  'demo.label': string;
 
   /* ── Fehlermeldungen aus src/lib ─────────────────────────────────────────
      Diese Texte entstehen in Modulen, die byte-identisch bleiben (siehe

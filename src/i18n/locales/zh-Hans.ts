@@ -40,7 +40,6 @@ export default {
   'input.count.errors': { other: '{n}处错误' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': '插入示例',
   'key.clear': '清空',
   'key.qrImage': '从图片读二维码',
   'key.camera': '摄像头',
@@ -120,14 +119,11 @@ export default {
   'import.unnamed': '未命名',
   'import.unreadable': '导出无法读取。',
 
-  'vacant.text': '还没有输入。在上面放一个 secret —— 或者用 {demo} 取 RFC 4226 的测试密钥。',
+  'vacant.text': '还没有输入。在上面放一个 secret。',
   'colophon.note': '无网络 · 无存储 · HMAC 经由 Web Crypto API',
 
   'lang.label': '语言',
   'lang.aria': '选择语言',
-
-  'demo.comment': '# RFC 4226 的测试密钥 —— secret 是文本“12345678901234567890”',
-  'demo.label': 'RFC 测试',
 
   'err.base32.paddingInside': '字符“=”只能放在末尾（它不过是填充）。',
   'err.base32.empty': 'secret 密钥是空的。',

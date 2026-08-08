@@ -40,7 +40,6 @@ export default {
   'input.count.errors': { one: '{n} грешка', other: '{n} грешки' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Вмъкни пример',
   'key.clear': 'Изчисти',
   'key.qrImage': 'QR от изображение',
   'key.camera': 'Камера',
@@ -128,16 +127,11 @@ export default {
   'import.unnamed': 'Без име',
   'import.unreadable': 'Износът е нечетлив.',
 
-  'vacant.text':
-    'Все още няма нищо. Поставете горе secret — или вземете с {demo} тестовия ключ от ' +
-    'RFC 4226.',
+  'vacant.text': 'Все още няма нищо. Поставете горе secret.',
   'colophon.note': 'Без мрежа · без хранилище · HMAC през Web Crypto API',
 
   'lang.label': 'Език',
   'lang.aria': 'Изберете език',
-
-  'demo.comment': '# Тестов ключ от RFC 4226 — secret е текстът „12345678901234567890“',
-  'demo.label': 'RFC тест',
 
   'err.base32.paddingInside': 'Знакът „=“ може да стои само накрая (той е само запълване).',
   'err.base32.empty': 'Ключът secret е празен.',

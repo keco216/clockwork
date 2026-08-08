@@ -40,8 +40,10 @@ Text `12345678901234567890`):
 GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ
 ```
 
-Der Knopf **Demo einsetzen** fügt ihn zusammen mit einer Beispiel-`otpauth://`-URI
-direkt ein.
+Diese Zeile ins Textfeld einfügen, fertig. Die App bringt bewusst **keinen**
+Demo-Knopf mit: Sie ist für den täglichen Gebrauch gebaut, und ein Knopf, der
+Beispiel-Schlüsselmaterial in dasselbe Feld schreibt wie die echten Secrets,
+gehört dort nicht hin.
 
 ### Zwei Build-Ziele
 

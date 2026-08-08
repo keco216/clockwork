@@ -56,7 +56,6 @@ export default {
   },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'إدراج نموذج',
   'key.clear': 'إفراغ',
   'key.qrImage': 'QR من صورة',
   'key.camera': 'الكاميرا',
@@ -164,14 +163,11 @@ export default {
   'import.unnamed': 'بلا اسم',
   'import.unreadable': 'الصادرات غير مقروءة.',
 
-  'vacant.text': 'لا إدخال بعد. ضع سرًّا في الأعلى — أو خذ عبر {demo} مفتاح الاختبار من RFC 4226.',
+  'vacant.text': 'لا إدخال بعد. ضع سرًّا في الأعلى.',
   'colophon.note': 'لا شبكة · لا تخزين · HMAC عبر Web Crypto API',
 
   'lang.label': 'اللغة',
   'lang.aria': 'اختر اللغة',
-
-  'demo.comment': '# مفتاح اختبار من RFC 4226 — السرّ هو النص «12345678901234567890»',
-  'demo.label': 'اختبار RFC',
 
   'err.base32.paddingInside': 'المحرف «=» لا يجوز إلا في النهاية (فهو حشو ليس إلا).',
   'err.base32.empty': 'مفتاح السرّ فارغ.',

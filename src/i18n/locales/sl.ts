@@ -50,7 +50,6 @@ export default {
   },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Vstavi predstavitev',
   'key.clear': 'Izprazni',
   'key.qrImage': 'QR iz slike',
   'key.camera': 'Kamera',
@@ -152,16 +151,11 @@ export default {
   'import.unnamed': 'Brez imena',
   'import.unreadable': 'Izvoz ni berljiv.',
 
-  'vacant.text':
-    'Zaenkrat še ni vnosa. Zgoraj vstavite secret — ali si z {demo} vzemite preskusni ključ ' +
-    'iz RFC 4226.',
+  'vacant.text': 'Zaenkrat še ni vnosa. Zgoraj vstavite secret.',
   'colophon.note': 'Brez omrežja · brez shrambe · HMAC prek Web Crypto API',
 
   'lang.label': 'Jezik',
   'lang.aria': 'Izberi jezik',
-
-  'demo.comment': '# Preskusni ključ iz RFC 4226 — secret je besedilo „12345678901234567890“',
-  'demo.label': 'Preskus RFC',
 
   'err.base32.paddingInside': 'Znak „=“ sme stati le na koncu (je zgolj polnilo).',
   'err.base32.empty': 'Ključ secret je prazen.',

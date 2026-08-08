@@ -40,7 +40,6 @@ export default {
   'input.count.errors': { other: '오류 {n}개' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': '예시 넣기',
   'key.clear': '비우기',
   'key.qrImage': '이미지에서 QR',
   'key.camera': '카메라',
@@ -121,15 +120,11 @@ export default {
   'import.unnamed': '이름 없음',
   'import.unreadable': '내보내기를 읽을 수 없다.',
 
-  'vacant.text':
-    '아직 입력한 것이 없다. 위에 시크릿을 넣거나 — {demo} 로 RFC 4226 의 시험 키를 가져오기.',
+  'vacant.text': '아직 입력한 것이 없다. 위에 시크릿을 넣기.',
   'colophon.note': '네트워크 없음 · 저장 없음 · HMAC 은 Web Crypto API 로',
 
   'lang.label': '언어',
   'lang.aria': '언어 선택',
-
-  'demo.comment': '# RFC 4226 의 시험 키 — 시크릿은 “12345678901234567890” 이라는 문자열',
-  'demo.label': 'RFC 시험',
 
   'err.base32.paddingInside': '문자 “=” 는 끝에만 올 수 있다 (채움일 뿐이다).',
   'err.base32.empty': '시크릿 키가 비어 있다.',

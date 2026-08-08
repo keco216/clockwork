@@ -39,7 +39,6 @@ export default {
   'input.count.errors': { one: '{n} feil', other: '{n} feil' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Sett inn demo',
   'key.clear': 'Tøm',
   'key.qrImage': 'QR fra bilde',
   'key.camera': 'Kamera',
@@ -126,16 +125,11 @@ export default {
   'import.unnamed': 'Uten navn',
   'import.unreadable': 'Eksporten kan ikke leses.',
 
-  'vacant.text':
-    'Ingenting lagt inn ennå. Sett inn en secret ovenfor — eller ta testnøkkelen fra RFC 4226 ' +
-    'med {demo}.',
+  'vacant.text': 'Ingenting lagt inn ennå. Sett inn en secret ovenfor.',
   'colophon.note': 'Ikke noe nettverk · ingen lagring · HMAC via Web Crypto API',
 
   'lang.label': 'Språk',
   'lang.aria': 'Velg språk',
-
-  'demo.comment': '# Testnøkkel fra RFC 4226 — din secret er teksten «12345678901234567890»',
-  'demo.label': 'RFC-test',
 
   'err.base32.paddingInside':
     'Tegnet «=» kan bare stå til slutt (det er ikke annet enn utfylling).',

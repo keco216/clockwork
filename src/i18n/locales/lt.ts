@@ -50,7 +50,6 @@ export default {
   },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Įterpti pavyzdį',
   'key.clear': 'Išvalyti',
   'key.qrImage': 'QR iš paveikslo',
   'key.camera': 'Kamera',
@@ -151,16 +150,11 @@ export default {
   'import.unnamed': 'Be pavadinimo',
   'import.unreadable': 'Eksportas neįskaitomas.',
 
-  'vacant.text':
-    'Kol kas nieko neįvesta. Įdėkite viršuje secret — arba per {demo} paimkite RFC 4226 ' +
-    'bandomąjį raktą.',
+  'vacant.text': 'Kol kas nieko neįvesta. Įdėkite viršuje secret.',
   'colophon.note': 'Jokio tinklo · jokios saugyklos · HMAC per Web Crypto API',
 
   'lang.label': 'Kalba',
   'lang.aria': 'Pasirinkite kalbą',
-
-  'demo.comment': '# Bandomasis raktas iš RFC 4226 — secret yra tekstas „12345678901234567890“',
-  'demo.label': 'RFC bandymas',
 
   'err.base32.paddingInside': 'Ženklas „=“ gali stovėti tik gale (tai tėra užpildas).',
   'err.base32.empty': 'Raktas secret yra tuščias.',

@@ -41,7 +41,6 @@ export default {
   'input.count.errors': { one: '{n} hata', other: '{n} hata' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Örnek ekle',
   'key.clear': 'Boşalt',
   'key.qrImage': 'Görselden QR',
   'key.camera': 'Kamera',
@@ -128,16 +127,11 @@ export default {
   'import.unnamed': 'Adsız',
   'import.unreadable': 'Dışa aktarım okunamıyor.',
 
-  'vacant.text':
-    'Henüz bir giriş yok. Yukarıya bir secret koyun — ya da {demo} ile RFC 4226’daki deneme ' +
-    'anahtarını alın.',
+  'vacant.text': 'Henüz bir giriş yok. Yukarıya bir secret koyun.',
   'colophon.note': 'Ağ yok · depolama yok · HMAC, Web Crypto API üzerinden',
 
   'lang.label': 'Dil',
   'lang.aria': 'Dil seçin',
-
-  'demo.comment': '# RFC 4226’daki deneme anahtarı — secret, “12345678901234567890” metnidir',
-  'demo.label': 'RFC denemesi',
 
   'err.base32.paddingInside': '“=” karakteri yalnızca sonda durabilir (yalnızca doldurmadır).',
   'err.base32.empty': 'Secret anahtarı boş.',

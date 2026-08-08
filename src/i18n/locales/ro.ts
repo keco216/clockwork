@@ -41,7 +41,6 @@ export default {
   'input.count.errors': { one: '{n} eroare', few: '{n} erori', other: '{n} de erori' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Inserează demonstrația',
   'key.clear': 'Golește',
   'key.qrImage': 'QR din imagine',
   'key.camera': 'Cameră',
@@ -131,16 +130,11 @@ export default {
   'import.unnamed': 'Fără nume',
   'import.unreadable': 'Export ilizibil.',
 
-  'vacant.text':
-    'Încă nimic introdus. Puneți deasupra un secret — sau luați cu {demo} cheia de test din ' +
-    'RFC 4226.',
+  'vacant.text': 'Încă nimic introdus. Puneți deasupra un secret.',
   'colophon.note': 'Fără rețea · fără stocare · HMAC prin Web Crypto API',
 
   'lang.label': 'Limbă',
   'lang.aria': 'Alegeți limba',
-
-  'demo.comment': '# Cheie de test din RFC 4226 — secretul este textul „12345678901234567890”',
-  'demo.label': 'Test RFC',
 
   'err.base32.paddingInside': 'Caracterul „=” poate sta doar la sfârșit (nu este decât umplutură).',
   'err.base32.empty': 'Cheia secret este goală.',

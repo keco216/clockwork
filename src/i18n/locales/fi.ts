@@ -40,7 +40,6 @@ export default {
   'input.count.errors': { one: '{n} virhe', other: '{n} virhettä' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Lisää esimerkki',
   'key.clear': 'Tyhjennä',
   'key.qrImage': 'QR kuvasta',
   'key.camera': 'Kamera',
@@ -127,15 +126,11 @@ export default {
   'import.unnamed': 'Nimetön',
   'import.unreadable': 'Vientiä ei voi lukea.',
 
-  'vacant.text':
-    'Ei vielä syötettä. Aseta ylle secret — tai ota napista {demo} RFC 4226:n testiavain.',
+  'vacant.text': 'Ei vielä syötettä. Aseta ylle secret.',
   'colophon.note': 'Ei verkkoa · ei tallennusta · HMAC Web Crypto API:n kautta',
 
   'lang.label': 'Kieli',
   'lang.aria': 'Valitse kieli',
-
-  'demo.comment': '# Testiavain RFC 4226:sta — secret on teksti ”12345678901234567890”',
-  'demo.label': 'RFC-testi',
 
   'err.base32.paddingInside': 'Merkki ”=” saa olla vain lopussa (se on pelkkää täytettä).',
   'err.base32.empty': 'Avain secret on tyhjä.',

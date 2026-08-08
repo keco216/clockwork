@@ -52,7 +52,6 @@ export default {
   },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Вставить пример',
   'key.clear': 'Очистить',
   'key.qrImage': 'QR из изображения',
   'key.camera': 'Камера',
@@ -153,16 +152,11 @@ export default {
   'import.unnamed': 'Без имени',
   'import.unreadable': 'Выгрузка не читается.',
 
-  'vacant.text':
-    'Пока ничего не введено. Вставьте выше secret — или возьмите через {demo} тестовый ключ ' +
-    'из RFC 4226.',
+  'vacant.text': 'Пока ничего не введено. Вставьте выше secret.',
   'colophon.note': 'Никакой сети · никакого хранилища · HMAC через Web Crypto API',
 
   'lang.label': 'Язык',
   'lang.aria': 'Выберите язык',
-
-  'demo.comment': '# Тестовый ключ из RFC 4226 — secret это текст «12345678901234567890»',
-  'demo.label': 'Тест RFC',
 
   'err.base32.paddingInside': 'Знак «=» может стоять только в конце (это всего лишь заполнение).',
   'err.base32.empty': 'Ключ secret пуст.',

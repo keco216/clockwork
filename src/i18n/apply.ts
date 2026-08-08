@@ -17,9 +17,9 @@
  * Deshalb: Die Vorlage ist EIN Satz mit Platzhaltern (`{nameSecret}`), und die
  * Elemente liegen als `[data-slot]`-Kinder daneben in index.html. Beim Anwenden
  * werden sie an die Stelle ihres Platzhalters einsortiert — an welche, bestimmt
- * die Übersetzung. Die Elemente werden dabei VERSCHOBEN, nicht neu gebaut:
- * Ereignis-Zuhörer (der Demo-Knopf im Leerzustand!) überleben den
- * Sprachwechsel.
+ * die Übersetzung. Die Elemente werden dabei VERSCHOBEN, nicht neu gebaut: Sie
+ * behalten damit ihre Identität samt allem, was daran hängt — Ereignis-Zuhörer
+ * überstehen einen Sprachwechsel.
  *
  * `innerHTML` kommt hier nirgends vor. Alle Texte gehen über `textContent`.
  */

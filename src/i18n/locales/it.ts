@@ -42,7 +42,6 @@ export default {
   'input.count.errors': { one: '{n} errore', many: '{n} errori', other: '{n} errori' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Inserisci demo',
   'key.clear': 'Svuota',
   'key.qrImage': 'QR da immagine',
   'key.camera': 'Fotocamera',
@@ -134,17 +133,11 @@ export default {
   'import.unnamed': 'Senza nome',
   'import.unreadable': 'Esportazione illeggibile.',
 
-  'vacant.text':
-    'Ancora nessun inserimento. Metti un secret qui sopra — oppure prendi la chiave di prova ' +
-    'della RFC 4226 con {demo}.',
+  'vacant.text': 'Ancora nessun inserimento. Metti un secret qui sopra.',
   'colophon.note': 'Nessuna rete · nessun salvataggio · HMAC tramite la Web Crypto API',
 
   'lang.label': 'Lingua',
   'lang.aria': 'Scegli la lingua',
-
-  'demo.comment':
-    '# Chiave di prova della RFC 4226 — il secret è il testo « 12345678901234567890 »',
-  'demo.label': 'Prova RFC',
 
   'err.base32.paddingInside':
     'Il carattere « = » può stare solo alla fine (è soltanto riempimento).',

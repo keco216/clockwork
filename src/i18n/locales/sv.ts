@@ -37,7 +37,6 @@ export default {
   'input.count.errors': { one: '{n} fel', other: '{n} fel' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Sätt in demo',
   'key.clear': 'Töm',
   'key.qrImage': 'QR från bild',
   'key.camera': 'Kamera',
@@ -124,15 +123,11 @@ export default {
   'import.unnamed': 'Namnlös',
   'import.unreadable': 'Exporten går inte att läsa.',
 
-  'vacant.text':
-    'Inget inmatat än. Sätt in en secret ovanför — eller ta testnyckeln ur RFC 4226 med {demo}.',
+  'vacant.text': 'Inget inmatat än. Sätt in en secret ovanför.',
   'colophon.note': 'Inget nätverk · ingen lagring · HMAC via Web Crypto API',
 
   'lang.label': 'Språk',
   'lang.aria': 'Välj språk',
-
-  'demo.comment': '# Testnyckel ur RFC 4226 — din secret är texten ”12345678901234567890”',
-  'demo.label': 'RFC-test',
 
   'err.base32.paddingInside': 'Tecknet ”=” får bara stå sist (det är inget annat än utfyllnad).',
   'err.base32.empty': 'Nyckeln secret är tom.',

@@ -41,7 +41,6 @@ export default {
   'input.count.errors': { zero: '{n} kļūdu', one: '{n} kļūda', other: '{n} kļūdas' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Ievietot paraugu',
   'key.clear': 'Iztukšot',
   'key.qrImage': 'QR no attēla',
   'key.camera': 'Kamera',
@@ -130,16 +129,11 @@ export default {
   'import.unnamed': 'Bez nosaukuma',
   'import.unreadable': 'Eksports nav salasāms.',
 
-  'vacant.text':
-    'Vēl nekas nav ievadīts. Ielieciet augšā secret — vai paņemiet ar {demo} RFC 4226 ' +
-    'pārbaudes atslēgu.',
+  'vacant.text': 'Vēl nekas nav ievadīts. Ielieciet augšā secret.',
   'colophon.note': 'Bez tīkla · bez krātuves · HMAC caur Web Crypto API',
 
   'lang.label': 'Valoda',
   'lang.aria': 'Izvēlieties valodu',
-
-  'demo.comment': '# Pārbaudes atslēga no RFC 4226 — secret ir teksts „12345678901234567890“',
-  'demo.label': 'RFC pārbaude',
 
   'err.base32.paddingInside': 'Zīme „=“ drīkst atrasties tikai beigās (tā ir tikai aizpildījums).',
   'err.base32.empty': 'Atslēga secret ir tukša.',

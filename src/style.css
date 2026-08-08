@@ -405,19 +405,6 @@ kbd {
   stroke-linejoin: miter;
 }
 
-/* Ein Knopf, der im Fließtext steht, sieht aus wie Text — aber unterstrichen,
-   damit er nicht nur an der Farbe erkennbar ist. */
-.linkkey {
-  padding: 0;
-  background: none;
-  border: 0;
-  font: inherit;
-  color: var(--ink);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-  cursor: pointer;
-}
-
 .note {
   font-size: var(--t-small);
   color: var(--ink-3);

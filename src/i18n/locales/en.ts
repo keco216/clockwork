@@ -39,7 +39,6 @@ export default {
   'input.count.errors': { one: '{n} error', other: '{n} errors' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Insert demo',
   'key.clear': 'Clear',
   'key.qrImage': 'QR from image',
   'key.camera': 'Camera',
@@ -126,15 +125,11 @@ export default {
   'import.unnamed': 'Unnamed',
   'import.unreadable': 'Export unreadable.',
 
-  'vacant.text':
-    'Nothing entered yet. Put a secret in above — or take the test key from RFC 4226 with {demo}.',
+  'vacant.text': 'Nothing entered yet. Put a secret in above.',
   'colophon.note': 'No network · no storage · HMAC via the Web Crypto API',
 
   'lang.label': 'Language',
   'lang.aria': 'Choose language',
-
-  'demo.comment': '# Test key from RFC 4226 — the secret is the text “12345678901234567890”',
-  'demo.label': 'RFC test',
 
   'err.base32.paddingInside':
     'The character “=” may only stand at the end (it is nothing but padding).',

@@ -39,7 +39,6 @@ export default {
   'input.count.errors': { one: '{n} viga', other: '{n} viga' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Lisa näidis',
   'key.clear': 'Tühjenda',
   'key.qrImage': 'QR pildilt',
   'key.camera': 'Kaamera',
@@ -126,14 +125,11 @@ export default {
   'import.unnamed': 'Nimeta',
   'import.unreadable': 'Eksportfail ei ole loetav.',
 
-  'vacant.text': 'Sisendit veel pole. Pane ülal secret — või võta nupuga {demo} RFC 4226 testvõti.',
+  'vacant.text': 'Sisendit veel pole. Pane ülal secret.',
   'colophon.note': 'Ei mingit võrku · ei mingit salvestust · HMAC Web Crypto API kaudu',
 
   'lang.label': 'Keel',
   'lang.aria': 'Vali keel',
-
-  'demo.comment': '# Testvõti RFC 4226-st — secret on tekst „12345678901234567890“',
-  'demo.label': 'RFC test',
 
   'err.base32.paddingInside': 'Märk „=“ tohib olla ainult lõpus (see on pelgalt täide).',
   'err.base32.empty': 'Võti secret on tühi.',

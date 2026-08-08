@@ -42,7 +42,6 @@ export default {
   'input.count.errors': { other: '{n} lỗi' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Chèn bản mẫu',
   'key.clear': 'Xoá trống',
   'key.qrImage': 'QR từ ảnh',
   'key.camera': 'Máy ảnh',
@@ -123,15 +122,11 @@ export default {
   'import.unnamed': 'Không tên',
   'import.unreadable': 'Bản xuất không đọc được.',
 
-  'vacant.text':
-    'Chưa nhập gì. Hãy đặt một secret ở trên — hoặc lấy khoá thử của RFC 4226 bằng {demo}.',
+  'vacant.text': 'Chưa nhập gì. Hãy đặt một secret ở trên.',
   'colophon.note': 'Không mạng · không lưu trữ · HMAC qua Web Crypto API',
 
   'lang.label': 'Ngôn ngữ',
   'lang.aria': 'Chọn ngôn ngữ',
-
-  'demo.comment': '# Khoá thử của RFC 4226 — secret là đoạn chữ “12345678901234567890”',
-  'demo.label': 'Thử RFC',
 
   'err.base32.paddingInside': 'Ký tự “=” chỉ được đứng ở cuối (nó chỉ là phần đệm).',
   'err.base32.empty': 'Khoá secret rỗng.',

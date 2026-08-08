@@ -42,7 +42,6 @@ export default {
   'input.count.errors': { other: '{n}件のエラー' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'デモを挿入',
   'key.clear': '消去',
   'key.qrImage': '画像から QR',
   'key.camera': 'カメラ',
@@ -125,16 +124,11 @@ export default {
   'import.unnamed': '名称未設定',
   'import.unreadable': 'エクスポートを読み取れない。',
 
-  'vacant.text':
-    'まだ何も入力されていない。上にシークレットを入れる — または {demo} で RFC 4226 の' +
-    'テスト鍵を使う。',
+  'vacant.text': 'まだ何も入力されていない。上にシークレットを入れる。',
   'colophon.note': 'ネットワークなし · 保存なし · HMAC は Web Crypto API 経由',
 
   'lang.label': '言語',
   'lang.aria': '言語を選ぶ',
-
-  'demo.comment': '# RFC 4226 のテスト鍵 — シークレットは文字列「12345678901234567890」',
-  'demo.label': 'RFC テスト',
 
   'err.base32.paddingInside': '文字「=」は末尾にしか置けない (単なる詰め物)。',
   'err.base32.empty': 'シークレット鍵が空。',

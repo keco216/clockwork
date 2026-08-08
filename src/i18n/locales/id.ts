@@ -41,7 +41,6 @@ export default {
   'input.count.errors': { other: '{n} galat' },
   'input.count.join': '{accounts} · {errors}',
 
-  'key.demo': 'Sisipkan demo',
   'key.clear': 'Kosongkan',
   'key.qrImage': 'QR dari gambar',
   'key.camera': 'Kamera',
@@ -122,16 +121,11 @@ export default {
   'import.unnamed': 'Tanpa nama',
   'import.unreadable': 'Ekspor tidak terbaca.',
 
-  'vacant.text':
-    'Belum ada masukan. Taruh sebuah secret di atas — atau ambil kunci uji dari RFC 4226 ' +
-    'lewat {demo}.',
+  'vacant.text': 'Belum ada masukan. Taruh sebuah secret di atas.',
   'colophon.note': 'Tanpa jaringan · tanpa penyimpanan · HMAC lewat Web Crypto API',
 
   'lang.label': 'Bahasa',
   'lang.aria': 'Pilih bahasa',
-
-  'demo.comment': '# Kunci uji dari RFC 4226 — secret-nya adalah teks “12345678901234567890”',
-  'demo.label': 'Uji RFC',
 
   'err.base32.paddingInside': 'Karakter “=” hanya boleh berada di akhir (itu sekadar pengisi).',
   'err.base32.empty': 'Kunci secret kosong.',
