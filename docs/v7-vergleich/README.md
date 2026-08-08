@@ -64,7 +64,7 @@ ist der Messung gleichgültig: Tonunterschied, Haarlinie oder Lichtkante.
 | Gehäuse gegen die Werkbank, dunkel | 1,00:1 (kein Gehäuse) | **1,52:1** |
 | Layout-Shift beim Laden            | 0,175                 | **0,001**  |
 | Lighthouse Desktop                 | 92                    | **100**    |
-| Lighthouse mobil, 4×-Drossel       | 98                    | 98         |
+| Lighthouse mobil, 4×-Drossel       | nicht gemessen        | **98**     |
 
 Die zweite Zeile ist der ehrliche Teil: Im dunklen Modus hat sich am Panel
 **nichts verbessert**, es ist sogar um 0,04 schlechter geworden. Das ist keine
