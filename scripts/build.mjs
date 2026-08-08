@@ -28,9 +28,13 @@ const dist = path.join(root, 'dist');
 const distSingle = path.join(root, 'dist-single');
 const singleFileName = 'clockwork.html';
 
-// --- 0. Icons -----------------------------------------------------------------
+// --- 0. Bilder ----------------------------------------------------------------
+// Beide entstehen aus vermessener Geometrie statt aus einer Bilddatei — siehe
+// die Kopfkommentare der Skripte.
 console.log('\n▸ Icons erzeugen');
 execFileSync(process.execPath, [path.join(root, 'scripts', 'icons.mjs')], { stdio: 'inherit' });
+console.log('\n▸ Vorschaubild erzeugen');
+execFileSync(process.execPath, [path.join(root, 'scripts', 'og-image.mjs')], { stdio: 'inherit' });
 
 // --- 1. PWA-Build -------------------------------------------------------------
 console.log('\n▸ Build 1/2: installierbare PWA → dist/');

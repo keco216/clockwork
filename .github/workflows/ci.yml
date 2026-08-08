@@ -1,0 +1,67 @@
+# Dieselbe Kette, die auch lokal vor jedem „fertig" laeuft — in derselben
+# Reihenfolge, damit ein roter Lauf hier genau den Befehl nennt, den man auf dem
+# eigenen Rechner wiederholen kann.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Erlaubt einen Lauf von Hand, etwa nach einem Wechsel der Node-Version.
+  workflow_dispatch:
+
+# Ein aelterer Lauf auf demselben Branch wird abgebrochen, sobald ein neuer
+# startet: Sein Ergebnis interessiert dann niemanden mehr.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          # Festgepinnt auf die Major-Version, mit der lokal entwickelt wird.
+          node-version: '26'
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format
+        run: npx prettier --check .
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # Die Zusagen aus README und SECURITY.md, bei jedem Lauf am fertigen
+      # Buendel nachgemessen statt behauptet.
+      - name: Check the bundle
+        run: node scripts/check-bundle.mjs
+
+      # Rauchprobe fuer die Sprachauswahl zur Bauzeit. Der Unit-Test prueft die
+      # Textarbeit am Katalog; hier laeuft der echte Build noch einmal mit
+      # gesetzter Variable, damit ein Fehler im Zusammenspiel mit Rollup nicht
+      # erst beim Release auffaellt.
+      - name: Subset build
+        env:
+          CLOCKWORK_LANGS: de,en
+        run: |
+          npm run build
+          node scripts/check-bundle.mjs de,en

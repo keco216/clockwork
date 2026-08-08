@@ -1,0 +1,121 @@
+<!doctype html>
+<!--
+  Die 404-Seite. Sie liegt in public/ und wandert unverändert nach dist/ —
+  Vercel liefert eine dort gefundene 404.html von sich aus aus.
+
+  Bewusst eigenständig statt Teil der App: Sie muss auch dann noch dastehen,
+  wenn das Bündel gar nicht erst geladen wurde. Deshalb kein Skript, keine
+  Schriftdatei, kein Verweis nach außen — nur das, was die strenge CSP dieser
+  Seite ohnehin erlaubt (`style-src 'self' 'unsafe-inline'`).
+
+  Für eine installierte PWA greift sie in der Regel nicht: Dort fängt der
+  Service Worker unbekannte Adressen ab und zeigt die App (navigateFallback).
+-->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="robots" content="noindex" />
+    <title>Not found — Clockwork</title>
+    <style>
+      :root {
+        --ink: #171614;
+        --ink-2: #5c5852;
+        --paper: #f5f3ef;
+        --signal: #c4400f;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ink: #f5f3ef;
+          --ink-2: #9a948b;
+          --paper: #131210;
+          --signal: #f05a28;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-content: center;
+        gap: 1.5rem;
+        padding: 2rem;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+        text-align: center;
+      }
+      /* Die Gravur-Beschriftung des Geräts: kleine gesperrte Versalien. */
+      p.label {
+        margin: 0;
+        font-size: 0.75rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+      a {
+        color: var(--signal);
+        text-underline-offset: 0.25em;
+      }
+      svg {
+        justify-self: center;
+        width: 88px;
+        height: 88px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Das Emblem, dieselbe Teilung wie in der App: 30 Marken, Signal auf 12 Uhr. -->
+    <svg viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+      <g stroke="currentColor" stroke-width="4.8" transform="translate(100 100)">
+        <!-- Signalmarke auf 12 Uhr: laenger (0,30·R) und staerker als die uebrigen. -->
+        <line y1="-70" y2="-100" stroke="var(--signal)" stroke-width="7.3" />
+        <g>
+          <line y1="-80" y2="-100" transform="rotate(12)" />
+          <line y1="-80" y2="-100" transform="rotate(24)" />
+          <line y1="-80" y2="-100" transform="rotate(36)" />
+          <line y1="-80" y2="-100" transform="rotate(48)" />
+          <line y1="-80" y2="-100" transform="rotate(60)" />
+          <line y1="-80" y2="-100" transform="rotate(72)" />
+          <line y1="-80" y2="-100" transform="rotate(84)" />
+          <line y1="-80" y2="-100" transform="rotate(96)" />
+          <line y1="-80" y2="-100" transform="rotate(108)" />
+          <line y1="-80" y2="-100" transform="rotate(120)" />
+          <line y1="-80" y2="-100" transform="rotate(132)" />
+          <line y1="-80" y2="-100" transform="rotate(144)" />
+          <line y1="-80" y2="-100" transform="rotate(156)" />
+          <line y1="-80" y2="-100" transform="rotate(168)" />
+          <line y1="-80" y2="-100" transform="rotate(180)" />
+          <line y1="-80" y2="-100" transform="rotate(192)" />
+          <line y1="-80" y2="-100" transform="rotate(204)" />
+          <line y1="-80" y2="-100" transform="rotate(216)" />
+          <line y1="-80" y2="-100" transform="rotate(228)" />
+          <line y1="-80" y2="-100" transform="rotate(240)" />
+          <line y1="-80" y2="-100" transform="rotate(252)" />
+          <line y1="-80" y2="-100" transform="rotate(264)" />
+          <line y1="-80" y2="-100" transform="rotate(276)" />
+          <line y1="-80" y2="-100" transform="rotate(288)" />
+          <line y1="-80" y2="-100" transform="rotate(300)" />
+          <line y1="-80" y2="-100" transform="rotate(312)" />
+          <line y1="-80" y2="-100" transform="rotate(324)" />
+          <line y1="-80" y2="-100" transform="rotate(336)" />
+          <line y1="-80" y2="-100" transform="rotate(348)" />
+        </g>
+        <circle r="5.2" fill="currentColor" stroke="none" />
+      </g>
+    </svg>
+
+    <p class="label">Error 404</p>
+    <h1>This page does not exist.</h1>
+    <p><a href="/">Back to Clockwork</a></p>
+  </body>
+</html>
