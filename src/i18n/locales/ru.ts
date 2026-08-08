@@ -36,6 +36,7 @@ export default {
     'Изображения с QR-кодом можно перетащить сюда или вставить сочетанием {paste}.',
   'input.help.migration':
     'Выгрузки из Google Authenticator ({migration}) преобразуются сами собой.',
+  'input.help.more': 'Все форматы ввода',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': {
@@ -61,6 +62,10 @@ export default {
   'key.copyFailed': 'Не удалось',
 
   'viewfinder.hint': 'Держите QR-код в рамке',
+
+  'filter.label': 'Фильтр учётных записей',
+  'filter.placeholder': 'Фильтр по имени',
+  'filter.empty': 'Ничего не найдено по запросу «{query}».',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
@@ -152,7 +157,7 @@ export default {
   'import.unnamed': 'Без имени',
   'import.unreadable': 'Выгрузка не читается.',
 
-  'vacant.text': 'Пока ничего не введено. Вставьте выше secret.',
+  'vacant.text': 'Секрет, ссылка otpauth или изображение QR — ничто из этого не покидает браузер.',
   'vacant.demo': 'Вставить тестовый ключ',
   'colophon.note': 'Никакой сети · никакого хранилища · HMAC через Web Crypto API',
 

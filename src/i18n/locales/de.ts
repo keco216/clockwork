@@ -39,6 +39,7 @@ export default {
   'input.help.images': 'QR-Bilder lassen sich auch hierher ziehen oder mit {paste} einfügen.',
   'input.help.migration':
     'Google-Authenticator-Exporte ({migration}) werden automatisch umgewandelt.',
+  'input.help.more': 'Alle Eingabeformate',
   'shortcut.modifier': 'Strg',
 
   'input.count.accounts': { one: '{n} Konto', other: '{n} Konten' },
@@ -54,6 +55,10 @@ export default {
   'key.copyFailed': 'Fehlgeschlagen',
 
   'viewfinder.hint': 'QR-Code in den Rahmen halten',
+
+  'filter.label': 'Konten filtern',
+  'filter.placeholder': 'Nach Name filtern',
+  'filter.empty': 'Nichts passt zu „{query}“.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} Stelle', other: '{n} Stellen' },
@@ -131,7 +136,7 @@ export default {
   'import.unnamed': 'Unbenannt',
   'import.unreadable': 'Export unlesbar.',
 
-  'vacant.text': 'Noch keine Eingabe. Setze oben ein Secret ein.',
+  'vacant.text': 'Secret, otpauth-Link oder QR-Bild — nichts davon verlässt diesen Browser.',
   'vacant.demo': 'Testschlüssel einfügen',
   'colophon.note': 'Kein Netzwerk · kein Speicher · HMAC über die Web Crypto API',
 

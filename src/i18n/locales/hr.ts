@@ -32,6 +32,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} ili {uri} — izmiješano. {hash} započinje bilješku.',
   'input.help.images': 'Slike s QR kodom mogu se dovući ovamo ili zalijepiti pomoću {paste}.',
   'input.help.migration': 'Izvozi iz Google Authenticatora ({migration}) pretvaraju se automatski.',
+  'input.help.more': 'Svi ulazni formati',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} račun', few: '{n} računa', other: '{n} računa' },
@@ -47,6 +48,10 @@ export default {
   'key.copyFailed': 'Nije uspjelo',
 
   'viewfinder.hint': 'Držite QR kod u okviru',
+
+  'filter.label': 'Filtriraj račune',
+  'filter.placeholder': 'Filtriraj po nazivu',
+  'filter.empty': 'Ništa ne odgovara „{query}“.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} znamenka', few: '{n} znamenke', other: '{n} znamenki' },
@@ -126,7 +131,8 @@ export default {
   'import.unnamed': 'Bez naziva',
   'import.unreadable': 'Izvoz nečitljiv.',
 
-  'vacant.text': 'Još nema unosa. Gore umetnite secret.',
+  'vacant.text':
+    'Secret, poveznica otpauth ili QR slika — ništa od toga ne napušta ovaj preglednik.',
   'vacant.demo': 'Umetni testni ključ',
   'colophon.note': 'Bez mreže · bez pohrane · HMAC preko Web Crypto API',
 

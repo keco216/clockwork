@@ -34,6 +34,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} tai {uri} — sekaisin. {hash} aloittaa muistiinpanon.',
   'input.help.images': 'QR-kuvia voi myös raahata tähän tai liittää näppäimillä {paste}.',
   'input.help.migration': 'Google Authenticatorin viennit ({migration}) muunnetaan itsestään.',
+  'input.help.more': 'Kaikki syötemuodot',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} tili', other: '{n} tiliä' },
@@ -49,6 +50,10 @@ export default {
   'key.copyFailed': 'Epäonnistui',
 
   'viewfinder.hint': 'Pidä QR-koodi kehyksen sisällä',
+
+  'filter.label': 'Suodata tilejä',
+  'filter.placeholder': 'Suodata nimen mukaan',
+  'filter.empty': 'Mikään ei vastaa hakua ”{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} numero', other: '{n} numeroa' },
@@ -126,7 +131,7 @@ export default {
   'import.unnamed': 'Nimetön',
   'import.unreadable': 'Vientiä ei voi lukea.',
 
-  'vacant.text': 'Ei vielä syötettä. Aseta ylle secret.',
+  'vacant.text': 'Secret, otpauth-linkki tai QR-kuva — mikään niistä ei poistu tästä selaimesta.',
   'vacant.demo': 'Lisää testiavain',
   'colophon.note': 'Ei verkkoa · ei tallennusta · HMAC Web Crypto API:n kautta',
 

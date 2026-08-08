@@ -35,6 +35,7 @@ export default {
   'input.help.images': 'Obrázky s QR kódom sa dajú sem aj pretiahnuť alebo vložiť cez {paste}.',
   'input.help.migration':
     'Exporty z Google Authenticatora ({migration}) sa prevádzajú automaticky.',
+  'input.help.more': 'Všetky vstupné formáty',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': {
@@ -60,6 +61,10 @@ export default {
   'key.copyFailed': 'Nepodarilo sa',
 
   'viewfinder.hint': 'Držte QR kód v rámčeku',
+
+  'filter.label': 'Filtrovať účty',
+  'filter.placeholder': 'Filtrovať podľa názvu',
+  'filter.empty': 'Nič nezodpovedá „{query}“.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
@@ -151,7 +156,7 @@ export default {
   'import.unnamed': 'Bez názvu',
   'import.unreadable': 'Export nečitateľný.',
 
-  'vacant.text': 'Zatiaľ nič zadané. Vložte hore secret.',
+  'vacant.text': 'Secret, odkaz otpauth alebo obrázok QR — nič z toho neopustí tento prehliadač.',
   'vacant.demo': 'Vložiť testovací kľúč',
   'colophon.note': 'Žiadna sieť · žiadne úložisko · HMAC cez Web Crypto API',
 

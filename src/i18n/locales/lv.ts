@@ -35,6 +35,7 @@ export default {
   'input.help.images': 'QR attēlus var arī ievilkt šeit vai ielīmēt ar {paste}.',
   'input.help.migration':
     'Google Authenticator eksporti ({migration}) tiek pārveidoti automātiski.',
+  'input.help.more': 'Visi ievades formāti',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { zero: '{n} kontu', one: '{n} konts', other: '{n} konti' },
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': 'Neizdevās',
 
   'viewfinder.hint': 'Turiet QR kodu rāmī',
+
+  'filter.label': 'Filtrēt kontus',
+  'filter.placeholder': 'Filtrēt pēc nosaukuma',
+  'filter.empty': 'Nekas neatbilst “{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { zero: '{n} ciparu', one: '{n} cipars', other: '{n} cipari' },
@@ -129,7 +134,7 @@ export default {
   'import.unnamed': 'Bez nosaukuma',
   'import.unreadable': 'Eksports nav salasāms.',
 
-  'vacant.text': 'Vēl nekas nav ievadīts. Ielieciet augšā secret.',
+  'vacant.text': 'Noslēpums, otpauth saite vai QR attēls — nekas no tā neatstāj šo pārlūku.',
   'vacant.demo': 'Ievietot testa atslēgu',
   'colophon.note': 'Bez tīkla · bez krātuves · HMAC caur Web Crypto API',
 

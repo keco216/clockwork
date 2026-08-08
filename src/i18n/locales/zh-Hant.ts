@@ -33,6 +33,7 @@ export default {
   'input.help.formats': 'Base32、{nameSecret} 或 {uri} —— 可以混排。{hash} 開始一則註記。',
   'input.help.images': 'QR 碼圖片也可以拖到這裡，或者用 {paste} 貼上。',
   'input.help.migration': 'Google 驗證器的匯出（{migration}）會自動轉換。',
+  'input.help.more': '全部輸入格式',
   'shortcut.modifier': 'Ctrl',
 
   // 數字與量詞之間不留空（「3個帳戶」）——這是中文的寫法，
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': '失敗',
 
   'viewfinder.hint': '把 QR 碼放進取景框',
+
+  'filter.label': '篩選帳戶',
+  'filter.placeholder': '依名稱篩選',
+  'filter.empty': '沒有與「{query}」相符的項目。',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { other: '{n} 位' },
@@ -120,7 +125,7 @@ export default {
   'import.unnamed': '未命名',
   'import.unreadable': '匯出無法讀取。',
 
-  'vacant.text': '還沒有輸入。在上面放一個 secret。',
+  'vacant.text': '密鑰、otpauth 連結或 QR 圖片——都不會離開這個瀏覽器。',
   'vacant.demo': '插入測試金鑰',
   'colophon.note': '無網路 · 無儲存 · HMAC 經由 Web Crypto API',
 

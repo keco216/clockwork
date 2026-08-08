@@ -34,6 +34,7 @@ export default {
   'input.help.formats': 'Base32、{nameSecret}、{uri} — 混在可。{hash} で注記が始まる。',
   'input.help.images': 'QR 画像はここへドラッグするか、{paste} で貼り付けてもよい。',
   'input.help.migration': 'Google Authenticator のエクスポート ({migration}) は自動で変換される。',
+  'input.help.more': '入力形式をすべて表示',
   'shortcut.modifier': 'Ctrl',
 
   // 数量 + 助数詞のあいだは詰める (「3件」)。それが日本語の書き方であり、
@@ -51,6 +52,10 @@ export default {
   'key.copyFailed': '失敗',
 
   'viewfinder.hint': 'QR コードを枠内に収める',
+
+  'filter.label': 'アカウントを絞り込む',
+  'filter.placeholder': '名前で絞り込む',
+  'filter.empty': '「{query}」に一致するものはない。',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { other: '{n} 桁' },
@@ -124,7 +129,7 @@ export default {
   'import.unnamed': '名称未設定',
   'import.unreadable': 'エクスポートを読み取れない。',
 
-  'vacant.text': 'まだ何も入力されていない。上にシークレットを入れる。',
+  'vacant.text': 'シークレット、otpauth リンク、QR 画像 — どれもこのブラウザーから出ない。',
   'vacant.demo': 'テスト鍵を挿入',
   'colophon.note': 'ネットワークなし · 保存なし · HMAC は Web Crypto API 経由',
 

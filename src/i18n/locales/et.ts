@@ -33,6 +33,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} või {uri} — segamini. {hash} alustab märkust.',
   'input.help.images': 'QR-pilte saab ka siia lohistada või kleepida klahvidega {paste}.',
   'input.help.migration': 'Google Authenticatori eksportfailid ({migration}) teisendatakse ise.',
+  'input.help.more': 'Kõik sisendvormingud',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} konto', other: '{n} kontot' },
@@ -48,6 +49,10 @@ export default {
   'key.copyFailed': 'Ebaõnnestus',
 
   'viewfinder.hint': 'Hoia QR-kood raami sees',
+
+  'filter.label': 'Filtreeri kontosid',
+  'filter.placeholder': 'Filtreeri nime järgi',
+  'filter.empty': 'Miski ei vasta otsingule „{query}“.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} number', other: '{n} numbrit' },
@@ -125,7 +130,8 @@ export default {
   'import.unnamed': 'Nimeta',
   'import.unreadable': 'Eksportfail ei ole loetav.',
 
-  'vacant.text': 'Sisendit veel pole. Pane ülal secret.',
+  'vacant.text':
+    'Salajane võti, otpauth-link või QR-pilt — miski neist ei lahku sellest brauserist.',
   'vacant.demo': 'Lisa testvõti',
   'colophon.note': 'Ei mingit võrku · ei mingit salvestust · HMAC Web Crypto API kaudu',
 

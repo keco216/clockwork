@@ -35,6 +35,7 @@ export default {
   'input.help.images': 'A QR-képek ide is húzhatók, vagy beilleszthetők a {paste} kombinációval.',
   'input.help.migration':
     'A Google Authenticator exportjai ({migration}) automatikusan átalakulnak.',
+  'input.help.more': 'Minden bemeneti formátum',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} fiók', other: '{n} fiók' },
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': 'Nem sikerült',
 
   'viewfinder.hint': 'Tartsa a QR-kódot a keretben',
+
+  'filter.label': 'Fiókok szűrése',
+  'filter.placeholder': 'Szűrés név szerint',
+  'filter.empty': 'Semmi sem egyezik ezzel: „{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} számjegy', other: '{n} számjegy' },
@@ -128,7 +133,7 @@ export default {
   'import.unnamed': 'Névtelen',
   'import.unreadable': 'Az export olvashatatlan.',
 
-  'vacant.text': 'Még nincs bevitel. Tegyen fentre egy secretet.',
+  'vacant.text': 'Secret, otpauth-hivatkozás vagy QR-kép — semmi sem hagyja el ezt a böngészőt.',
   'vacant.demo': 'Tesztkulcs beszúrása',
   'colophon.note': 'Nincs hálózat · nincs tárolás · HMAC a Web Crypto API-n keresztül',
 

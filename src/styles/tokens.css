@@ -23,18 +23,29 @@
 
   /* Flächen: helles Gerätegehäuse. Kein Reinweiß — Papier, kein Bildschirm.
 
-     Seit V5 gibt es zwei Ebenen statt einer. Der Grund ist nicht Geschmack: Eine
-     Erhebung, die man sehen soll, braucht etwas, worüber sie sich erhebt. Läge
-     das Gerät auf derselben Fläche, aus der es besteht, bliebe vom Schatten nur
-     ein Schmutzrand.
+     Seit V5 gab es zwei Ebenen statt einer. Seit V7 sind es DREI, und jede hat
+     eine Rolle:
+
+       --ground   die Werkbank   außerhalb des Geräts
+       --case     das Gehäuse    das Gerät selbst
+       --surface  die Panels     Papier bzw. Nacht
+
+     Der Grund für die dritte Ebene ist kein Geschmack, sondern eine gemessene
+     Zahl. Bis V6 lagen Panel und Untergrund bei 1,11:1 auseinander — das ist
+     kein Tonunterschied mehr, das ist ein Verdacht. Eine Erhebung, die man
+     sehen soll, braucht etwas, worüber sie sich erhebt; und ein Gerät, das man
+     als Gerät sehen soll, braucht etwas, worauf es liegt.
 
      Die Rollenverteilung folgt der Marke, nicht der Bequemlichkeit: Papier und
      Nacht sind laut branding/README-BRANDING.md die GEHÄUSEFLÄCHEN — sie liegen
-     deshalb auf den Panels, also dort, wo das Gerät ist. Der Grund darunter ist
-     ein abgeleiteter Ton, so wie --ink-2 und --ink-3 auch: die Tischplatte,
-     auf der das Gerät liegt. */
-  --ground: #eae7e0; /* Untergrund — eine Stufe unter Papier */
-  --surface: #f5f3ef; /* Papier — die Gehäusefläche selbst */
+     deshalb auf den Panels, also dort, wo man das Gerät anfasst. Werkbank und
+     Gehäuse sind abgeleitete Töne, so wie --ink-2 und --ink-3 auch.
+
+     Nachgemessen von scripts/check-contrast.mjs, Abschnitt 6: hell 1,25 (Panel
+     zu Gehäuse) und 1,25 (Gehäuse zu Werkbank). */
+  --ground: #c9c3b6; /* Werkbank — der Tisch, auf dem das Gerät liegt */
+  --case: #ded9cf; /* Gehäuse — das Gerät selbst */
+  --surface: #f5f3ef; /* Papier — die Panels darauf */
   --surface-recessed: #e9e6e0; /* versenkt: Eingabeschlitz */
   --surface-inverted: #171614; /* Tinte, für gedrückte Tasten */
 
@@ -185,6 +196,16 @@
   --col-label: 6.5rem;
   --measure: 62rem;
 
+  /* Die Bedienseite im Arbeitszustand. 23 rem = 368 px, also in der Mitte des
+     Fensters, das der Auftrag nennt (360–400 px). Fest und nicht fluid: Was man
+     EINSTELLT, braucht keine zusätzliche Breite — jede gewonnene Breite gehört
+     dem, was man ABLIEST. */
+  --rail-w: 23rem;
+
+  /* Die Breite der Onboarding-Bühne. Ein einzelnes Feld auf 1600 px wäre kein
+     Angebot, sondern eine Fläche. */
+  --stage-w: 44rem;
+
   /* Höhe jedes Bedienelements — Taste, einzeiliges Feld, Auswahl.
      2,75 rem sind 44 px und damit die Zielgröße, die sowohl Apple als auch die
      WCAG für einen Finger nennen. Bis V4 waren es 36 px: für die Maus genug,
@@ -292,6 +313,31 @@
   --dial-hub: 0.052;
 }
 
+/* ── Die Typo-Skala atmet mit ────────────────────────────────────────────────
+   Ab 1440 px eine Stufe größer. Ein 27-Zöller wird nicht mit Handy-Größen
+   bedient: Auf 2560 px stand die Parameterzeile bis V6 in 11 px da, aus einem
+   Meter Abstand betrachtet.
+
+   Ausdrücklich über die TOKENS und nicht über einzelne Bauteile. Wer stattdessen
+   `.dial { font-size: … }` in einer Media Query nachzieht, hat die Skala an
+   einer Stelle verdoppelt und muss sie ab da an zwei Stellen pflegen — und die
+   Bauteile, an die er nicht gedacht hat, bleiben klein.
+
+   Das Zifferblatt wächst mit, aber weniger: Es steht ohnehin in `clamp()` an
+   der Containerbreite und ist die einzige Angabe, die schon vorher mitgewachsen
+   ist. */
+@media (min-width: 90rem) {
+  :root {
+    --t-micro: 0.75rem; /*    12px */
+    --t-small: 0.8125rem; /*  13px */
+    --t-body: 0.9375rem; /*   15px */
+    --t-lead: 1.1875rem; /*   19px */
+    --t-mark: 1.25rem; /*     20px */
+    --t-dial-min: 2.75rem; /* 44px */
+    --t-dial-max: 5rem; /*    80px */
+  }
+}
+
 /* ── Dunkler Modus: mattschwarzes Gerät ──────────────────────────────────────
    Nicht die Umkehrung des hellen Themes, sondern dasselbe Gerät in einer
    anderen Ausführung. */
@@ -300,9 +346,21 @@
     /* Deutlich tiefer als im ersten Anlauf (#0b0a09). Der Grund: Im Dunkeln
        muss der TONWERTUNTERSCHIED die Arbeit machen, die im Hellen der Schatten
        leistet — zwei fast gleiche Schwarztöne ergeben keine Erhebung, sondern
-       eine Fläche mit einem Kratzer darin. */
-    --ground: #070706; /* Untergrund — deutlich unter Nacht */
-    --surface: #131210; /* Nacht — die Gehäusefläche selbst */
+       eine Fläche mit einem Kratzer darin.
+
+       ── Warum die drei Ebenen im Dunkeln enger liegen ────────────────────
+       Weil sie müssen. Nacht liegt bei einer relativen Leuchtdichte von 0,0074;
+       selbst gegen reines Schwarz wären daraus höchstens 1,15:1. Ein Abstand
+       von 1,25 wie im Hellen ist nach unten hin physikalisch nicht zu haben.
+
+       Im Dunkeln trägt deshalb die LICHTKANTE, was im Hellen der Ton trägt —
+       genau die Umkehrung, die --edge-lit und --elev-1 weiter unten schon für
+       V5 beschrieben haben. scripts/check-contrast.mjs misst deswegen nicht den
+       Flächenabstand, sondern den stärksten Sprung ÜBER die Kante: Dort zählt,
+       was das Auge tatsächlich benutzt, um eine Kante zu finden. */
+    --ground: #030302; /* Werkbank */
+    --case: #0a0908; /* Gehäuse */
+    --surface: #131210; /* Nacht — die Panels */
     --surface-recessed: #0a0908;
     --surface-inverted: #f5f3ef;
 

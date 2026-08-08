@@ -33,6 +33,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} या {uri} — मिलाजुला. {hash} से टिप्पणी शुरू होती है.',
   'input.help.images': 'QR चित्र यहाँ खींचकर भी लाए जा सकते हैं या {paste} से चिपकाए जा सकते हैं.',
   'input.help.migration': 'Google Authenticator के निर्यात ({migration}) अपने आप बदल दिए जाते हैं.',
+  'input.help.more': 'सभी इनपुट प्रारूप',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} खाता', other: '{n} खाते' },
@@ -48,6 +49,10 @@ export default {
   'key.copyFailed': 'विफल',
 
   'viewfinder.hint': 'QR कोड को फ़्रेम में रखें',
+
+  'filter.label': 'खाते फ़िल्टर करें',
+  'filter.placeholder': 'नाम से फ़िल्टर करें',
+  'filter.empty': 'कुछ भी “{query}” से मेल नहीं खाता।',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} अंक', other: '{n} अंक' },
@@ -125,7 +130,7 @@ export default {
   'import.unnamed': 'बिना नाम',
   'import.unreadable': 'निर्यात पढ़ा नहीं जा सकता.',
 
-  'vacant.text': 'अभी कुछ नहीं डाला गया. ऊपर कोई सीक्रेट रखें.',
+  'vacant.text': 'सीक्रेट, otpauth लिंक या QR छवि — इनमें से कुछ भी इस ब्राउज़र से बाहर नहीं जाता।',
   'vacant.demo': 'परीक्षण कुंजी डालें',
   'colophon.note': 'कोई नेटवर्क नहीं · कोई भंडारण नहीं · HMAC Web Crypto API से',
 

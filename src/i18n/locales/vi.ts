@@ -36,6 +36,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} hoặc {uri} — trộn lẫn. {hash} mở đầu một ghi chú.',
   'input.help.images': 'Ảnh mã QR cũng có thể kéo vào đây hoặc dán bằng {paste}.',
   'input.help.migration': 'Bản xuất từ Google Authenticator ({migration}) được chuyển đổi tự động.',
+  'input.help.more': 'Mọi định dạng đầu vào',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { other: '{n} tài khoản' },
@@ -51,6 +52,10 @@ export default {
   'key.copyFailed': 'Thất bại',
 
   'viewfinder.hint': 'Giữ mã QR trong khung',
+
+  'filter.label': 'Lọc tài khoản',
+  'filter.placeholder': 'Lọc theo tên',
+  'filter.empty': 'Không có gì khớp với “{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { other: '{n} chữ số' },
@@ -122,7 +127,7 @@ export default {
   'import.unnamed': 'Không tên',
   'import.unreadable': 'Bản xuất không đọc được.',
 
-  'vacant.text': 'Chưa nhập gì. Hãy đặt một secret ở trên.',
+  'vacant.text': 'Secret, liên kết otpauth hoặc ảnh QR — không có gì rời khỏi trình duyệt này.',
   'vacant.demo': 'Chèn khóa thử',
   'colophon.note': 'Không mạng · không lưu trữ · HMAC qua Web Crypto API',
 

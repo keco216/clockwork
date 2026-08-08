@@ -31,6 +31,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} eller {uri} — blandat. {hash} inleder en notering.',
   'input.help.images': 'QR-bilder går också att dra hit eller klistra in med {paste}.',
   'input.help.migration': 'Exporter från Google Authenticator ({migration}) omvandlas automatiskt.',
+  'input.help.more': 'Alla inmatningsformat',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} konto', other: '{n} konton' },
@@ -46,6 +47,10 @@ export default {
   'key.copyFailed': 'Misslyckades',
 
   'viewfinder.hint': 'Håll QR-koden inom ramen',
+
+  'filter.label': 'Filtrera konton',
+  'filter.placeholder': 'Filtrera på namn',
+  'filter.empty': 'Inget matchar ”{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} siffra', other: '{n} siffror' },
@@ -123,7 +128,7 @@ export default {
   'import.unnamed': 'Namnlös',
   'import.unreadable': 'Exporten går inte att läsa.',
 
-  'vacant.text': 'Inget inmatat än. Sätt in en secret ovanför.',
+  'vacant.text': 'Secret, otpauth-länk eller QR-bild — inget av det lämnar den här webbläsaren.',
   'vacant.demo': 'Infoga testnyckel',
   'colophon.note': 'Inget nätverk · ingen lagring · HMAC via Web Crypto API',
 

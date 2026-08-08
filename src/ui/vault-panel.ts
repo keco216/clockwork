@@ -59,6 +59,7 @@ export interface VaultPanelHandlers {
 
 export function startVaultPanel(handlers: VaultPanelHandlers): void {
   const panel = requireElement(document, '#vault');
+  const disclosure = requireElement<HTMLDetailsElement>(document, '#vault-disclosure');
   const stateText = requireElement(document, '#vault-state-text');
   const explain = requireElement(document, '#vault-explain');
   const form = requireElement<HTMLFormElement>(document, '#vault-form');
@@ -128,6 +129,12 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
         passField.autocomplete = 'current-password';
         primary.textContent = t('vault.action.unseal');
         explain.hidden = true;
+        // Ein gesperrter Tresor ist der einzige Zustand, in dem der Aufklapper
+        // von selbst aufgeht — und zwar der wichtigste Fall überhaupt: Beim
+        // Laden der Seite ist das Textfeld leer, weil der Inhalt hier drin
+        // liegt. Läge das Passphrasenfeld dann hinter einem Klick, müsste man
+        // erst suchen, wo die eigenen Codes geblieben sind.
+        disclosure.open = true;
         break;
       case 'open':
         stateText.textContent = t('vault.state.open');

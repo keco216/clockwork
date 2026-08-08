@@ -35,6 +35,7 @@ export default {
   'input.help.images': 'Imaginile cu cod QR pot fi trase aici sau lipite cu {paste}.',
   'input.help.migration':
     'Exporturile din Google Authenticator ({migration}) sunt convertite automat.',
+  'input.help.more': 'Toate formatele acceptate',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} cont', few: '{n} conturi', other: '{n} de conturi' },
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': 'A eșuat',
 
   'viewfinder.hint': 'Țineți codul QR în cadru',
+
+  'filter.label': 'Filtrează conturile',
+  'filter.placeholder': 'Filtrează după nume',
+  'filter.empty': 'Nimic nu corespunde cu „{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} cifră', few: '{n} cifre', other: '{n} de cifre' },
@@ -130,7 +135,8 @@ export default {
   'import.unnamed': 'Fără nume',
   'import.unreadable': 'Export ilizibil.',
 
-  'vacant.text': 'Încă nimic introdus. Puneți deasupra un secret.',
+  'vacant.text':
+    'Secret, link otpauth sau imagine QR — nimic din toate acestea nu părăsește acest browser.',
   'vacant.demo': 'Inserează cheia de test',
   'colophon.note': 'Fără rețea · fără stocare · HMAC prin Web Crypto API',
 

@@ -34,6 +34,7 @@ export default {
   'input.help.formats': 'Base32, ‏{nameSecret} או {uri} — מעורבבים. {hash} פותח הערה.',
   'input.help.images': 'אפשר גם לגרור לכאן תמונות של קוד QR או להדביק עם {paste}.',
   'input.help.migration': 'ייצוא מ‑Google Authenticator ‏({migration}) מומר מאליו.',
+  'input.help.more': 'כל תבניות הקלט',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': {
@@ -59,6 +60,10 @@ export default {
   'key.copyFailed': 'נכשל',
 
   'viewfinder.hint': 'החזיקו את קוד ה‑QR בתוך המסגרת',
+
+  'filter.label': 'סינון חשבונות',
+  'filter.placeholder': 'סינון לפי שם',
+  'filter.empty': 'אין התאמה ל־"{query}".',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
@@ -149,7 +154,7 @@ export default {
   'import.unnamed': 'ללא שם',
   'import.unreadable': 'הייצוא אינו קריא.',
 
-  'vacant.text': 'עוד לא הוזן דבר. הכניסו למעלה סוד.',
+  'vacant.text': 'סוד, קישור otpauth או תמונת QR — דבר מאלה אינו עוזב את הדפדפן הזה.',
   'vacant.demo': 'הוספת מפתח בדיקה',
   'colophon.note': 'בלי רשת · בלי אחסון · HMAC דרך Web Crypto API',
 

@@ -34,6 +34,7 @@ export default {
     'QR-afbeeldingen kunnen ook hierheen worden gesleept of met {paste} worden geplakt.',
   'input.help.migration':
     'Exports uit Google Authenticator ({migration}) worden automatisch omgezet.',
+  'input.help.more': 'Alle invoerformaten',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} account', other: '{n} accounts' },
@@ -49,6 +50,10 @@ export default {
   'key.copyFailed': 'Mislukt',
 
   'viewfinder.hint': 'Houd de QR-code in het kader',
+
+  'filter.label': 'Accounts filteren',
+  'filter.placeholder': 'Filteren op naam',
+  'filter.empty': 'Niets komt overeen met “{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} cijfer', other: '{n} cijfers' },
@@ -127,7 +132,7 @@ export default {
   'import.unnamed': 'Naamloos',
   'import.unreadable': 'Export onleesbaar.',
 
-  'vacant.text': 'Nog geen invoer. Zet hierboven een secret neer.',
+  'vacant.text': 'Secret, otpauth-link of QR-afbeelding — niets daarvan verlaat deze browser.',
   'vacant.demo': 'Testsleutel invoegen',
   'colophon.note': 'Geen netwerk · geen opslag · HMAC via de Web Crypto API',
 

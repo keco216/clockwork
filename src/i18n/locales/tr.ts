@@ -35,6 +35,7 @@ export default {
   'input.help.images': 'QR görselleri buraya sürüklenebilir ya da {paste} ile yapıştırılabilir.',
   'input.help.migration':
     'Google Authenticator dışa aktarımları ({migration}) kendiliğinden dönüştürülür.',
+  'input.help.more': 'Tüm giriş biçimleri',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} hesap', other: '{n} hesap' },
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': 'Başarısız',
 
   'viewfinder.hint': 'QR kodu çerçevenin içinde tutun',
+
+  'filter.label': 'Hesapları filtrele',
+  'filter.placeholder': 'Ada göre filtrele',
+  'filter.empty': '“{query}” ile eşleşen yok.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} basamak', other: '{n} basamak' },
@@ -127,7 +132,7 @@ export default {
   'import.unnamed': 'Adsız',
   'import.unreadable': 'Dışa aktarım okunamıyor.',
 
-  'vacant.text': 'Henüz bir giriş yok. Yukarıya bir secret koyun.',
+  'vacant.text': 'Secret, otpauth bağlantısı veya QR görüntüsü — hiçbiri bu tarayıcıdan çıkmaz.',
   'vacant.demo': 'Test anahtarı ekle',
   'colophon.note': 'Ağ yok · depolama yok · HMAC, Web Crypto API üzerinden',
 

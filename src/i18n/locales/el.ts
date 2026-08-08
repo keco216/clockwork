@@ -35,6 +35,7 @@ export default {
     'Οι εικόνες με κωδικό QR μπορούν επίσης να συρθούν εδώ ή να επικολληθούν με {paste}.',
   'input.help.migration':
     'Οι εξαγωγές από το Google Authenticator ({migration}) μετατρέπονται αυτόματα.',
+  'input.help.more': 'Όλες οι μορφές εισόδου',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} λογαριασμός', other: '{n} λογαριασμοί' },
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': 'Απέτυχε',
 
   'viewfinder.hint': 'Κρατήστε τον κωδικό QR μέσα στο πλαίσιο',
+
+  'filter.label': 'Φιλτράρισμα λογαριασμών',
+  'filter.placeholder': 'Φιλτράρισμα κατά όνομα',
+  'filter.empty': 'Τίποτα δεν ταιριάζει με «{query}».',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} ψηφίο', other: '{n} ψηφία' },
@@ -131,7 +136,8 @@ export default {
   'import.unnamed': 'Χωρίς όνομα',
   'import.unreadable': 'Η εξαγωγή δεν διαβάζεται.',
 
-  'vacant.text': 'Δεν υπάρχει ακόμη είσοδος. Βάλτε πιο πάνω ένα secret.',
+  'vacant.text':
+    'Μυστικό, σύνδεσμος otpauth ή εικόνα QR — τίποτα από αυτά δεν φεύγει από αυτό το πρόγραμμα περιήγησης.',
   'vacant.demo': 'Εισαγωγή δοκιμαστικού κλειδιού',
   'colophon.note': 'Χωρίς δίκτυο · χωρίς αποθήκευση · HMAC μέσω του Web Crypto API',
 

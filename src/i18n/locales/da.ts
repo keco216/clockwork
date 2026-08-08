@@ -32,6 +32,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} eller {uri} — blandet. {hash} starter en note.',
   'input.help.images': 'QR-billeder kan også trækkes herhen eller sættes ind med {paste}.',
   'input.help.migration': 'Eksporter fra Google Authenticator ({migration}) omdannes automatisk.',
+  'input.help.more': 'Alle inputformater',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} konto', other: '{n} konti' },
@@ -47,6 +48,10 @@ export default {
   'key.copyFailed': 'Mislykkedes',
 
   'viewfinder.hint': 'Hold QR-koden inden for rammen',
+
+  'filter.label': 'Filtrér konti',
+  'filter.placeholder': 'Filtrér efter navn',
+  'filter.empty': 'Intet matcher »{query}«.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} ciffer', other: '{n} cifre' },
@@ -124,7 +129,7 @@ export default {
   'import.unnamed': 'Uden navn',
   'import.unreadable': 'Eksporten kan ikke læses.',
 
-  'vacant.text': 'Endnu ingenting. Sæt en secret ind ovenfor.',
+  'vacant.text': 'Secret, otpauth-link eller QR-billede — intet af det forlader denne browser.',
   'vacant.demo': 'Indsæt testnøgle',
   'colophon.note': 'Intet netværk · intet lager · HMAC via Web Crypto API',
 

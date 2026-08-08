@@ -34,6 +34,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} 또는 {uri} — 섞어도 된다. {hash} 는 메모를 시작한다.',
   'input.help.images': 'QR 이미지는 여기로 끌어 놓거나 {paste} 로 붙여 넣어도 된다.',
   'input.help.migration': 'Google Authenticator 내보내기 ({migration}) 는 저절로 변환된다.',
+  'input.help.more': '모든 입력 형식',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { other: '계정 {n}개' },
@@ -49,6 +50,10 @@ export default {
   'key.copyFailed': '실패',
 
   'viewfinder.hint': 'QR 코드를 테두리 안에 두기',
+
+  'filter.label': '계정 필터',
+  'filter.placeholder': '이름으로 필터',
+  'filter.empty': '“{query}”와 일치하는 항목이 없다.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { other: '{n}자리' },
@@ -120,7 +125,7 @@ export default {
   'import.unnamed': '이름 없음',
   'import.unreadable': '내보내기를 읽을 수 없다.',
 
-  'vacant.text': '아직 입력한 것이 없다. 위에 시크릿을 넣기.',
+  'vacant.text': '시크릿, otpauth 링크, QR 이미지 — 어느 것도 이 브라우저를 벗어나지 않는다.',
   'vacant.demo': '테스트 키 삽입',
   'colophon.note': '네트워크 없음 · 저장 없음 · HMAC 은 Web Crypto API 로',
 

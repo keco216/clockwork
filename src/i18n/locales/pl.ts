@@ -36,6 +36,7 @@ export default {
   'input.help.images': 'Obrazy z kodem QR można też tu przeciągnąć albo wkleić przez {paste}.',
   'input.help.migration':
     'Eksporty z Google Authenticatora ({migration}) są przekształcane automatycznie.',
+  'input.help.more': 'Wszystkie formaty wejściowe',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': {
@@ -61,6 +62,10 @@ export default {
   'key.copyFailed': 'Nie udało się',
 
   'viewfinder.hint': 'Trzymaj kod QR w ramce',
+
+  'filter.label': 'Filtruj konta',
+  'filter.placeholder': 'Filtruj według nazwy',
+  'filter.empty': 'Nic nie pasuje do „{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
@@ -153,7 +158,7 @@ export default {
   'import.unnamed': 'Bez nazwy',
   'import.unreadable': 'Eksport nieczytelny.',
 
-  'vacant.text': 'Jeszcze nic nie wpisano. Wstaw powyżej secret.',
+  'vacant.text': 'Secret, link otpauth albo obraz QR — nic z tego nie opuszcza tej przeglądarki.',
   'vacant.demo': 'Wstaw klucz testowy',
   'colophon.note': 'Bez sieci · bez zapisu · HMAC przez Web Crypto API',
 

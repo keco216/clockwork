@@ -34,6 +34,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} arba {uri} — sumaišyti. {hash} pradeda pastabą.',
   'input.help.images': 'QR paveikslus taip pat galima atitempti čia arba įklijuoti su {paste}.',
   'input.help.migration': '„Google Authenticator“ eksportai ({migration}) pertvarkomi savaime.',
+  'input.help.more': 'Visi įvesties formatai',
   'shortcut.modifier': 'Vald',
 
   'input.count.accounts': {
@@ -59,6 +60,10 @@ export default {
   'key.copyFailed': 'Nepavyko',
 
   'viewfinder.hint': 'Laikykite QR kodą rėmelyje',
+
+  'filter.label': 'Filtruoti paskyras',
+  'filter.placeholder': 'Filtruoti pagal pavadinimą',
+  'filter.empty': 'Niekas neatitinka „{query}“.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
@@ -150,7 +155,8 @@ export default {
   'import.unnamed': 'Be pavadinimo',
   'import.unreadable': 'Eksportas neįskaitomas.',
 
-  'vacant.text': 'Kol kas nieko neįvesta. Įdėkite viršuje secret.',
+  'vacant.text':
+    'Slaptas raktas, otpauth nuoroda ar QR paveikslėlis — niekas iš to neišeina iš šios naršyklės.',
   'vacant.demo': 'Įterpti bandomąjį raktą',
   'colophon.note': 'Jokio tinklo · jokios saugyklos · HMAC per Web Crypto API',
 

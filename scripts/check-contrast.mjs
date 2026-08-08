@@ -155,6 +155,20 @@ function decodePng(buffer) {
   return { width, height, channels, pixels };
 }
 
+/** Der Durchschnitt EINER Bildzeile, als [r, g, b]. */
+function rowColour({ width, channels, pixels }, y) {
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  for (let x = 0; x < width; x++) {
+    const at = (y * width + x) * channels;
+    r += pixels[at];
+    g += pixels[at + 1];
+    b += pixels[at + 2];
+  }
+  return [r / width, g / width, b / width];
+}
+
 /** Der Durchschnitt aller Pixel eines Ausschnitts, als [r, g, b]. */
 function averageColour({ width, height, channels, pixels }) {
   let r = 0;
@@ -307,6 +321,66 @@ async function measure(
   return ratio;
 }
 
+/**
+ * Wie deutlich hebt sich eine Fläche von der ab, auf der sie liegt?
+ *
+ * ── Warum das nicht der Abstand zweier Flächenfarben ist ───────────────────
+ * Weil er im dunklen Modus gar nicht existieren kann. Nacht (#131210) liegt bei
+ * einer relativen Leuchtdichte von 0,0074; selbst gegen reines Schwarz wären
+ * daraus höchstens 1,15:1. Ein Panel im Dunkeln über seinen TON von seinem
+ * Grund abzuheben ist physikalisch nicht möglich — und genau deshalb tragen
+ * dort Haarlinie und Lichtkante die Erhebung (siehe --edge-lit in tokens.css).
+ *
+ * Gemessen wird deshalb, was das Auge tatsächlich benutzt, um eine Kante zu
+ * finden: der STÄRKSTE SPRUNG über sie hinweg. Ein schmaler senkrechter
+ * Streifen quer über die Oberkante, Zeile für Zeile gemittelt, dann der größte
+ * Kontrast zwischen zwei benachbarten Zeilen. Was ihn erzeugt — Tonunterschied,
+ * Haarlinie oder Lichtkante —, ist der Messung gleichgültig; sie fragt nur, ob
+ * es ihn gibt.
+ *
+ * Der Streifen ist absichtlich schmal und sitzt in der Mitte der Kante: An den
+ * gerundeten Ecken läuft die Kante schräg durch die Zeilen und verschmiert.
+ */
+async function measureEdge(page, { label, selector, scheme, min = 1.25 }) {
+  const handle = await page.$(selector);
+  if (handle === null) {
+    findings.push(`${scheme} · ${label}: Element nicht gefunden (${selector})`);
+    return;
+  }
+
+  await handle.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(120);
+
+  const BAND = 10; // Pixel ober- und unterhalb der Kante
+  const rect = await handle.evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    return { x: box.x, y: box.y, width: box.width };
+  });
+
+  const clip = visibleClip(
+    { x: rect.x + rect.width / 2 - 20, y: rect.y - BAND, width: 40, height: BAND * 2 },
+    page.viewportSize(),
+  );
+  if (clip === null) {
+    findings.push(`${scheme} · ${label}: Kante liegt nicht im Fenster`);
+    return;
+  }
+
+  const image = decodePng(await page.screenshot({ clip }));
+  let best = 1;
+  for (let y = 1; y < image.height; y++) {
+    best = Math.max(best, contrast(rowColour(image, y - 1), rowColour(image, y)));
+  }
+
+  const ok = best >= min;
+  rows.push({ scheme, label, ratio: best.toFixed(2), min: min.toFixed(2), expectFail: false, ok });
+  if (!ok) {
+    findings.push(
+      `${scheme} · ${label}: staerkster Sprung ueber die Kante ${best.toFixed(2)}:1 — verlangt sind ${min}:1`,
+    );
+  }
+}
+
 const DEMO = [
   'RFC-Test: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ',
   'otpauth://totp/ACME%20Co:kevin@example.com?secret=JBSWY3DPEHPK3PXP&issuer=ACME%20Co',
@@ -328,6 +402,16 @@ for (const scheme of ['light', 'dark']) {
   await page.goto(`${url}#lang=de`, { waitUntil: 'networkidle' });
   await page.fill('#secrets', DEMO);
   await page.waitForTimeout(450);
+
+  // Der Tresor ist seit V7 ein Aufklapper und startet zu. Ein zugeklappter
+  // `<details>`-Inhalt hat kein Rechteck — die Messung darunter bekäme dann
+  // einen Ausschnitt der Fläche, auf der der Absatz LÄGE, und meldete eine
+  // Zahl, die nichts beschreibt.
+  await page.evaluate(() => {
+    const disclosure = document.querySelector('#vault-disclosure');
+    if (disclosure !== null) disclosure.open = true;
+  });
+  await page.waitForTimeout(200);
 
   /* ── 1. Die festen Flächen ──────────────────────────────────────────────
      Alles, was auf einer Gehäusegruppe steht. Neu an V5 ist der Untergrund
@@ -547,6 +631,33 @@ for (const scheme of ['light', 'dark']) {
   await page.evaluate(() => {
     document.documentElement.style.removeProperty('--frost-surface');
     document.getElementById('contrast-probe')?.remove();
+  });
+
+  /* ── 6. Die Kanten des Geräts ───────────────────────────────────────────
+     Bis V6 gab es zwei Flächenebenen, und der Abstand zwischen ihnen war 1,11:1
+     — das ist kein Tonunterschied mehr, das ist ein Verdacht. V7 hat daraus
+     drei gemacht (Werkbank, Gehäuse, Panels), und hier steht die Zusage dazu:
+
+       Panel  auf  Gehäuse    das Bedienfeld hebt sich vom Gerät ab
+       Gehäuse auf Werkbank   das Gerät hebt sich vom Tisch ab
+
+     1,25 ist keine WCAG-Schwelle — für zwei aneinandergrenzende Flächen gibt es
+     keine. Es ist die Zahl, die dieses Projekt sich gibt, und sie ist von unten
+     begründet: 1,11 war nachweislich zu wenig, denn genau daran hat sich der
+     V7-Auftrag gestört. */
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(300);
+  await measureEdge(page, {
+    scheme,
+    label: 'Kante: Panel auf Gehaeuse',
+    selector: '#zone-codes .zone__body',
+  });
+  await measureEdge(page, {
+    scheme,
+    label: 'Kante: Gehaeuse auf Werkbank',
+    selector: '.device',
   });
 
   await context.close();

@@ -34,6 +34,7 @@ export default {
   'input.help.images': 'Изображения с QR код може да се влачат тук или да се поставят с {paste}.',
   'input.help.migration':
     'Износите от Google Authenticator ({migration}) се преобразуват автоматично.',
+  'input.help.more': 'Всички входни формати',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} акаунт', other: '{n} акаунта' },
@@ -49,6 +50,10 @@ export default {
   'key.copyFailed': 'Неуспешно',
 
   'viewfinder.hint': 'Дръжте QR кода в рамката',
+
+  'filter.label': 'Филтриране на акаунтите',
+  'filter.placeholder': 'Филтриране по име',
+  'filter.empty': 'Нищо не съвпада с „{query}“.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} цифра', other: '{n} цифри' },
@@ -127,7 +132,8 @@ export default {
   'import.unnamed': 'Без име',
   'import.unreadable': 'Износът е нечетлив.',
 
-  'vacant.text': 'Все още няма нищо. Поставете горе secret.',
+  'vacant.text':
+    'Секрет, връзка otpauth или QR изображение — нищо от това не напуска този браузър.',
   'vacant.demo': 'Вмъкване на тестов ключ',
   'colophon.note': 'Без мрежа · без хранилище · HMAC през Web Crypto API',
 

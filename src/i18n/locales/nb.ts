@@ -33,6 +33,7 @@ export default {
   'input.help.images': 'QR-bilder kan også dras hit eller limes inn med {paste}.',
   'input.help.migration':
     'Eksporter fra Google Authenticator ({migration}) blir omgjort automatisk.',
+  'input.help.more': 'Alle inndataformater',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} konto', other: '{n} kontoer' },
@@ -48,6 +49,10 @@ export default {
   'key.copyFailed': 'Mislyktes',
 
   'viewfinder.hint': 'Hold QR-koden innenfor rammen',
+
+  'filter.label': 'Filtrer kontoer',
+  'filter.placeholder': 'Filtrer etter navn',
+  'filter.empty': 'Ingenting stemmer med «{query}».',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} siffer', other: '{n} sifre' },
@@ -125,7 +130,8 @@ export default {
   'import.unnamed': 'Uten navn',
   'import.unreadable': 'Eksporten kan ikke leses.',
 
-  'vacant.text': 'Ingenting lagt inn ennå. Sett inn en secret ovenfor.',
+  'vacant.text':
+    'Secret, otpauth-lenke eller QR-bilde — ingenting av det forlater denne nettleseren.',
   'vacant.demo': 'Sett inn testnøkkel',
   'colophon.note': 'Ikke noe nettverk · ingen lagring · HMAC via Web Crypto API',
 

@@ -94,6 +94,29 @@ async function checkNoOverflow(page, name) {
   }
 }
 
+/**
+ * Bricht in den Hinweisen ein Wortfetzen um?
+ *
+ * Der V7-Auftrag nennt das ausdrücklich: „nichts darf mehr mitten im Satz
+ * umbrechen". Gemeint ist nicht der normale Zeilenumbruch zwischen zwei
+ * Wörtern — der ist Satz und kein Fehler —, sondern das Auseinanderreißen
+ * eines Dings, das als EIN Ding gelesen werden muss: `otpauth://…` über zwei
+ * Zeilen verteilt sind zwei kaputte Zeichenketten.
+ *
+ * Messbar ist das genau: Ein Inline-Element, das umbricht, belegt mehr als ein
+ * Rechteck. `getClientRects()` gibt sie einzeln zurück.
+ */
+async function checkNoBrokenFragments(page, name) {
+  const broken = await page.evaluate(() =>
+    [...document.querySelectorAll('.note code, .note kbd, .slot__legend code')]
+      .filter((element) => element.getClientRects().length > 1)
+      .map((element) => element.textContent ?? '(leer)'),
+  );
+  if (broken.length > 0) {
+    problems.push(`[${name}] Wortfetzen umgebrochen: ${broken.join(' · ')}`);
+  }
+}
+
 /** Steht die Sprache wirklich am Dokument? Davon hängen Trennung und Schrift ab. */
 async function checkDocument(page, name, expectedLang, expectedDir) {
   const actual = await page.evaluate(() => ({
@@ -256,6 +279,16 @@ await session('06-tresor', {
   lang: 'de',
   steps: async (page, name) => {
     await fillSecrets(page, 'RFC-Test: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ');
+
+    // Der Tresor ist seit V7 ein Aufklapper und startet zu. Aufgeklappt wird
+    // über die Statuszeile — genau so, wie es jemand mit der Maus täte. Ein
+    // `open`-Attribut von Hand zu setzen würde die Prüfung um die einzige
+    // Interaktion bringen, die hier neu ist.
+    await page.click('#vault-disclosure > summary');
+    if (!(await page.evaluate(() => document.querySelector('#vault-disclosure')?.open))) {
+      problems.push(`[${name}] Tresor laesst sich ueber die Statuszeile nicht aufklappen`);
+    }
+
     await page.fill('#vault-pass', 'ein-langes-passwort-42');
     await page.click('#vault-primary');
     await page.waitForFunction(() => document.querySelector('#vault')?.dataset.state === 'open', {
@@ -357,6 +390,179 @@ await session('08-sprachwechsel', {
 
     await checkNoOverflow(page, name);
     await shoot(page, name);
+  },
+});
+
+/* ── 15. Die Responsive-Kette aus V7 ───────────────────────────────────────
+   Fünf Breiten, drei Ausführungen. Die Kette ist keine Bilderstrecke, sondern
+   die Prüfung, dass die Shell an jeder Schwelle noch aufgeht:
+
+     2560  Gehäuse in der Mitte, Werkbank drumherum, Bühne zweispaltig
+     1680  Gehäuse noch mit Luft, Bühne zweispaltig
+     1280  Gehäuse randnah, Bühne einspaltig
+     1024  die Schwelle: eine Spalte, kein Gehäuse mehr
+      375  Handy
+
+   Acht Konten, damit Filterzeile und zweite Spalte überhaupt vorkommen — beide
+   hängen an dieser Zahl (ui/app.ts, DENSE_FROM). */
+const CHAIN_DEMO = [
+  'otpauth://totp/ACME%20Co:kevin@example.com?secret=JBSWY3DPEHPK3PXP&issuer=ACME%20Co',
+  'otpauth://totp/Google:kevin@example.com?secret=GEZDGNBVGY3TQOJQ&issuer=Google&algorithm=SHA256&digits=8&period=60',
+  'GitHub: jbsw y3dp ehpk 3pxp',
+  'otpauth://totp/Fastmail:kevin@example.com?secret=MFRGGZDFMZTWQ2LK&issuer=Fastmail',
+  'otpauth://totp/Hetzner%20Cloud:kevin@example.com?secret=NBSWY3DPEB3W64TMMQ&issuer=Hetzner%20Cloud',
+  'Bitwarden: MZXW6YTBOI======',
+  'otpauth://totp/Deutsche%20Bahn:kevin@example.com?secret=ONSWG4TFOQ&issuer=Deutsche%20Bahn',
+  'RFC-Test: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ',
+  'JBSW0Y3DPEHPK3PXP',
+].join('\n');
+
+const CHAIN = [
+  { name: '2560', width: 2560, height: 1440 },
+  { name: '1680', width: 1680, height: 1050 },
+  { name: '1280', width: 1280, height: 900 },
+  { name: '1024', width: 1024, height: 800 },
+  { name: '0375', width: 375, height: 812 },
+];
+
+const CHAIN_SKINS = [
+  { name: 'hell', scheme: 'light', lang: 'de', dir: 'ltr' },
+  { name: 'dunkel', scheme: 'dark', lang: 'de', dir: 'ltr' },
+  { name: 'ar', scheme: 'light', lang: 'ar', dir: 'rtl' },
+];
+
+for (const skin of CHAIN_SKINS) {
+  for (const size of CHAIN) {
+    await session(`30-kette-${size.name}-${skin.name}`, {
+      width: size.width,
+      height: size.height,
+      scheme: skin.scheme,
+      lang: skin.lang,
+      steps: async (page, name) => {
+        await fillSecrets(page, CHAIN_DEMO);
+        await checkDocument(page, name, skin.lang, skin.dir);
+        await checkNoOverflow(page, name);
+        await checkNoBrokenFragments(page, name);
+
+        // Die Shell muss an der richtigen Schwelle umschalten. Ohne diese
+        // Prüfung sieht ein Standbild bei 1024 px genauso aus wie eines bei
+        // 1023 — und dass die Rail dort noch klebt statt zu fließen, merkt
+        // niemand, bis jemand mit einem 1024er davorsitzt.
+        const shell = await page.evaluate(() => {
+          const rail = document.querySelector('.rail');
+          const main = document.querySelector('main');
+          return {
+            stage: document.querySelector('.device')?.dataset.stage,
+            railSticky: getComputedStyle(rail).position === 'sticky',
+            columns: getComputedStyle(main).gridTemplateColumns.split(' ').length,
+            cased: getComputedStyle(document.querySelector('.device')).borderTopWidth !== '0px',
+          };
+        });
+        const wide = size.width >= 1024;
+        if (shell.stage !== 'working') {
+          problems.push(`[${name}] Buehne steht auf »${shell.stage}«, erwartet »working«`);
+        }
+        if (shell.railSticky !== wide) {
+          problems.push(
+            `[${name}] Rail klebt ${shell.railSticky ? '' : 'nicht '}— erwartet anders`,
+          );
+        }
+        if (shell.cased !== wide) {
+          problems.push(`[${name}] Gehaeuse ${shell.cased ? 'da' : 'weg'} — erwartet anders`);
+        }
+
+        await shoot(page, name);
+      },
+    });
+  }
+}
+
+/* ── 16. Der Leerzustand als Onboarding-Bühne ──────────────────────────────
+   Der zweite Zustand, und der, den jeder zuerst sieht. Geprüft wird nicht nur
+   das Bild: Im Leerzustand darf es keine Codes-Zone geben, keinen Tresor und
+   keinen sichtbaren „Leeren"-Knopf — und den Testschlüssel sehr wohl. */
+for (const size of [
+  { name: '2560', width: 2560, height: 1440 },
+  { name: '1280', width: 1280, height: 900 },
+  { name: '0375', width: 375, height: 812 },
+]) {
+  await session(`31-leer-${size.name}`, {
+    width: size.width,
+    height: size.height,
+    scheme: 'dark',
+    lang: 'de',
+    steps: async (page, name) => {
+      const state = await page.evaluate(() => {
+        const seen = (selector) => {
+          const element = document.querySelector(selector);
+          return element !== null && element.getClientRects().length > 0;
+        };
+        return {
+          stage: document.querySelector('.device')?.dataset.stage,
+          codes: seen('#zone-codes'),
+          vault: seen('#zone-vault'),
+          clear: seen('#key-clear'),
+          demo: seen('#key-demo'),
+          emblem: seen('#vacant-dial'),
+        };
+      });
+      if (state.stage !== 'vacant') {
+        problems.push(`[${name}] Buehne steht auf »${state.stage}«, erwartet »vacant«`);
+      }
+      if (state.codes) problems.push(`[${name}] Codes-Zone im Leerzustand sichtbar`);
+      if (state.vault) problems.push(`[${name}] Tresor im Leerzustand sichtbar`);
+      if (state.clear) problems.push(`[${name}] »Leeren« im Leerzustand sichtbar`);
+      if (!state.demo) problems.push(`[${name}] Testschluessel im Leerzustand nicht sichtbar`);
+      if (!state.emblem) problems.push(`[${name}] Emblem im Leerzustand nicht sichtbar`);
+      await checkNoOverflow(page, name);
+      await checkNoBrokenFragments(page, name);
+      await shoot(page, name);
+    },
+  });
+}
+
+/* ── 17. Der Filter ────────────────────────────────────────────────────────
+   Acht Konten sind die Schwelle. Geprüft wird beides: dass er ab dort da ist,
+   dass er filtert, und dass „nichts gefunden" auch so gesagt wird. */
+await session('32-filter', {
+  width: 1680,
+  height: 1050,
+  scheme: 'dark',
+  lang: 'de',
+  steps: async (page, name) => {
+    await fillSecrets(page, CHAIN_DEMO);
+
+    const visible = () =>
+      page.evaluate(() => [...document.querySelectorAll('.strip')].filter((s) => !s.hidden).length);
+
+    if (await page.isHidden('#stage-filter')) {
+      problems.push(`[${name}] Filterzeile fehlt bei acht Konten`);
+    }
+    const all = await visible();
+
+    await page.fill('#strip-filter', 'goog');
+    await page.waitForTimeout(200);
+    const hits = await visible();
+    if (hits === 0 || hits >= all) {
+      problems.push(`[${name}] Filter »goog« zeigt ${hits} von ${all} — erwartet dazwischen`);
+    }
+    await shoot(page, name);
+
+    await page.fill('#strip-filter', 'zzz-gibt-es-nicht');
+    await page.waitForTimeout(200);
+    if ((await visible()) !== 0) problems.push(`[${name}] Filter ohne Treffer zeigt noch Zeilen`);
+    if (await page.isHidden('#filter-void')) {
+      problems.push(`[${name}] Kein-Treffer-Meldung fehlt`);
+    }
+
+    // Unter der Schwelle verschwindet die Zeile wieder — samt ihrem Inhalt.
+    await fillSecrets(page, 'RFC-Test: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ');
+    if (await page.isVisible('#stage-filter')) {
+      problems.push(`[${name}] Filterzeile bleibt unter der Schwelle stehen`);
+    }
+    if ((await page.inputValue('#strip-filter')) !== '') {
+      problems.push(`[${name}] Filtertext ueberlebt das Ausblenden — Zeilen blieben versteckt`);
+    }
   },
 });
 

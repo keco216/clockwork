@@ -35,6 +35,7 @@ export default {
   'input.help.images': 'Gambar QR juga bisa diseret ke sini atau ditempel dengan {paste}.',
   'input.help.migration':
     'Ekspor dari Google Authenticator ({migration}) diubah dengan sendirinya.',
+  'input.help.more': 'Semua format masukan',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { other: '{n} akun' },
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': 'Gagal',
 
   'viewfinder.hint': 'Tahan kode QR di dalam bingkai',
+
+  'filter.label': 'Saring akun',
+  'filter.placeholder': 'Saring menurut nama',
+  'filter.empty': 'Tidak ada yang cocok dengan “{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { other: '{n} digit' },
@@ -121,7 +126,8 @@ export default {
   'import.unnamed': 'Tanpa nama',
   'import.unreadable': 'Ekspor tidak terbaca.',
 
-  'vacant.text': 'Belum ada masukan. Taruh sebuah secret di atas.',
+  'vacant.text':
+    'Secret, tautan otpauth, atau gambar QR — tidak ada yang meninggalkan peramban ini.',
   'vacant.demo': 'Sisipkan kunci uji',
   'colophon.note': 'Tanpa jaringan · tanpa penyimpanan · HMAC lewat Web Crypto API',
 

@@ -20,6 +20,7 @@ import { isMigrationUri, MigrationError, parseMigrationUri } from '../lib/google
 import { createStrip, type Strip, type StripContext } from './strip';
 import { startClock } from './clock';
 import { prefersReducedMotion, requireElement } from './dom';
+import { describeForSearch, matchesFilter } from './filter';
 import { buildGauge } from './gauge';
 import { startLanguageSwitch } from './lang-switch';
 import { startMasthead } from './masthead';
@@ -35,10 +36,32 @@ import { startVaultPanel } from './vault-panel';
  */
 const INPUT_DEBOUNCE_MS = 220;
 
+/**
+ * Ab wie vielen Konten die Bühne ein Filterfeld bekommt — und zweispaltig
+ * werden darf.
+ *
+ * Beides hängt an derselben Zahl, weil beides dieselbe Frage beantwortet: Ab
+ * wann ist die Liste eine Liste und keine Aufzählung mehr? Darunter wäre der
+ * Filter ein Bedienelement für ein Problem, das es nicht gibt, und zwei Spalten
+ * wären eine angefangene Zeile mit einer Lücke daneben.
+ *
+ * Die Breite entscheidet CSS (ab 1400 px, siehe style.css) — sie ist eine Frage
+ * an das Fenster, nicht an die Daten.
+ */
+const DENSE_FROM = 8;
+
 export function startApp(): void {
   const input = requireElement<HTMLTextAreaElement>(document, '#secrets');
+  const device = requireElement(document, '.device');
   const stripHost = requireElement(document, '#strips');
   const vacant = requireElement(document, '#vacant');
+  const stage = requireElement(document, '#zone-codes');
+  const vaultZone = requireElement(document, '#zone-vault');
+  const filterBar = requireElement(document, '#stage-filter');
+  const filterField = requireElement<HTMLInputElement>(document, '#strip-filter');
+  const filterVoid = requireElement(document, '#filter-void');
+  const keyClear = requireElement<HTMLButtonElement>(document, '#key-clear');
+  const keyDemo = requireElement<HTMLButtonElement>(document, '#key-demo');
   const meter = requireElement(document, '#entry-count');
   const liveRegion = requireElement(document, '#live-region');
   const importNote = requireElement(document, '#import-note');
@@ -72,8 +95,22 @@ export function startApp(): void {
   let strips = new Map<string, Strip>();
   let debounceTimer = 0;
 
+  /**
+   * Der Text, gegen den der Filter sucht — je Kanalzug einmal vorbereitet.
+   *
+   * Ausdrücklich NICHT der gerenderte Inhalt des Elements: Dort stünde auch der
+   * Code drin, und dann fände eine Suche nach „123" alle Konten, deren Code
+   * gerade zufällig so anfängt — eine Sekunde später andere. Ein Filter, dessen
+   * Treffer mit der Uhr wandern, ist kein Filter.
+   *
+   * Das Secret steht hier ebenfalls nicht drin. Es ist kein Suchbegriff.
+   */
+  let searchText = new Map<string, string>();
+  let visibleCount = 0;
+
   function render(entries: ParsedEntry[]): void {
     const next = new Map<string, Strip>();
+    const nextText = new Map<string, string>();
     const ordered = document.createDocumentFragment();
     const fresh: HTMLElement[] = [];
 
@@ -92,6 +129,7 @@ export function startApp(): void {
         fresh.push(strip.element);
       }
       next.set(entry.key, strip);
+      nextText.set(entry.key, describeForSearch(entry));
       ordered.append(strip.element);
     });
 
@@ -102,15 +140,94 @@ export function startApp(): void {
     }
 
     strips = next;
+    searchText = nextText;
     stripHost.replaceChildren(ordered);
 
-    vacant.hidden = entries.length > 0;
+    const accounts = entries.filter((entry) => entry.kind === 'account').length;
+
+    /* ── Die Bühne wechseln ────────────────────────────────────────────────
+       Ein Attribut, eine Stelle. Alles Weitere — welche Zone verschwindet, wie
+       breit `main` wird, ob das Feld atmet — steht in style.css und hängt an
+       diesem einen Wert. Zwei Zustände, die an fünf Stellen im JavaScript
+       zusammengesetzt werden, laufen früher oder später auseinander. */
+    const wanted = entries.length === 0 ? 'vacant' : 'working';
+    const changed = device.dataset['stage'] !== wanted;
+    device.dataset['stage'] = wanted;
+
+    vacant.hidden = wanted === 'working';
+    filterBar.hidden = accounts < DENSE_FROM;
+    if (filterBar.hidden && filterField.value !== '') {
+      filterField.value = '';
+    }
+
+    applyFilter();
     meter.textContent = summarise(entries);
+    paintKeys();
+    paintVaultZone();
 
     // Sofort ein Tick, damit frische Kanalzüge nicht bis zum nächsten Frame
     // leer dastehen.
     tick(Date.now());
     revealStrips(fresh);
+    if (changed && wanted === 'working') {
+      revealStage(stage);
+    }
+  }
+
+  /* ── Der Filter ──────────────────────────────────────────────────────────
+     Er versteckt Kanalzüge, er baut sie nicht neu. Der Unterschied ist mehr als
+     Bequemlichkeit: Ein weggefilterter Kanalzug läuft weiter mit der Uhr, und
+     wer den Filter leert, bekommt seinen Code sofort und richtig zurück statt
+     eines Zifferblatts, das erst wieder anlaufen muss. */
+  function applyFilter(): void {
+    const needle = filterField.value.trim();
+    visibleCount = 0;
+
+    for (const [key, strip] of strips) {
+      const hit = matchesFilter(searchText.get(key) ?? '', needle);
+      strip.element.hidden = !hit;
+      if (hit) visibleCount++;
+    }
+
+    const nothing = needle !== '' && visibleCount === 0;
+    filterVoid.hidden = !nothing;
+    if (nothing) {
+      filterVoid.textContent = t('filter.empty', { query: filterField.value.trim() });
+    }
+
+    // Zwei Spalten erst, wenn auch nach dem Filtern genug übrig ist. Sonst
+    // stünden nach dem Eintippen eines Buchstabens zwei Kanalzüge nebeneinander
+    // und daneben eine leere Hälfte.
+    stripHost.classList.toggle('strips--dense', visibleCount >= DENSE_FROM);
+  }
+
+  filterField.addEventListener('input', applyFilter);
+
+  /* ── Welche Taste wann ───────────────────────────────────────────────────
+     Beide hängen am FELDINHALT und nicht an der Bühne. Eine Zeile, die nur ein
+     `#`-Kommentar ist, ergibt keinen Eintrag — die Bühne bliebe also leer,
+     obwohl sehr wohl etwas im Feld steht, das man leeren kann. Und der
+     Testschlüssel darf in genau dem Moment nicht mehr erreichbar sein, in dem
+     das Feld nicht mehr leer ist; alles andere wäre eine zweite Definition von
+     „leer" neben der im Handler. */
+  function paintKeys(): void {
+    const empty = input.value.trim() === '';
+    keyClear.hidden = input.value === '';
+    keyDemo.hidden = !empty;
+  }
+
+  /* ── Der Tresor im Leerzustand ───────────────────────────────────────────
+     Weg — er ist erst relevant, wenn es etwas zu speichern gibt.
+
+     Mit einer Ausnahme, und die ist keine Feinheit: Ist bereits ein Tresor
+     GESPERRT, dann ist das Feld beim Laden der Seite leer — genau deshalb, weil
+     der Inhalt im Tresor liegt. Würde die Zone dann verschwinden, wäre das
+     Passphrasenfeld unerreichbar und der Tresor faktisch nicht mehr zu öffnen.
+     Der Leerzustand versteckt also nur einen Tresor, der aus ist. */
+  let vaultState: 'off' | 'locked' | 'open' = 'off';
+
+  function paintVaultZone(): void {
+    vaultZone.hidden = device.dataset['stage'] === 'vacant' && vaultState === 'off';
   }
 
   function tick(nowMs: number): void {
@@ -124,6 +241,11 @@ export function startApp(): void {
   }
 
   input.addEventListener('input', () => {
+    // Die Tasten hängen am Feldinhalt und dürfen deshalb NICHT auf die
+    // Wartezeit warten: „Leeren" soll da sein, sobald das erste Zeichen steht,
+    // nicht eine Fünftelsekunde später. Die Bühne wechselt weiter erst nach dem
+    // Auswerten — sie hängt an den Einträgen, nicht am Tippen.
+    paintKeys();
     window.clearTimeout(debounceTimer);
     debounceTimer = window.setTimeout(reparse, INPUT_DEBOUNCE_MS);
   });
@@ -139,7 +261,7 @@ export function startApp(): void {
     }, 0);
   });
 
-  requireElement<HTMLButtonElement>(document, '#key-clear').addEventListener('click', () => {
+  keyClear.addEventListener('click', () => {
     input.value = '';
     input.focus();
     reparse();
@@ -162,7 +284,7 @@ export function startApp(): void {
      Ausnahmenliste von ui-literals.test.ts. */
   const RFC_TEST_LINE = 'RFC 4226: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
 
-  requireElement<HTMLButtonElement>(document, '#key-demo').addEventListener('click', () => {
+  keyDemo.addEventListener('click', () => {
     if (input.value.trim() !== '') {
       return;
     }
@@ -263,6 +385,8 @@ export function startApp(): void {
       context.announce(message);
     },
     reportState(state): void {
+      vaultState = state;
+      paintVaultZone();
       // Die Statuszeile im Kopf sagt, was tatsächlich der Fall ist. „Offline"
       // gilt immer; der zweite Teil hängt am Tresor. Beide Teile stehen als
       // eigene Platzhalter in `status.line`, damit eine Sprache sie umstellen
@@ -324,6 +448,30 @@ const ENTER: Keyframe[] = [
 ];
 
 const MAX_STAGGERED = 6;
+
+/**
+ * Der Wechsel von der Onboarding-Bühne in den Arbeitszustand.
+ *
+ * Nur die Bühne, die DAZUKOMMT, bewegt sich — und auch die nur einmal, beim
+ * Wechsel. Ein Ausblenden des Leerzustands gibt es bewusst nicht: Es würde das
+ * Umschalten des Layouts hinauszögern, und ein Feld, in das man gerade tippt,
+ * darf nicht auf eine Animation warten.
+ *
+ * Dieselbe Feder wie überall, und `prefers-reduced-motion` schaltet sie ab —
+ * hier ist das unkritisch, weil die Bewegung nichts MITTEILT: Was sie zeigt,
+ * steht danach ohnehin da. Genau darin unterscheidet sie sich von der
+ * Kopier-Quittung, die deshalb ein Zustand ist und keine Animation.
+ */
+function revealStage(element: HTMLElement): void {
+  if (prefersReducedMotion()) {
+    return;
+  }
+  element.animate(ENTER, {
+    duration: motionToken('--dur-sheet', 350),
+    easing: easingToken('--ease-spring', 'cubic-bezier(0.32, 0.72, 0, 1)'),
+    fill: 'backwards',
+  });
+}
 
 function revealStrips(elements: HTMLElement[]): void {
   if (elements.length === 0 || prefersReducedMotion()) {

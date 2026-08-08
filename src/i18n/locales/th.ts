@@ -34,6 +34,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} หรือ {uri} — ปนกันได้ {hash} เริ่มต้นบันทึกย่อ',
   'input.help.images': 'ภาพรหัส QR ลากมาวางที่นี่ก็ได้ หรือวางด้วย {paste}',
   'input.help.migration': 'ไฟล์ส่งออกจาก Google Authenticator ({migration}) จะถูกแปลงให้เอง',
+  'input.help.more': 'รูปแบบข้อมูลทั้งหมด',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { other: '{n} บัญชี' },
@@ -49,6 +50,10 @@ export default {
   'key.copyFailed': 'ล้มเหลว',
 
   'viewfinder.hint': 'ถือรหัส QR ไว้ในกรอบ',
+
+  'filter.label': 'กรองบัญชี',
+  'filter.placeholder': 'กรองตามชื่อ',
+  'filter.empty': 'ไม่มีรายการที่ตรงกับ “{query}”',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { other: '{n} หลัก' },
@@ -118,7 +123,7 @@ export default {
   'import.unnamed': 'ไม่มีชื่อ',
   'import.unreadable': 'ไฟล์ส่งออกอ่านไม่ออก',
 
-  'vacant.text': 'ยังไม่ได้ป้อนอะไร ใส่ secret ไว้ด้านบน',
+  'vacant.text': 'ซีเคร็ต ลิงก์ otpauth หรือรูป QR — ไม่มีสิ่งใดออกจากเบราว์เซอร์นี้',
   'vacant.demo': 'ใส่คีย์ทดสอบ',
   'colophon.note': 'ไม่มีเครือข่าย · ไม่มีที่เก็บ · HMAC ผ่าน Web Crypto API',
 

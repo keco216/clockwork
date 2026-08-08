@@ -14,6 +14,14 @@
   gap: var(--sp-3);
 }
 
+/* ── Der Tresor als Aufklapper ────────────────────────────────────────────
+   In der Rail des Arbeitszustands ist der Tresor sonst der größte Block der
+   Bedienseite — für eine Funktion, die man einmal einrichtet und danach nie
+   wieder anfasst.
+
+   Die Statuszeile bleibt die Zusammenfassung und damit immer sichtbar: Ob
+   etwas gespeichert ist, muss ablesbar sein, ohne dass man etwas öffnet.
+   Alles, womit man etwas TUT, liegt dahinter. */
 .vault__state {
   display: flex;
   align-items: center;
@@ -23,6 +31,40 @@
   letter-spacing: var(--track-caps);
   text-transform: var(--case-caps);
   color: var(--ink-2);
+  cursor: pointer;
+  list-style: none;
+}
+
+.vault__state::-webkit-details-marker {
+  display: none;
+}
+
+/* Der Winkel steht am ENDE der Zeile, nicht davor: Die Statuszeile ist eine
+   Angabe, die man liest, und erst danach kommt das Angebot, sie aufzuklappen.
+   `margin-inline-start: auto` schiebt ihn dorthin — logisch, weil „Ende" eine
+   Leserichtung ist; die Drehung physisch, weil ein Winkel eine Form ist. */
+.vault__state::after {
+  content: '';
+  width: 0.42em;
+  height: 0.42em;
+  flex: none;
+  margin-inline-start: auto;
+  border-right: 1.5px solid var(--ink-3);
+  border-bottom: 1.5px solid var(--ink-3);
+  border-bottom-right-radius: 1px;
+  transform: translateY(-25%) rotate(45deg);
+  transition: transform var(--dur-quick) var(--ease-snap);
+}
+
+.vault__disclosure[open] .vault__state::after {
+  transform: translateY(10%) rotate(225deg);
+}
+
+.vault__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding-block-start: var(--sp-3);
 }
 
 /* Die Zustandsleuchte ist die einzige Stelle, an der eine Fläche Farbe trägt.

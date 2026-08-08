@@ -17,18 +17,6 @@ import { applyStaticStrings } from './i18n/apply';
 import { initLanguage } from './i18n/language';
 import { startApp } from './ui/app';
 
-/* PROTOTYP für die V7-Variantenwahl: `?shell=a|b|c` schaltet eine der drei
-   Grob-Kompositionen aus styles/v7-shells.css an. Fliegt zusammen mit jener
-   Datei wieder raus, sobald die Variante feststeht.
-
-   Bewusst gegen eine Liste geprüft und nicht durchgereicht: Der Wert landet als
-   Attribut im Dokument, und ein Attributwert aus der Adresszeile ist eine
-   Nutzereingabe wie jede andere. */
-const shell = new URLSearchParams(window.location.search).get('shell');
-if (shell !== null && ['a', 'b', 'c'].includes(shell)) {
-  document.documentElement.dataset['shell'] = shell;
-}
-
 initLanguage();
 applyStaticStrings();
 startApp();

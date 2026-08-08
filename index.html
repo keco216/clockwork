@@ -99,6 +99,27 @@
       </header>
 
       <main>
+        <!-- ══ Onboarding-Bühne: nur im Leerzustand ═════════════════════
+             Emblem und Satz stehen VOR der Bedienseite, weil im Leerzustand
+             genau diese Reihenfolge gelesen wird: Zeichen, Satz, Feld, Knöpfe.
+             Im Arbeitszustand ist dieser Block weg, und die Reihenfolge stimmt
+             weiter — Eingabe, Tresor, Codes.
+
+             Bis V6 saß er IM Codes-Panel und war damit ein Platzhalter in einer
+             leeren Kiste. Ein Leerzustand ist aber kein leerer Behälter,
+             sondern ein eigener Zustand des Geräts. -->
+        <div class="vacant" id="vacant">
+          <svg
+            class="dialface vacant__emblem"
+            id="vacant-dial"
+            aria-hidden="true"
+            focusable="false"
+          ></svg>
+          <p class="vacant__text" data-i18n="vacant.text">
+            Put in a secret, an otpauth link or a QR image — nothing ever leaves this browser.
+          </p>
+        </div>
+
         <!--
           Die Bedienseite als EIN Bereich. Bis V6 standen Eingabe und Tresor
           als zwei Geschwister direkt im Raster, und genau daran ist der
@@ -106,7 +127,7 @@
           nicht gemeinsam scrollen und nicht gemeinsam verschieben. Was
           zusammen bedient wird, muss auch zusammen ein Kasten sein.
 
-          Die Reihenfolge im Dokument bleibt unverändert — die Varianten
+          Die Reihenfolge im Dokument bleibt unverändert — die Zustände
           verschieben die Hülle, nicht ihren Inhalt.
         -->
         <div class="rail">
@@ -140,11 +161,41 @@
                 <p class="slot__meter" id="entry-count"></p>
               </div>
 
+              <!--
+                Die Tastenzeile hat seit V7 eine Rangordnung, keine Reihe.
+
+                Links, abgesetzt und als leiser Textknopf: „Leeren". Es ist die
+                einzige zerstörerische Handlung im Panel, und eine Pille neben
+                zwei anderen Pillen behauptet Gleichrang. Rechts die Gruppe, die
+                zusammengehört, weil sie dasselbe tut — ein Bild hereinholen:
+                Testschlüssel, QR aus Bild, Kamera.
+
+                Sichtbarkeit steuert ui/app.ts, nicht CSS: „Leeren" erscheint,
+                sobald etwas im Feld steht, der Testschlüssel verschwindet dann.
+                Beides hängt am tatsächlichen Feldinhalt und nicht am Zustand
+                der Bühne — eine Zeile, die nur einen Kommentar enthält, ergibt
+                keinen Eintrag, ist aber sehr wohl etwas zum Leeren.
+              -->
               <div class="keys">
-                <button type="button" class="key" id="key-clear" data-i18n="key.clear">
+                <button type="button" class="key key--quiet" id="key-clear" data-i18n="key.clear">
                   Clear
                 </button>
                 <span class="keys__gap" aria-hidden="true"></span>
+                <!--
+                  Der Testschlüssel stand bis V6 im Leerzustands-Block. Er steht
+                  jetzt hier — an der Stelle, an der die anderen beiden Wege ins
+                  Feld auch stehen —, und `hidden` hält ihn vom Arbeitszustand
+                  fern. Die Zusage aus V4 bleibt damit wörtlich erfüllt: Es gibt
+                  keinen Zustand, in dem dieser Knopf echtes Schlüsselmaterial
+                  überschreiben könnte. Der Handler prüft zusätzlich auf ein
+                  leeres Feld.
+                -->
+                <button type="button" class="key" id="key-demo" hidden>
+                  <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                    <path d="M8 3.25v9.5M3.25 8h9.5" />
+                  </svg>
+                  <span data-i18n="vacant.demo">Insert test key</span>
+                </button>
                 <!--
                 Die Bedien-Icons sind seit V5 in der Handschrift von SF Symbols
                 gezeichnet: runde Ecken, weiche Verbindungen, 1,5 px Strich
@@ -213,19 +264,41 @@
               wohin, bestimmt die Übersetzung. Damit ist die Wortstellung frei.
               Siehe src/i18n/apply.ts.
             -->
-              <p class="note" data-rich="input.help.formats">
+              <!--
+                Bis V6 standen hier drei gleichrangige Hinweisabsätze. In einer
+                Rail von 368 px wurden daraus zwölf Zeilen Kleingedrucktes über
+                dem, worum es geht — und der erste Satz, der einzige, den man
+                wirklich braucht, ging darin unter.
+
+                Jetzt trägt eine Zeile die Antwort auf „was darf ich hier
+                hineinschreiben", und der Rest liegt hinter einem Aufklapper.
+                `<details>` und nicht ein eigener Knopf mit `aria-expanded`: Das
+                Element bringt Zustand, Tastaturbedienung und
+                Screenreader-Ansage mit, und es funktioniert ohne eine Zeile
+                JavaScript.
+              -->
+              <p class="note note--lede" data-rich="input.help.formats">
                 <code data-slot="nameSecret" translate="no" dir="ltr">Name: SECRET</code>
                 <code data-slot="uri" translate="no" dir="ltr">otpauth://…</code>
                 <code data-slot="hash" translate="no" dir="ltr">#</code>
               </p>
-              <p class="note" data-rich="input.help.images">
-                <span data-slot="paste" dir="ltr"
-                  ><kbd data-i18n="shortcut.modifier">Ctrl</kbd>+<kbd translate="no">V</kbd></span
-                >
-              </p>
-              <p class="note" data-rich="input.help.migration">
-                <code data-slot="migration" translate="no" dir="ltr">otpauth-migration://</code>
-              </p>
+              <details class="reveal">
+                <summary class="reveal__summary" data-i18n="input.help.more">
+                  All input formats
+                </summary>
+                <div class="reveal__body">
+                  <p class="note" data-rich="input.help.images">
+                    <span data-slot="paste" dir="ltr"
+                      ><kbd data-i18n="shortcut.modifier">Ctrl</kbd>+<kbd translate="no"
+                        >V</kbd
+                      ></span
+                    >
+                  </p>
+                  <p class="note" data-rich="input.help.migration">
+                    <code data-slot="migration" translate="no" dir="ltr">otpauth-migration://</code>
+                  </p>
+                </div>
+              </details>
             </div>
           </section>
 
@@ -234,12 +307,30 @@
             <h2 class="zone__label" id="zone-vault-label" data-i18n="zone.vault">Vault</h2>
             <div class="zone__body">
               <div class="vault" id="vault" data-state="off">
-                <p class="vault__state">
-                  <span class="vault__lamp" aria-hidden="true"></span>
-                  <span id="vault-state-text">Off — nothing is stored</span>
-                </p>
-
                 <!--
+                  Der Tresor ist seit V7 ein Aufklapper. In einer Rail von
+                  368 px ist er sonst der größte Block der Bedienseite — und das
+                  für eine Funktion, die man einmal einrichtet und danach nie
+                  wieder anfasst.
+
+                  Die Statuszeile ist die Zusammenfassung und damit IMMER
+                  sichtbar: Ob etwas gespeichert ist, muss man ablesen können,
+                  ohne etwas zu öffnen. Alles, womit man etwas TUT, liegt
+                  dahinter.
+
+                  Das `open`-Attribut setzt ui/vault-panel.ts, sobald ein
+                  Tresor gesperrt ist: Dann ist das Passphrasenfeld das
+                  Wichtigste auf der Seite und darf nicht hinter einem Klick
+                  liegen.
+                -->
+                <details class="vault__disclosure" id="vault-disclosure">
+                  <summary class="vault__state">
+                    <span class="vault__lamp" aria-hidden="true"></span>
+                    <span id="vault-state-text">Off — nothing is stored</span>
+                  </summary>
+
+                  <div class="vault__panel">
+                    <!--
                 Der Text wird von vault-panel.ts gesetzt — er enthält die
                 Iterationszahl, und die will lokalisiert gruppiert sein
                 (600,000 / 600.000 / 600 000).
@@ -251,125 +342,124 @@
                 Seite nach unten — gemessen als Layout-Shift von 0,16. Steht der
                 Platz von Anfang an, bleibt vom Sprung nichts übrig.
               -->
-                <p class="note" id="vault-explain">
-                  By default Clockwork stores nothing. If you want to, you can keep the input here
-                  encrypted with a passphrase: PBKDF2-SHA-256 with 600,000 iterations, then
-                  AES-256-GCM. Without the passphrase the stored block is worthless.
-                </p>
+                    <p class="note" id="vault-explain">
+                      By default Clockwork stores nothing. If you want to, you can keep the input
+                      here encrypted with a passphrase: PBKDF2-SHA-256 with 600,000 iterations, then
+                      AES-256-GCM. Without the passphrase the stored block is worthless.
+                    </p>
 
-                <form class="vault__form" id="vault-form">
-                  <label class="slot__legend" for="vault-pass" id="vault-pass-label"
-                    >Passphrase</label
-                  >
-                  <div class="vault__row">
-                    <input
-                      type="password"
-                      id="vault-pass"
-                      class="field vault__pass"
-                      translate="no"
-                      dir="ltr"
-                      autocomplete="current-password"
-                      spellcheck="false"
-                    />
-                    <button type="submit" class="key" id="vault-primary">Store encrypted</button>
-                  </div>
-                  <p class="vault__error" id="vault-error" role="alert"></p>
-                </form>
+                    <form class="vault__form" id="vault-form">
+                      <label class="slot__legend" for="vault-pass" id="vault-pass-label"
+                        >Passphrase</label
+                      >
+                      <div class="vault__row">
+                        <input
+                          type="password"
+                          id="vault-pass"
+                          class="field vault__pass"
+                          translate="no"
+                          dir="ltr"
+                          autocomplete="current-password"
+                          spellcheck="false"
+                        />
+                        <button type="submit" class="key" id="vault-primary">
+                          Store encrypted
+                        </button>
+                      </div>
+                      <p class="vault__error" id="vault-error" role="alert"></p>
+                    </form>
 
-                <div class="keys" id="vault-actions">
-                  <button
-                    type="button"
-                    class="key"
-                    id="vault-lock"
-                    hidden
-                    data-i18n="vault.action.lock"
-                  >
-                    Lock
-                  </button>
-                  <button
-                    type="button"
-                    class="key"
-                    id="vault-update"
-                    hidden
-                    data-i18n="vault.action.update"
-                  >
-                    Store again
-                  </button>
-                  <button type="button" class="key key--danger" id="vault-wipe" hidden>
-                    Delete everything
-                  </button>
-                </div>
+                    <div class="keys" id="vault-actions">
+                      <button
+                        type="button"
+                        class="key"
+                        id="vault-lock"
+                        hidden
+                        data-i18n="vault.action.lock"
+                      >
+                        Lock
+                      </button>
+                      <button
+                        type="button"
+                        class="key"
+                        id="vault-update"
+                        hidden
+                        data-i18n="vault.action.update"
+                      >
+                        Store again
+                      </button>
+                      <button type="button" class="key key--danger" id="vault-wipe" hidden>
+                        Delete everything
+                      </button>
+                    </div>
 
-                <p class="vault__config">
-                  <label for="vault-timeout" data-i18n="vault.timeout.label"
-                    >Locks automatically after</label
-                  >
-                  <!-- Beschriftet werden die Einträge in vault-panel.ts über die
+                    <p class="vault__config">
+                      <label for="vault-timeout" data-i18n="vault.timeout.label"
+                        >Locks automatically after</label
+                      >
+                      <!-- Beschriftet werden die Einträge in vault-panel.ts über die
                      Mehrzahlregeln. Der Text hier ist der Platzhalter für den
                      ersten Anstrich, damit das Feld nicht nachträglich wächst.
 
                      Die Hülle trägt den eigenen Winkel: `appearance: none`
                      räumt den Systempfeil weg, und ein <select> kann kein
                      Pseudo-Element tragen. Siehe styles/panels.css. -->
-                  <span class="pick-shell">
-                    <select id="vault-timeout" class="pick">
-                      <option value="60000">1 minute</option>
-                      <option value="300000" selected>5 minutes</option>
-                      <option value="900000">15 minutes</option>
-                    </select>
-                  </span>
-                  <label class="vault__check">
-                    <input type="checkbox" id="vault-hide-lock" checked />
-                    <span data-i18n="vault.lockOnHide">and when the tab is left</span>
-                  </label>
-                </p>
+                      <span class="pick-shell">
+                        <select id="vault-timeout" class="pick">
+                          <option value="60000">1 minute</option>
+                          <option value="300000" selected>5 minutes</option>
+                          <option value="900000">15 minutes</option>
+                        </select>
+                      </span>
+                      <label class="vault__check">
+                        <input type="checkbox" id="vault-hide-lock" checked />
+                        <span data-i18n="vault.lockOnHide">and when the tab is left</span>
+                      </label>
+                    </p>
+                  </div>
+                </details>
               </div>
             </div>
           </section>
         </div>
 
-        <!-- ══ Zone: Codes ═════════════════════════════════════════════ -->
+        <!-- ══ Zone: Codes — die Bühne ═════════════════════════════════ -->
         <section class="zone" id="zone-codes" aria-labelledby="zone-codes-label">
           <h2 class="zone__label" id="zone-codes-label" data-i18n="zone.codes">Codes</h2>
           <div class="zone__body">
+            <!--
+              Die Filterzeile. Sie erscheint erst ab acht Konten (ui/app.ts) —
+              darunter ist sie ein Bedienelement für ein Problem, das es nicht
+              gibt, und nimmt der Bühne eine Zeile weg.
+
+              `type="search"` und nicht `text`: Der Browser gibt dem Feld damit
+              seine Löschtaste und meldet es dem Screenreader als Suchfeld.
+
+              Als EINZIGES darf diese Zeile kleben — die Bühne selbst nicht. Wer
+              in einer langen Liste sucht, braucht das Feld im Blick; wer eine
+              Liste liest, will sie nicht unter einem Riegel hervorholen.
+            -->
+            <div class="stage__filter" id="stage-filter" hidden>
+              <label class="sr-only" for="strip-filter" data-i18n="filter.label"
+                >Filter accounts</label
+              >
+              <input
+                type="search"
+                id="strip-filter"
+                class="field stage__field"
+                autocomplete="off"
+                spellcheck="false"
+                data-i18n-attr="placeholder=filter.placeholder"
+                placeholder="Filter by name"
+              />
+            </div>
+
             <div class="strips" id="strips"></div>
 
-            <!-- Leerzustand: das Emblem selbst, kein Platzhalter-Symbol. Es ist
-                 dieselbe Teilung, die gleich die Codes begleiten wird. -->
-            <div class="vacant" id="vacant">
-              <svg
-                class="dialface vacant__emblem"
-                id="vacant-dial"
-                aria-hidden="true"
-                focusable="false"
-              ></svg>
-              <div class="vacant__body">
-                <p class="vacant__text" data-i18n="vacant.text">
-                  Nothing entered yet. Put a secret in above.
-                </p>
-                <!--
-                  Der Knopf steht AUSSCHLIESSLICH hier, im leeren Zustand.
-
-                  V4 hatte einen „Demo einfügen"-Knopf und hat ihn absichtlich
-                  entfernt: Ein Knopf, der Beispiel-Schlüsselmaterial in
-                  dasselbe Feld schreibt wie echte Secrets, gehört nicht neben
-                  das Feld. Diese Begründung gilt weiterhin — deshalb sitzt er
-                  jetzt nicht mehr in der Tastenzeile, sondern im Leerzustand.
-
-                  Der Unterschied ist keine Kosmetik: Der Leerzustand ist per
-                  Definition der Moment, in dem das Feld leer ist. Sobald eine
-                  Zeile darinsteht, verschwindet er mitsamt seinem Knopf. Es
-                  gibt also keinen Zustand, in dem dieser Knopf echtes
-                  Schlüsselmaterial überschreiben könnte.
-                -->
-                <button type="button" class="key vacant__demo" id="key-demo">
-                  <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                    <path d="M8 3.25v9.5M3.25 8h9.5" />
-                  </svg>
-                  <span data-i18n="vacant.demo">Insert test key</span>
-                </button>
-              </div>
-            </div>
+            <!-- Kein Treffer im Filter. Ein eigener Absatz und nicht der
+                 Leerzustand: „nichts eingegeben" und „nichts gefunden" sind
+                 zwei verschiedene Auskünfte. -->
+            <p class="stage__void" id="filter-void" role="status" aria-live="polite" hidden></p>
           </div>
         </section>
       </main>

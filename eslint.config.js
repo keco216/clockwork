@@ -37,11 +37,9 @@ export default tseslint.config(
     languageOptions: { globals: globals.node },
   },
   {
-    // Die Playwright-Skripte laufen in Node, schicken aber Rückrufe über
+    // Die beiden Playwright-Skripte laufen in Node, schicken aber Rückrufe über
     // `page.evaluate()` in den Browser — dort gibt es `document` und `window`.
-    // shoot-shells.mjs ist Wegwerfware für die V7-Variantenwahl und fliegt mit
-    // der Entscheidung wieder aus dieser Zeile.
-    files: ['scripts/shoot.mjs', 'scripts/check-contrast.mjs', 'scripts/shoot-shells.mjs'],
+    files: ['scripts/shoot.mjs', 'scripts/check-contrast.mjs'],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
 

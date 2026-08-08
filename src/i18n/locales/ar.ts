@@ -36,6 +36,7 @@ export default {
   'input.help.formats': 'Base32 أو {nameSecret} أو {uri} — مختلطة. و{hash} تبدأ ملاحظة.',
   'input.help.images': 'يمكن أيضًا سحب صور رمز QR إلى هنا أو لصقها بـ {paste}.',
   'input.help.migration': 'تُحوَّل صادرات Google Authenticator ({migration}) تلقائيًا.',
+  'input.help.more': 'كل صيغ الإدخال',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': {
@@ -65,6 +66,10 @@ export default {
   'key.copyFailed': 'أخفق',
 
   'viewfinder.hint': 'أبقِ رمز QR داخل الإطار',
+
+  'filter.label': 'تصفية الحسابات',
+  'filter.placeholder': 'تصفية بالاسم',
+  'filter.empty': 'لا يوجد ما يطابق «{query}».',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
@@ -163,7 +168,7 @@ export default {
   'import.unnamed': 'بلا اسم',
   'import.unreadable': 'الصادرات غير مقروءة.',
 
-  'vacant.text': 'لا إدخال بعد. ضع سرًّا في الأعلى.',
+  'vacant.text': 'سر أو رابط otpauth أو صورة QR — لا شيء من ذلك يغادر هذا المتصفح.',
   'vacant.demo': 'إدراج مفتاح تجريبي',
   'colophon.note': 'لا شبكة · لا تخزين · HMAC عبر Web Crypto API',
 

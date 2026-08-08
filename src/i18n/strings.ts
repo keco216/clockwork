@@ -67,6 +67,13 @@ export interface Strings {
   'input.help.images': string;
   /** `{migration}` ist eine Code-Auszeichnung. */
   'input.help.migration': string;
+  /**
+   * Beschriftung des Aufklappers über den beiden Hinweisen oben.
+   *
+   * Kurz halten: Sie steht als einzelne Zeile unter dem Feld und darf in einer
+   * 23-rem-Rail nicht umbrechen.
+   */
+  'input.help.more': string;
   /** Die Steuerungstaste, wie sie in dieser Sprache heißt (Strg, Ctrl, Ctrl …). */
   'shortcut.modifier': string;
 
@@ -86,6 +93,16 @@ export interface Strings {
   'key.copyFailed': string;
 
   'viewfinder.hint': string;
+
+  /* ── Filter auf der Bühne ────────────────────────────────────────────────
+     Erscheint erst ab acht Konten. Darunter wäre er ein Bedienelement für ein
+     Problem, das es nicht gibt. */
+
+  /** Nur für Screenreader — sichtbar ist der Platzhalter im Feld. */
+  'filter.label': string;
+  'filter.placeholder': string;
+  /** `{query}` ist das, wonach gesucht wurde — in Anführungszeichen der Sprache. */
+  'filter.empty': string;
 
   /* ── Kanalzug ────────────────────────────────────────────────────────── */
 
@@ -173,6 +190,13 @@ export interface Strings {
 
   /* ── Leerzustand und Fuß ─────────────────────────────────────────────── */
 
+  /**
+   * Der eine Satz der Onboarding-Bühne.
+   *
+   * Seit V7 steht das Eingabefeld UNTER diesem Satz, nicht darüber — ein
+   * „siehe oben" wäre jetzt falsch. Der Satz nennt deshalb die drei Wege
+   * hinein und die Zusage, die dieses Gerät ausmacht.
+   */
   'vacant.text': string;
   /**
    * Beschriftung des Knopfes im leeren Zustand.

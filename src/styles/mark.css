@@ -141,12 +141,25 @@
   stroke: var(--signal);
 }
 
-/* ── Leerzustand: das Emblem in Ruhe ──────────────────────────────────────── */
+/* ── Leerzustand: das Emblem in Ruhe ──────────────────────────────────────
+   Bis V6 stand das Emblem klein und links neben einem Satz, in einem sonst
+   leeren Codes-Panel. Es war Deko am Rand.
 
+   Im Leerzustand ist es aber das Einzige, was von der Marke zu sehen ist,
+   bevor irgendetwas passiert — also steht es groß und in der Mitte, und der
+   Satz darunter. Zusammen sind sie die Überschrift über dem Eingabefeld, das
+   gleich folgt.
+
+   Es steht still: Es gibt noch nichts zu messen. Der Zeiger wird erst gezeichnet,
+   wenn ein Konto da ist (ui/gauge.ts wird hier mit 30 Marken und ohne Zeiger
+   aufgerufen). */
 .vacant {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: var(--sp-4);
+  padding-block-end: var(--sp-6);
+  text-align: center;
 }
 
 .vacant[hidden] {
@@ -154,40 +167,24 @@
 }
 
 .vacant__emblem {
-  /* Etwas größer als am Kanalzug — hier ist es Marke, nicht Anzeige. */
-  width: calc(var(--dial-size) * 1.3);
-  height: calc(var(--dial-size) * 1.3);
-  opacity: 0.55;
-}
-
-/* Emblem, Satz, EIN Knopf — mehr braucht ein leerer Zustand nicht, und mehr
-   verträgt er auch nicht. Der Knopf steht unter dem Satz und nicht daneben:
-   Er ist die Folge des Satzes, nicht seine Alternative. */
-.vacant__body {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--sp-3);
-  min-width: 0;
+  /* Deutlich größer als am Kanalzug — hier ist es Marke, nicht Anzeige. Über
+     `--dial-size` und nicht als fester Wert: Wächst das Instrument, wächst
+     das Zeichen mit. */
+  width: calc(var(--dial-size) * 2.2);
+  height: calc(var(--dial-size) * 2.2);
+  opacity: 0.5;
 }
 
 .vacant__text {
-  font-size: var(--t-small);
-  color: var(--ink-3);
-  max-width: 52ch;
+  font-size: var(--t-body);
+  color: var(--ink-2);
+  max-width: 46ch;
   text-wrap: pretty;
 }
 
-/* Das Plus im Knopf ist das einzige Bedien-Icon ohne Gegenstück in der Welt —
-   es zeigt keinen Ordner und keine Kamera, sondern die Handlung selbst.
-   Zwei Striche, runde Enden, dieselbe Strichstärke wie alle anderen. */
-.vacant__demo {
-  flex: none;
-}
-
 @media (max-width: 34rem) {
-  .vacant {
-    flex-direction: column;
-    align-items: flex-start;
+  .vacant__emblem {
+    width: calc(var(--dial-size) * 1.6);
+    height: calc(var(--dial-size) * 1.6);
   }
 }
