@@ -152,6 +152,7 @@ export default {
   'import.unreadable': 'Вивантаження не читається.',
 
   'vacant.text': 'Поки нічого не введено. Вставте вгорі secret.',
+  'vacant.demo': 'Вставити тестовий ключ',
   'colophon.note': 'Жодної мережі · жодного сховища · HMAC через Web Crypto API',
 
   'lang.label': 'Мова',

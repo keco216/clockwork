@@ -127,6 +127,7 @@ export default {
   'import.unreadable': 'Izvoz nečitljiv.',
 
   'vacant.text': 'Još nema unosa. Gore umetnite secret.',
+  'vacant.demo': 'Umetni testni ključ',
   'colophon.note': 'Bez mreže · bez pohrane · HMAC preko Web Crypto API',
 
   'lang.label': 'Jezik',

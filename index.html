@@ -32,16 +32,16 @@
       keine Anfragen. Die Zusage „keine fremde Netzwerkanfrage" bleibt davon
       unberührt, auch in der Single-File-Datei.
     -->
-    <link rel="canonical" href="https://clockwork-sage.vercel.app/" />
+    <link rel="canonical" href="%SITE_URL%/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Clockwork" />
-    <meta property="og:url" content="https://clockwork-sage.vercel.app/" />
+    <meta property="og:url" content="%SITE_URL%/" />
     <meta property="og:title" content="Clockwork — TOTP Authenticator" />
     <meta
       property="og:description"
       content="Two-factor codes generated entirely in your browser. No network requests, nothing stored by default, RFC 4226/6238 implemented from scratch."
     />
-    <meta property="og:image" content="https://clockwork-sage.vercel.app/og-image.png" />
+    <meta property="og:image" content="%SITE_URL%/og-image.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -55,7 +55,7 @@
       name="twitter:description"
       content="Two-factor codes generated entirely in your browser. No network requests, nothing stored by default."
     />
-    <meta name="twitter:image" content="https://clockwork-sage.vercel.app/og-image.png" />
+    <meta name="twitter:image" content="%SITE_URL%/og-image.png" />
     <!--
       Favicon als Inline-SVG: das C-Werk aus branding/clockwork-logo-b-cwerk.svg,
       auf das Nötigste reduziert. Ohne diese Zeile fragt der Browser von sich aus
@@ -329,9 +329,32 @@
                 aria-hidden="true"
                 focusable="false"
               ></svg>
-              <p class="vacant__text" data-i18n="vacant.text">
-                Nothing entered yet. Put a secret in above.
-              </p>
+              <div class="vacant__body">
+                <p class="vacant__text" data-i18n="vacant.text">
+                  Nothing entered yet. Put a secret in above.
+                </p>
+                <!--
+                  Der Knopf steht AUSSCHLIESSLICH hier, im leeren Zustand.
+
+                  V4 hatte einen „Demo einfügen"-Knopf und hat ihn absichtlich
+                  entfernt: Ein Knopf, der Beispiel-Schlüsselmaterial in
+                  dasselbe Feld schreibt wie echte Secrets, gehört nicht neben
+                  das Feld. Diese Begründung gilt weiterhin — deshalb sitzt er
+                  jetzt nicht mehr in der Tastenzeile, sondern im Leerzustand.
+
+                  Der Unterschied ist keine Kosmetik: Der Leerzustand ist per
+                  Definition der Moment, in dem das Feld leer ist. Sobald eine
+                  Zeile darinsteht, verschwindet er mitsamt seinem Knopf. Es
+                  gibt also keinen Zustand, in dem dieser Knopf echtes
+                  Schlüsselmaterial überschreiben könnte.
+                -->
+                <button type="button" class="key vacant__demo" id="key-demo">
+                  <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                    <path d="M8 3.25v9.5M3.25 8h9.5" />
+                  </svg>
+                  <span data-i18n="vacant.demo">Insert test key</span>
+                </button>
+              </div>
             </div>
           </div>
         </section>

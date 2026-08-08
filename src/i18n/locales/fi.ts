@@ -127,6 +127,7 @@ export default {
   'import.unreadable': 'Vientiä ei voi lukea.',
 
   'vacant.text': 'Ei vielä syötettä. Aseta ylle secret.',
+  'vacant.demo': 'Lisää testiavain',
   'colophon.note': 'Ei verkkoa · ei tallennusta · HMAC Web Crypto API:n kautta',
 
   'lang.label': 'Kieli',

@@ -385,8 +385,14 @@ for (const scheme of ['light', 'dark']) {
         patch.style.width = '100%';
         patch.style.height = '160px';
         // Unter den Kopf, aber über alles andere.
-        patch.style.zIndex = '4';
-        document.body.append(patch);
+        patch.style.zIndex = '2';
+        // In .device und nicht in body: Seit V6 hat .device `position: relative`
+        // (es trägt das Korn als Pseudo-Element), und die Zonen darin liegen auf
+        // z-index 1. Ein Patch am body landete dadurch in einem anderen
+        // Stapelzusammenhang und schob sich ÜBER den Kopf — gemessen wurde dann
+        // die Prüffläche selbst statt des Frostes darüber, mit absurden 1,13:1.
+        // Hier drin sitzt er sauber zwischen Inhalt (1) und Kopf (5).
+        (document.querySelector('.device') ?? document.body).append(patch);
       }
       patch.style.background = colour;
     }, probe.colour);

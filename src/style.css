@@ -337,6 +337,7 @@ kbd {
    Kärtchen wären das genaue Gegenteil davon. Gerundet und erhoben ist die
    Gruppe, nicht ihr Inhalt. */
 .zone__body {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
@@ -348,7 +349,64 @@ kbd {
      heller — siehe --edge-lit in styles/tokens.css. */
   border-top-color: var(--edge-lit);
   border-radius: var(--radius-panel);
-  box-shadow: var(--elev-1);
+  /* Erhebung nach außen UND Lichtkante nach innen, in einer Eigenschaft.
+     Der Innenschatten folgt dem Radius, ein Rahmen täte das nicht — siehe
+     --edge-inner in styles/tokens.css. */
+  box-shadow:
+    var(--elev-1),
+    inset 0 1px 0 var(--edge-inner);
+}
+
+/* ── Korn ──────────────────────────────────────────────────────────────────
+   Als Pseudo-Element und nicht als zweiter `background-image`-Eintrag: So
+   lässt sich die Deckung getrennt von der Fläche steuern, und der Radius
+   beschneidet das Korn über `border-radius: inherit`.
+
+   `pointer-events: none` ist Pflicht, nicht Vorsicht: Ohne das läge eine
+   unsichtbare Fläche über dem ganzen Panel und schluckte jeden Klick auf die
+   Bedienelemente darunter. */
+.zone__body::after,
+.device::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--grain);
+  opacity: var(--grain-opacity);
+  pointer-events: none;
+  /* Das Korn ist Material, kein Inhalt — es hat für Screenreader nichts zu
+     sagen und darf auch beim Drucken wegbleiben. */
+  z-index: 0;
+}
+
+/* Der Untergrund bekommt dasselbe Korn, damit die Tischplatte nicht glatter
+   wirkt als das Gerät darauf. */
+.device {
+  position: relative;
+}
+
+.device::after {
+  border-radius: 0;
+  /* Auf dem Untergrund noch leiser: Er ist die größte Fläche im Bild, und was
+     auf einem Panel Materialität ist, wird über die ganze Seite Unruhe. */
+  opacity: calc(var(--grain-opacity) * 0.6);
+}
+
+/* Der Inhalt muss über dem Korn liegen. Ohne das legt sich die Textur über die
+   Codes — sichtbar wird das erst bei größeren Deckungen, und dann sucht man
+   lange.
+
+   Der Kopf steht hier ausdrücklich NICHT mit dabei, und das ist keine
+   Nachlässigkeit: Er hat weiter oben bereits `position: sticky` und
+   `z-index: 5`. Stünde er in dieser Liste, überschriebe sie beides — er wäre
+   wieder `relative` und läge auf Ebene 1 unter allem, was hier steht. Genau
+   das ist einmal passiert; gefunden hat es nicht das Auge, sondern
+   `check-contrast.mjs`: Der Kopf misst über eingeschobenen Prüfflächen
+   plötzlich 1,13:1, weil er unter ihnen lag statt darüber. */
+.zone,
+.colophon {
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Fuß: Seriennummern-Gravur ────────────────────────────────────────────── */
@@ -365,6 +423,33 @@ kbd {
   gap: var(--sp-2) var(--sp-5);
   padding-block-start: var(--sp-6);
   padding-inline: var(--panel-pad);
+}
+
+/* ── Der Trenner über dem Fuß ──────────────────────────────────────────────
+   V4 hatte hier eine Haarlinie, V5 hat sie entfernt (zwischen zwei erhobenen
+   Flächen braucht es keinen Strich). Übrig blieb blanker Abstand — und der
+   sagt nichts.
+
+   Jetzt steht dort eine Teilung: dieselben Marken wie auf dem Zifferblatt, nur
+   abgewickelt. Das Zeichen der Marke in seiner dritten Rolle — Emblem,
+   Countdown, und hier Gravur am Gehäuse.
+
+   Das ist ein `repeating-linear-gradient` mit HARTEN Stops und damit ein
+   Strichraster, kein Verlauf: Es gibt keinen Farbübergang, nur an und aus. Der
+   Ban gegen Deko-Gradients bleibt unberührt.
+
+   Die Maße stammen aus dem Emblem: Strich 1 px auf 8 px Teilung, also
+   dieselbe Dichte, die 30 Marken auf dem Zifferblatt haben. */
+.colophon::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: var(--panel-pad);
+  block-size: 5px;
+  background-image: repeating-linear-gradient(to right, var(--ink-3) 0 1px, transparent 1px 8px);
+  /* Die Teilung ist eine Gravur, kein Bauteil: sehr leise, sonst konkurriert
+     sie mit den Angaben darunter. */
+  opacity: 0.4;
 }
 
 .colophon__specs {
@@ -597,6 +682,50 @@ kbd {
   background: var(--rule);
 }
 
+/* ── Der Kanalzug reagiert ─────────────────────────────────────────────────
+   Ein Kanalzug ist keine Karte und wird auch beim Überfahren keine: kein
+   eigener Schatten, kein Rahmen, kein Radius. Was er bekommt, ist die
+   Rückmeldung, die eine Zeile braucht, mit der man umgeht — man kopiert aus
+   ihr, man liest aus ihr ab.
+
+   Ein Pixel Hub und ein leiser Flächenton, auf der Federkurve. Mehr wäre eine
+   Behauptung, dass hier ein Objekt schwebt; weniger wäre keine Rückmeldung.
+
+   `:focus-within` zählt mit: Wer sich mit der Tastatur zur Kopiertaste
+   vorarbeitet, soll dieselbe Zeile hervorgehoben sehen wie jemand mit der Maus.
+   Sonst ist der Zusammenhang zwischen Taste und Code nur visuell da, nicht
+   für den, der ihn gerade braucht. */
+.strip {
+  border-radius: var(--radius-field);
+  transition:
+    transform var(--dur-calm) var(--ease-spring),
+    background-color var(--dur-calm) var(--ease-spring);
+}
+
+@media (hover: hover) {
+  .strip:hover {
+    transform: translateY(-1px);
+    background: var(--surface-recessed);
+  }
+}
+
+.strip:focus-within {
+  background: var(--surface-recessed);
+}
+
+/* Der Flächenton läuft über die volle Panelbreite, nicht nur über den
+   Textbereich — sonst sähe die Hervorhebung aus wie ein zweites Panel im
+   Panel. Negative Außenabstände plus gleich großer Innenabstand: Die Fläche
+   wächst, das Raster darin bleibt, wo es war. */
+.strip {
+  margin-inline: calc(var(--sp-3) * -1);
+  padding-inline: var(--sp-3);
+}
+
+.strip::before {
+  inset-inline: calc(var(--strip-rule-inset) + var(--sp-3)) var(--sp-3);
+}
+
 /* Das Zifferblatt steht links und trägt alle drei Zeilen — die Anzeige gehört
    zum ganzen Kanal, nicht zu einer seiner Zeilen. */
 .gauge {
@@ -789,6 +918,66 @@ kbd {
 /* ── Leerzustand ──────────────────────────────────────────────────────────── */
 
 /* Der Leerzustand steht in styles/mark.css — er ist ein Markenmoment. */
+
+/* =============================================================================
+   Breite Schirme: das Rack neben die Bedienung
+   ==========================================================================
+
+   Bis V5 lief die App auch auf einem 1500-px-Schirm als eine Spalte von
+   62 rem — rechts stand ein Drittel Leere, und zwar unabsichtlich.
+
+   Ab 80 rem (1280 px) stehen Eingabe und Tresor links, die Codes rechts
+   daneben und kleben dort. Das ist keine Platzverwertung, sondern die
+   Arbeitsteilung des Geräts: links wird eingestellt, rechts wird abgelesen.
+   Genau so ist ein Messplatz aufgebaut, und genau deshalb bleibt das Rack im
+   Blick, während man unten am Tresor etwas ändert.
+
+   Unter 80 rem passiert nichts davon: eine Spalte, Reihenfolge unverändert,
+   Eingabe zuerst. Auf dem Handy tippt man, dann liest man. */
+@media (min-width: 80rem) {
+  :root {
+    /* Zwei Spalten brauchen mehr Papier. 76 rem statt 62 - darüber hinaus
+       liefe die Zeilenlänge der Hinweistexte aus dem Ruder. */
+    --measure: 76rem;
+    /* Die Gravur-Spalte wird schmaler, weil sie jetzt zweimal vorkommt und
+       sonst ein Sechstel der Breite fräße. Die Beschriftungen sind kurz
+       (EINGABE, TRESOR, CODES) - 4,5 rem tragen sie in jeder Sprache, und wo
+       nicht, bricht die Zeile um. */
+    --col-label: 4.5rem;
+  }
+
+  main {
+    display: grid;
+    /* Rechts etwas mehr: Dort steht das Zifferblatt, und der Code soll seine
+       Größe behalten statt an der Containerbreite zu schrumpfen. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    column-gap: var(--sp-5);
+    align-items: start;
+  }
+
+  /* Die Codes fassen die volle Höhe der linken Spalte und kleben unter dem
+     Kopf. `align-self: start` ist dabei die Bedingung, nicht die Kür: Ein
+     Rasterelement ist standardmäßig `stretch`, und ein gestrecktes Element hat
+     keine Höhe, an der `sticky` greifen könnte. */
+  #zone-codes {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: start;
+    position: sticky;
+    inset-block-start: var(--scroll-anchor);
+    /* Bei sehr vielen Konten darf das Rack selbst scrollen, statt die Seite
+       nach unten zu sprengen. */
+    max-block-size: calc(100vh - var(--scroll-anchor) - var(--sp-5));
+    overflow-y: auto;
+    /* Sonst nimmt eine Scrollbewegung im Rack am Ende die ganze Seite mit. */
+    overscroll-behavior: contain;
+  }
+
+  /* Der Fuß gehört unter beides, nicht unter eine Spalte. */
+  .colophon {
+    padding-block-start: var(--sp-5);
+  }
+}
 
 /* =============================================================================
    Umbrüche

@@ -132,6 +132,7 @@ export default {
   'import.unreadable': 'Η εξαγωγή δεν διαβάζεται.',
 
   'vacant.text': 'Δεν υπάρχει ακόμη είσοδος. Βάλτε πιο πάνω ένα secret.',
+  'vacant.demo': 'Εισαγωγή δοκιμαστικού κλειδιού',
   'colophon.note': 'Χωρίς δίκτυο · χωρίς αποθήκευση · HMAC μέσω του Web Crypto API',
 
   'lang.label': 'Γλώσσα',

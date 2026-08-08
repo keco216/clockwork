@@ -122,6 +122,7 @@ export default {
   'import.unreadable': 'Ekspor tidak terbaca.',
 
   'vacant.text': 'Belum ada masukan. Taruh sebuah secret di atas.',
+  'vacant.demo': 'Sisipkan kunci uji',
   'colophon.note': 'Tanpa jaringan · tanpa penyimpanan · HMAC lewat Web Crypto API',
 
   'lang.label': 'Bahasa',

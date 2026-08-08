@@ -154,6 +154,7 @@ export default {
   'import.unreadable': 'Eksport nieczytelny.',
 
   'vacant.text': 'Jeszcze nic nie wpisano. Wstaw powyżej secret.',
+  'vacant.demo': 'Wstaw klucz testowy',
   'colophon.note': 'Bez sieci · bez zapisu · HMAC przez Web Crypto API',
 
   'lang.label': 'Język',

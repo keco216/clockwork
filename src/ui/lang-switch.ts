@@ -16,8 +16,9 @@
 
 import { chooseLanguage } from '../i18n/language';
 import { bundledLocales } from '../i18n/registry';
-import { getLocale, onLocaleChange } from '../i18n/runtime';
+import { getLocale, onLocaleChange, t } from '../i18n/runtime';
 import { requireElement } from './dom';
+import { enhanceSelect } from './listbox';
 
 export function startLanguageSwitch(): void {
   const select = requireElement<HTMLSelectElement>(document, '#lang-select');
@@ -52,6 +53,11 @@ export function startLanguageSwitch(): void {
   select.addEventListener('change', () => {
     chooseLanguage(select.value);
   });
+
+  // Der Aufsatz kommt ZULETZT, nachdem alle Einträge stehen: Er liest sie
+  // einmal aus und baut daraus seine Liste. Fällt er aus, bleibt das native
+  // Feld voll bedienbar — siehe ui/listbox.ts.
+  enhanceSelect({ select, label: t('lang.aria') });
 
   // Auch wenn die Sprache von woanders kommt (Hash von Hand geändert,
   // Zurück-Knopf), soll das Feld zeigen, was wirklich gilt.

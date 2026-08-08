@@ -126,6 +126,7 @@ export default {
   'import.unreadable': 'Eksporten kan ikke leses.',
 
   'vacant.text': 'Ingenting lagt inn ennå. Sett inn en secret ovenfor.',
+  'vacant.demo': 'Sett inn testnøkkel',
   'colophon.note': 'Ikke noe nettverk · ingen lagring · HMAC via Web Crypto API',
 
   'lang.label': 'Språk',

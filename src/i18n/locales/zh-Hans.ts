@@ -120,6 +120,7 @@ export default {
   'import.unreadable': '导出无法读取。',
 
   'vacant.text': '还没有输入。在上面放一个 secret。',
+  'vacant.demo': '插入测试密钥',
   'colophon.note': '无网络 · 无存储 · HMAC 经由 Web Crypto API',
 
   'lang.label': '语言',

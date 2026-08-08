@@ -102,6 +102,23 @@
 
 .dialface__hub {
   fill: var(--ink);
+  transition: fill var(--dur-calm) var(--ease-spring);
+}
+
+/* ── Die Kopier-Quittung ───────────────────────────────────────────────────
+   Beim Kopieren springt die Nabe für die Dauer der Rückmeldung auf Signal.
+   Sie ist der einzige Punkt des Zifferblatts, der sonst immer Tinte trägt —
+   im Emblem ist genau ein Punkt farbig, und hier ist es für anderthalb
+   Sekunden dieser.
+
+   Bewusst ein ZUSTAND und keine Animation. Der Unterschied ist nicht
+   akademisch: `prefers-reduced-motion` schaltet in diesem Projekt alle
+   Animationen global auf 0,001 ms. Eine Quittung, die als Keyframe gebaut
+   wäre, verschwände damit für genau die Leute, die ohnehin weniger visuelle
+   Signale bekommen. Als Zustand bleibt sie stehen; nur der weiche Übergang
+   dorthin entfällt. */
+.strip--copied .dialface__hub {
+  fill: var(--signal);
 }
 
 /* Der Zeiger. Eine Umdrehung pro Periode, angetrieben von `--progress`, das die
@@ -143,11 +160,29 @@
   opacity: 0.55;
 }
 
+/* Emblem, Satz, EIN Knopf — mehr braucht ein leerer Zustand nicht, und mehr
+   verträgt er auch nicht. Der Knopf steht unter dem Satz und nicht daneben:
+   Er ist die Folge des Satzes, nicht seine Alternative. */
+.vacant__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+
 .vacant__text {
   font-size: var(--t-small);
   color: var(--ink-3);
   max-width: 52ch;
   text-wrap: pretty;
+}
+
+/* Das Plus im Knopf ist das einzige Bedien-Icon ohne Gegenstück in der Welt —
+   es zeigt keinen Ordner und keine Kamera, sondern die Handlung selbst.
+   Zwei Striche, runde Enden, dieselbe Strichstärke wie alle anderen. */
+.vacant__demo {
+  flex: none;
 }
 
 @media (max-width: 34rem) {

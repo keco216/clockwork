@@ -121,6 +121,7 @@ export default {
   'import.unreadable': '匯出無法讀取。',
 
   'vacant.text': '還沒有輸入。在上面放一個 secret。',
+  'vacant.demo': '插入測試金鑰',
   'colophon.note': '無網路 · 無儲存 · HMAC 經由 Web Crypto API',
 
   'lang.label': '語言',

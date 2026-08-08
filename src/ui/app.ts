@@ -145,6 +145,32 @@ export function startApp(): void {
     reparse();
   });
 
+  /* ── Der Testschlüssel im Leerzustand ────────────────────────────────────
+     Der Wert ist der Testvektor aus RFC 4226 Anhang D — Base32 für den ASCII-
+     Text „12345678901234567890". Er steht in der Norm, in der Doku und in den
+     Tests; er ist das Gegenteil eines Geheimnisses.
+
+     Die Prüfung auf ein leeres Feld ist trotzdem da, und zwar als zweites
+     Schloss: Der Knopf lebt im Leerzustand und ist deshalb unerreichbar, sobald
+     eine Zeile im Feld steht. Sollte diese Kopplung je brechen — ein
+     umgebautes Markup, ein vergessenes `hidden` —, überschreibt er hier
+     trotzdem nichts. Bei Schlüsselmaterial ist ein zweites Schloss billiger
+     als die Frage, ob das erste noch hält.
+
+     Der Kontoname davor ist eine Normnummer und wird deshalb NICHT übersetzt —
+     „RFC 4226" heißt in jeder Sprache so. Genau dafür steht die Zeile in der
+     Ausnahmenliste von ui-literals.test.ts. */
+  const RFC_TEST_LINE = 'RFC 4226: GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
+
+  requireElement<HTMLButtonElement>(document, '#key-demo').addEventListener('click', () => {
+    if (input.value.trim() !== '') {
+      return;
+    }
+    input.value = RFC_TEST_LINE;
+    input.focus();
+    reparse();
+  });
+
   /* ── Google-Authenticator-Export ─────────────────────────────────────────
      Eine `otpauth-migration://`-Zeile wird an Ort und Stelle durch die
      entsprechenden `otpauth://`-Zeilen ersetzt. Der Nutzer SIEHT damit, was

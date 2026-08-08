@@ -150,6 +150,7 @@ export default {
   'import.unreadable': 'הייצוא אינו קריא.',
 
   'vacant.text': 'עוד לא הוזן דבר. הכניסו למעלה סוד.',
+  'vacant.demo': 'הוספת מפתח בדיקה',
   'colophon.note': 'בלי רשת · בלי אחסון · HMAC דרך Web Crypto API',
 
   'lang.label': 'שפה',

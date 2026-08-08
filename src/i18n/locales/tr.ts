@@ -128,6 +128,7 @@ export default {
   'import.unreadable': 'Dışa aktarım okunamıyor.',
 
   'vacant.text': 'Henüz bir giriş yok. Yukarıya bir secret koyun.',
+  'vacant.demo': 'Test anahtarı ekle',
   'colophon.note': 'Ağ yok · depolama yok · HMAC, Web Crypto API üzerinden',
 
   'lang.label': 'Dil',

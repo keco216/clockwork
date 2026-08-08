@@ -126,6 +126,7 @@ export default {
   'import.unreadable': 'निर्यात पढ़ा नहीं जा सकता.',
 
   'vacant.text': 'अभी कुछ नहीं डाला गया. ऊपर कोई सीक्रेट रखें.',
+  'vacant.demo': 'परीक्षण कुंजी डालें',
   'colophon.note': 'कोई नेटवर्क नहीं · कोई भंडारण नहीं · HMAC Web Crypto API से',
 
   'lang.label': 'भाषा',

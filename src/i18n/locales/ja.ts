@@ -125,6 +125,7 @@ export default {
   'import.unreadable': 'エクスポートを読み取れない。',
 
   'vacant.text': 'まだ何も入力されていない。上にシークレットを入れる。',
+  'vacant.demo': 'テスト鍵を挿入',
   'colophon.note': 'ネットワークなし · 保存なし · HMAC は Web Crypto API 経由',
 
   'lang.label': '言語',

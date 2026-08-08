@@ -121,6 +121,7 @@ export default {
   'import.unreadable': '내보내기를 읽을 수 없다.',
 
   'vacant.text': '아직 입력한 것이 없다. 위에 시크릿을 넣기.',
+  'vacant.demo': '테스트 키 삽입',
   'colophon.note': '네트워크 없음 · 저장 없음 · HMAC 은 Web Crypto API 로',
 
   'lang.label': '언어',

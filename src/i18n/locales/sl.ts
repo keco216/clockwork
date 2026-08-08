@@ -152,6 +152,7 @@ export default {
   'import.unreadable': 'Izvoz ni berljiv.',
 
   'vacant.text': 'Zaenkrat še ni vnosa. Zgoraj vstavite secret.',
+  'vacant.demo': 'Vstavi testni ključ',
   'colophon.note': 'Brez omrežja · brez shrambe · HMAC prek Web Crypto API',
 
   'lang.label': 'Jezik',

@@ -130,6 +130,7 @@ export default {
   'import.unreadable': 'Eksports nav salasāms.',
 
   'vacant.text': 'Vēl nekas nav ievadīts. Ielieciet augšā secret.',
+  'vacant.demo': 'Ievietot testa atslēgu',
   'colophon.note': 'Bez tīkla · bez krātuves · HMAC caur Web Crypto API',
 
   'lang.label': 'Valoda',

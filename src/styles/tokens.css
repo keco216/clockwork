@@ -58,6 +58,40 @@
      dunklere Oberkante, Erhobenes eine hellere. Zwei Bauteile, eine Regel. */
   --edge-lit: var(--rule);
 
+  /* ── Lichtkante, innen ────────────────────────────────────────────────────
+     V5 setzte sie als `border-top-color`. Das funktionierte, hatte aber zwei
+     Nachteile: Es verbrauchte die Rahmenfarbe als Ausdrucksmittel, und an einer
+     18-px-Rundung sitzt eine gefärbte Rahmenoberkante nicht sauber — sie läuft
+     um die Ecke weiter, als hätte das Licht dort noch etwas zu suchen.
+
+     Als INNENSCHATTEN liegt sie innerhalb des Radius und folgt ihm. Und sie
+     belegt keinen Platz im Boxmodell, anders als ein Rahmen — das Layout bleibt
+     unberührt, egal ob sie da ist oder nicht.
+
+     Im Hellen ist sie fast nichts (Papier auf Papier), im Dunkeln trägt sie die
+     ganze Erhebung. */
+  --edge-inner: rgb(255 255 255 / 55%);
+
+  /* ── Korn ─────────────────────────────────────────────────────────────────
+     Papier und mattschwarzes Gehäuse sind keine Bildschirmflächen. Ein Hauch
+     Korn macht aus einer Farbfläche ein Material.
+
+     Erzeugt wird es von `feTurbulence` — SVG bringt einen Rauschgenerator mit,
+     man muss ihn nur benutzen. `fractalNoise` stapelt weiche Oktaven statt
+     harter Wirbel (das wäre `turbulence`), `baseFrequency` 0.9 macht das Korn
+     fein statt wolkig, drei Oktaven geben ihm Tiefe. Das Ganze wiegt rund 250
+     Byte als Text und skaliert auf jede Auflösung — ein PNG-Kachelbild wäre ein
+     Vielfaches davon und auf einem Retina-Schirm sichtbar zu grob.
+
+     Ausdrücklich KEIN Verlauf: Das Muster hat keine Richtung und keinen
+     Farbübergang, es ist gleichverteiltes Rauschen. Deko-Gradients bleiben
+     verboten. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23g)'/%3E%3C/svg%3E");
+  /* Auf Papier fast aus: Helle Flächen zeigen Rauschen viel bereitwilliger als
+     dunkle, und was auf Nacht als Materialität liest, wird auf Papier zu
+     Schmutz. Nachgemessen an den Screenshots, nicht symmetrisch gesetzt. */
+  --grain-opacity: 0.022;
+
   /* ── Signal: der eine Akzent ──────────────────────────────────────────────
      Nur für Zustände mit Bedeutung: der ablaufende Code, ein bestätigter
      Kopiervorgang, ein offener Tresor, der Sucherrahmen. Nie als Dekoration.
@@ -235,7 +269,13 @@
   --dur-snap: 190ms; /* Fallblatt-Umsprung */
   --dur-calm: 250ms; /* Zustandswechsel */
   --dur-sheet: 350ms; /* Panel öffnet, Kanalzug kommt dazu */
-  --stagger-flap: 16ms;
+  /* Versatz je umspringender Stelle. 20 ms ist der Wert, den Nummern-Ticker im
+     Feld durchgehend benutzen (21st.dev, Gattung „Stats & KPIs") — und er hat
+     ein enges Fenster: Unter 15 ms sieht der Versatz aus wie ein Rundungsfehler
+     im Rendering, über 25 ms wie eine Animation, die man anschauen soll. Bei
+     sechs Stellen kostet er 100 ms Gesamtversatz, also weniger als eine
+     Wimpernbewegung. */
+  --stagger-flap: 20ms;
 
   /* ── Zifferblatt: Proportionen aus dem Emblem ─────────────────────────────
      branding/clockwork-logo-a-skala.svg: Außenradius 96, Marke 19,2 lang
@@ -276,6 +316,12 @@
     /* Hier leuchtet die Oberkante — sie trägt die Erhebung, die der Schatten
        auf diesem Grund nicht mehr tragen kann. */
     --edge-lit: rgb(245 243 239 / 28%);
+    --edge-inner: rgb(245 243 239 / 9%);
+
+    /* Nacht nimmt gut das Doppelte an Korn, bevor es auffällt — und braucht es
+       auch: Eine große, fast schwarze Fläche ohne jede Textur wirkt wie ein
+       Loch, nicht wie ein Gehäuse. */
+    --grain-opacity: 0.05;
 
     /* Auf Nacht trägt der Markenwert selbst — 5,5:1, also auch für Fließtext. */
     --signal-text: #f05a28;

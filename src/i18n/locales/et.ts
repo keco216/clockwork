@@ -126,6 +126,7 @@ export default {
   'import.unreadable': 'Eksportfail ei ole loetav.',
 
   'vacant.text': 'Sisendit veel pole. Pane ülal secret.',
+  'vacant.demo': 'Lisa testvõti',
   'colophon.note': 'Ei mingit võrku · ei mingit salvestust · HMAC Web Crypto API kaudu',
 
   'lang.label': 'Keel',

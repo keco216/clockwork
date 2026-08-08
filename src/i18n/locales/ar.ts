@@ -164,6 +164,7 @@ export default {
   'import.unreadable': 'الصادرات غير مقروءة.',
 
   'vacant.text': 'لا إدخال بعد. ضع سرًّا في الأعلى.',
+  'vacant.demo': 'إدراج مفتاح تجريبي',
   'colophon.note': 'لا شبكة · لا تخزين · HMAC عبر Web Crypto API',
 
   'lang.label': 'اللغة',

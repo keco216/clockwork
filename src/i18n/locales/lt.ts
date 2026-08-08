@@ -151,6 +151,7 @@ export default {
   'import.unreadable': 'Eksportas neįskaitomas.',
 
   'vacant.text': 'Kol kas nieko neįvesta. Įdėkite viršuje secret.',
+  'vacant.demo': 'Įterpti bandomąjį raktą',
   'colophon.note': 'Jokio tinklo · jokios saugyklos · HMAC per Web Crypto API',
 
   'lang.label': 'Kalba',

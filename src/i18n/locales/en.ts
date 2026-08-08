@@ -126,6 +126,7 @@ export default {
   'import.unreadable': 'Export unreadable.',
 
   'vacant.text': 'Nothing entered yet. Put a secret in above.',
+  'vacant.demo': 'Insert test key',
   'colophon.note': 'No network · no storage · HMAC via the Web Crypto API',
 
   'lang.label': 'Language',

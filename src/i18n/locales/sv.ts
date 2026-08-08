@@ -124,6 +124,7 @@ export default {
   'import.unreadable': 'Exporten går inte att läsa.',
 
   'vacant.text': 'Inget inmatat än. Sätt in en secret ovanför.',
+  'vacant.demo': 'Infoga testnyckel',
   'colophon.note': 'Inget nätverk · ingen lagring · HMAC via Web Crypto API',
 
   'lang.label': 'Språk',

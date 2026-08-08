@@ -119,6 +119,7 @@ export default {
   'import.unreadable': 'ไฟล์ส่งออกอ่านไม่ออก',
 
   'vacant.text': 'ยังไม่ได้ป้อนอะไร ใส่ secret ไว้ด้านบน',
+  'vacant.demo': 'ใส่คีย์ทดสอบ',
   'colophon.note': 'ไม่มีเครือข่าย · ไม่มีที่เก็บ · HMAC ผ่าน Web Crypto API',
 
   'lang.label': 'ภาษา',

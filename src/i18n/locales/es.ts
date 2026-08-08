@@ -133,6 +133,7 @@ export default {
   'import.unreadable': 'Exportación ilegible.',
 
   'vacant.text': 'Todavía no hay nada. Pon un secret arriba.',
+  'vacant.demo': 'Insertar clave de prueba',
   'colophon.note': 'Sin red · sin almacenamiento · HMAC mediante la Web Crypto API',
 
   'lang.label': 'Idioma',

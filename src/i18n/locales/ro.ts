@@ -131,6 +131,7 @@ export default {
   'import.unreadable': 'Export ilizibil.',
 
   'vacant.text': 'Încă nimic introdus. Puneți deasupra un secret.',
+  'vacant.demo': 'Inserează cheia de test',
   'colophon.note': 'Fără rețea · fără stocare · HMAC prin Web Crypto API',
 
   'lang.label': 'Limbă',

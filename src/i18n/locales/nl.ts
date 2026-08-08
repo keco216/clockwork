@@ -128,6 +128,7 @@ export default {
   'import.unreadable': 'Export onleesbaar.',
 
   'vacant.text': 'Nog geen invoer. Zet hierboven een secret neer.',
+  'vacant.demo': 'Testsleutel invoegen',
   'colophon.note': 'Geen netwerk · geen opslag · HMAC via de Web Crypto API',
 
   'lang.label': 'Taal',

@@ -125,6 +125,7 @@ export default {
   'import.unreadable': 'Eksporten kan ikke læses.',
 
   'vacant.text': 'Endnu ingenting. Sæt en secret ind ovenfor.',
+  'vacant.demo': 'Indsæt testnøgle',
   'colophon.note': 'Intet netværk · intet lager · HMAC via Web Crypto API',
 
   'lang.label': 'Sprog',

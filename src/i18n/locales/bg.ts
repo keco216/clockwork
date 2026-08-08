@@ -128,6 +128,7 @@ export default {
   'import.unreadable': 'Износът е нечетлив.',
 
   'vacant.text': 'Все още няма нищо. Поставете горе secret.',
+  'vacant.demo': 'Вмъкване на тестов ключ',
   'colophon.note': 'Без мрежа · без хранилище · HMAC през Web Crypto API',
 
   'lang.label': 'Език',

@@ -174,6 +174,15 @@ export interface Strings {
   /* ── Leerzustand und Fuß ─────────────────────────────────────────────── */
 
   'vacant.text': string;
+  /**
+   * Beschriftung des Knopfes im leeren Zustand.
+   *
+   * Bewusst „Testschlüssel" und nicht „Demo": Der Knopf fügt den dokumentierten
+   * Testvektor aus RFC 4226 ein, und eine Taste soll benennen, was sie tut.
+   * „Demo" klänge nach Spielzeugmodus — hier wird echtes, nur eben öffentlich
+   * bekanntes Schlüsselmaterial eingesetzt.
+   */
+  'vacant.demo': string;
   'colophon.note': string;
 
   /* ── Sprachwahl ──────────────────────────────────────────────────────── */

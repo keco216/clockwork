@@ -217,6 +217,89 @@
   border-color: var(--ink-3);
 }
 
+/* ── Die Listbox ──────────────────────────────────────────────────────────
+   Der Aufsatz auf dem nativen Feld (ui/listbox.ts). Er übernimmt dessen
+   Aussehen im geschlossenen Zustand — und gestaltet endlich auch den offenen.
+
+   Das native Feld bleibt im Dokument, aber unsichtbar. Bewusst NICHT
+   `display: none`: Ein so entferntes Feld meldet in manchen Browsern keine
+   `change`-Ereignisse mehr, und genau die sind hier die Kupplung zwischen
+   Aufsatz und Wahrheit. */
+.pick--replaced {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Der Knopf ist dasselbe Bauteil wie das Feld — er erbt `.pick` und bringt nur
+   die Textausrichtung mit, die ein `<button>` nicht von sich aus hat. */
+.pick--button {
+  display: inline-flex;
+  align-items: center;
+  text-align: start;
+}
+
+.pick__value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Das Panel. Dieselbe Erhebung wie der klebende Kopf — es liegt über dem
+   Gerät, also Ebene 2. Kein Frost: Was dahinter liegt, ist eine deckende
+   Fläche, und ein Weichzeichner ohne Hintergrund wäre eine Ebene ohne Zweck. */
+.listbox {
+  position: absolute;
+  inset-inline: 0;
+  /* Nach OBEN aufklappen: Der Umschalter sitzt im Fuß, und dort ist unten
+     nichts mehr. */
+  inset-block-end: calc(100% + var(--sp-2));
+  z-index: 20;
+  max-block-size: min(60vh, 22rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--sp-1);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-field);
+  box-shadow:
+    var(--elev-2),
+    inset 0 1px 0 var(--edge-inner);
+}
+
+.listbox[hidden] {
+  display: none;
+}
+
+.listbox__option {
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-inset);
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Die aktive Zeile — die, auf der Tastatur oder Maus gerade steht. Ein
+   Flächenton, kein Rahmen: Ein Rahmen würde die Zeile um einen Pixel
+   verschieben, und eine Liste, in der die Zeilen beim Durchgehen wackeln, ist
+   schwer zu lesen. */
+.listbox__option.is-active {
+  background: var(--surface-recessed);
+  color: var(--ink);
+}
+
+/* Die gewählte Sprache trägt den Akzent. Das ist einer der Zustände mit
+   Bedeutung, für die die Signalfarbe da ist: „das hier gilt gerade". */
+.listbox__option[aria-selected='true'] {
+  color: var(--signal-text);
+  font-weight: 600;
+}
+
 .vault__check {
   display: inline-flex;
   align-items: center;

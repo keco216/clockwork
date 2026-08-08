@@ -129,6 +129,7 @@ export default {
   'import.unreadable': 'Az export olvashatatlan.',
 
   'vacant.text': 'Még nincs bevitel. Tegyen fentre egy secretet.',
+  'vacant.demo': 'Tesztkulcs beszúrása',
   'colophon.note': 'Nincs hálózat · nincs tárolás · HMAC a Web Crypto API-n keresztül',
 
   'lang.label': 'Nyelv',

@@ -152,6 +152,7 @@ export default {
   'import.unreadable': 'Export nečitateľný.',
 
   'vacant.text': 'Zatiaľ nič zadané. Vložte hore secret.',
+  'vacant.demo': 'Vložiť testovací kľúč',
   'colophon.note': 'Žiadna sieť · žiadne úložisko · HMAC cez Web Crypto API',
 
   'lang.label': 'Jazyk',

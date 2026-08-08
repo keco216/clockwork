@@ -123,6 +123,7 @@ export default {
   'import.unreadable': 'Bản xuất không đọc được.',
 
   'vacant.text': 'Chưa nhập gì. Hãy đặt một secret ở trên.',
+  'vacant.demo': 'Chèn khóa thử',
   'colophon.note': 'Không mạng · không lưu trữ · HMAC qua Web Crypto API',
 
   'lang.label': 'Ngôn ngữ',
