@@ -193,7 +193,10 @@
   --sp-7: 3rem;
   --sp-8: 4rem;
 
-  --col-label: 6.5rem;
+  /* `--col-label` ist mit V7 entfallen: Die Zonenbeschriftung steht nicht mehr
+     als eigene Rasterspalte daneben, sondern über ihrem Panel (siehe
+     .zone__label in style.css). Ein Token ohne Bauteil ist eine Einladung, es
+     wieder zu benutzen. */
   --measure: 62rem;
 
   /* Die Bedienseite im Arbeitszustand. 23 rem = 368 px, also in der Mitte des

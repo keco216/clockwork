@@ -60,6 +60,7 @@ export function startApp(): void {
   const filterBar = requireElement(document, '#stage-filter');
   const filterField = requireElement<HTMLInputElement>(document, '#strip-filter');
   const filterVoid = requireElement(document, '#filter-void');
+  const skip = requireElement<HTMLAnchorElement>(document, '.skip');
   const keyClear = requireElement<HTMLButtonElement>(document, '#key-clear');
   const keyDemo = requireElement<HTMLButtonElement>(document, '#key-demo');
   const meter = requireElement(document, '#entry-count');
@@ -155,6 +156,11 @@ export function startApp(): void {
     device.dataset['stage'] = wanted;
 
     vacant.hidden = wanted === 'working';
+    // Der Sprunglink zeigt auf die Codes-Zone, und die gibt es im Leerzustand
+    // nicht. Ein Sprunglink, der ins Leere zielt, ist schlimmer als keiner: Er
+    // ist das ERSTE, was jemand mit der Tastatur erreicht, und wenn er nichts
+    // tut, hat die Seite ihre Bedienung schon im ersten Schritt widerlegt.
+    skip.hidden = wanted === 'vacant';
     filterBar.hidden = accounts < DENSE_FROM;
     if (filterBar.hidden && filterField.value !== '') {
       filterField.value = '';
@@ -181,13 +187,36 @@ export function startApp(): void {
      eines Zifferblatts, das erst wieder anlaufen muss. */
   function applyFilter(): void {
     const needle = filterField.value.trim();
-    visibleCount = 0;
+    const shown: HTMLElement[] = [];
 
     for (const [key, strip] of strips) {
       const hit = matchesFilter(searchText.get(key) ?? '', needle);
       strip.element.hidden = !hit;
-      if (hit) visibleCount++;
+      delete strip.element.dataset['lead'];
+      delete strip.element.dataset['tail'];
+      if (hit) shown.push(strip.element);
     }
+    visibleCount = shown.length;
+
+    /* ── Wo die Liste anfängt und wo sie aufhört ───────────────────────────
+       Die Fuge zwischen zwei Kanälen und der fehlende Innenabstand oben hingen
+       bis V6 an `:first-child` und `:last-child`, und das war richtig, solange
+       alle Kanalzüge sichtbar waren.
+
+       Mit dem Filter stimmt es nicht mehr: `:first-child` meint den ersten im
+       DOKUMENT, nicht den ersten im BILD. Nach einer Suche stand über dem
+       obersten Treffer eine Fuge, die nichts mehr trennte — ein Strich am
+       Anfang einer Liste.
+
+       Ausdrücken lässt sich „erster sichtbarer" in CSS nicht; `:first-child`
+       kennt keine Sichtbarkeit, und einen `:nth-child`-Ausdruck über
+       ausgeblendete Geschwister gibt es nicht. Also setzt es die Stelle, die es
+       ohnehin weiß. Die zweite Marke braucht die zweispaltige Bühne: Dort
+       besteht die oberste Zeile aus zwei Kanälen — ob sie gilt, entscheidet
+       weiterhin CSS. */
+    shown[0]?.setAttribute('data-lead', '1');
+    shown[1]?.setAttribute('data-lead', '2');
+    shown.at(-1)?.setAttribute('data-tail', '');
 
     const nothing = needle !== '' && visibleCount === 0;
     filterVoid.hidden = !nothing;

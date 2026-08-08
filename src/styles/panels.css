@@ -33,6 +33,16 @@
   color: var(--ink-2);
   cursor: pointer;
   list-style: none;
+  /* Ein Aufklapper ist ein Bedienelement, keine Überschrift. Er bekommt deshalb
+     dieselbe Trefferhöhe wie eine Taste — eine 17 px hohe Zeile trifft man mit
+     dem Daumen nicht.
+
+     Die negativen Außenabstände plus derselbe Innenabstand: Die Trefferfläche
+     wächst, der Text bleibt, wo er im Raster steht. */
+  min-height: var(--control-h);
+  margin: calc(var(--sp-2) * -1) calc(var(--sp-2) * -1);
+  padding: var(--sp-2);
+  border-radius: var(--radius-inset);
 }
 
 .vault__state::-webkit-details-marker {

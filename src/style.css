@@ -817,7 +817,12 @@ body::before {
   /* Der Systemdreieck-Marker sieht auf jeder Plattform anders aus. Ersetzt wird
      er durch denselben Winkel, den auch das Auswahlfeld trägt (panels.css). */
   list-style: none;
-  padding-block: var(--sp-1);
+  /* Trefferfläche wie beim Tresor-Aufklapper: Auch ein leiser Kleintext ist ein
+     Bedienelement, sobald man ihn antippen soll. */
+  min-height: var(--control-h);
+  margin-inline: calc(var(--sp-2) * -1);
+  padding-inline: var(--sp-2);
+  border-radius: var(--radius-inset);
 }
 
 /* Safari zeigt den Marker über ein eigenes Pseudo-Element und ignoriert
@@ -1007,16 +1012,22 @@ body::before {
 }
 
 /* Erster und letzter Kanal stoßen an den Innenabstand der Gruppe — dort braucht
-   es weder Fuge noch zusätzliche Luft. */
-.strip:first-child {
+   es weder Fuge noch zusätzliche Luft.
+
+   `data-lead` und `data-tail` statt `:first-child` und `:last-child`, seit es
+   den Filter gibt: Die Pseudoklassen zählen Geschwister im DOKUMENT, nicht im
+   BILD. Nach einer Suche stand über dem obersten Treffer eine Fuge, die nichts
+   mehr trennte. Gesetzt werden die Marken in ui/app.ts, weil nur dort bekannt
+   ist, wer gerade sichtbar ist. */
+.strip[data-lead='1'] {
   padding-top: 0;
 }
 
-.strip:first-child::before {
+.strip[data-lead='1']::before {
   display: none;
 }
 
-.strip:last-child {
+.strip[data-tail] {
   padding-bottom: 0;
 }
 
@@ -1289,16 +1300,17 @@ body::before {
 
   /* Die Fuge trennt Zeilen, nicht Spalten: In zwei Spalten besteht die oberste
      Zeile aus zwei Kanälen, und beide stoßen oben an den Innenabstand. */
-  .strips--dense .strip:nth-child(-n + 2) {
+  .strips--dense .strip[data-lead='2'] {
     padding-top: 0;
   }
 
-  .strips--dense .strip:nth-child(-n + 2)::before {
+  .strips--dense .strip[data-lead='2']::before {
     display: none;
   }
 
-  /* Und der letzte Kanal ist nicht mehr zwangsläufig der unterste. */
-  .strips--dense .strip:last-child {
+  /* Und der letzte Kanal ist nicht mehr zwangsläufig der unterste — in einem
+     Raster steht neben ihm noch einer. */
+  .strips--dense .strip[data-tail] {
     padding-bottom: var(--sp-5);
   }
 }

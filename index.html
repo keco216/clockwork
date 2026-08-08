@@ -70,7 +70,10 @@
   </head>
 
   <body>
-    <a class="skip" href="#zone-codes" data-i18n="skip.toCodes">Skip to the codes</a>
+    <!-- `hidden` beim Ausliefern, weil die Seite im Leerzustand startet und die
+         Codes-Zone dort nicht existiert. ui/app.ts blendet ihn ein, sobald es
+         etwas zum Hinspringen gibt. -->
+    <a class="skip" href="#zone-codes" hidden data-i18n="skip.toCodes">Skip to the codes</a>
 
     <!--
       Der Leerzustand steht schon im ausgelieferten HTML, nicht erst, wenn das
