@@ -21,6 +21,32 @@
  * Der Umweg über den unsichtbaren Text ist der Punkt: Ein Mittelwert ÜBER den
  * Glyphen hinweg würde die Schrift mitmessen und käme immer zu gut heraus.
  *
+ * ── Warum ein Seitenausschnitt und keine Elementaufnahme ───────────────────
+ * Bis V6 stand hier `elementHandle.screenshot()`. Das ist der bequeme Weg und
+ * für ein klebendes Element der falsche: Playwright führt vor jeder
+ * Elementaufnahme seine Bedienbarkeitsprüfungen aus und scrollt das Element
+ * dabei in den Blick. Bei `position: sticky` zielt dieses Scrollen auf die
+ * Position im FLUSS — also an den Dokumentanfang. Die Seite sprang damit auf
+ * y = 0 zurück, der Fühler am Seitenanfang kam wieder ins Bild, der Kopf
+ * verlor sein Frost-Material (siehe ui/masthead.ts), und ab da maß jede
+ * weitere Zeile Text auf blankem Untergrund statt auf Frost.
+ *
+ * Sichtbar wurde das an der Reserveprobe: Sie lieferte exakt die Farbwerte der
+ * eingeschobenen Prüffläche — 1,13:1 über Orange —, weil zwischen Text und
+ * Prüffläche nichts mehr lag. Die naheliegende Erklärung war ein
+ * z-index-Fehler, und sie war falsch: `document.elementsFromPoint` zeigt den
+ * Kopf sauber über der Prüffläche. Kaputt war nicht der Stapel, sondern die
+ * Scrollposition — also der Messaufbau, nicht das Material.
+ *
+ * `page.screenshot({ clip })` scrollt nichts. Der Ausschnitt steht in
+ * FENSTERKOORDINATEN und wird unmittelbar vor der Aufnahme gelesen; wo nötig,
+ * scrollt dieses Skript vorher selbst und weiß danach, dass es gescrollt hat.
+ *
+ * Damit dieser Fehler nicht ein zweites Mal jahrelang unbemerkt bleibt, prüft
+ * das Skript seinen eigenen Aufbau: Die Gegenprobe (Abschnitt 5) schwächt den
+ * Frost absichtlich auf 30 % und verlangt, dass die Probe DURCHFÄLLT. Ein
+ * Messgerät, das auch dann noch grün meldet, misst nicht das, was es soll.
+ *
  * ── Warum ein eigener PNG-Leser ────────────────────────────────────────────
  * Aus demselben Grund, aus dem scripts/icons.mjs seine PNGs selbst schreibt:
  * Für ein paar Tausend Pixel lohnt keine native Bildbibliothek mit 50 MB
@@ -179,19 +205,41 @@ const findings = [];
 const rows = [];
 
 /**
- * Misst ein Element: Textfarbe gegen das, was der Browser tatsächlich
- * dahinter gezeichnet hat.
+ * Ein Kastenmaß in Fensterkoordinaten auf den sichtbaren Bereich beschneiden.
+ * `page.screenshot({ clip })` weist einen Ausschnitt zurück, der auch nur einen
+ * Pixel über den Fensterrand ragt — und ein Element, das an der Falz hängt, ist
+ * genau so einer.
  */
-async function measure(page, { label, selector, scheme, min = AA_TEXT, keepScroll = false }) {
+function visibleClip(rect, viewport) {
+  const x = Math.max(0, Math.floor(rect.x));
+  const y = Math.max(0, Math.floor(rect.y));
+  const width = Math.min(viewport.width, Math.ceil(rect.x + rect.width)) - x;
+  const height = Math.min(viewport.height, Math.ceil(rect.y + rect.height)) - y;
+  return width >= 2 && height >= 2 ? { x, y, width, height } : null;
+}
+
+/**
+ * Misst ein Element: Textfarbe gegen das, was der Browser tatsächlich
+ * dahinter gezeichnet hat. Gibt das Verhältnis zurück (oder `null`, wenn nicht
+ * gemessen werden konnte).
+ *
+ * `expectFail` dreht das Urteil um: Dann gilt die Zeile als bestanden, wenn der
+ * Wert UNTER dem Maß liegt. Das braucht die Gegenprobe, die nachweist, dass das
+ * Skript den Frost überhaupt sieht.
+ */
+async function measure(
+  page,
+  { label, selector, scheme, min = AA_TEXT, keepScroll = false, expectFail = false },
+) {
   const handle = await page.$(selector);
   if (handle === null) {
     findings.push(`${scheme} · ${label}: Element nicht gefunden (${selector})`);
-    return;
+    return null;
   }
 
-  // Der Ausschnitt eines Bildschirmfotos zählt vom sichtbaren Bereich aus. Was
-  // unterhalb der Falz liegt, hat zwar einen Kastenmaß, aber keinen Platz im
-  // Bild — also erst hinscrollen.
+  // Ein Seitenausschnitt zählt vom sichtbaren Bereich aus. Was unterhalb der
+  // Falz liegt, hat zwar ein Kastenmaß, aber keinen Platz im Bild — also erst
+  // hinscrollen.
   //
   // Für die Frost-Messungen ist genau das verboten: Dort IST die Scrollposition
   // der Messgegenstand. Der Kopf klebt ohnehin oben und ist immer sichtbar.
@@ -204,31 +252,30 @@ async function measure(page, { label, selector, scheme, min = AA_TEXT, keepScrol
     await handle.evaluate((element) => getComputedStyle(element).color),
   );
 
-  const box = await handle.boundingBox();
-  if (box === null || box.width < 2 || box.height < 2) {
-    findings.push(`${scheme} · ${label}: Element hat keine Flaeche`);
-    return;
-  }
-
-  // Den Text unsichtbar machen, damit der Ausschnitt reiner Hintergrund ist —
-  // samt Weichzeichner. `visibility: hidden` ginge nicht: Das nimmt das Element
-  // aus dem Bild und legte den Grund darunter frei statt den Grund dahinter.
+  // Erst JETZT das Kastenmaß lesen, in Fensterkoordinaten und im selben Zug,
+  // in dem der Text unsichtbar wird: Zwischen Messen und Aufnehmen darf nichts
+  // mehr scrollen, sonst zeigt der Ausschnitt eine andere Stelle der Seite.
+  //
+  // `visibility: hidden` ginge für den Text nicht: Das nimmt das Element aus
+  // dem Bild und legte den Grund DARUNTER frei statt den Grund DAHINTER.
   //
   // Das `finally` ist kein Zierrat: Bliebe der Text nach einem Fehler auf
   // `transparent` stehen, wären alle folgenden Messungen an derselben Seite
   // still falsch.
   let shot;
-  await handle.evaluate((element) => {
+  const rect = await handle.evaluate((element) => {
     element.dataset['measuring'] = element.style.color;
     element.style.color = 'transparent';
+    const box = element.getBoundingClientRect();
+    return { x: box.x, y: box.y, width: box.width, height: box.height };
   });
   try {
-    // Bewusst der Ausschnitt des ELEMENTS und nicht ein `clip` auf der Seite:
-    // Ein Seitenausschnitt rechnet in Fensterkoordinaten und läuft ins Leere,
-    // sobald das Element auch nur teilweise unter der Falz liegt. Playwright
-    // holt das Element selbst ins Bild — und nimmt dabei mit auf, was darüber
-    // liegt, was hier gerade erwünscht ist.
-    shot = await handle.screenshot();
+    const clip = visibleClip(rect, page.viewportSize());
+    if (clip === null) {
+      findings.push(`${scheme} · ${label}: Element hat im Fenster keine Flaeche`);
+      return null;
+    }
+    shot = await page.screenshot({ clip });
   } finally {
     await handle.evaluate((element) => {
       element.style.color = element.dataset['measuring'] ?? '';
@@ -238,19 +285,26 @@ async function measure(page, { label, selector, scheme, min = AA_TEXT, keepScrol
 
   const background = averageColour(decodePng(shot));
   const ratio = contrast(foreground, background);
-  const ok = ratio >= min;
+  const ok = expectFail ? ratio < min : ratio >= min;
 
   rows.push({
     scheme,
     label,
     ratio: ratio.toFixed(2),
     min: min.toFixed(1),
+    expectFail,
     ok,
   });
 
   if (!ok) {
-    findings.push(`${scheme} · ${label}: ${ratio.toFixed(2)}:1 — verlangt sind ${min}:1`);
+    findings.push(
+      expectFail
+        ? `${scheme} · ${label}: ${ratio.toFixed(2)}:1 — mit halb durchsichtigem Kopf MUSS die Probe unter ${min}:1 fallen. Tut sie das nicht, misst das Skript den Frost nicht mit.`
+        : `${scheme} · ${label}: ${ratio.toFixed(2)}:1 — verlangt sind ${min}:1`,
+    );
   }
+
+  return ratio;
 }
 
 const DEMO = [
@@ -333,6 +387,22 @@ for (const scheme of ['light', 'dark']) {
     window.scrollTo(0, 400);
   });
   await page.waitForTimeout(400);
+
+  // Die Messregion verifizieren, bevor irgendetwas gemessen wird. Ohne diesen
+  // Griff steht in der Ausgabe eine ordentliche Zahl, die eine ganz andere
+  // Fläche beschreibt: Trägt der Kopf kein Material, misst „Kopf auf Frost"
+  // schlicht den Untergrund — und meldet dafür anstandslos AA. Genau so blieb
+  // der Messfehler aus V6 ein halbes Release lang unsichtbar.
+  const grip = await page.evaluate(() => ({
+    y: Math.round(window.scrollY),
+    lifted: document.querySelector('.masthead')?.classList.contains('masthead--lifted') ?? false,
+  }));
+  if (!grip.lifted) {
+    findings.push(
+      `${scheme} · Messaufbau: Der Kopf traegt bei y=${grip.y} kein Frost-Material — alle Frost-Werte darunter sind wertlos.`,
+    );
+  }
+
   await measure(page, {
     scheme,
     label: 'Kopf auf Frost ueber Panel',
@@ -373,8 +443,8 @@ for (const scheme of ['light', 'dark']) {
     { name: 'Papier', colour: '#f5f3ef' },
   ];
 
-  for (const probe of HARD) {
-    await page.evaluate((colour) => {
+  const setProbe = (colour) =>
+    page.evaluate((value) => {
       let patch = document.getElementById('contrast-probe');
       if (patch === null) {
         patch = document.createElement('div');
@@ -384,29 +454,98 @@ for (const scheme of ['light', 'dark']) {
         patch.style.insetBlockStart = '0';
         patch.style.width = '100%';
         patch.style.height = '160px';
-        // Unter den Kopf, aber über alles andere.
+        // Unter den Kopf (z-index 5), aber über den Inhalt (z-index 1).
         patch.style.zIndex = '2';
-        // In .device und nicht in body: Seit V6 hat .device `position: relative`
-        // (es trägt das Korn als Pseudo-Element), und die Zonen darin liegen auf
-        // z-index 1. Ein Patch am body landete dadurch in einem anderen
-        // Stapelzusammenhang und schob sich ÜBER den Kopf — gemessen wurde dann
-        // die Prüffläche selbst statt des Frostes darüber, mit absurden 1,13:1.
-        // Hier drin sitzt er sauber zwischen Inhalt (1) und Kopf (5).
+        // In .device und nicht am body, damit die Prüffläche im selben
+        // Stapelzusammenhang liegt wie der Kopf, den sie unterlegen soll.
         (document.querySelector('.device') ?? document.body).append(patch);
       }
-      patch.style.background = colour;
-    }, probe.colour);
+      patch.style.background = value;
+    }, colour);
+
+  let orange = null;
+
+  for (const probe of HARD) {
+    await setProbe(probe.colour);
     await page.waitForTimeout(250);
-    await measure(page, {
+    const ratio = await measure(page, {
       scheme,
       label: `Reserve: Kopf ueber ${probe.name}`,
       selector: '.masthead__spec',
       keepScroll: true,
       min: AA_LARGE,
     });
+    if (probe.name === 'Signal-Orange') orange = ratio;
+  }
+
+  /* ── 5. Die Gegenprobe: misst dieses Skript den Frost überhaupt? ─────────
+     Alles bis hierher ist eine Behauptung über eine Fläche, die es ohne den
+     Browser gar nicht gibt. Wenn der Messaufbau kaputtgeht, bricht er nicht
+     laut zusammen — er liefert weiter Zahlen, nur eben von der falschen
+     Fläche. Genau das ist in V6 passiert, und genau deshalb steht hier eine
+     Probe, die durchfallen MUSS.
+
+     Der Frost wird auf 30 % Deckung geschwächt. Eine so dünne Fläche kann
+     Signal-Orange nicht mehr tragen; sie muss unter 3:1 rutschen. Tut sie das
+     nicht, sieht das Skript den Kopf nicht — dann sind auch alle grünen Zeilen
+     darüber wertlos, und diese Zeile ist die einzige, die das merkt.
+
+     ── Warum 30 % und nicht 50 % ─────────────────────────────────────────
+     Weil 50 % nachgemessen nicht reichen. Die Kurve über Signal-Orange, hell:
+
+       78 % → 4,81   60 % → 3,81   50 % → 3,37   40 % → 2,98   30 % → 2,65
+                                                  0 % → 2,04
+
+     Bei 50 % steht der helle Kopf noch bei 3,37:1 — er BESTEHT die Probe, und
+     eine Gegenprobe, die besteht, beweist nichts. Erst unter 40 % fällt sie in
+     beiden Themes durch, und 30 % lässt genug Luft, dass eine spätere
+     Palettenänderung sie nicht zufällig wieder über die Schwelle hebt.
+
+     Die 0 %-Zeile derselben Reihe ist der Beweis in die andere Richtung: 2,04
+     hell und 1,15 dunkel sind exakt die Werte, die das kaputte Skript vorher
+     lieferte. Es hat also nicht „ungenau" gemessen — es hat den Kopf gar nicht
+     gesehen.
+
+     Der Wert wird auf dem Wurzelelement gesetzt und danach wieder entfernt:
+     Das Theme selbst (styles/tokens.css) bleibt unberührt, und die nächste
+     Sitzung im selben Browser misst wieder das echte Material. */
+  const frost = await page.evaluate(() => {
+    const root = document.documentElement;
+    // Ein nicht angemeldetes Custom Property kommt so zurück, wie es notiert
+    // wurde — hier also `rgb(245 243 239 / 78%)`. Die vierte Zahl ist die
+    // Deckung; sie wird nur gelesen, damit der Bericht sagen kann, wovon er
+    // ausgeht, statt eine Zahl aus der Doku zu wiederholen.
+    const numbers = getComputedStyle(root)
+      .getPropertyValue('--frost-surface')
+      .match(/[\d.]+/g);
+    const [r, g, b, alpha] = numbers ?? ['0', '0', '0', '100'];
+    root.style.setProperty('--frost-surface', `rgb(${r} ${g} ${b} / 30%)`);
+    return Math.round(Number(alpha) <= 1 ? Number(alpha) * 100 : Number(alpha));
+  });
+  await setProbe('#f05a28');
+  await page.waitForTimeout(300);
+  const thin = await measure(page, {
+    scheme,
+    label: `Gegenprobe: 30 % statt ${frost} % Deckung`,
+    selector: '.masthead__spec',
+    keepScroll: true,
+    min: AA_LARGE,
+    expectFail: true,
+  });
+
+  // Die zweite Hälfte des Beweises, und die eigentlich tragende: Der Wert muss
+  // sich beim Verdünnen ÜBERHAUPT bewegen. Eine feste Schwelle könnte eine
+  // Palettenänderung eines Tages von allein unterschreiten; ein Abstand kann
+  // das nicht. Bleibt er aus, misst das Skript eine Fläche, an der der Kopf
+  // nichts ändert — also nicht den Kopf.
+  if (orange !== null && thin !== null && orange - thin < 1) {
+    findings.push(
+      `${scheme} · Messaufbau: Verduennen des Frostes von ${frost} % auf 30 % aendert den Wert nur um ${(orange - thin).toFixed(2)} — der Kopf geht in diese Messung nicht ein.`,
+    );
   }
 
   await page.evaluate(() => {
+    document.documentElement.style.removeProperty('--frost-surface');
     document.getElementById('contrast-probe')?.remove();
   });
 
@@ -426,13 +565,22 @@ for (const row of rows) {
     last = row.scheme;
   }
   const mark = row.ok ? '✓' : '✗';
-  console.log(`  ${mark} ${row.label.padEnd(width)}  ${row.ratio.padStart(6)}:1  (>= ${row.min})`);
+  // Die Gegenprobe hat das umgekehrte Ziel — sie soll darunter liegen. Stünde
+  // dort dasselbe „>=" wie überall, läse sich eine bestandene Zeile wie ein
+  // Widerspruch.
+  const aim = row.expectFail ? `<  ${row.min}` : `>= ${row.min}`;
+  console.log(`  ${mark} ${row.label.padEnd(width)}  ${row.ratio.padStart(6)}:1  (${aim})`);
 }
+
+const proofs = rows.filter((row) => row.expectFail).length;
 
 if (findings.length > 0) {
   console.error('\nBefunde:');
   for (const finding of findings) console.error('  ✗ ' + finding);
   process.exitCode = 1;
 } else {
-  console.log(`\n✓ Alle ${rows.length} gemessenen Paare erfuellen WCAG AA.`);
+  console.log(
+    `\n✓ Alle ${rows.length - proofs} gemessenen Paare erfuellen WCAG AA.` +
+      `\n✓ ${proofs} Gegenproben zeigen, dass dabei wirklich der Frost gemessen wurde.`,
+  );
 }
