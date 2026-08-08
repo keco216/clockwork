@@ -72,7 +72,21 @@
   <body>
     <a class="skip" href="#zone-codes" data-i18n="skip.toCodes">Skip to the codes</a>
 
-    <div class="device">
+    <!--
+      Der Leerzustand steht schon im ausgelieferten HTML, nicht erst, wenn das
+      Skript läuft.
+
+      Der Browser malt einmal, BEVOR ein 620-kB-Bündel ausgewertet ist. Stand
+      hier kein Zustand, zeigte dieser erste Anstrich die volle Shell — Rail,
+      Tresor, Codes-Panel —, und das Skript räumte sie eine Zehntelsekunde
+      später wieder ab. Gemessen als Layout-Shift von 0,175, also der einzige
+      Grund, warum Lighthouse auf 92 statt 95 stand.
+
+      Und es ist keine Behauptung: Beim Laden ist das Feld IMMER leer. Es gibt
+      keinen Speicher ohne Tresor, und mit Tresor ist der Inhalt verschlüsselt —
+      dann ist das Feld erst recht leer.
+    -->
+    <div class="device" data-stage="vacant">
       <!-- ══ Kopf ══════════════════════════════════════════════════════ -->
       <header class="masthead">
         <!--
@@ -177,7 +191,16 @@
                 keinen Eintrag, ist aber sehr wohl etwas zum Leeren.
               -->
               <div class="keys">
-                <button type="button" class="key key--quiet" id="key-clear" data-i18n="key.clear">
+                <!-- `hidden` von Anfang an: Beim Laden ist das Feld leer, es
+                     gibt also nichts zu leeren. Ab hier führt ui/app.ts beide
+                     Tasten. -->
+                <button
+                  type="button"
+                  class="key key--quiet"
+                  id="key-clear"
+                  hidden
+                  data-i18n="key.clear"
+                >
                   Clear
                 </button>
                 <span class="keys__gap" aria-hidden="true"></span>
@@ -190,7 +213,7 @@
                   überschreiben könnte. Der Handler prüft zusätzlich auf ein
                   leeres Feld.
                 -->
-                <button type="button" class="key" id="key-demo" hidden>
+                <button type="button" class="key" id="key-demo">
                   <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                     <path d="M8 3.25v9.5M3.25 8h9.5" />
                   </svg>
@@ -302,8 +325,14 @@
             </div>
           </section>
 
-          <!-- ══ Zone: Tresor ════════════════════════════════════════════ -->
-          <section class="zone" id="zone-vault" aria-labelledby="zone-vault-label">
+          <!-- ══ Zone: Tresor ════════════════════════════════════════════
+               `hidden` von Anfang an, aus demselben Grund wie beim
+               Leerzustand oben: Der übliche Fall ist ein leeres Feld, und dann
+               gehört der Tresor nicht ins Bild. Liegt ein GESPERRTER Tresor
+               vor, blendet ui/app.ts ihn ein — das ist der seltenere Fall und
+               kostet dann eben einen Sprung nach unten statt bei jedem
+               einzelnen Aufruf einen. -->
+          <section class="zone" id="zone-vault" aria-labelledby="zone-vault-label" hidden>
             <h2 class="zone__label" id="zone-vault-label" data-i18n="zone.vault">Vault</h2>
             <div class="zone__body">
               <div class="vault" id="vault" data-state="off">
