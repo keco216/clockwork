@@ -99,40 +99,53 @@
       </header>
 
       <main>
-        <!-- ══ Zone: Eingabe ═══════════════════════════════════════════ -->
-        <section class="zone" id="zone-input" aria-labelledby="zone-input-label">
-          <h2 class="zone__label" id="zone-input-label" data-i18n="zone.input">Input</h2>
-          <div class="zone__body">
-            <div class="slot">
-              <label class="slot__legend" for="secrets" data-i18n="input.legend"
-                >One entry per line</label
-              >
-              <!--
+        <!--
+          Die Bedienseite als EIN Bereich. Bis V6 standen Eingabe und Tresor
+          als zwei Geschwister direkt im Raster, und genau daran ist der
+          Zweispalter gescheitert: Zwei getrennte Rasterelemente lassen sich
+          nicht gemeinsam scrollen und nicht gemeinsam verschieben. Was
+          zusammen bedient wird, muss auch zusammen ein Kasten sein.
+
+          Die Reihenfolge im Dokument bleibt unverändert — die Varianten
+          verschieben die Hülle, nicht ihren Inhalt.
+        -->
+        <div class="rail">
+          <!-- ══ Zone: Eingabe ═══════════════════════════════════════════ -->
+          <section class="zone" id="zone-input" aria-labelledby="zone-input-label">
+            <h2 class="zone__label" id="zone-input-label" data-i18n="zone.input">Input</h2>
+            <div class="zone__body">
+              <div class="slot">
+                <label class="slot__legend" for="secrets" data-i18n="input.legend"
+                  >One entry per line</label
+                >
+                <!--
                 dir="ltr" ist hier keine Kosmetik: Base32-Secrets und
                 otpauth-URIs sind lateinische Zeichenketten. In einer
                 RTL-Oberfläche würde die Bidi-Regel sie sonst am rechten Rand
                 ausrichten und Satzzeichen umsortieren — man tippt dann etwas
                 anderes ein, als man sieht.
               -->
-              <textarea
-                id="secrets"
-                class="field slot__field"
-                translate="no"
-                dir="ltr"
-                rows="4"
-                spellcheck="false"
-                autocomplete="off"
-                autocapitalize="off"
-                autocorrect="off"
-                placeholder="JBSWY3DPEHPK3PXP&#10;GitHub: jbsw y3dp ehpk 3pxp&#10;otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP"
-              ></textarea>
-              <p class="slot__meter" id="entry-count"></p>
-            </div>
+                <textarea
+                  id="secrets"
+                  class="field slot__field"
+                  translate="no"
+                  dir="ltr"
+                  rows="4"
+                  spellcheck="false"
+                  autocomplete="off"
+                  autocapitalize="off"
+                  autocorrect="off"
+                  placeholder="JBSWY3DPEHPK3PXP&#10;GitHub: jbsw y3dp ehpk 3pxp&#10;otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP"
+                ></textarea>
+                <p class="slot__meter" id="entry-count"></p>
+              </div>
 
-            <div class="keys">
-              <button type="button" class="key" id="key-clear" data-i18n="key.clear">Clear</button>
-              <span class="keys__gap" aria-hidden="true"></span>
-              <!--
+              <div class="keys">
+                <button type="button" class="key" id="key-clear" data-i18n="key.clear">
+                  Clear
+                </button>
+                <span class="keys__gap" aria-hidden="true"></span>
+                <!--
                 Die Bedien-Icons sind seit V5 in der Handschrift von SF Symbols
                 gezeichnet: runde Ecken, weiche Verbindungen, 1,5 px Strich
                 (styles/style.css, .key__icon). Das gilt ausdrücklich NUR für
@@ -143,90 +156,90 @@
                 keinen Ordner, er nimmt ein Bild entgegen; ein Ordnersymbol
                 versprach die falsche Handlung.
               -->
-              <button type="button" class="key" id="key-file">
-                <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                  <rect x="2" y="3" width="12" height="10" rx="2.75" />
-                  <circle cx="5.6" cy="6.4" r="1" />
-                  <path d="M2.6 11.4 6 8.4l2.3 2 2.3-2.4 2.8 3" />
-                </svg>
-                <!-- Eigener span: data-i18n setzt textContent, das würde sonst
+                <button type="button" class="key" id="key-file">
+                  <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                    <rect x="2" y="3" width="12" height="10" rx="2.75" />
+                    <circle cx="5.6" cy="6.4" r="1" />
+                    <path d="M2.6 11.4 6 8.4l2.3 2 2.3-2.4 2.8 3" />
+                  </svg>
+                  <!-- Eigener span: data-i18n setzt textContent, das würde sonst
                      das Icon mit wegwischen. -->
-                <span data-i18n="key.qrImage">QR from image</span>
-              </button>
-              <button type="button" class="key" id="key-camera">
-                <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                  <rect x="1.75" y="4.4" width="12.5" height="9.1" rx="2.75" />
-                  <path d="M5.5 4.4 6.4 2.5h3.2l.9 1.9" />
-                  <circle cx="8" cy="8.95" r="2.35" />
-                </svg>
-                <span data-i18n="key.camera">Camera</span>
-              </button>
-              <input
-                type="file"
-                id="file-input"
-                accept="image/*"
-                class="sr-only"
-                tabindex="-1"
-                aria-hidden="true"
-              />
-            </div>
-
-            <!-- Kamerasucher. Die vier Eckwinkel sind kein Zierrat: Sie zeigen,
-                 wohin der QR-Code gehalten werden muss. -->
-            <div class="viewfinder" id="viewfinder" hidden>
-              <div class="viewfinder__frame">
-                <video id="viewfinder-video" class="viewfinder__video" playsinline muted></video>
-                <span class="viewfinder__mark" data-corner="tl" aria-hidden="true"></span>
-                <span class="viewfinder__mark" data-corner="tr" aria-hidden="true"></span>
-                <span class="viewfinder__mark" data-corner="bl" aria-hidden="true"></span>
-                <span class="viewfinder__mark" data-corner="br" aria-hidden="true"></span>
-              </div>
-              <div class="viewfinder__bar">
-                <p class="viewfinder__hint" id="viewfinder-hint" data-i18n="viewfinder.hint">
-                  Hold the QR code inside the frame
-                </p>
-                <button type="button" class="key" id="key-camera-stop" data-i18n="key.cameraStop">
-                  Camera off
+                  <span data-i18n="key.qrImage">QR from image</span>
                 </button>
+                <button type="button" class="key" id="key-camera">
+                  <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                    <rect x="1.75" y="4.4" width="12.5" height="9.1" rx="2.75" />
+                    <path d="M5.5 4.4 6.4 2.5h3.2l.9 1.9" />
+                    <circle cx="8" cy="8.95" r="2.35" />
+                  </svg>
+                  <span data-i18n="key.camera">Camera</span>
+                </button>
+                <input
+                  type="file"
+                  id="file-input"
+                  accept="image/*"
+                  class="sr-only"
+                  tabindex="-1"
+                  aria-hidden="true"
+                />
               </div>
-            </div>
 
-            <p class="note" id="import-note" role="status" aria-live="polite"></p>
+              <!-- Kamerasucher. Die vier Eckwinkel sind kein Zierrat: Sie zeigen,
+                 wohin der QR-Code gehalten werden muss. -->
+              <div class="viewfinder" id="viewfinder" hidden>
+                <div class="viewfinder__frame">
+                  <video id="viewfinder-video" class="viewfinder__video" playsinline muted></video>
+                  <span class="viewfinder__mark" data-corner="tl" aria-hidden="true"></span>
+                  <span class="viewfinder__mark" data-corner="tr" aria-hidden="true"></span>
+                  <span class="viewfinder__mark" data-corner="bl" aria-hidden="true"></span>
+                  <span class="viewfinder__mark" data-corner="br" aria-hidden="true"></span>
+                </div>
+                <div class="viewfinder__bar">
+                  <p class="viewfinder__hint" id="viewfinder-hint" data-i18n="viewfinder.hint">
+                    Hold the QR code inside the frame
+                  </p>
+                  <button type="button" class="key" id="key-camera-stop" data-i18n="key.cameraStop">
+                    Camera off
+                  </button>
+                </div>
+              </div>
 
-            <!--
+              <p class="note" id="import-note" role="status" aria-live="polite"></p>
+
+              <!--
               Reichtexte: Der Satz ist EINE Übersetzung mit Platzhaltern, die
               ausgezeichneten Stücke liegen als [data-slot] daneben. Beim
               Anwenden werden sie an die Stelle ihres Platzhalters geschoben —
               wohin, bestimmt die Übersetzung. Damit ist die Wortstellung frei.
               Siehe src/i18n/apply.ts.
             -->
-            <p class="note" data-rich="input.help.formats">
-              <code data-slot="nameSecret" translate="no" dir="ltr">Name: SECRET</code>
-              <code data-slot="uri" translate="no" dir="ltr">otpauth://…</code>
-              <code data-slot="hash" translate="no" dir="ltr">#</code>
-            </p>
-            <p class="note" data-rich="input.help.images">
-              <span data-slot="paste" dir="ltr"
-                ><kbd data-i18n="shortcut.modifier">Ctrl</kbd>+<kbd translate="no">V</kbd></span
-              >
-            </p>
-            <p class="note" data-rich="input.help.migration">
-              <code data-slot="migration" translate="no" dir="ltr">otpauth-migration://</code>
-            </p>
-          </div>
-        </section>
-
-        <!-- ══ Zone: Tresor ════════════════════════════════════════════ -->
-        <section class="zone" id="zone-vault" aria-labelledby="zone-vault-label">
-          <h2 class="zone__label" id="zone-vault-label" data-i18n="zone.vault">Vault</h2>
-          <div class="zone__body">
-            <div class="vault" id="vault" data-state="off">
-              <p class="vault__state">
-                <span class="vault__lamp" aria-hidden="true"></span>
-                <span id="vault-state-text">Off — nothing is stored</span>
+              <p class="note" data-rich="input.help.formats">
+                <code data-slot="nameSecret" translate="no" dir="ltr">Name: SECRET</code>
+                <code data-slot="uri" translate="no" dir="ltr">otpauth://…</code>
+                <code data-slot="hash" translate="no" dir="ltr">#</code>
               </p>
+              <p class="note" data-rich="input.help.images">
+                <span data-slot="paste" dir="ltr"
+                  ><kbd data-i18n="shortcut.modifier">Ctrl</kbd>+<kbd translate="no">V</kbd></span
+                >
+              </p>
+              <p class="note" data-rich="input.help.migration">
+                <code data-slot="migration" translate="no" dir="ltr">otpauth-migration://</code>
+              </p>
+            </div>
+          </section>
 
-              <!--
+          <!-- ══ Zone: Tresor ════════════════════════════════════════════ -->
+          <section class="zone" id="zone-vault" aria-labelledby="zone-vault-label">
+            <h2 class="zone__label" id="zone-vault-label" data-i18n="zone.vault">Vault</h2>
+            <div class="zone__body">
+              <div class="vault" id="vault" data-state="off">
+                <p class="vault__state">
+                  <span class="vault__lamp" aria-hidden="true"></span>
+                  <span id="vault-state-text">Off — nothing is stored</span>
+                </p>
+
+                <!--
                 Der Text wird von vault-panel.ts gesetzt — er enthält die
                 Iterationszahl, und die will lokalisiert gruppiert sein
                 (600,000 / 600.000 / 600 000).
@@ -238,81 +251,82 @@
                 Seite nach unten — gemessen als Layout-Shift von 0,16. Steht der
                 Platz von Anfang an, bleibt vom Sprung nichts übrig.
               -->
-              <p class="note" id="vault-explain">
-                By default Clockwork stores nothing. If you want to, you can keep the input here
-                encrypted with a passphrase: PBKDF2-SHA-256 with 600,000 iterations, then
-                AES-256-GCM. Without the passphrase the stored block is worthless.
-              </p>
+                <p class="note" id="vault-explain">
+                  By default Clockwork stores nothing. If you want to, you can keep the input here
+                  encrypted with a passphrase: PBKDF2-SHA-256 with 600,000 iterations, then
+                  AES-256-GCM. Without the passphrase the stored block is worthless.
+                </p>
 
-              <form class="vault__form" id="vault-form">
-                <label class="slot__legend" for="vault-pass" id="vault-pass-label"
-                  >Passphrase</label
-                >
-                <div class="vault__row">
-                  <input
-                    type="password"
-                    id="vault-pass"
-                    class="field vault__pass"
-                    translate="no"
-                    dir="ltr"
-                    autocomplete="current-password"
-                    spellcheck="false"
-                  />
-                  <button type="submit" class="key" id="vault-primary">Store encrypted</button>
+                <form class="vault__form" id="vault-form">
+                  <label class="slot__legend" for="vault-pass" id="vault-pass-label"
+                    >Passphrase</label
+                  >
+                  <div class="vault__row">
+                    <input
+                      type="password"
+                      id="vault-pass"
+                      class="field vault__pass"
+                      translate="no"
+                      dir="ltr"
+                      autocomplete="current-password"
+                      spellcheck="false"
+                    />
+                    <button type="submit" class="key" id="vault-primary">Store encrypted</button>
+                  </div>
+                  <p class="vault__error" id="vault-error" role="alert"></p>
+                </form>
+
+                <div class="keys" id="vault-actions">
+                  <button
+                    type="button"
+                    class="key"
+                    id="vault-lock"
+                    hidden
+                    data-i18n="vault.action.lock"
+                  >
+                    Lock
+                  </button>
+                  <button
+                    type="button"
+                    class="key"
+                    id="vault-update"
+                    hidden
+                    data-i18n="vault.action.update"
+                  >
+                    Store again
+                  </button>
+                  <button type="button" class="key key--danger" id="vault-wipe" hidden>
+                    Delete everything
+                  </button>
                 </div>
-                <p class="vault__error" id="vault-error" role="alert"></p>
-              </form>
 
-              <div class="keys" id="vault-actions">
-                <button
-                  type="button"
-                  class="key"
-                  id="vault-lock"
-                  hidden
-                  data-i18n="vault.action.lock"
-                >
-                  Lock
-                </button>
-                <button
-                  type="button"
-                  class="key"
-                  id="vault-update"
-                  hidden
-                  data-i18n="vault.action.update"
-                >
-                  Store again
-                </button>
-                <button type="button" class="key key--danger" id="vault-wipe" hidden>
-                  Delete everything
-                </button>
-              </div>
-
-              <p class="vault__config">
-                <label for="vault-timeout" data-i18n="vault.timeout.label"
-                  >Locks automatically after</label
-                >
-                <!-- Beschriftet werden die Einträge in vault-panel.ts über die
+                <p class="vault__config">
+                  <label for="vault-timeout" data-i18n="vault.timeout.label"
+                    >Locks automatically after</label
+                  >
+                  <!-- Beschriftet werden die Einträge in vault-panel.ts über die
                      Mehrzahlregeln. Der Text hier ist der Platzhalter für den
                      ersten Anstrich, damit das Feld nicht nachträglich wächst.
 
                      Die Hülle trägt den eigenen Winkel: `appearance: none`
                      räumt den Systempfeil weg, und ein <select> kann kein
                      Pseudo-Element tragen. Siehe styles/panels.css. -->
-                <span class="pick-shell">
-                  <select id="vault-timeout" class="pick">
-                    <option value="60000">1 minute</option>
-                    <option value="300000" selected>5 minutes</option>
-                    <option value="900000">15 minutes</option>
-                  </select>
-                </span>
-                <label class="vault__check">
-                  <input type="checkbox" id="vault-hide-lock" checked />
-                  <span data-i18n="vault.lockOnHide">and when the tab is left</span>
-                </label>
-              </p>
+                  <span class="pick-shell">
+                    <select id="vault-timeout" class="pick">
+                      <option value="60000">1 minute</option>
+                      <option value="300000" selected>5 minutes</option>
+                      <option value="900000">15 minutes</option>
+                    </select>
+                  </span>
+                  <label class="vault__check">
+                    <input type="checkbox" id="vault-hide-lock" checked />
+                    <span data-i18n="vault.lockOnHide">and when the tab is left</span>
+                  </label>
+                </p>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
 
         <!-- ══ Zone: Codes ═════════════════════════════════════════════ -->
         <section class="zone" id="zone-codes" aria-labelledby="zone-codes-label">

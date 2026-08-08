@@ -4,6 +4,11 @@
 @import './styles/fonts.css';
 @import './styles/mark.css';
 @import './styles/panels.css';
+/* PROTOTYP, fliegt nach der V7-Variantenwahl wieder raus. Jede Regel darin ist
+   mit [data-shell] am Wurzelelement qualifiziert und greift deshalb nur, wenn
+   src/main.ts das Attribut gesetzt hat — ohne `?shell=` ist diese Zeile
+   wirkungslos. */
+@import './styles/v7-shells.css';
 
 /* =============================================================================
    Clockwork — Frontplatte

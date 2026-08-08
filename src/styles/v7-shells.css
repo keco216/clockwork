@@ -1,0 +1,328 @@
+/* =============================================================================
+   V7 — PROTOTYP: drei Grob-Varianten der Arbeitszustand-Shell
+
+   DIESE DATEI IST WEGWERFWARE. Sie existiert für genau eine Entscheidung:
+   Welche der drei Kompositionen wird ausgebaut? Danach wandert die gewählte in
+   style.css, die beiden anderen und diese Datei verschwinden — zusammen mit
+   scripts/shoot-shells.mjs und dem `?shell=`-Schalter in src/main.ts.
+
+   Deshalb steht hier ausdrücklich KEINE Politur: keine neue Typo-Skala, kein
+   Leerzustand, kein Filterfeld, keine Feinabstände. Wer eine Variante nach dem
+   Feinschliff beurteilt, beurteilt den Feinschliff.
+
+   ── Warum jede Regel mit [data-shell] anfängt ──────────────────────────────
+   Weil @import-Regeln IMMER vor den eigenen Regeln der importierenden Datei
+   stehen. Diese Datei wird von style.css importiert, ihre Regeln stehen also
+   VOR allem, was in style.css selbst steht — auch vor dem Zweispalter aus V6.
+   Bei gleicher Spezifität verlöre hier jede Zeile.
+
+   Der Attributselektor am Wurzelelement hebt die Spezifität um eine Klasse an
+   und macht die Reihenfolge damit gleichgültig. Dieselbe Lehre wie bei
+   `.key.key--danger` in panels.css — dort war eine Warnfarbe zwei Versionen
+   lang unsichtbar, weil sie sich auf die Reihenfolge verlassen hat.
+
+   Die drei Varianten:
+     a  Rail links   — eingestellt wird links, abgelesen rechts
+     b  Rail rechts  — die Codes stehen vorn, die Bedienung an der Seite
+     c  Werkzeugleiste — Bedienung als schmaler Riegel oben, Codes darunter
+   ========================================================================== */
+
+/* ── Gemeinsam: das Gehäuse wird echt ─────────────────────────────────────
+   Bis V6 war „Gehäuse" eine Redensart: Es gab Panels auf einem Untergrund,
+   aber kein Gerät. Auf 2560 px stand deshalb eine 1216-px-Spalte mitten im
+   Nichts.
+
+   Jetzt gibt es drei Tonebenen statt zwei, und jede hat eine Rolle:
+
+     --ground    die Werkbank    außerhalb des Geräts
+     --case      das Gehäuse     das Gerät selbst
+     --surface   die Panels      Papier bzw. Nacht, markenverbindlich
+
+   Papier und Nacht bleiben dort, wo das Markenhandbuch sie hinstellt: auf den
+   Flächen, die man bedient. Werkbank und Gehäuse sind abgeleitete Töne — so
+   wie --ink-2 und --ink-3 auch. */
+:root[data-shell] {
+  /* 100rem = 1600 px. Darüber hinaus wird aus einer Bühne ein Feld. */
+  --measure: 100rem;
+  /* Die Bedienseite. 23rem = 368 px, also in der Mitte des vorgegebenen
+     Fensters von 360–400 px. Fest, nicht fluid: Was man einstellt, soll seine
+     Größe behalten, wenn das Fenster wächst — die gewonnene Breite gehört den
+     Codes. */
+  --rail-w: 23rem;
+
+  --ground: #d6d1c6;
+  --case: #e4e0d7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-shell] {
+    --ground: #020202;
+    --case: #080807;
+  }
+}
+
+/* Die Werkbank bekommt das Korn, das bis V6 auf .device lag. Als fixierte
+   Fläche hinter allem: Sie ist die Tischplatte, und eine Tischplatte scrollt
+   nicht mit. */
+:root[data-shell] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--grain);
+  opacity: calc(var(--grain-opacity) * 0.6);
+  pointer-events: none;
+}
+
+/* Das Gerät. Alles, was es vom Untergrund trennt, auf einmal: eigener Ton,
+   Haarlinie, Lichtkante innen, weicher Schatten. */
+:root[data-shell] .device {
+  /* Ein Gerät, das den Fensterrand berührt, ist kein Gerät mehr, sondern eine
+     Seite. Zwischen 1024 und 1600 px reicht `max-width` allein deshalb nicht —
+     dort ist das Fenster schmaler als die Zielbreite, und ohne diese Klammer
+     liefe das Gehäuse randlos aus. */
+  max-inline-size: min(var(--measure), calc(100% - var(--sp-7)));
+  margin-block: var(--sp-6);
+  /* Kopf und Fuß bringen ihren eigenen Innenabstand mit — sie sollen die
+     Deckplatte und die Bodenplatte des Geräts sein, nicht Text darin. */
+  padding-block: 0;
+  background: var(--case);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-panel);
+  box-shadow:
+    var(--elev-2),
+    inset 0 1px 0 var(--edge-inner);
+}
+
+/* Das Korn liegt jetzt auf dem Gehäuse und folgt seiner Rundung. */
+:root[data-shell] .device::after {
+  border-radius: inherit;
+  opacity: var(--grain-opacity);
+}
+
+/* ── Kopf und Fuß laufen über die volle Gehäusebreite ─────────────────────
+   Der Kopf ist die Deckplatte, der Fuß die Bodenplatte. Beide ziehen sich um
+   den Innenabstand des Gehäuses heraus und runden nur nach außen mit. */
+:root[data-shell] .masthead {
+  border-radius: var(--radius-panel) var(--radius-panel) 0 0;
+  border-block-end: 1px solid var(--rule);
+  padding-block: var(--sp-4);
+}
+
+:root[data-shell] .colophon {
+  margin-inline: calc(var(--device-pad) * -1);
+  margin-block-start: var(--sp-6);
+  padding: var(--sp-4) var(--device-pad);
+  border-block-start: 1px solid var(--rule);
+  border-radius: 0 0 var(--radius-panel) var(--radius-panel);
+}
+
+/* Die Tick-Teilung aus V6 saß auf dem freien Abstand über dem Fuß. Jetzt gibt
+   es dort eine echte Kante — zwei Trenner übereinander wären einer zu viel. */
+:root[data-shell] .colophon::before {
+  display: none;
+}
+
+:root[data-shell] main {
+  padding-block: var(--sp-5);
+}
+
+/* ── Die Gravur-Spalte entfällt in der Shell ──────────────────────────────
+   Sie hat 6,5 rem gekostet und war auf einer Bühne von 1136 px zu verkraften.
+   In einer Rail von 368 px frisst sie ein Fünftel der Bedienfläche. Die
+   Beschriftung rückt deshalb über ihre Zone — dieselbe Umschaltung, die es
+   mobil seit V2 gibt. */
+:root[data-shell] .zone {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-2);
+  padding-block: 0;
+}
+
+:root[data-shell] .zone__label {
+  padding-top: 0;
+}
+
+/* Der Zweispalter aus V6 wird abgeräumt, nicht überschrieben: Seine Regeln
+   stehen in einer @media-Abfrage ab 80 rem und gälten sonst zusätzlich zu
+   allem hier.
+
+   `align-self` steht ausdrücklich mit in der Liste. V6 setzt es auf `start`,
+   damit das klebende Rasterelement überhaupt eine Höhe bekommt — ein
+   gestrecktes hat keine, an der `sticky` greifen könnte. `auto` gibt die
+   Entscheidung an die jeweilige Variante zurück, die sie über `align-items`
+   an ihrem `main` trifft.
+
+   Die Ausrichtung MUSS an beiden Stellen zurückgenommen werden, und das war
+   der Grund, warum zwei Anläufe wirkungslos blieben: `align-self: auto` allein
+   erbt weiter das `align-items: start` vom Elternteil, `align-items: stretch`
+   allein wird vom eigenen `align-self: start` geschlagen. Jede Hälfte für sich
+   sah aus wie „hat nichts geändert". */
+:root[data-shell] #zone-codes {
+  grid-column: auto;
+  grid-row: auto;
+  align-self: auto;
+  position: relative;
+  inset-block-start: auto;
+  max-block-size: none;
+  overflow: visible;
+}
+
+/* ── Die Codes-Bühne ──────────────────────────────────────────────────────
+   Ab einer Bühnenbreite von 68 rem (1088 px) stehen die Kanalzüge zweispaltig.
+   Gemessen wird die BÜHNE, nicht das Fenster: Wie viel Platz die Codes haben,
+   hängt in Variante c an etwas ganz anderem als in a und b, und eine
+   Fensterabfrage wüsste davon nichts.
+
+   Im fertigen Ausbau kommt die Bedingung „ab 8 Konten" dazu; für den Vergleich
+   der drei Kompositionen wäre sie nur eine Fehlerquelle. */
+:root[data-shell] #zone-codes .zone__body {
+  container-type: inline-size;
+}
+
+@container (min-width: 68rem) {
+  :root[data-shell] .strips {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+  }
+
+  /* Die Fuge trennt Zeilen, nicht Spalten: In zwei Spalten ist die oberste
+     Zeile zwei Kanäle breit. */
+  :root[data-shell] .strip:nth-child(-n + 2) {
+    padding-top: 0;
+  }
+
+  :root[data-shell] .strip:nth-child(-n + 2)::before {
+    display: none;
+  }
+
+  :root[data-shell] .strip:last-child {
+    padding-bottom: var(--sp-5);
+  }
+}
+
+/* ── Variante a: Rail links ───────────────────────────────────────────────
+   Links wird eingestellt, rechts abgelesen — die Arbeitsteilung eines
+   Messplatzes, und die Leserichtung gleich mit. */
+:root[data-shell='a'] main {
+  display: grid;
+  grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  gap: var(--sp-5);
+  align-items: start;
+}
+
+/* ── Variante b: Rail rechts ──────────────────────────────────────────────
+   Dieselbe Aufteilung, gespiegelt: Die Codes stehen vorn, die Bedienung tritt
+   an den Rand. Ausdrücklich über `grid-column` und nicht über `order` — `order`
+   verschiebt nur das Bild und lässt die Tabulatorreihenfolge stehen, und dann
+   springt der Fokus quer über den Schirm. */
+:root[data-shell='b'] main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--rail-w);
+  gap: var(--sp-5);
+  align-items: start;
+}
+
+:root[data-shell='b'] .rail {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+:root[data-shell='b'] #zone-codes {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+/* Die Rail klebt in beiden Seitenvarianten und scrollt eigenständig. */
+:root[data-shell='a'] .rail,
+:root[data-shell='b'] .rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  position: sticky;
+  inset-block-start: var(--scroll-anchor);
+  max-block-size: calc(100vh - var(--scroll-anchor) - var(--sp-6));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ── Variante c: Bedienung als Werkzeugleiste oben ────────────────────────
+   Die ganze Breite gehört den Codes. Die Bedienung wird zu einem Riegel:
+   Eingabe breit, Tresor daneben.
+
+   `align-items: stretch` ist hier Pflicht, nicht Ordnungsliebe: V6 setzt auf
+   demselben `main` ein `align-items: start`. In einem RASTER heißt das „oben
+   ausrichten". In einer Flex-SPALTE heißt dieselbe Zeile „nur so breit wie der
+   Inhalt" — die Bühne schrumpfte damit auf 50 px, und die Kanalzüge liefen
+   quer über eine leere Seite.
+
+   Eine Eigenschaft, zwei Layoutmodelle, zwei verschiedene Bedeutungen. Auf dem
+   Standbild sah das aus wie „irgendwas mit den Kanalzügen"; gefunden hat es
+   erst ein Blick in die gerechneten Breiten. */
+:root[data-shell='c'] main {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sp-5);
+}
+
+:root[data-shell='c'] .rail {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: var(--sp-5);
+  align-items: start;
+}
+
+/* Ein Riegel ist flach. Das mehrzeilige Feld gibt deshalb Höhe ab — es ist im
+   Arbeitszustand ohnehin selten das, was man ansieht. */
+:root[data-shell='c'] .slot__field {
+  min-height: 4.5rem;
+}
+
+/* ── Unter 1024 px verschwindet das Gehäuse ───────────────────────────────
+   Auf einem Schirm, der ohnehin nur eine Spalte trägt, ist ein gerahmtes Gerät
+   in einem Rahmen ein Rahmen zu viel. Die Seite bekommt dann den Gehäuseton
+   als Grund, und alles läuft wie bisher einspaltig. */
+@media (max-width: 64rem) {
+  :root[data-shell] body {
+    background: var(--case);
+  }
+
+  :root[data-shell] .device {
+    margin-block: 0;
+    padding-block: var(--sp-5) calc(var(--sp-8) + env(safe-area-inset-bottom));
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  :root[data-shell] .masthead {
+    border-radius: var(--radius-panel);
+    border-block-end: 0;
+  }
+
+  :root[data-shell] .colophon {
+    border-radius: 0;
+  }
+
+  /* `align-items: stretch` aus demselben Grund wie oben bei Variante c: Das
+     `start` aus dem V6-Zweispalter gilt hier weiter und ließe jede Zone auf
+     Inhaltsbreite schrumpfen. */
+  :root[data-shell='a'] main,
+  :root[data-shell='b'] main,
+  :root[data-shell='c'] main,
+  :root[data-shell='c'] .rail {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-5);
+  }
+
+  :root[data-shell='a'] .rail,
+  :root[data-shell='b'] .rail {
+    position: static;
+    max-block-size: none;
+    overflow: visible;
+  }
+}
