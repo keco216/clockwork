@@ -1,5 +1,5 @@
 # Clockwork — TOTP authenticator. Everything here is public and static.
+# No sitemap: this is a single page, and pointing at a file that does not
+# exist is worse than pointing at nothing.
 User-agent: *
 Allow: /
-
-Sitemap: https://clockwork.vercel.app/sitemap.xml

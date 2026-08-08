@@ -931,7 +931,7 @@ dass sich in `vercel.json` nichts dergleichen einschleicht.
 Nachmessen lässt sich das am laufenden Deploy:
 
 ```bash
-curl -sI https://clockwork.vercel.app | grep -i "content-security-policy\|strict-transport"
+curl -sI https://clockwork-sage.vercel.app | grep -i "content-security-policy\|strict-transport"
 ```
 
 ### Wie ein Update bei einer installierten PWA ankommt

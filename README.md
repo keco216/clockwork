@@ -8,7 +8,7 @@ OTP library, no network requests, and nothing stored unless you ask for it.
 [![License: MIT](https://img.shields.io/badge/License-MIT-F05A28.svg)](LICENSE)
 [![No dependencies at runtime](https://img.shields.io/badge/runtime%20deps-1-F05A28.svg)](package.json)
 
-**[Open the app](https://clockwork.vercel.app)** ·
+**[Open the app](https://clockwork-sage.vercel.app)** ·
 [Download as a single file](https://github.com/keco216/clockwork/releases/latest/download/clockwork.html) ·
 [Deutsche Fassung](docs/README.de.md)
 
@@ -70,7 +70,7 @@ done
 
 ## Quick start
 
-Use it: **[clockwork.vercel.app](https://clockwork.vercel.app)**, or download
+Use it: **[clockwork-sage.vercel.app](https://clockwork-sage.vercel.app)**, or download
 `clockwork.html` from the
 [latest release](https://github.com/keco216/clockwork/releases/latest) and open
 it locally. No server, no connection, no install.
