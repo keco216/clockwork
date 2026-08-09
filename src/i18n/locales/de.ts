@@ -39,6 +39,7 @@ export default {
   'input.help.images': 'QR-Bilder lassen sich auch hierher ziehen oder mit {paste} einfügen.',
   'input.help.migration':
     'Google-Authenticator-Exporte ({migration}) werden automatisch umgewandelt.',
+  'input.help.more': 'Alle Eingabeformate',
   'shortcut.modifier': 'Strg',
 
   'input.count.accounts': { one: '{n} Konto', other: '{n} Konten' },
@@ -54,6 +55,10 @@ export default {
   'key.copyFailed': 'Fehlgeschlagen',
 
   'viewfinder.hint': 'QR-Code in den Rahmen halten',
+
+  'filter.label': 'Konten filtern',
+  'filter.placeholder': 'Nach Name filtern',
+  'filter.empty': 'Nichts passt zu „{query}“.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} Stelle', other: '{n} Stellen' },
@@ -73,9 +78,14 @@ export default {
   'vault.state.locked': 'Gesperrt — Passphrase nötig',
   'vault.state.open': 'Offen — Secrets liegen im Textfeld',
   'vault.explain':
-    'Standardmäßig speichert Clockwork nichts. Wer möchte, kann die Eingabe hier mit einer ' +
-    'Passphrase verschlüsselt ablegen: PBKDF2-SHA-256 mit {iterations} Iterationen, danach ' +
-    'AES-256-GCM. Ohne die Passphrase ist der gespeicherte Block wertlos.',
+    'Standardmäßig speichert Clockwork nichts. Wer den Tresor einschaltet, lässt die ' +
+    'Eingabe hier mit seiner Passphrase verschlüsselt liegen — ohne sie ist der ' +
+    'gespeicherte Block wertlos.',
+  'vault.explain.crypto':
+    'Den Schlüssel leitet PBKDF2-SHA-256 mit {iterations} Iterationen aus der Passphrase ' +
+    'ab, verschlüsselt wird mit AES-256-GCM. Gespeichert wird nur der versiegelte ' +
+    'Umschlag: nie der Klartext, nie die Passphrase, nie der abgeleitete Schlüssel.',
+  'vault.explain.more': 'Alle Details',
   'vault.pass.new': 'Neue Passphrase',
   'vault.pass.existing': 'Passphrase',
   'vault.action.seal': 'Verschlüsselt speichern',
@@ -131,7 +141,8 @@ export default {
   'import.unnamed': 'Unbenannt',
   'import.unreadable': 'Export unlesbar.',
 
-  'vacant.text': 'Noch keine Eingabe. Setze oben ein Secret ein.',
+  'vacant.text': 'Secret, otpauth-Link oder QR-Bild — nichts davon verlässt diesen Browser.',
+  'vacant.demo': 'Testschlüssel einfügen',
   'colophon.note': 'Kein Netzwerk · kein Speicher · HMAC über die Web Crypto API',
 
   'lang.label': 'Sprache',

@@ -35,6 +35,7 @@ export default {
   'input.help.images': 'Imaginile cu cod QR pot fi trase aici sau lipite cu {paste}.',
   'input.help.migration':
     'Exporturile din Google Authenticator ({migration}) sunt convertite automat.',
+  'input.help.more': 'Toate formatele acceptate',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} cont', few: '{n} conturi', other: '{n} de conturi' },
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': 'A eșuat',
 
   'viewfinder.hint': 'Țineți codul QR în cadru',
+
+  'filter.label': 'Filtrează conturile',
+  'filter.placeholder': 'Filtrează după nume',
+  'filter.empty': 'Nimic nu corespunde cu „{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} cifră', few: '{n} cifre', other: '{n} de cifre' },
@@ -69,9 +74,13 @@ export default {
   'vault.state.locked': 'Încuiat — este nevoie de fraza de acces',
   'vault.state.open': 'Deschis — secretele sunt în câmpul de text',
   'vault.explain':
-    'În mod implicit Clockwork nu salvează nimic. Cine dorește poate lăsa intrarea aici ' +
-    'criptată cu o frază de acces: PBKDF2-SHA-256 cu {iterations} iterații, apoi ' +
-    'AES-256-GCM. Fără fraza de acces, blocul salvat nu valorează nimic.',
+    'În mod implicit Clockwork nu păstrează nimic. Dacă porniți seiful, ce ați introdus ' +
+    'rămâne aici criptat cu fraza de acces — fără ea blocul păstrat nu valorează nimic.',
+  'vault.explain.crypto':
+    'Cheia este derivată din fraza de acces prin PBKDF2-SHA-256 cu {iterations} iterații, ' +
+    'iar AES-256-GCM face criptarea. Se păstrează doar plicul sigilat: niciodată textul ' +
+    'în clar, niciodată fraza de acces, niciodată cheia derivată.',
+  'vault.explain.more': 'Toate detaliile',
   'vault.pass.new': 'Frază de acces nouă',
   'vault.pass.existing': 'Frază de acces',
   'vault.action.seal': 'Salvează criptat',
@@ -130,7 +139,9 @@ export default {
   'import.unnamed': 'Fără nume',
   'import.unreadable': 'Export ilizibil.',
 
-  'vacant.text': 'Încă nimic introdus. Puneți deasupra un secret.',
+  'vacant.text':
+    'Secret, link otpauth sau imagine QR — nimic din toate acestea nu părăsește acest browser.',
+  'vacant.demo': 'Inserează cheia de test',
   'colophon.note': 'Fără rețea · fără stocare · HMAC prin Web Crypto API',
 
   'lang.label': 'Limbă',

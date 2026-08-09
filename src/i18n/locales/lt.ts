@@ -34,6 +34,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} arba {uri} — sumaišyti. {hash} pradeda pastabą.',
   'input.help.images': 'QR paveikslus taip pat galima atitempti čia arba įklijuoti su {paste}.',
   'input.help.migration': '„Google Authenticator“ eksportai ({migration}) pertvarkomi savaime.',
+  'input.help.more': 'Visi įvesties formatai',
   'shortcut.modifier': 'Vald',
 
   'input.count.accounts': {
@@ -60,6 +61,10 @@ export default {
 
   'viewfinder.hint': 'Laikykite QR kodą rėmelyje',
 
+  'filter.label': 'Filtruoti paskyras',
+  'filter.placeholder': 'Filtruoti pagal pavadinimą',
+  'filter.empty': 'Niekas neatitinka „{query}“.',
+
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
     one: '{n} skaitmuo',
@@ -83,9 +88,13 @@ export default {
   'vault.state.locked': 'Užrakintas — reikia slaptafrazės',
   'vault.state.open': 'Atrakintas — secret yra teksto lauke',
   'vault.explain':
-    'Numatytai Clockwork neįrašo nieko. Kas nori, gali palikti įvestį čia užšifruotą ' +
-    'slaptafraze: PBKDF2-SHA-256 su {iterations} iteracijų, paskui AES-256-GCM. Be ' +
-    'slaptafrazės įrašytas blokas nieko nevertas.',
+    'Pagal nutylėjimą Clockwork nieko nesaugo. Įjungus seifą, įvestis lieka čia ' +
+    'užšifruota tavo slaptafraze — be jos išsaugotas blokas nieko nevertas.',
+  'vault.explain.crypto':
+    'Raktas iš slaptafrazės išvedamas PBKDF2-SHA-256 su {iterations} iteracijų, o ' +
+    'šifruoja AES-256-GCM. Saugomas tik užklijuotas vokas: niekada atviras tekstas, ' +
+    'niekada slaptafrazė, niekada išvestas raktas.',
+  'vault.explain.more': 'Visa informacija',
   'vault.pass.new': 'Nauja slaptafrazė',
   'vault.pass.existing': 'Slaptafrazė',
   'vault.action.seal': 'Įrašyti užšifruotą',
@@ -150,7 +159,9 @@ export default {
   'import.unnamed': 'Be pavadinimo',
   'import.unreadable': 'Eksportas neįskaitomas.',
 
-  'vacant.text': 'Kol kas nieko neįvesta. Įdėkite viršuje secret.',
+  'vacant.text':
+    'Slaptas raktas, otpauth nuoroda ar QR paveikslėlis — niekas iš to neišeina iš šios naršyklės.',
+  'vacant.demo': 'Įterpti bandomąjį raktą',
   'colophon.note': 'Jokio tinklo · jokios saugyklos · HMAC per Web Crypto API',
 
   'lang.label': 'Kalba',

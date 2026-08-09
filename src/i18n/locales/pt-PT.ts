@@ -36,6 +36,7 @@ export default {
     'As imagens com código QR também podem ser arrastadas para aqui ou coladas com {paste}.',
   'input.help.migration':
     'As exportações do Google Authenticator ({migration}) são convertidas automaticamente.',
+  'input.help.more': 'Todos os formatos de entrada',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} conta', many: '{n} contas', other: '{n} contas' },
@@ -51,6 +52,10 @@ export default {
   'key.copyFailed': 'Falhou',
 
   'viewfinder.hint': 'Mantenha o código QR dentro da moldura',
+
+  'filter.label': 'Filtrar contas',
+  'filter.placeholder': 'Filtrar por nome',
+  'filter.empty': 'Nada corresponde a «{query}».',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} dígito', many: '{n} dígitos', other: '{n} dígitos' },
@@ -70,9 +75,13 @@ export default {
   'vault.state.locked': 'Trancado — é precisa a frase-passe',
   'vault.state.open': 'Aberto — os secrets estão no campo de texto',
   'vault.explain':
-    'Por predefinição o Clockwork não guarda nada. Se quiser, a entrada pode ficar aqui ' +
-    'cifrada com uma frase-passe: PBKDF2-SHA-256 com {iterations} iterações e depois ' +
-    'AES-256-GCM. Sem a frase-passe, o bloco guardado não vale nada.',
+    'Por omissão o Clockwork não guarda nada. Se ligar o cofre, o que introduziu fica ' +
+    'aqui cifrado com a sua frase-passe: sem ela o bloco guardado não vale nada.',
+  'vault.explain.crypto':
+    'A chave é derivada da frase-passe por PBKDF2-SHA-256 com {iterations} iterações, e o ' +
+    'AES-256-GCM faz a cifra. Guarda-se apenas o envelope selado: nunca o texto em claro, ' +
+    'nunca a frase-passe, nunca a chave derivada.',
+  'vault.explain.more': 'Todos os detalhes',
   'vault.pass.new': 'Nova frase-passe',
   'vault.pass.existing': 'Frase-passe',
   'vault.action.seal': 'Guardar cifrado',
@@ -134,7 +143,8 @@ export default {
   'import.unnamed': 'Sem nome',
   'import.unreadable': 'Exportação ilegível.',
 
-  'vacant.text': 'Ainda não há nada. Ponha um secret acima.',
+  'vacant.text': 'Secret, ligação otpauth ou imagem QR — nada disso sai deste navegador.',
+  'vacant.demo': 'Inserir chave de teste',
   'colophon.note': 'Sem rede · sem armazenamento · HMAC através da Web Crypto API',
 
   'lang.label': 'Idioma',

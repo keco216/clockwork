@@ -36,6 +36,7 @@ export default {
   'input.help.images': 'Obrazy z kodem QR można też tu przeciągnąć albo wkleić przez {paste}.',
   'input.help.migration':
     'Eksporty z Google Authenticatora ({migration}) są przekształcane automatycznie.',
+  'input.help.more': 'Wszystkie formaty wejściowe',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': {
@@ -62,6 +63,10 @@ export default {
 
   'viewfinder.hint': 'Trzymaj kod QR w ramce',
 
+  'filter.label': 'Filtruj konta',
+  'filter.placeholder': 'Filtruj według nazwy',
+  'filter.empty': 'Nic nie pasuje do „{query}”.',
+
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
     one: '{n} cyfra',
@@ -85,9 +90,13 @@ export default {
   'vault.state.locked': 'Zamknięty — potrzebne hasło',
   'vault.state.open': 'Otwarty — secrety są w polu tekstowym',
   'vault.explain':
-    'Domyślnie Clockwork nie zapisuje niczego. Kto chce, może przechować tu wpisy ' +
-    'zaszyfrowane hasłem: PBKDF2-SHA-256 z {iterations} iteracjami, potem AES-256-GCM. Bez ' +
-    'hasła zapisany blok jest bezwartościowy.',
+    'Domyślnie Clockwork nie zapisuje niczego. Po włączeniu sejfu wpisane dane zostają ' +
+    'tutaj zaszyfrowane hasłem — bez niego zapisany blok jest bezwartościowy.',
+  'vault.explain.crypto':
+    'Klucz powstaje z hasła przez PBKDF2-SHA-256 z {iterations} iteracjami, a szyfruje ' +
+    'AES-256-GCM. Zapisywana jest tylko zamknięta koperta: nigdy jawny tekst, nigdy ' +
+    'hasło, nigdy wyprowadzony klucz.',
+  'vault.explain.more': 'Wszystkie szczegóły',
   'vault.pass.new': 'Nowe hasło',
   'vault.pass.existing': 'Hasło',
   'vault.action.seal': 'Zapisz zaszyfrowane',
@@ -153,7 +162,8 @@ export default {
   'import.unnamed': 'Bez nazwy',
   'import.unreadable': 'Eksport nieczytelny.',
 
-  'vacant.text': 'Jeszcze nic nie wpisano. Wstaw powyżej secret.',
+  'vacant.text': 'Secret, link otpauth albo obraz QR — nic z tego nie opuszcza tej przeglądarki.',
+  'vacant.demo': 'Wstaw klucz testowy',
   'colophon.note': 'Bez sieci · bez zapisu · HMAC przez Web Crypto API',
 
   'lang.label': 'Język',

@@ -33,6 +33,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} või {uri} — segamini. {hash} alustab märkust.',
   'input.help.images': 'QR-pilte saab ka siia lohistada või kleepida klahvidega {paste}.',
   'input.help.migration': 'Google Authenticatori eksportfailid ({migration}) teisendatakse ise.',
+  'input.help.more': 'Kõik sisendvormingud',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} konto', other: '{n} kontot' },
@@ -48,6 +49,10 @@ export default {
   'key.copyFailed': 'Ebaõnnestus',
 
   'viewfinder.hint': 'Hoia QR-kood raami sees',
+
+  'filter.label': 'Filtreeri kontosid',
+  'filter.placeholder': 'Filtreeri nime järgi',
+  'filter.empty': 'Miski ei vasta otsingule „{query}“.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} number', other: '{n} numbrit' },
@@ -67,9 +72,13 @@ export default {
   'vault.state.locked': 'Lukus — vaja on paroolifraasi',
   'vault.state.open': 'Avatud — secretid on tekstiväljal',
   'vault.explain':
-    'Vaikimisi ei salvesta Clockwork midagi. Kes soovib, võib sisendi siia jätta ' +
-    'paroolifraasiga krüptituna: PBKDF2-SHA-256 {iterations} kordusega, seejärel ' +
-    'AES-256-GCM. Ilma paroolifraasita on salvestatud plokk väärtusetu.',
+    'Vaikimisi ei salvesta Clockwork midagi. Kui lülitad seifi sisse, jääb sisestatu siia ' +
+    'sinu paroolifraasiga krüpteerituna — ilma selleta on salvestatud plokk väärtusetu.',
+  'vault.explain.crypto':
+    'Võti tuletatakse paroolifraasist PBKDF2-SHA-256-ga ja {iterations} iteratsiooniga, ' +
+    'krüpteerib AES-256-GCM. Salvestatakse ainult pitseeritud ümbrik: mitte kunagi avatud ' +
+    'tekst, mitte paroolifraas, mitte tuletatud võti.',
+  'vault.explain.more': 'Kõik üksikasjad',
   'vault.pass.new': 'Uus paroolifraas',
   'vault.pass.existing': 'Paroolifraas',
   'vault.action.seal': 'Salvesta krüptitult',
@@ -125,7 +134,9 @@ export default {
   'import.unnamed': 'Nimeta',
   'import.unreadable': 'Eksportfail ei ole loetav.',
 
-  'vacant.text': 'Sisendit veel pole. Pane ülal secret.',
+  'vacant.text':
+    'Salajane võti, otpauth-link või QR-pilt — miski neist ei lahku sellest brauserist.',
+  'vacant.demo': 'Lisa testvõti',
   'colophon.note': 'Ei mingit võrku · ei mingit salvestust · HMAC Web Crypto API kaudu',
 
   'lang.label': 'Keel',

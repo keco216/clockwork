@@ -5,6 +5,7 @@ import { defineConfig, type Plugin } from 'vitest/config';
 // den vollständigen Pfad. Ohne die Endung warnt Vite schon heute.
 import { contentSecurityPolicy } from './scripts/csp.ts';
 import { ENV_KEY, requestedLocales, subsetLocalePlugin } from './scripts/locale-subset.ts';
+import { SITE_URL } from './scripts/site.ts';
 
 /**
  * Der Single-File-Build wird von scripts/build.mjs über diese Umgebungsvariable
@@ -20,6 +21,33 @@ const SINGLE_FILE = process.env['BUILD_SINGLEFILE'] === '1';
  * Build-Ziele.
  */
 const LOCALE_SELECTION = requestedLocales(process.env[ENV_KEY]);
+
+/**
+ * Setzt die Adresse der Seite in die Platzhalter von `index.html` ein.
+ *
+ * In der Quelldatei steht `%SITE_URL%`, im Ergebnis die Adresse aus
+ * `scripts/site.ts`. Das betrifft vier Angaben: `canonical`, `og:url` und die
+ * beiden Vorschaubilder.
+ *
+ * ── Warum das nicht einfach hartcodiert bleibt ─────────────────────────────
+ * Weil es das schon war, und weil genau das schiefging: V4 sollte die Adresse
+ * zentral halten, tat es nicht, und als der Wunschname beim Import vergeben war,
+ * mussten sechs Stellen von Hand nachgezogen werden. Vier davon stehen hier.
+ *
+ * `enforce: 'pre'` ist hier NICHT nötig — anders als beim Sprach-Subset wird
+ * kein Quelltext gelesen, sondern nur das fertige HTML ersetzt. Und bewusst
+ * ohne `apply: 'build'`: Im Dev-Server soll dieselbe Adresse dastehen, sonst
+ * sähe man den Platzhalter im Seitenquelltext und fragte sich, ob er im
+ * Ergebnis auch dort steht.
+ */
+function injectSiteUrl(): Plugin {
+  return {
+    name: 'clockwork:site-url',
+    transformIndexHtml(html) {
+      return html.replaceAll('%SITE_URL%', SITE_URL);
+    },
+  };
+}
 
 /**
  * Hängt die CSP nur in den *Build* ein. Im Dev-Server bliebe sonst der
@@ -98,6 +126,7 @@ export default defineConfig({
   // Relative Pfade, damit `dist/index.html` auch direkt per file:// funktioniert.
   base: './',
   plugins: [
+    injectSiteUrl(),
     injectContentSecurityPolicy(SINGLE_FILE),
     preloadLatinFonts(SINGLE_FILE),
     subsetLocalePlugin(LOCALE_SELECTION),

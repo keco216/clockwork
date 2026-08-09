@@ -34,6 +34,7 @@ export default {
   'input.help.formats': 'Base32, ‏{nameSecret} או {uri} — מעורבבים. {hash} פותח הערה.',
   'input.help.images': 'אפשר גם לגרור לכאן תמונות של קוד QR או להדביק עם {paste}.',
   'input.help.migration': 'ייצוא מ‑Google Authenticator ‏({migration}) מומר מאליו.',
+  'input.help.more': 'כל תבניות הקלט',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': {
@@ -60,6 +61,10 @@ export default {
 
   'viewfinder.hint': 'החזיקו את קוד ה‑QR בתוך המסגרת',
 
+  'filter.label': 'סינון חשבונות',
+  'filter.placeholder': 'סינון לפי שם',
+  'filter.empty': 'אין התאמה ל־"{query}".',
+
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
     one: '{n} ספרה',
@@ -83,9 +88,13 @@ export default {
   'vault.state.locked': 'נעולה — נדרש משפט־סיסמה',
   'vault.state.open': 'פתוחה — הסודות נמצאים בשדה הטקסט',
   'vault.explain':
-    'כברירת מחדל Clockwork אינו שומר דבר. מי שרוצה יכול להשאיר את הקלט כאן מוצפן במשפט־' +
-    'סיסמה: ‏PBKDF2-SHA-256 עם {iterations} חזרות, ואחריו AES-256-GCM. בלי משפט־הסיסמה ' +
-    'הבלוק השמור חסר ערך.',
+    'כברירת מחדל Clockwork אינו שומר דבר. אם תפעיל את הכספת, הקלט יישאר כאן מוצפן ' +
+    'במשפט־הסיסמה שלך — בלעדיו הבלוק השמור חסר ערך.',
+  'vault.explain.crypto':
+    'המפתח נגזר ממשפט־הסיסמה באמצעות ‏PBKDF2-SHA-256 עם {iterations} חזרות, וההצפנה היא ' +
+    '‏AES-256-GCM. נשמרת רק המעטפה החתומה: לא הטקסט הגלוי, לא משפט־הסיסמה ולא המפתח ' +
+    'הנגזר.',
+  'vault.explain.more': 'כל הפרטים',
   'vault.pass.new': 'משפט־סיסמה חדש',
   'vault.pass.existing': 'משפט־סיסמה',
   'vault.action.seal': 'שמירה מוצפנת',
@@ -149,7 +158,8 @@ export default {
   'import.unnamed': 'ללא שם',
   'import.unreadable': 'הייצוא אינו קריא.',
 
-  'vacant.text': 'עוד לא הוזן דבר. הכניסו למעלה סוד.',
+  'vacant.text': 'סוד, קישור otpauth או תמונת QR — דבר מאלה אינו עוזב את הדפדפן הזה.',
+  'vacant.demo': 'הוספת מפתח בדיקה',
   'colophon.note': 'בלי רשת · בלי אחסון · HMAC דרך Web Crypto API',
 
   'lang.label': 'שפה',

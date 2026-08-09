@@ -32,6 +32,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} ili {uri} — izmiješano. {hash} započinje bilješku.',
   'input.help.images': 'Slike s QR kodom mogu se dovući ovamo ili zalijepiti pomoću {paste}.',
   'input.help.migration': 'Izvozi iz Google Authenticatora ({migration}) pretvaraju se automatski.',
+  'input.help.more': 'Svi ulazni formati',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} račun', few: '{n} računa', other: '{n} računa' },
@@ -47,6 +48,10 @@ export default {
   'key.copyFailed': 'Nije uspjelo',
 
   'viewfinder.hint': 'Držite QR kod u okviru',
+
+  'filter.label': 'Filtriraj račune',
+  'filter.placeholder': 'Filtriraj po nazivu',
+  'filter.empty': 'Ništa ne odgovara „{query}“.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} znamenka', few: '{n} znamenke', other: '{n} znamenki' },
@@ -66,9 +71,13 @@ export default {
   'vault.state.locked': 'Zaključan — potrebna je zaporka',
   'vault.state.open': 'Otvoren — secreti su u tekstnom polju',
   'vault.explain':
-    'Clockwork prema zadanome ne sprema ništa. Tko želi, može unos ostaviti ovdje šifriran ' +
-    'zaporkom: PBKDF2-SHA-256 s {iterations} ponavljanja, zatim AES-256-GCM. Bez zaporke ' +
-    'spremljeni blok ne vrijedi ništa.',
+    'Clockwork zadano ne pohranjuje ništa. Uključite li sef, unos ostaje ovdje šifriran ' +
+    'vašom zaporkom — bez nje je pohranjeni blok bezvrijedan.',
+  'vault.explain.crypto':
+    'Ključ se izvodi iz zaporke pomoću PBKDF2-SHA-256 s {iterations} iteracija, a šifrira ' +
+    'AES-256-GCM. Pohranjuje se samo zapečaćena omotnica: nikad otvoreni tekst, nikad ' +
+    'zaporka, nikad izvedeni ključ.',
+  'vault.explain.more': 'Svi detalji',
   'vault.pass.new': 'Nova zaporka',
   'vault.pass.existing': 'Zaporka',
   'vault.action.seal': 'Spremi šifrirano',
@@ -126,7 +135,9 @@ export default {
   'import.unnamed': 'Bez naziva',
   'import.unreadable': 'Izvoz nečitljiv.',
 
-  'vacant.text': 'Još nema unosa. Gore umetnite secret.',
+  'vacant.text':
+    'Secret, poveznica otpauth ili QR slika — ništa od toga ne napušta ovaj preglednik.',
+  'vacant.demo': 'Umetni testni ključ',
   'colophon.note': 'Bez mreže · bez pohrane · HMAC preko Web Crypto API',
 
   'lang.label': 'Jezik',

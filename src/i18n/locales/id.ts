@@ -35,6 +35,7 @@ export default {
   'input.help.images': 'Gambar QR juga bisa diseret ke sini atau ditempel dengan {paste}.',
   'input.help.migration':
     'Ekspor dari Google Authenticator ({migration}) diubah dengan sendirinya.',
+  'input.help.more': 'Semua format masukan',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { other: '{n} akun' },
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': 'Gagal',
 
   'viewfinder.hint': 'Tahan kode QR di dalam bingkai',
+
+  'filter.label': 'Saring akun',
+  'filter.placeholder': 'Saring menurut nama',
+  'filter.empty': 'Tidak ada yang cocok dengan “{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { other: '{n} digit' },
@@ -69,9 +74,14 @@ export default {
   'vault.state.locked': 'Terkunci — perlu frasa sandi',
   'vault.state.open': 'Terbuka — secret ada di bidang teks',
   'vault.explain':
-    'Secara bawaan Clockwork tidak menyimpan apa pun. Kalau mau, masukan bisa ditinggal di ' +
-    'sini dalam keadaan terenkripsi dengan frasa sandi: PBKDF2-SHA-256 dengan {iterations} ' +
-    'iterasi, lalu AES-256-GCM. Tanpa frasa sandi, blok yang tersimpan tidak ada gunanya.',
+    'Secara bawaan Clockwork tidak menyimpan apa pun. Jika lemari besi dinyalakan, ' +
+    'masukan tetap di sini terenkripsi dengan frasa sandi Anda — tanpa itu blok yang ' +
+    'tersimpan tidak berguna.',
+  'vault.explain.crypto':
+    'Kunci diturunkan dari frasa sandi lewat PBKDF2-SHA-256 dengan {iterations} iterasi, ' +
+    'dan AES-256-GCM yang mengenkripsi. Hanya amplop tersegel yang disimpan: tidak pernah ' +
+    'teks terbuka, tidak pernah frasa sandi, tidak pernah kunci turunan.',
+  'vault.explain.more': 'Semua detail',
   'vault.pass.new': 'Frasa sandi baru',
   'vault.pass.existing': 'Frasa sandi',
   'vault.action.seal': 'Simpan terenkripsi',
@@ -121,7 +131,9 @@ export default {
   'import.unnamed': 'Tanpa nama',
   'import.unreadable': 'Ekspor tidak terbaca.',
 
-  'vacant.text': 'Belum ada masukan. Taruh sebuah secret di atas.',
+  'vacant.text':
+    'Secret, tautan otpauth, atau gambar QR — tidak ada yang meninggalkan peramban ini.',
+  'vacant.demo': 'Sisipkan kunci uji',
   'colophon.note': 'Tanpa jaringan · tanpa penyimpanan · HMAC lewat Web Crypto API',
 
   'lang.label': 'Bahasa',

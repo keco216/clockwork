@@ -36,6 +36,7 @@ export default {
   'input.help.formats': 'Base32 أو {nameSecret} أو {uri} — مختلطة. و{hash} تبدأ ملاحظة.',
   'input.help.images': 'يمكن أيضًا سحب صور رمز QR إلى هنا أو لصقها بـ {paste}.',
   'input.help.migration': 'تُحوَّل صادرات Google Authenticator ({migration}) تلقائيًا.',
+  'input.help.more': 'كل صيغ الإدخال',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': {
@@ -66,6 +67,10 @@ export default {
 
   'viewfinder.hint': 'أبقِ رمز QR داخل الإطار',
 
+  'filter.label': 'تصفية الحسابات',
+  'filter.placeholder': 'تصفية بالاسم',
+  'filter.empty': 'لا يوجد ما يطابق «{query}».',
+
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
     zero: '{n} خانة',
@@ -91,9 +96,13 @@ export default {
   'vault.state.locked': 'مقفلة — عبارة المرور مطلوبة',
   'vault.state.open': 'مفتوحة — الأسرار في حقل النص',
   'vault.explain':
-    'لا يحفظ Clockwork شيئًا بشكل افتراضي. ومن أراد، فبإمكانه ترك المُدخَل هنا مُعمّى بعبارة ' +
-    'مرور: PBKDF2-SHA-256 بـ {iterations} تكرار، ثم AES-256-GCM. وبغير عبارة المرور لا قيمة ' +
-    'للكتلة المحفوظة.',
+    'لا يحفظ Clockwork شيئًا بشكل افتراضي. وإن شغّلت الخزنة بقي المُدخَل هنا مُعمّى ' +
+    'بعبارة مرورك، وبغيرها لا قيمة للكتلة المحفوظة.',
+  'vault.explain.crypto':
+    'يُشتَق المفتاح من عبارة المرور بـ PBKDF2-SHA-256 عبر {iterations} تكرار، ويتولّى ' +
+    'AES-256-GCM التعمية. ولا يُحفَظ سوى المُغلَّف المختوم: لا النص الصريح، ولا عبارة ' +
+    'المرور، ولا المفتاح المُشتَق.',
+  'vault.explain.more': 'كل التفاصيل',
   'vault.pass.new': 'عبارة مرور جديدة',
   'vault.pass.existing': 'عبارة المرور',
   'vault.action.seal': 'احفظ مُعمّى',
@@ -163,7 +172,8 @@ export default {
   'import.unnamed': 'بلا اسم',
   'import.unreadable': 'الصادرات غير مقروءة.',
 
-  'vacant.text': 'لا إدخال بعد. ضع سرًّا في الأعلى.',
+  'vacant.text': 'سر أو رابط otpauth أو صورة QR — لا شيء من ذلك يغادر هذا المتصفح.',
+  'vacant.demo': 'إدراج مفتاح تجريبي',
   'colophon.note': 'لا شبكة · لا تخزين · HMAC عبر Web Crypto API',
 
   'lang.label': 'اللغة',

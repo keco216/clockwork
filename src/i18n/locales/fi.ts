@@ -34,6 +34,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} tai {uri} — sekaisin. {hash} aloittaa muistiinpanon.',
   'input.help.images': 'QR-kuvia voi myös raahata tähän tai liittää näppäimillä {paste}.',
   'input.help.migration': 'Google Authenticatorin viennit ({migration}) muunnetaan itsestään.',
+  'input.help.more': 'Kaikki syötemuodot',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} tili', other: '{n} tiliä' },
@@ -49,6 +50,10 @@ export default {
   'key.copyFailed': 'Epäonnistui',
 
   'viewfinder.hint': 'Pidä QR-koodi kehyksen sisällä',
+
+  'filter.label': 'Suodata tilejä',
+  'filter.placeholder': 'Suodata nimen mukaan',
+  'filter.empty': 'Mikään ei vastaa hakua ”{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} numero', other: '{n} numeroa' },
@@ -68,9 +73,13 @@ export default {
   'vault.state.locked': 'Lukossa — salauslause tarvitaan',
   'vault.state.open': 'Auki — secretit ovat tekstikentässä',
   'vault.explain':
-    'Oletuksena Clockwork ei tallenna mitään. Halutessaan syötteen voi jättää tähän ' +
-    'salattuna salauslauseella: PBKDF2-SHA-256 ja {iterations} kierrosta, sitten ' +
-    'AES-256-GCM. Ilman salauslausetta tallennettu lohko on arvoton.',
+    'Oletuksena Clockwork ei tallenna mitään. Jos otat kassakaapin käyttöön, syöte jää ' +
+    'tänne salauslauseellasi salattuna — ilman sitä tallennettu lohko on arvoton.',
+  'vault.explain.crypto':
+    'Avain johdetaan salauslauseesta PBKDF2-SHA-256:lla ja {iterations} kierroksella, ja ' +
+    'salauksen tekee AES-256-GCM. Vain sinetöity kirjekuori tallennetaan: ei koskaan ' +
+    'selkokielistä tekstiä, ei salauslausetta, ei johdettua avainta.',
+  'vault.explain.more': 'Kaikki yksityiskohdat',
   'vault.pass.new': 'Uusi salauslause',
   'vault.pass.existing': 'Salauslause',
   'vault.action.seal': 'Tallenna salattuna',
@@ -126,7 +135,8 @@ export default {
   'import.unnamed': 'Nimetön',
   'import.unreadable': 'Vientiä ei voi lukea.',
 
-  'vacant.text': 'Ei vielä syötettä. Aseta ylle secret.',
+  'vacant.text': 'Secret, otpauth-linkki tai QR-kuva — mikään niistä ei poistu tästä selaimesta.',
+  'vacant.demo': 'Lisää testiavain',
   'colophon.note': 'Ei verkkoa · ei tallennusta · HMAC Web Crypto API:n kautta',
 
   'lang.label': 'Kieli',

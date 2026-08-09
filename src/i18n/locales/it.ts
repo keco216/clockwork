@@ -36,6 +36,7 @@ export default {
     'Le immagini con codice QR si possono anche trascinare qui o incollare con {paste}.',
   'input.help.migration':
     'Le esportazioni di Google Authenticator ({migration}) vengono convertite in automatico.',
+  'input.help.more': 'Tutti i formati di input',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} account', many: '{n} account', other: '{n} account' },
@@ -51,6 +52,10 @@ export default {
   'key.copyFailed': 'Non riuscito',
 
   'viewfinder.hint': 'Tieni il codice QR dentro la cornice',
+
+  'filter.label': 'Filtra gli account',
+  'filter.placeholder': 'Filtra per nome',
+  'filter.empty': 'Nessuna corrispondenza per «{query}».',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} cifra', many: '{n} cifre', other: '{n} cifre' },
@@ -70,9 +75,14 @@ export default {
   'vault.state.locked': 'Chiusa — serve la passphrase',
   'vault.state.open': 'Aperta — i secret sono nel campo di testo',
   'vault.explain':
-    'Come impostazione predefinita Clockwork non salva nulla. Volendo, l’inserimento può ' +
-    'restare qui cifrato con una passphrase: PBKDF2-SHA-256 con {iterations} iterazioni, poi ' +
-    'AES-256-GCM. Senza la passphrase il blocco salvato non vale nulla.',
+    'Per impostazione predefinita Clockwork non salva nulla. Se attivi la cassaforte, ciò ' +
+    'che hai inserito resta qui cifrato con la tua passphrase: senza di essa il blocco ' +
+    'salvato non vale niente.',
+  'vault.explain.crypto':
+    'La chiave viene derivata dalla passphrase con PBKDF2-SHA-256 e {iterations} ' +
+    'iterazioni, mentre AES-256-GCM esegue la cifratura. Viene salvata solo la busta ' +
+    'sigillata: mai il testo in chiaro, mai la passphrase, mai la chiave derivata.',
+  'vault.explain.more': 'Tutti i dettagli',
   'vault.pass.new': 'Nuova passphrase',
   'vault.pass.existing': 'Passphrase',
   'vault.action.seal': 'Salva cifrato',
@@ -133,7 +143,8 @@ export default {
   'import.unnamed': 'Senza nome',
   'import.unreadable': 'Esportazione illeggibile.',
 
-  'vacant.text': 'Ancora nessun inserimento. Metti un secret qui sopra.',
+  'vacant.text': 'Secret, link otpauth o immagine QR: niente di tutto ciò lascia questo browser.',
+  'vacant.demo': 'Inserisci chiave di prova',
   'colophon.note': 'Nessuna rete · nessun salvataggio · HMAC tramite la Web Crypto API',
 
   'lang.label': 'Lingua',

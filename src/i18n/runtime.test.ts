@@ -36,10 +36,13 @@ describe('t()', () => {
   });
 
   it('formatiert Zahlen in der Schreibweise der Sprache', () => {
+    // Seit V8 steht die Iterationszahl in `vault.explain.crypto`: Die Erklärung
+    // selbst ist auf zwei Sätze gekürzt, die Verfahrensnamen liegen im
+    // Aufklapper darunter.
     setLocale('de');
-    expect(t('vault.explain', { iterations: formatNumber(600_000) })).toContain('600.000');
+    expect(t('vault.explain.crypto', { iterations: formatNumber(600_000) })).toContain('600.000');
     setLocale('en');
-    expect(t('vault.explain', { iterations: formatNumber(600_000) })).toContain('600,000');
+    expect(t('vault.explain.crypto', { iterations: formatNumber(600_000) })).toContain('600,000');
   });
 });
 

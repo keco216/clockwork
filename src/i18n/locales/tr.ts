@@ -35,6 +35,7 @@ export default {
   'input.help.images': 'QR görselleri buraya sürüklenebilir ya da {paste} ile yapıştırılabilir.',
   'input.help.migration':
     'Google Authenticator dışa aktarımları ({migration}) kendiliğinden dönüştürülür.',
+  'input.help.more': 'Tüm giriş biçimleri',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} hesap', other: '{n} hesap' },
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': 'Başarısız',
 
   'viewfinder.hint': 'QR kodu çerçevenin içinde tutun',
+
+  'filter.label': 'Hesapları filtrele',
+  'filter.placeholder': 'Ada göre filtrele',
+  'filter.empty': '“{query}” ile eşleşen yok.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} basamak', other: '{n} basamak' },
@@ -69,9 +74,13 @@ export default {
   'vault.state.locked': 'Kilitli — parola cümlesi gerekiyor',
   'vault.state.open': 'Açık — secret’lar metin alanında',
   'vault.explain':
-    'Clockwork varsayılan olarak hiçbir şey saklamaz. İsteyen, girdiyi burada bir parola ' +
-    'cümlesiyle şifreli bırakabilir: {iterations} yinelemeli PBKDF2-SHA-256, ardından ' +
-    'AES-256-GCM. Parola cümlesi olmadan saklanan blok hiçbir işe yaramaz.',
+    'Clockwork varsayılan olarak hiçbir şey saklamaz. Kasayı açarsanız girdi burada ' +
+    'parola cümlenizle şifreli kalır — o olmadan saklanan blok hiçbir işe yaramaz.',
+  'vault.explain.crypto':
+    'Anahtar, parola cümlesinden PBKDF2-SHA-256 ile {iterations} yineleme sonunda ' +
+    'türetilir; şifrelemeyi AES-256-GCM yapar. Yalnızca mühürlü zarf saklanır: ne açık ' +
+    'metin, ne parola cümlesi, ne de türetilen anahtar.',
+  'vault.explain.more': 'Tüm ayrıntılar',
   'vault.pass.new': 'Yeni parola cümlesi',
   'vault.pass.existing': 'Parola cümlesi',
   'vault.action.seal': 'Şifreli sakla',
@@ -127,7 +136,8 @@ export default {
   'import.unnamed': 'Adsız',
   'import.unreadable': 'Dışa aktarım okunamıyor.',
 
-  'vacant.text': 'Henüz bir giriş yok. Yukarıya bir secret koyun.',
+  'vacant.text': 'Secret, otpauth bağlantısı veya QR görüntüsü — hiçbiri bu tarayıcıdan çıkmaz.',
+  'vacant.demo': 'Test anahtarı ekle',
   'colophon.note': 'Ağ yok · depolama yok · HMAC, Web Crypto API üzerinden',
 
   'lang.label': 'Dil',

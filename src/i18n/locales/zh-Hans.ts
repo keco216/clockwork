@@ -32,6 +32,7 @@ export default {
   'input.help.formats': 'Base32、{nameSecret} 或 {uri} —— 可以混排。{hash} 开始一条备注。',
   'input.help.images': '二维码图片也可以拖到这里，或者用 {paste} 粘贴。',
   'input.help.migration': 'Google 身份验证器的导出（{migration}）会自动转换。',
+  'input.help.more': '全部输入格式',
   'shortcut.modifier': 'Ctrl',
 
   // 数字与量词之间不留空（“3个账户”）——这是中文的写法，
@@ -49,6 +50,10 @@ export default {
   'key.copyFailed': '失败',
 
   'viewfinder.hint': '把二维码放进取景框',
+
+  'filter.label': '筛选账户',
+  'filter.placeholder': '按名称筛选',
+  'filter.empty': '没有与“{query}”匹配的项。',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { other: '{n} 位' },
@@ -68,9 +73,11 @@ export default {
   'vault.state.locked': '已锁 —— 需要密码短语',
   'vault.state.open': '已开 —— secret 在文本框里',
   'vault.explain':
-    'Clockwork 默认什么都不保存。愿意的话，可以把输入用密码短语加密后留在这里：' +
-    'PBKDF2-SHA-256 迭代 {iterations} 次，然后 AES-256-GCM。没有密码短语，保存下来的那一' +
-    '块毫无价值。',
+    'Clockwork 默认什么都不保存。打开保险箱后，输入的内容会用你的密码短语加密后留在这里；没有密码短语，保存下来的那一块毫无价值。',
+  'vault.explain.crypto':
+    '密钥由密码短语经 PBKDF2-SHA-256 迭代 {iterations} 次导出，加密由 AES-256-GCM ' +
+    '完成。保存的只有封好的信封：明文、密码短语和导出的密钥都不会存下来。',
+  'vault.explain.more': '全部细节',
   'vault.pass.new': '新的密码短语',
   'vault.pass.existing': '密码短语',
   'vault.action.seal': '加密保存',
@@ -119,7 +126,8 @@ export default {
   'import.unnamed': '未命名',
   'import.unreadable': '导出无法读取。',
 
-  'vacant.text': '还没有输入。在上面放一个 secret。',
+  'vacant.text': '密钥、otpauth 链接或二维码图片——都不会离开这个浏览器。',
+  'vacant.demo': '插入测试密钥',
   'colophon.note': '无网络 · 无存储 · HMAC 经由 Web Crypto API',
 
   'lang.label': '语言',

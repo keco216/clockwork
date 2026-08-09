@@ -7,6 +7,30 @@
    Regel für alles darunter: KEIN Bauteil setzt je eine feste Farbe, einen festen
    Abstand oder eine feste Schriftgröße. Alles kommt aus dieser Datei — sonst
    bricht genau ein Theme, und zwar immer erst beim Nutzer.
+
+   ── Was V8 hier geändert hat, und warum ────────────────────────────────────
+   V7 hatte drei Flächenebenen (Werkbank, Gehäuse, Panel). Gemessen lagen die
+   dunklen zwei Stufen bei 1,037 und 1,063 — HeroUI liegt an derselben Stelle bei
+   1,185 und 1,189 (docs/v8-referenzen.md). Das ist die Diagnose „alles versinkt
+   im Nebel" in Zahlen, und sie gilt nur für den dunklen Modus: Im hellen waren
+   die Stufen mit 1,248 und 1,269 schon weiter als bei der Referenz.
+
+   Die Ursache war nicht der Betrag, sondern die RICHTUNG. V7 legte Nacht auf die
+   Panels und leitete Gehäuse und Werkbank nach unten daraus ab. Nacht liegt bei
+   einer relativen Leuchtdichte von 0,0074 — selbst gegen pures Schwarz sind
+   daraus höchstens 1,122:1, und dieses eine Zehntel musste sich auf zwei Stufen
+   aufteilen. Nach unten war da nichts zu holen, egal welche Hex-Werte man
+   einsetzt.
+
+   V8 dreht die Richtung: Der Grund ist der dunkelste Punkt, und die Flächen
+   STEIGEN von dort auf. Nacht rutscht dabei auf die Ebene, deren Namen es
+   ohnehin trägt — branding/README-BRANDING.md nennt Papier und Nacht die
+   GEHÄUSEFLÄCHEN, und das Gehäuse ist genau die Ebene, auf der die Panels
+   liegen. Das ist keine Abweichung vom Markenhandbuch, sondern eine wörtlichere
+   Lesart als die von V7.
+
+   Im hellen Modus bleibt die Leiter, wie sie war: Dort ist Papier schon der
+   hellste Punkt und das Panel schon die oberste Fläche.
    ========================================================================== */
 
 :root {
@@ -21,30 +45,81 @@
      Zwischentöne für Nebenbeschriftung und versenkte Flächen, die eine
      Vier-Farben-Palette naturgemäß nicht mitliefert. */
 
-  /* Flächen: helles Gerätegehäuse. Kein Reinweiß — Papier, kein Bildschirm.
+  /* ── Die Flächenleiter ────────────────────────────────────────────────────
+     Fünf Sprossen, jede mit einer Rolle. Bis V7 waren es drei, und zwei Rollen
+     teilten sich einen Wert: `--surface-recessed` stand sowohl für „versenkt"
+     (Eingabefeld) als auch für „hervorgehoben" (überfahrener Kanalzug) — also
+     für das Gegenteil. Zwei Rollen, eine Farbe, und niemand konnte sagen, was
+     der Ton eigentlich bedeutet.
 
-     Seit V5 gibt es zwei Ebenen statt einer. Der Grund ist nicht Geschmack: Eine
-     Erhebung, die man sehen soll, braucht etwas, worüber sie sich erhebt. Läge
-     das Gerät auf derselben Fläche, aus der es besteht, bliebe vom Schatten nur
-     ein Schmutzrand.
+       --ground            die Werkbank    außerhalb des Geräts
+       --case              das Gehäuse     das Gerät, Kopf- und Fußplatte
+       --surface-recessed  versenkt        Eingabeschlitz, Auswahlfeld
+       --surface           das Panel       Papier bzw. der Panelton
+       --surface-active    berührt         überfahrener oder fokussierter Kanal
 
-     Die Rollenverteilung folgt der Marke, nicht der Bequemlichkeit: Papier und
-     Nacht sind laut branding/README-BRANDING.md die GEHÄUSEFLÄCHEN — sie liegen
-     deshalb auf den Panels, also dort, wo das Gerät ist. Der Grund darunter ist
-     ein abgeleiteter Ton, so wie --ink-2 und --ink-3 auch: die Tischplatte,
-     auf der das Gerät liegt. */
-  --ground: #eae7e0; /* Untergrund — eine Stufe unter Papier */
-  --surface: #f5f3ef; /* Papier — die Gehäusefläche selbst */
+     Die Reihenfolge nach Helligkeit ist NICHT in beiden Themes dieselbe, und
+     das ist Absicht: `--surface-active` liegt immer auf der Seite des Panels,
+     auf der noch Platz ist. Im Dunkeln ist das oben (heller als das Panel), im
+     Hellen unten (dunkler) — über Papier liegt nur Reinweiß, und das ist seit
+     V2 verboten. Eine Sprosse, die in beiden Themes nach oben zeigt, gibt es
+     hier nicht zu haben.
+
+     Alle Abstände nachgemessen (Kontrastverhältnis benachbarter Sprossen):
+
+       hell    Werkbank →1,248→ Gehäuse →1,129→ versenkt →1,047→ berührt
+               →1,074→ Panel                                   gesamt 1,584
+       dunkel  Werkbank →1,107→ Gehäuse →1,124→ versenkt →1,181→ Panel
+               →1,150→ berührt                                 gesamt 1,690
+
+     Die dunkle Leiter hatte vorher zwei Stufen (1,037 und 1,063), zusammen
+     also 1,102. Sie hat nicht eine Sprosse dazubekommen, sondern ihren Weg
+     vervielfacht: Was zählt, ist der Abstand zu 1,000 — „kein Unterschied" —,
+     und der wächst von 0,102 auf 0,690, also auf das 6,8-Fache.
+
+     (Hier stand bis zum Schlusspass „gesamt 1,146" und „vervierfacht". Die
+     beiden Einzelstufen waren richtig gemessen, ihr Produkt war falsch
+     ausgerechnet — 1,037 × 1,063 sind 1,102. Nachgerechnet mit der
+     WCAG-Formel, nicht überschlagen.)
+
+     Die erste Stufe (1,107) ist die einzige, die unter der Referenz bleibt,
+     und sie kann es nicht besser: 1,122 ist das physikalische Maximum unter
+     Nacht. Was dort trägt, ist die Kante, nicht der Ton — siehe --edge-lit. */
+  --ground: #c9c3b6; /* Werkbank — der Tisch, auf dem das Gerät liegt */
+  --case: #ded9cf; /* Gehäuse — das Gerät selbst, Deck- und Bodenplatte */
   --surface-recessed: #e9e6e0; /* versenkt: Eingabeschlitz */
+  --surface-active: #eeebe5; /* berührt: Kanalzug unter Zeiger oder Fokus */
+  --surface: #f5f3ef; /* Papier — die Panels */
   --surface-inverted: #171614; /* Tinte, für gedrückte Tasten */
 
-  /* Ink: gedruckte und eingravierte Markierungen. */
+  /* ── Ink: gedruckte und eingravierte Markierungen ─────────────────────────
+     Drei Stufen, und seit V8 gilt für alle drei dasselbe: mindestens 4,5:1 auf
+     JEDER Fläche der Leiter, auf der sie vorkommen. Nachgemessen gegen Gehäuse,
+     versenkt, berührt und Panel — der schlechteste Fall steht dabei:
+
+       --ink    12,86:1     --ink-2  6,15:1     --ink-3  5,02:1
+
+     Das räumt eine Ausnahme weg, die V7 noch brauchte. Dort galt: Text auf dem
+     GEHÄUSE trägt --ink-2, Text auf einem PANEL --ink-3 — weil --ink-3 auf dem
+     dunkleren Gehäuseton nur noch 4,00:1 erreichte und AA riss. Diese
+     Sonderregel ist mit der neuen Leiter unnötig geworden: Beide Stufen halten
+     überall. Eine Regel weniger, und zwar nicht durch Nachlassen, sondern durch
+     Messen. */
   --ink: #171614; /* Tinte */
-  --ink-2: #5c5852; /* Nebenbeschriftung — 6,3:1 auf Papier */
-  --ink-3: #6b665e; /* Skalenteilung, Platzhalter — 5,1:1 auf Papier */
+  --ink-2: #4f4b46; /* Nebenbeschriftung */
+  --ink-3: #5c5852; /* Gravur, Skalenteilung, Platzhalter */
   --ink-on-inverted: #f5f3ef;
 
-  /* Haarlinien: Fugen im Gehäuse. */
+  /* ── Haarlinien: Fugen im Gehäuse ─────────────────────────────────────────
+     18 % hell und 16 % dunkel — das ist genau das Niveau, auf dem HeroUIs
+     `divider` liegt (`rgba(17,17,17,.15)` hell, `rgba(255,255,255,.15)` dunkel),
+     und der Wert bleibt deshalb unverändert.
+
+     Der Auftrag nennt die Borders „fast unsichtbar", und das war richtig
+     beobachtet — die Ursache lag aber nicht bei ihnen. Eine 16-%-Linie auf einer
+     Leiter mit 1,04er Stufen hat nichts, wovon sie abstechen könnte. Auf der
+     neuen Leiter bringt dieselbe Linie im Dunkeln 1,73:1 gegen ihre eigene
+     Fläche. Die Kante ist also nicht geändert worden, sie ist sichtbar geworden. */
   --rule: rgb(23 22 20 / 18%);
   --rule-strong: rgb(23 22 20 / 34%);
 
@@ -58,27 +133,140 @@
      dunklere Oberkante, Erhobenes eine hellere. Zwei Bauteile, eine Regel. */
   --edge-lit: var(--rule);
 
+  /* ── Lichtkante, innen ────────────────────────────────────────────────────
+     V5 setzte sie als `border-top-color`. Das funktionierte, hatte aber zwei
+     Nachteile: Es verbrauchte die Rahmenfarbe als Ausdrucksmittel, und an einer
+     18-px-Rundung sitzt eine gefärbte Rahmenoberkante nicht sauber — sie läuft
+     um die Ecke weiter, als hätte das Licht dort noch etwas zu suchen.
+
+     Als INNENSCHATTEN liegt sie innerhalb des Radius und folgt ihm. Und sie
+     belegt keinen Platz im Boxmodell, anders als ein Rahmen — das Layout bleibt
+     unberührt, egal ob sie da ist oder nicht.
+
+     Im Hellen ist sie fast nichts (Papier auf Papier), im Dunkeln trägt sie die
+     ganze Erhebung. */
+  --edge-inner: rgb(255 255 255 / 55%);
+
+  /* ── Die Oberkante einer VERSENKTEN Fläche ────────────────────────────────
+     Das Gegenstück zu --edge-inner, und seit V8 ein eigener Wert.
+
+     Bis V7 machte das `border-top-color: var(--rule-strong)` am Feld. Im hellen
+     Modus war das richtig — dort ist --rule-strong ein dunkler Tintenton. Im
+     dunklen ist es eine HELLE Linie, und eine helle Oberkante heißt „erhoben".
+     Das Eingabefeld behauptete dort also das Gegenteil von dem, was es ist. Ein
+     Vorzeichenfehler, den man nicht sieht, weil man beide Themes selten
+     nebeneinander hat.
+
+     Ein Innenschatten statt einer Rahmenfarbe, aus denselben zwei Gründen wie
+     bei --edge-inner: Er folgt dem Radius, und er lässt die Rahmenfarbe für den
+     Rahmen frei. Beide Werte dunkeln, in beiden Themes — eine Fräsung ist ein
+     Schatten, und ein Schatten wird nicht hell, wenn man das Licht ausmacht. */
+  --edge-sunk: rgb(23 22 20 / 26%);
+
+  /* ── Kantenstärken ────────────────────────────────────────────────────────
+     HeroUI führt drei (`borderWidth` 1/2/3 px) und benutzt für einen
+     Umriss-Knopf ausdrücklich die MITTLERE: `bordered` ist `border-medium`,
+     also 2 px.
+
+     Genau das ist der Grund, warum die Clockwork-Pillen „blass" wirkten. Sie
+     trugen 1 px in derselben Farbe wie eine Panelfuge — ein Bedienelement,
+     gezeichnet wie eine Trennlinie. Die Fuge bleibt bei 1 px (und schreibt das
+     direkt hin, wie bisher); alles, was ein Objekt mit Umriss ist, bekommt
+     dieses Token.
+
+     Die dritte Stärke gibt es hier nicht: Es gibt kein Bauteil dafür, und ein
+     Token ohne Bauteil ist eine Einladung, es irgendwo zu benutzen. */
+  --border-2: 2px;
+
+  /* ── Gesperrt ─────────────────────────────────────────────────────────────
+     HeroUIs `disabledOpacity`, unverändert übernommen: 0,5.
+
+     Bis V7 gab es das nicht — und das war kein Verzicht, sondern eine Lücke.
+     `ui/vault-panel.ts` sperrt den Tresor-Knopf, solange der Schlüssel aus der
+     Passphrase abgeleitet wird (600 000 Iterationen, im Browser ein knappes
+     Vielfaches der gemessenen 77 ms). Der Knopf sah in dieser Zeit aus wie
+     vorher: gleiche Farbe, gleiche Kante, nur ohne Wirkung. Aufgefallen ist es
+     beim Statesheet — vier Zustände nebeneinander zu fotografieren zeigt sofort,
+     wenn zwei davon dasselbe Bild sind.
+
+     Deckkraft ist hier ausdrücklich das richtige Mittel, obwohl sie den
+     Textkontrast mitnimmt: Ein gesperrtes Bedienelement ist von WCAG 1.4.3
+     ausgenommen, und genau das soll es aussagen — hier ist gerade nichts zu
+     holen. */
+  --opacity-disabled: 0.5;
+
+  /* ── Korn ─────────────────────────────────────────────────────────────────
+     Papier und mattschwarzes Gehäuse sind keine Bildschirmflächen. Ein Hauch
+     Korn macht aus einer Farbfläche ein Material.
+
+     Erzeugt wird es von `feTurbulence` — SVG bringt einen Rauschgenerator mit,
+     man muss ihn nur benutzen. `fractalNoise` stapelt weiche Oktaven statt
+     harter Wirbel (das wäre `turbulence`), `baseFrequency` 0.9 macht das Korn
+     fein statt wolkig, drei Oktaven geben ihm Tiefe. Das Ganze wiegt rund 250
+     Byte als Text und skaliert auf jede Auflösung — ein PNG-Kachelbild wäre ein
+     Vielfaches davon und auf einem Retina-Schirm sichtbar zu grob.
+
+     Ausdrücklich KEIN Verlauf: Das Muster hat keine Richtung und keinen
+     Farbübergang, es ist gleichverteiltes Rauschen. Deko-Gradients bleiben
+     verboten.
+
+     ── Seit V8 nur noch auf der Werkbank ──────────────────────────────────
+     V6 legte es auf Panels, Gehäuse UND Werkbank. Drei Lagen Rauschen unter
+     einer halbdurchsichtigen Kopffläche waren zusammen der „Matsch", den die
+     V8-Diagnose benennt: Auf einer Fläche, die man ABLIEST, ist Korn kein
+     Material, sondern Störung. Es bleibt genau dort, wo nichts abgelesen wird —
+     außerhalb des Geräts. Der Wert selbst ist unverändert. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23g)'/%3E%3C/svg%3E");
+  /* Auf Papier fast aus: Helle Flächen zeigen Rauschen viel bereitwilliger als
+     dunkle, und was auf Nacht als Materialität liest, wird auf Papier zu
+     Schmutz. Nachgemessen an den Screenshots, nicht symmetrisch gesetzt. */
+  --grain-opacity: 0.022;
+
   /* ── Signal: der eine Akzent ──────────────────────────────────────────────
      Nur für Zustände mit Bedeutung: der ablaufende Code, ein bestätigter
      Kopiervorgang, ein offener Tresor, der Sucherrahmen. Nie als Dekoration.
 
-     Zwei Token für eine Marke: `--signal` ist der verbindliche Markenwert und
-     steht überall dort, wo er als FLÄCHE oder MARKE erscheint — Zeiger,
-     Skalenmarke, Leuchte, Rahmen. Dort genügt 3:1, und #f05a28 erreicht auf
-     Papier 3,05:1.
+     Zwei Token für eine Marke, und seit V8 mit einer präziseren Grenze zwischen
+     ihnen. Bisher hieß sie „Fläche gegen Schrift". Nachgemessen trägt sie nicht
+     weit genug: Der Markenwert #f05a28 erreicht auf Papier 3,06:1 — also fast
+     genau die 3:1, die WCAG für Marken verlangt, und damit ohne jede Reserve.
+     Auf jeder dunkleren Fläche der hellen Leiter fällt er darunter (berührt
+     2,85 · versenkt 2,72 · Gehäuse 2,41).
 
-     Für kleine SCHRIFT auf Papier reicht das nicht (AA verlangt 4,5:1). Deshalb
-     gibt es `--signal-text`: derselbe Farbton, nur tiefer, gemessene 4,6:1. Auf
-     Nacht ist der Markenwert selbst mit 5,5:1 ausreichend — dort sind beide
-     Token identisch. Die Marke wird also nicht verwässert, sie bekommt für
-     Fließtext eine lesbare Variante. */
+     Die Grenze heißt deshalb jetzt „grobe Geometrie gegen feine":
+
+       --signal       Flächen und Striche ab 2 px: Fokus-Ring, Sucherwinkel,
+                      die Kante beim Ziehen, gefüllte Zustände.
+       --signal-text  alles Feine: Schrift, der Zeiger des Zifferblatts (0,073 R
+                      breit, auf einem 80-px-Blatt also 3 px), die
+                      Zustandsleuchten.
+
+     Der Zeiger hat die Grenze verschoben, und zwar messbar: Es gibt im hellen
+     Modus KEINEN Hover-Ton, der gleichzeitig sichtbar ist (Stufe ≥ 1,04) und
+     den Markenton über 3:1 hält — bei 3,01 ist die Stufe auf 1,017 geschrumpft
+     und damit unsichtbar. Ein Zeiger, dessen Ablesbarkeit davon abhängt, ob die
+     Maus gerade auf seiner Zeile steht, ist kein Messinstrument. Also trägt er
+     den tieferen Ton; gemessen 5,04 bis 5,41 auf der Panelfamilie.
+
+     Die Marke wird dadurch nicht verwässert — #f05a28 bleibt der verbindliche
+     Wert und steht überall dort, wo er groß genug ist, um zu tragen.
+
+     Der Wert ist zweimal nachgezogen worden, und beide Male hat es die
+     Matrixprüfung in scripts/check-contrast.mjs verlangt: #c4400f aus V7 hält auf
+     der versenkten Fläche nur 4,12:1, #b23a0d auf dem Gehäuse nur 4,26. #a8360c
+     hält auf ALLEN vier Flächen der Leiter mindestens 4,67 — gemessen, und ohne
+     Ausnahmefeld in der Matrix. Der Farbton ist derselbe (dieselbe Hue-Achse wie
+     #f05a28), nur tiefer. */
   --signal: #f05a28;
-  --signal-text: #c4400f;
+  --signal-text: #a8360c;
   --signal-quiet: rgb(240 90 40 / 14%);
 
   /* ── Fehler ───────────────────────────────────────────────────────────────
      Bewusst NICHT der Signal-Akzent: Eine unlesbare Zeile ist kein
-     Betriebszustand des Geräts, sondern ein Eingabefehler. */
+     Betriebszustand des Geräts, sondern ein Eingabefehler.
+
+     Nachgemessen auf allen vier texttragenden Flächen: 5,26:1 im schlechtesten
+     Fall (Gehäuse). */
   --fault: #9c2f1c;
 
   /* ── Typografie ───────────────────────────────────────────────────────────
@@ -108,7 +296,13 @@
      styles/scripts.css), diese Zeile nicht. */
   --font-brand: 'Instrument Sans Variable', ui-sans-serif, system-ui, sans-serif;
 
-  /* Typo-Skala, gerastert auf 4 px. */
+  /* ── Typo-Treppe: sechs Stufen, mehr nicht ────────────────────────────────
+     Gezählt werden die Stufen, nicht die Token: micro · small · body · lead ·
+     mark · Zifferblatt. Die beiden `--t-dial-*` sind zusammen EINE Stufe — sie
+     sind die Grenzen eines `clamp()`, keine zwei Größen.
+
+     Gerastert auf 4 px, und das Zifferblatt bleibt in jedem Fenster das größte
+     Element. */
   --t-micro: 0.6875rem; /* 11px — Gravur-Beschriftung, Versalien */
   --t-small: 0.75rem; /*   12px — Nebenangaben */
   --t-body: 0.875rem; /*  14px — Fließtext */
@@ -138,40 +332,115 @@
      Siehe styles/scripts.css. */
   --case-caps: uppercase;
 
-  /* ── Raster: 4 px Basis, 8 px Haupttakt ────────────────────────────────── */
-  --sp-1: 0.25rem;
-  --sp-2: 0.5rem;
-  --sp-3: 0.75rem;
-  --sp-4: 1rem;
-  --sp-5: 1.5rem;
-  --sp-6: 2rem;
-  --sp-7: 3rem;
-  --sp-8: 4rem;
+  /* ── Raster: 4 px Basis, 8 px Haupttakt ──────────────────────────────────
+     Acht Sprossen, und keine dazwischen: 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64.
+     Nachgeprüft von scripts/check-tokens.mjs am Quelltext und von
+     `checkSpacingScale` in scripts/shoot.mjs am gerechneten Ergebnis — ein
+     Abstand kann auch aus zwei richtigen Tokens falsch zusammengesetzt sein. */
+  --sp-1: 0.25rem; /*   4px */
+  --sp-2: 0.5rem; /*    8px */
+  --sp-3: 0.75rem; /*  12px */
+  --sp-4: 1rem; /*     16px */
+  --sp-5: 1.5rem; /*   24px */
+  --sp-6: 2rem; /*     32px */
+  --sp-7: 3rem; /*     48px */
+  --sp-8: 4rem; /*     64px */
 
-  --col-label: 6.5rem;
+  /* ── Abstände nach ROLLE ──────────────────────────────────────────────────
+     Die Skala darüber sagt, welche Werte es gibt. Diese drei sagen, wofür — und
+     sie sind der Grund, dass zwei gleiche Beziehungen im Gerät nie zwei
+     verschiedene Lücken bekommen.
+
+     Genau daran hat es bis hierher gefehlt. Der Stapelabstand IN einem Panel
+     stand an vier Stellen in drei Werten: 16 px in `.zone__body`, 12 px in
+     `.vault` und `.vault__panel`, 8 px in `.vault__intro`. Jeder einzelne Wert
+     lag auf der Skala, jeder war für sich begründbar — und zusammen ergaben sie
+     keinen Takt. Ein Rhythmus entsteht nicht daraus, dass jeder Abstand erlaubt
+     ist, sondern daraus, dass gleiche Dinge gleich weit auseinanderstehen.
+
+       --gap-pair    was zusammengehört: Beschriftung und ihr Feld, Feld und
+                     Knopf, Tasten in einer Zeile, die Zeilen einer Karte,
+                     Sektionsgravur über ihrem Panel
+       --gap-stack   Geschwister in einem Panel
+       --gap-group   zwischen Panels — und der Innenabstand eines Panels, denn
+                     der Rand zum Gehäuse ist derselbe Abstand wie der zum
+                     Nachbarn
+
+     Drei Werte, drei Ebenen, 8 → 16 → 24. Wer eine vierte braucht, braucht
+     eigentlich eine Begründung. */
+  --gap-pair: var(--sp-2);
+  --gap-stack: var(--sp-4);
+  --gap-group: var(--sp-5);
+
+  /* `--col-label` ist mit V7 entfallen: Die Zonenbeschriftung steht nicht mehr
+     als eigene Rasterspalte daneben, sondern über ihrem Panel (siehe
+     .zone__label in style.css). Ein Token ohne Bauteil ist eine Einladung, es
+     wieder zu benutzen. */
   --measure: 62rem;
 
-  /* Höhe jedes Bedienelements — Taste, einzeiliges Feld, Auswahl.
-     2,75 rem sind 44 px und damit die Zielgröße, die sowohl Apple als auch die
-     WCAG für einen Finger nennen. Bis V4 waren es 36 px: für die Maus genug,
-     für den Daumen knapp. Als Token, weil Taste und Feld nebeneinanderstehen
-     und jede Abweichung sofort als schiefe Zeile sichtbar wird. */
-  --control-h: 2.75rem;
+  /* Die Bedienseite im Arbeitszustand. 23 rem = 368 px, also in der Mitte des
+     Fensters, das der Auftrag nennt (360–400 px). Fest und nicht fluid: Was man
+     EINSTELLT, braucht keine zusätzliche Breite — jede gewonnene Breite gehört
+     dem, was man ABLIEST. */
+  --rail-w: 23rem;
 
-  /* Innenabstand jeder Gehäusegruppe. Als eigenes Token, weil zwei Dinge sich
-     danach richten müssen, die nicht im Panel liegen: die Gravur-Spalte
-     daneben (sie muss auf die erste Zeile IM Panel treffen) und der klebende
-     Kopf (er zieht sich um genau diesen Betrag über den Rand hinaus). */
-  --panel-pad: 1.5rem;
+  /* Die Breite der Onboarding-Bühne. Ein einzelnes Feld auf 1600 px wäre kein
+     Angebot, sondern eine Fläche. */
+  --stage-w: 44rem;
+
+  /* ── Höhenleiter der Bedienelemente ──────────────────────────────────────
+     Drei Höhen statt einer, übernommen aus HeroUIs `button.size`:
+     `sm: h-8` = 32 px, `md: h-10` = 40 px, `lg: h-12` = 48 px. Mit der Höhe
+     wachsen dort auch Innenabstand, Schriftgrad und Radius — nicht nur die
+     Höhe, und genau das macht eine Leiter aus einer Zahlenreihe.
+
+     Bis V7 gab es genau eine Höhe (44 px) und Rangordnung nur über die Kante.
+     „Leeren" wurde dadurch zum nackten Text: leise, aber nicht mehr als Knopf
+     erkennbar. Drei Varianten geben den Rang, drei Höhen das Gewicht.
+
+     ── Warum keine Taste 32 px hoch ist ──────────────────────────────────
+     Weil die Leiter drei Höhen ANBIETET und nicht drei Höhen vorschreibt. Eine
+     32-px-Taste ist für die Maus richtig und für den Daumen zu klein; ihre
+     Trefferfläche über ein Pseudo-Element aufzublasen wäre der bekannte Trick
+     und hier ein Eigentor: Bei 8 px Abstand überlappen sich zwei um je 6 px
+     vergrößerte Flächen, und dann trifft man beim Danebentippen den Nachbarn
+     statt gar nichts.
+
+     Die Tasten stehen deshalb auf 40 oder 48. Die 32 gehören den Bauteilen, die
+     man EINMAL einstellt und danach nie wieder anfasst (Auswahlfeld), die 44 den
+     breiten Zeilen, bei denen Höhe nichts kostet — den beiden Aufklappern.
+
+     WCAG 2.5.8 verlangt 24 × 24 px, die 44 sind die AAA-Zielgröße aus 2.5.5. Die
+     Leiter erfüllt damit überall AA und dort AAA, wo es ohne Nebenwirkung geht. */
+  --control-h-sm: 2rem; /*   32px — Auswahlfeld: einmal einstellen, dann nie */
+  --control-h: 2.5rem; /*    40px — der Normalfall */
+  --control-h-lg: 3rem; /*   48px — die eine Haupthandlung je Panel */
+  --touch-min: 2.75rem; /*   44px — breite Zeilen: die beiden Aufklapper */
+
+  /* Chips sind keine Bedienelemente und stehen deshalb nicht auf der
+     Tastenleiter. HeroUI führt sie aus demselben Grund getrennt (`chip.size.sm`
+     ist `h-6`, also 24 px). Eine Angabe, die man liest, braucht keine
+     Trefferfläche — und in einer 40-px-Zeile hat sie neben dem Text noch Platz. */
+  --chip-h: 1.5rem; /*       24px */
+
+  /* Innenabstand jeder Gehäusegruppe — derselbe Wert wie der Abstand zwischen
+     zwei Panels. Ein eigener Name bleibt er trotzdem, weil zwei Dinge sich
+     danach richten müssen, die nicht im Panel liegen: die Filterzeile (sie zieht
+     sich um genau diesen Betrag über den Rand hinaus) und der klebende Kopf. */
+  --panel-pad: var(--gap-group);
   /* Innenabstand des Gehäuses zum Fensterrand. Ebenfalls ein eigenes Token,
      weil der klebende Kopf sich per negativem Außenabstand genau darum wieder
      herauszieht — und ein Wert, der beim Umbruch auseinanderläuft, erzeugt
      dort waagerechten Überlauf. */
-  --device-pad: 1.5rem;
+  --device-pad: var(--gap-group);
   /* Wie weit ein Sprungziel unter dem klebenden Kopf durchrutschen darf.
      Grob dessen Höhe plus Luft — lieber etwas zu viel als eine Überschrift,
-     die halb unter dem Riegel klemmt. */
-  --scroll-anchor: 5.5rem;
+     die halb unter dem Riegel klemmt.
+
+     Als SUMME zweier Sprossen und nicht als 5,5 rem: 88 px liegen auf keiner
+     Sprosse der Skala, und ein Wert, der neben der Skala steht, steht auch
+     neben dem Takt. 64 + 24 ist derselbe Betrag, nur nachvollziehbar. */
+  --scroll-anchor: calc(var(--sp-8) + var(--sp-5));
 
   /* ── Radien ───────────────────────────────────────────────────────────────
      Bis V4 stand hier 0 für Flächen und 2 px für Tasten: ein gefräster
@@ -180,7 +449,12 @@
 
      Es gibt genau drei Werte, und sie stehen für drei Bauteilsorten. Ein
      vierter „irgendwas dazwischen" wäre der Anfang vom Ende: Radien, die
-     niemand mehr begründen kann, sehen aus wie Radien, die niemand gewählt hat. */
+     niemand mehr begründen kann, sehen aus wie Radien, die niemand gewählt hat.
+
+     Die beiden kleineren sind zeichengenau HeroUIs `radius.small` (8) und
+     `radius.medium` (12) — nachgesehen, nicht angeglichen. Nur das obere Ende
+     weicht ab: HeroUI führt 14 px, hier stehen 18. Eine Gehäusegruppe ist ein
+     größeres Bauteil als eine Card, und der Radius gehört dem Bauteil. */
   --radius-panel: 18px; /* Gehäusegruppe — Eingabe, Tresor, Codes */
   --radius-field: 12px; /* Eingabefeld, Sucherrahmen */
   --radius-inset: 8px; /* Kleinteile im Feld: Tastenkappe, Auswahl */
@@ -193,7 +467,7 @@
      Reihenfolge, die niemand nachprüfen kann.
 
        1 — das Gerät liegt auf dem Grund   (Panels, Kanalzug-Gruppe)
-       2 — etwas liegt über dem Gerät      (klebender Kopf, offener Tresor)
+       2 — etwas liegt über dem Gerät      (klebender Kopf, Listbox)
 
      Weich und großflächig statt hart und nah, macOS-Fenster statt
      Material-Design-Karte: zwei Lagen je Ebene, eine ganz kurze für die Kante
@@ -205,20 +479,6 @@
   --elev-1: 0 1px 2px rgb(23 22 20 / 5%), 0 8px 28px rgb(23 22 20 / 6%);
   --elev-2: 0 2px 6px rgb(23 22 20 / 7%), 0 16px 48px rgb(23 22 20 / 11%);
 
-  /* ── Frost ────────────────────────────────────────────────────────────────
-     Das eine Apple-Material, das hier etwas zu suchen hat — und nur dort, wo
-     tatsächlich etwas dahinter durchläuft (siehe styles/panels.css). Die
-     Sättigung ist kein Effekt, sondern die Korrektur: Blur allein wäscht die
-     Farbe hinter der Fläche aus, `saturate` holt sie zurück.
-
-     Die Deckung ist NACHGEMESSEN, nicht geschätzt: 72 % sahen gut aus und
-     rissen im Härtetest von scripts/check-contrast.mjs die AA-Schwelle, sobald
-     eine kontrastreiche Fläche darunter lag. 78 % halten sie — und mehr wäre
-     keine Sicherheit mehr, sondern nur noch eine deckende Fläche mit einem
-     Weichzeichner, der nichts mehr zu tun hat. */
-  --frost-surface: rgb(245 243 239 / 78%);
-  --frost-filter: blur(20px) saturate(180%);
-
   /* ── Bewegung ─────────────────────────────────────────────────────────────
      Bis V4: kurz und mechanisch, nichts federt nach. V5 federt — aber nur die
      Oberfläche. Das Instrument selbst (Zeiger, Skala) rechnet weiter linear mit
@@ -226,7 +486,10 @@
 
      Die Feder ist Apples Standardkurve: schnell los, lange auslaufend, ohne
      Überschwinger. Kein `bounce` — ein überschwingendes Bauteil behauptet Masse,
-     die ein Messgerät nicht hat. */
+     die ein Messgerät nicht hat.
+
+     V8 nimmt Frost und Korn zurück, die Federn ausdrücklich nicht: Bewegung war
+     nie das Problem. */
   --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
   /* Für den Tastendruck: kürzer und straffer, damit der Druckpunkt sitzt. */
   --ease-snap: cubic-bezier(0.2, 0.85, 0.3, 1);
@@ -235,7 +498,13 @@
   --dur-snap: 190ms; /* Fallblatt-Umsprung */
   --dur-calm: 250ms; /* Zustandswechsel */
   --dur-sheet: 350ms; /* Panel öffnet, Kanalzug kommt dazu */
-  --stagger-flap: 16ms;
+  /* Versatz je umspringender Stelle. 20 ms ist der Wert, den Nummern-Ticker im
+     Feld durchgehend benutzen (21st.dev, Gattung „Stats & KPIs") — und er hat
+     ein enges Fenster: Unter 15 ms sieht der Versatz aus wie ein Rundungsfehler
+     im Rendering, über 25 ms wie eine Animation, die man anschauen soll. Bei
+     sechs Stellen kostet er 100 ms Gesamtversatz, also weniger als eine
+     Wimpernbewegung. */
+  --stagger-flap: 20ms;
 
   /* ── Zifferblatt: Proportionen aus dem Emblem ─────────────────────────────
      branding/clockwork-logo-a-skala.svg: Außenradius 96, Marke 19,2 lang
@@ -243,8 +512,13 @@
      7,0 (0,073 R), Nabe r = 5 (0,052 R), Teilung 12° = 30 Sekunden.
 
      Diese Verhältnisse gelten hier unverändert: Das Instrument in der App IST
-     die Marke, nicht bloß etwas Ähnliches. */
-  --dial-size: 5rem;
+     die Marke, nicht bloß etwas Ähnliches.
+
+     Die GRÖSSE ist seit V8 eine andere Frage als die Proportion. Der Auftrag
+     nennt das Zifferblatt „winzig", und das war es: 5 rem neben einem Code, der
+     bis 4,5 rem hoch wird. Es ist die Anzeige, die sagt, wie lange der Code
+     noch gilt — sie darf nicht kleiner sein als die Beschriftung daneben. */
+  --dial-size: 6.5rem;
   --dial-tick-len: 0.2;
   --dial-hand-len: 0.3;
   --dial-tick-w: 0.048;
@@ -252,36 +526,94 @@
   --dial-hub: 0.052;
 }
 
+/* ── Die Typo-Skala atmet mit ────────────────────────────────────────────────
+   Ab 1440 px eine Stufe größer. Ein 27-Zöller wird nicht mit Handy-Größen
+   bedient: Auf 2560 px stand die Parameterzeile bis V6 in 11 px da, aus einem
+   Meter Abstand betrachtet.
+
+   Ausdrücklich über die TOKENS und nicht über einzelne Bauteile. Wer stattdessen
+   `.dial { font-size: … }` in einer Media Query nachzieht, hat die Skala an
+   einer Stelle verdoppelt und muss sie ab da an zwei Stellen pflegen — und die
+   Bauteile, an die er nicht gedacht hat, bleiben klein.
+
+   Das Zifferblatt wächst mit, aber weniger: Es steht ohnehin in `clamp()` an
+   der Containerbreite und ist die einzige Angabe, die schon vorher mitgewachsen
+   ist. */
+@media (min-width: 90rem) {
+  :root {
+    --t-micro: 0.75rem; /*    12px */
+    --t-small: 0.8125rem; /*  13px */
+    --t-body: 0.9375rem; /*   15px */
+    --t-lead: 1.1875rem; /*   19px */
+    --t-mark: 1.25rem; /*     20px */
+    --t-dial-min: 2.75rem; /* 44px */
+    --t-dial-max: 5rem; /*    80px */
+    --dial-size: 7.5rem;
+  }
+}
+
 /* ── Dunkler Modus: mattschwarzes Gerät ──────────────────────────────────────
    Nicht die Umkehrung des hellen Themes, sondern dasselbe Gerät in einer
-   anderen Ausführung. */
+   anderen Ausführung.
+
+   Die Leiter steigt hier von unten auf, statt von oben abzufallen — die
+   Begründung steht im Kopf dieser Datei. Nacht ist das Gehäuse, die Panels
+   liegen darüber. */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Deutlich tiefer als im ersten Anlauf (#0b0a09). Der Grund: Im Dunkeln
-       muss der TONWERTUNTERSCHIED die Arbeit machen, die im Hellen der Schatten
-       leistet — zwei fast gleiche Schwarztöne ergeben keine Erhebung, sondern
-       eine Fläche mit einem Kratzer darin. */
-    --ground: #070706; /* Untergrund — deutlich unter Nacht */
-    --surface: #131210; /* Nacht — die Gehäusefläche selbst */
-    --surface-recessed: #0a0908;
+    /* Die Werkbank so tief, wie es geht, ohne pures Schwarz zu sein: Der
+       gesamte Weg unter Nacht ist 1,122:1, hiervon werden 1,107 genutzt.
+       Pures Schwarz stünde noch zur Verfügung — HeroUI benutzt es sogar als
+       `background` —, aber es ist das Gegenstück zum Reinweiß, das dieses
+       Projekt seit V2 nicht kennt. Für die letzten 0,015 gibt man keine
+       Palettenregel auf. */
+    --ground: #030201; /* Werkbank */
+    --case: #131210; /* Nacht — das Gehäuse */
+    --surface-recessed: #1f1e1c; /* versenkt */
+    --surface: #2d2b29; /* die Panels */
+    --surface-active: #363532; /* berührt */
     --surface-inverted: #f5f3ef;
 
+    /* Gemessen gegen alle vier texttragenden Flächen, schlechtester Fall:
+       --ink 11,07 · --ink-2 6,15 · --ink-3 4,73. */
     --ink: #f5f3ef; /* Papier */
-    --ink-2: #9a948b; /* 6,2:1 auf Nacht */
-    --ink-3: #8a857c; /* 5,1:1 auf Nacht */
+    --ink-2: #bdb7ac;
+    --ink-3: #a6a098;
     --ink-on-inverted: #131210;
 
     --rule: rgb(245 243 239 / 16%);
     --rule-strong: rgb(245 243 239 / 30%);
     /* Hier leuchtet die Oberkante — sie trägt die Erhebung, die der Schatten
-       auf diesem Grund nicht mehr tragen kann. */
+       auf diesem Grund nicht mehr tragen kann. Und sie trägt zusätzlich die
+       erste Sprosse der Leiter: 1,107 Tonunterschied allein wären zu wenig, um
+       die Gerätekante zu finden. */
     --edge-lit: rgb(245 243 239 / 28%);
+    --edge-inner: rgb(245 243 239 / 9%);
+    /* Deutlich kräftiger als im Hellen: Ein Schatten auf einer dunklen Fläche
+       hat weniger Weg nach unten, also braucht er mehr Deckung, um überhaupt
+       eine Kante zu sein. Dieselbe Asymmetrie wie bei --elev-1 und beim Korn. */
+    --edge-sunk: rgb(0 0 0 / 60%);
 
-    /* Auf Nacht trägt der Markenwert selbst — 5,5:1, also auch für Fließtext. */
-    --signal-text: #f05a28;
+    /* Nacht nimmt gut das Doppelte an Korn, bevor es auffällt — und die
+       Werkbank ist im Dunkeln die einzige Fläche, die es überhaupt noch trägt.
+       Eine große, fast schwarze Fläche ohne jede Textur wirkt wie ein Loch. */
+    --grain-opacity: 0.05;
+
+    /* Auf den helleren Panels der neuen Leiter trägt der Markenwert für Schrift
+       NICHT mehr: #f05a28 kommt auf der berührten Fläche nur auf 3,62:1. Der
+       tiefere Ton aus dem hellen Modus wäre hier genau falsch — er ginge in
+       Richtung Grund. Also derselbe Farbton, aber aufgehellt: gemessen 4,79:1
+       im schlechtesten Fall.
+
+       Bis V7 waren die beiden Token im Dunkeln identisch. Dass sie es jetzt
+       nicht mehr sind, ist keine neue Ausnahme, sondern dieselbe Regel unter
+       geänderten Flächen. */
+    --signal-text: #f4825c;
     --signal-quiet: rgb(240 90 40 / 16%);
 
-    --fault: #e5806e;
+    /* Ebenfalls aufgehellt: #e5806e aus V7 kommt auf der berührten Fläche auf
+       4,46:1 und reißt AA um 0,04. Gemessen, nicht geschätzt. */
+    --fault: #e88b7a;
 
     /* ── Erhebung im Dunkeln ──────────────────────────────────────────────
        Ein Schatten ist dunkler als sein Grund. Auf Nacht gibt es dafür kaum
@@ -294,10 +626,5 @@
        Schattenwerte und wundert sich, dass nichts mehr schwebt. */
     --elev-1: 0 1px 2px rgb(0 0 0 / 44%), 0 8px 28px rgb(0 0 0 / 34%);
     --elev-2: 0 2px 8px rgb(0 0 0 / 52%), 0 16px 48px rgb(0 0 0 / 44%);
-
-    /* Vibrancy-Falle: Dieselbe Deckung wie im Hellen lässt im Dunkeln zu viel
-       durch, und der Text auf der Frostfläche verliert seinen Grund. Deshalb
-       hier undurchsichtiger, nicht durchsichtiger — auch das nachgemessen. */
-    --frost-surface: rgb(19 18 16 / 84%);
   }
 }

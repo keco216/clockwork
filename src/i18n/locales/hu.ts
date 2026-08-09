@@ -35,6 +35,7 @@ export default {
   'input.help.images': 'A QR-képek ide is húzhatók, vagy beilleszthetők a {paste} kombinációval.',
   'input.help.migration':
     'A Google Authenticator exportjai ({migration}) automatikusan átalakulnak.',
+  'input.help.more': 'Minden bemeneti formátum',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} fiók', other: '{n} fiók' },
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': 'Nem sikerült',
 
   'viewfinder.hint': 'Tartsa a QR-kódot a keretben',
+
+  'filter.label': 'Fiókok szűrése',
+  'filter.placeholder': 'Szűrés név szerint',
+  'filter.empty': 'Semmi sem egyezik ezzel: „{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} számjegy', other: '{n} számjegy' },
@@ -69,9 +74,13 @@ export default {
   'vault.state.locked': 'Zárva — jelmondat kell',
   'vault.state.open': 'Nyitva — a secretek a szövegmezőben vannak',
   'vault.explain':
-    'Alapértelmezés szerint a Clockwork semmit sem tárol. Aki szeretné, itt hagyhatja a ' +
-    'bevitelt jelmondattal titkosítva: PBKDF2-SHA-256 {iterations} iterációval, utána ' +
-    'AES-256-GCM. A jelmondat nélkül a tárolt blokk semmit sem ér.',
+    'A Clockwork alapértelmezésben semmit nem tárol. Ha bekapcsolja a páncélszekrényt, a ' +
+    'bevitel itt marad, a jelmondatával titkosítva — nélküle a tárolt blokk értéktelen.',
+  'vault.explain.crypto':
+    'A kulcsot PBKDF2-SHA-256 származtatja a jelmondatból {iterations} iterációval, a ' +
+    'titkosítást az AES-256-GCM végzi. Csak a lezárt boríték kerül tárolásra: sem a nyílt ' +
+    'szöveg, sem a jelmondat, sem a származtatott kulcs.',
+  'vault.explain.more': 'Minden részlet',
   'vault.pass.new': 'Új jelmondat',
   'vault.pass.existing': 'Jelmondat',
   'vault.action.seal': 'Titkosítva tárol',
@@ -128,7 +137,8 @@ export default {
   'import.unnamed': 'Névtelen',
   'import.unreadable': 'Az export olvashatatlan.',
 
-  'vacant.text': 'Még nincs bevitel. Tegyen fentre egy secretet.',
+  'vacant.text': 'Secret, otpauth-hivatkozás vagy QR-kép — semmi sem hagyja el ezt a böngészőt.',
+  'vacant.demo': 'Tesztkulcs beszúrása',
   'colophon.note': 'Nincs hálózat · nincs tárolás · HMAC a Web Crypto API-n keresztül',
 
   'lang.label': 'Nyelv',

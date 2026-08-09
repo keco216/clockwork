@@ -36,6 +36,7 @@ export default {
     'Изображения с QR-кодом можно перетащить сюда или вставить сочетанием {paste}.',
   'input.help.migration':
     'Выгрузки из Google Authenticator ({migration}) преобразуются сами собой.',
+  'input.help.more': 'Все форматы ввода',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': {
@@ -62,6 +63,10 @@ export default {
 
   'viewfinder.hint': 'Держите QR-код в рамке',
 
+  'filter.label': 'Фильтр учётных записей',
+  'filter.placeholder': 'Фильтр по имени',
+  'filter.empty': 'Ничего не найдено по запросу «{query}».',
+
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
     one: '{n} цифра',
@@ -85,9 +90,14 @@ export default {
   'vault.state.locked': 'Заперт — нужна парольная фраза',
   'vault.state.open': 'Открыт — secret’ы лежат в текстовом поле',
   'vault.explain':
-    'По умолчанию Clockwork не сохраняет ничего. При желании введённое можно оставить здесь ' +
-    'зашифрованным парольной фразой: PBKDF2-SHA-256 с {iterations} итерациями, затем ' +
-    'AES-256-GCM. Без парольной фразы сохранённый блок ничего не стоит.',
+    'По умолчанию Clockwork не сохраняет ничего. Если включить сейф, введённое останется ' +
+    'здесь зашифрованным вашей парольной фразой — без неё сохранённый блок ничего не ' +
+    'стоит.',
+  'vault.explain.crypto':
+    'Ключ выводится из парольной фразы через PBKDF2-SHA-256 с {iterations} итерациями, а ' +
+    'шифрует AES-256-GCM. Сохраняется только запечатанный конверт: никогда открытый ' +
+    'текст, никогда парольная фраза, никогда выведенный ключ.',
+  'vault.explain.more': 'Все подробности',
   'vault.pass.new': 'Новая парольная фраза',
   'vault.pass.existing': 'Парольная фраза',
   'vault.action.seal': 'Сохранить зашифрованным',
@@ -152,7 +162,8 @@ export default {
   'import.unnamed': 'Без имени',
   'import.unreadable': 'Выгрузка не читается.',
 
-  'vacant.text': 'Пока ничего не введено. Вставьте выше secret.',
+  'vacant.text': 'Секрет, ссылка otpauth или изображение QR — ничто из этого не покидает браузер.',
+  'vacant.demo': 'Вставить тестовый ключ',
   'colophon.note': 'Никакой сети · никакого хранилища · HMAC через Web Crypto API',
 
   'lang.label': 'Язык',

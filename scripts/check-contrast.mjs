@@ -4,11 +4,16 @@
  *   node scripts/check-contrast.mjs [url]
  *
  * ── Warum das nicht aus den Tokens zu rechnen ist ──────────────────────────
- * Solange eine Fläche eine Farbe hat, könnte man den Kontrast aus zwei
- * Hex-Werten ausrechnen. Seit V5 gibt es eine Fläche, bei der das nicht mehr
- * geht: Der klebende Kopf ist halbdurchsichtig und weichgezeichnet
- * (`backdrop-filter`). Was hinter seinem Text liegt, entscheidet erst der
- * Browser beim Zeichnen — und es ändert sich, während man scrollt.
+ * Weil zwei Hex-Werte nicht sagen, was der Browser daraus macht. Halbdeckende
+ * Haarlinien, Deckungen, übereinanderliegende Flächen, geerbte Farben — was
+ * hinter einem Text liegt, entsteht erst beim Zeichnen.
+ *
+ * Bis V7 war der klebende Kopf der Grund dafür: halbdurchsichtig und
+ * weichgezeichnet, also ein Kontrast, der sich beim Scrollen ändert. Seit V8 ist
+ * er deckend, und man könnte meinen, damit sei die Pixelmessung überflüssig.
+ * Sie ist es nicht — sie beweist jetzt etwas anderes, nämlich dass er wirklich
+ * deckt (Abschnitt 5). Und die halbdeckenden Haarlinien der Flächenleiter
+ * (Abschnitt 7) lassen sich ohnehin nur so prüfen.
  *
  * Deshalb misst dieses Skript nicht Tokens, sondern PIXEL:
  *
@@ -20,6 +25,36 @@
  *
  * Der Umweg über den unsichtbaren Text ist der Punkt: Ein Mittelwert ÜBER den
  * Glyphen hinweg würde die Schrift mitmessen und käme immer zu gut heraus.
+ *
+ * ── Warum ein Seitenausschnitt und keine Elementaufnahme ───────────────────
+ * Bis V6 stand hier `elementHandle.screenshot()`. Das ist der bequeme Weg und
+ * für ein klebendes Element der falsche: Playwright führt vor jeder
+ * Elementaufnahme seine Bedienbarkeitsprüfungen aus und scrollt das Element
+ * dabei in den Blick. Bei `position: sticky` zielt dieses Scrollen auf die
+ * Position im FLUSS — also an den Dokumentanfang. Die Seite sprang damit auf
+ * y = 0 zurück, der Fühler am Seitenanfang kam wieder ins Bild, der Kopf
+ * verlor sein Frost-Material (siehe ui/masthead.ts), und ab da maß jede
+ * weitere Zeile Text auf blankem Untergrund statt auf Frost.
+ *
+ * Sichtbar wurde das an der Reserveprobe: Sie lieferte exakt die Farbwerte der
+ * eingeschobenen Prüffläche — 1,13:1 über Orange —, weil zwischen Text und
+ * Prüffläche nichts mehr lag. Die naheliegende Erklärung war ein
+ * z-index-Fehler, und sie war falsch: `document.elementsFromPoint` zeigt den
+ * Kopf sauber über der Prüffläche. Kaputt war nicht der Stapel, sondern die
+ * Scrollposition — also der Messaufbau, nicht das Material.
+ *
+ * `page.screenshot({ clip })` scrollt nichts. Der Ausschnitt steht in
+ * FENSTERKOORDINATEN und wird unmittelbar vor der Aufnahme gelesen; wo nötig,
+ * scrollt dieses Skript vorher selbst und weiß danach, dass es gescrollt hat.
+ *
+ * Damit dieser Fehler nicht ein zweites Mal jahrelang unbemerkt bleibt, prüft
+ * das Skript seinen eigenen Aufbau (Abschnitt 5). Die Form dieses Selbsttests
+ * hat sich mit V8 geändert, sein Zweck nicht: Bis V7 verdünnte er den Frost auf
+ * 30 % und verlangte, dass die Probe DURCHFÄLLT. Einen Frost gibt es nicht mehr,
+ * also wird jetzt seine Nachfolge-Eigenschaft geprüft — dass der Kopf über drei
+ * extrem verschiedenen Prüfflächen DENSELBEN Wert liefert. Ein Kopf, der deckt,
+ * kann keinen anderen zeigen; ein Kopf, den das Skript nicht sieht, zeigt drei
+ * verschiedene.
  *
  * ── Warum ein eigener PNG-Leser ────────────────────────────────────────────
  * Aus demselben Grund, aus dem scripts/icons.mjs seine PNGs selbst schreibt:
@@ -129,6 +164,20 @@ function decodePng(buffer) {
   return { width, height, channels, pixels };
 }
 
+/** Der Durchschnitt EINER Bildzeile, als [r, g, b]. */
+function rowColour({ width, channels, pixels }, y) {
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  for (let x = 0; x < width; x++) {
+    const at = (y * width + x) * channels;
+    r += pixels[at];
+    g += pixels[at + 1];
+    b += pixels[at + 2];
+  }
+  return [r / width, g / width, b / width];
+}
+
 /** Der Durchschnitt aller Pixel eines Ausschnitts, als [r, g, b]. */
 function averageColour({ width, height, channels, pixels }) {
   let r = 0;
@@ -179,22 +228,38 @@ const findings = [];
 const rows = [];
 
 /**
+ * Ein Kastenmaß in Fensterkoordinaten auf den sichtbaren Bereich beschneiden.
+ * `page.screenshot({ clip })` weist einen Ausschnitt zurück, der auch nur einen
+ * Pixel über den Fensterrand ragt — und ein Element, das an der Falz hängt, ist
+ * genau so einer.
+ */
+function visibleClip(rect, viewport) {
+  const x = Math.max(0, Math.floor(rect.x));
+  const y = Math.max(0, Math.floor(rect.y));
+  const width = Math.min(viewport.width, Math.ceil(rect.x + rect.width)) - x;
+  const height = Math.min(viewport.height, Math.ceil(rect.y + rect.height)) - y;
+  return width >= 2 && height >= 2 ? { x, y, width, height } : null;
+}
+
+/**
  * Misst ein Element: Textfarbe gegen das, was der Browser tatsächlich
- * dahinter gezeichnet hat.
+ * dahinter gezeichnet hat. Gibt das Verhältnis zurück (oder `null`, wenn nicht
+ * gemessen werden konnte).
  */
 async function measure(page, { label, selector, scheme, min = AA_TEXT, keepScroll = false }) {
   const handle = await page.$(selector);
   if (handle === null) {
     findings.push(`${scheme} · ${label}: Element nicht gefunden (${selector})`);
-    return;
+    return null;
   }
 
-  // Der Ausschnitt eines Bildschirmfotos zählt vom sichtbaren Bereich aus. Was
-  // unterhalb der Falz liegt, hat zwar einen Kastenmaß, aber keinen Platz im
-  // Bild — also erst hinscrollen.
+  // Ein Seitenausschnitt zählt vom sichtbaren Bereich aus. Was unterhalb der
+  // Falz liegt, hat zwar ein Kastenmaß, aber keinen Platz im Bild — also erst
+  // hinscrollen.
   //
-  // Für die Frost-Messungen ist genau das verboten: Dort IST die Scrollposition
-  // der Messgegenstand. Der Kopf klebt ohnehin oben und ist immer sichtbar.
+  // Für die Messungen am klebenden Kopf ist genau das verboten: Dort IST die
+  // Scrollposition der Messgegenstand. Der Kopf klebt ohnehin oben und ist immer
+  // sichtbar.
   if (!keepScroll) {
     await handle.scrollIntoViewIfNeeded();
     await page.waitForTimeout(120);
@@ -204,31 +269,30 @@ async function measure(page, { label, selector, scheme, min = AA_TEXT, keepScrol
     await handle.evaluate((element) => getComputedStyle(element).color),
   );
 
-  const box = await handle.boundingBox();
-  if (box === null || box.width < 2 || box.height < 2) {
-    findings.push(`${scheme} · ${label}: Element hat keine Flaeche`);
-    return;
-  }
-
-  // Den Text unsichtbar machen, damit der Ausschnitt reiner Hintergrund ist —
-  // samt Weichzeichner. `visibility: hidden` ginge nicht: Das nimmt das Element
-  // aus dem Bild und legte den Grund darunter frei statt den Grund dahinter.
+  // Erst JETZT das Kastenmaß lesen, in Fensterkoordinaten und im selben Zug,
+  // in dem der Text unsichtbar wird: Zwischen Messen und Aufnehmen darf nichts
+  // mehr scrollen, sonst zeigt der Ausschnitt eine andere Stelle der Seite.
+  //
+  // `visibility: hidden` ginge für den Text nicht: Das nimmt das Element aus
+  // dem Bild und legte den Grund DARUNTER frei statt den Grund DAHINTER.
   //
   // Das `finally` ist kein Zierrat: Bliebe der Text nach einem Fehler auf
   // `transparent` stehen, wären alle folgenden Messungen an derselben Seite
   // still falsch.
   let shot;
-  await handle.evaluate((element) => {
+  const rect = await handle.evaluate((element) => {
     element.dataset['measuring'] = element.style.color;
     element.style.color = 'transparent';
+    const box = element.getBoundingClientRect();
+    return { x: box.x, y: box.y, width: box.width, height: box.height };
   });
   try {
-    // Bewusst der Ausschnitt des ELEMENTS und nicht ein `clip` auf der Seite:
-    // Ein Seitenausschnitt rechnet in Fensterkoordinaten und läuft ins Leere,
-    // sobald das Element auch nur teilweise unter der Falz liegt. Playwright
-    // holt das Element selbst ins Bild — und nimmt dabei mit auf, was darüber
-    // liegt, was hier gerade erwünscht ist.
-    shot = await handle.screenshot();
+    const clip = visibleClip(rect, page.viewportSize());
+    if (clip === null) {
+      findings.push(`${scheme} · ${label}: Element hat im Fenster keine Flaeche`);
+      return null;
+    }
+    shot = await page.screenshot({ clip });
   } finally {
     await handle.evaluate((element) => {
       element.style.color = element.dataset['measuring'] ?? '';
@@ -240,16 +304,72 @@ async function measure(page, { label, selector, scheme, min = AA_TEXT, keepScrol
   const ratio = contrast(foreground, background);
   const ok = ratio >= min;
 
-  rows.push({
-    scheme,
-    label,
-    ratio: ratio.toFixed(2),
-    min: min.toFixed(1),
-    ok,
-  });
+  rows.push({ scheme, label, ratio: ratio.toFixed(2), min: min.toFixed(1), ok });
 
   if (!ok) {
     findings.push(`${scheme} · ${label}: ${ratio.toFixed(2)}:1 — verlangt sind ${min}:1`);
+  }
+
+  return ratio;
+}
+
+/**
+ * Wie deutlich hebt sich eine Fläche von der ab, auf der sie liegt?
+ *
+ * ── Warum das nicht der Abstand zweier Flächenfarben ist ───────────────────
+ * Weil er im dunklen Modus gar nicht existieren kann. Nacht (#131210) liegt bei
+ * einer relativen Leuchtdichte von 0,0074; selbst gegen reines Schwarz wären
+ * daraus höchstens 1,15:1. Ein Panel im Dunkeln über seinen TON von seinem
+ * Grund abzuheben ist physikalisch nicht möglich — und genau deshalb tragen
+ * dort Haarlinie und Lichtkante die Erhebung (siehe --edge-lit in tokens.css).
+ *
+ * Gemessen wird deshalb, was das Auge tatsächlich benutzt, um eine Kante zu
+ * finden: der STÄRKSTE SPRUNG über sie hinweg. Ein schmaler senkrechter
+ * Streifen quer über die Oberkante, Zeile für Zeile gemittelt, dann der größte
+ * Kontrast zwischen zwei benachbarten Zeilen. Was ihn erzeugt — Tonunterschied,
+ * Haarlinie oder Lichtkante —, ist der Messung gleichgültig; sie fragt nur, ob
+ * es ihn gibt.
+ *
+ * Der Streifen ist absichtlich schmal und sitzt in der Mitte der Kante: An den
+ * gerundeten Ecken läuft die Kante schräg durch die Zeilen und verschmiert.
+ */
+async function measureEdge(page, { label, selector, scheme, min = 1.25 }) {
+  const handle = await page.$(selector);
+  if (handle === null) {
+    findings.push(`${scheme} · ${label}: Element nicht gefunden (${selector})`);
+    return;
+  }
+
+  await handle.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(120);
+
+  const BAND = 10; // Pixel ober- und unterhalb der Kante
+  const rect = await handle.evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    return { x: box.x, y: box.y, width: box.width };
+  });
+
+  const clip = visibleClip(
+    { x: rect.x + rect.width / 2 - 20, y: rect.y - BAND, width: 40, height: BAND * 2 },
+    page.viewportSize(),
+  );
+  if (clip === null) {
+    findings.push(`${scheme} · ${label}: Kante liegt nicht im Fenster`);
+    return;
+  }
+
+  const image = decodePng(await page.screenshot({ clip }));
+  let best = 1;
+  for (let y = 1; y < image.height; y++) {
+    best = Math.max(best, contrast(rowColour(image, y - 1), rowColour(image, y)));
+  }
+
+  const ok = best >= min;
+  rows.push({ scheme, label, ratio: best.toFixed(2), min: min.toFixed(2), ok });
+  if (!ok) {
+    findings.push(
+      `${scheme} · ${label}: staerkster Sprung ueber die Kante ${best.toFixed(2)}:1 — verlangt sind ${min}:1`,
+    );
   }
 }
 
@@ -274,6 +394,16 @@ for (const scheme of ['light', 'dark']) {
   await page.goto(`${url}#lang=de`, { waitUntil: 'networkidle' });
   await page.fill('#secrets', DEMO);
   await page.waitForTimeout(450);
+
+  // Der Tresor ist seit V7 ein Aufklapper und startet zu. Ein zugeklappter
+  // `<details>`-Inhalt hat kein Rechteck — die Messung darunter bekäme dann
+  // einen Ausschnitt der Fläche, auf der der Absatz LÄGE, und meldete eine
+  // Zahl, die nichts beschreibt.
+  await page.evaluate(() => {
+    const disclosure = document.querySelector('#vault-disclosure');
+    if (disclosure !== null) disclosure.open = true;
+  });
+  await page.waitForTimeout(200);
 
   /* ── 1. Die festen Flächen ──────────────────────────────────────────────
      Alles, was auf einer Gehäusegruppe steht. Neu an V5 ist der Untergrund
@@ -327,21 +457,40 @@ for (const scheme of ['light', 'dark']) {
      Hier ist er noch flach und liegt auf dem blanken Untergrund. */
   await measure(page, { scheme, label: 'Kopf: Marke, ungescrollt', selector: '.masthead__spec' });
 
-  /* ── 3. Der klebende Kopf über der Gehäusegruppe ────────────────────────
-     Jetzt trägt er Frost, und dahinter läuft eine helle Panelfläche durch. */
+  /* ── 3. Der klebende Kopf, gescrollt ────────────────────────────────────
+     Jetzt liegt eine Panelfläche unter ihm. Seit V8 ändert das an seinem Grund
+     nichts mehr — er ist deckend. Gemessen wird es trotzdem, denn „ändert
+     nichts" ist genau die Zusage, die hier geprüft wird. */
   await page.evaluate(() => {
     window.scrollTo(0, 400);
   });
   await page.waitForTimeout(400);
+
+  // Die Messregion verifizieren, bevor irgendetwas gemessen wird. Ohne diesen
+  // Griff steht in der Ausgabe eine ordentliche Zahl, die eine ganz andere
+  // Fläche beschreibt — genau so blieb der Messfehler aus V6 ein halbes Release
+  // lang unsichtbar. Die Klasse schaltet seit V8 kein Material mehr, sondern
+  // Kante und Schatten; als Nachweis, DASS gescrollt wurde und der Kopf über
+  // etwas liegt, taugt sie unverändert.
+  const grip = await page.evaluate(() => ({
+    y: Math.round(window.scrollY),
+    lifted: document.querySelector('.masthead')?.classList.contains('masthead--lifted') ?? false,
+  }));
+  if (!grip.lifted) {
+    findings.push(
+      `${scheme} · Messaufbau: Der Kopf liegt bei y=${grip.y} ueber nichts — er klebt nicht, oder die Seite ist nicht gescrollt.`,
+    );
+  }
+
   await measure(page, {
     scheme,
-    label: 'Kopf auf Frost ueber Panel',
+    label: 'Kopf ueber Panel: Marke',
     selector: '.masthead__spec',
     keepScroll: true,
   });
   await measure(page, {
     scheme,
-    label: 'Kopf auf Frost: Wortmarke',
+    label: 'Kopf ueber Panel: Zustand',
     selector: '#state-text',
     keepScroll: true,
   });
@@ -351,30 +500,28 @@ for (const scheme of ['light', 'dark']) {
      lässt: Gehäusegruppen und Untergrund. Diese Werte MÜSSEN AA erfüllen —
      sie kommen vor.
 
-     Jetzt kommt, was nicht vorkommt. Der Auftrag nennt als schlimmsten Fall
-     eine Signal-Orange-Fläche unter dem Kopf; die gibt es hier nicht, weil die
-     Signalfarbe in diesem Gerät nur Marken und Schrift trägt und nie eine
-     Fläche. Gemessen wird sie trotzdem, zusammen mit Tinte und Papier — den
-     beiden Enden der Palette.
+     Jetzt kommt, was nicht vorkommt: Signal-Orange, Tinte und Papier unter dem
+     Kopf, also die Enden der Palette.
 
-     Der Maßstab ist hier bewusst 3:1 und nicht 4,5:1, und das ist kein
-     Weichspülen, sondern die Frage, die hier zählt: Nicht „ist dieser Text
+     ── Warum die Probe bleibt, obwohl der Kopf jetzt deckt ────────────────
+     Weil sie mit V5 einen echten Fehler gefunden hat (2,78:1 bei 72 % Deckung),
+     und weil „der Kopf ist deckend" eine Behauptung über Code ist, die ein
+     Token, ein Rückfall oder ein `@supports` jederzeit wieder umdrehen kann.
+     Ein deckender Kopf besteht diese Probe mühelos — genau das ist der Punkt.
+     Der Wächter kostet drei Messungen und meldet sich, sobald irgendwer die
+     Fläche wieder durchsichtig macht.
+
+     Der Maßstab bleibt 3:1 und nicht 4,5:1: Gefragt ist nicht „ist dieser Text
      bequem zu lesen" — er steht nie auf so einem Grund —, sondern „wie viel
-     Reserve hat das Material, bevor es zusammenbricht". 3:1 ist die Schwelle,
-     unter der Schrift aufhört, erkennbar zu sein.
-
-     Wollte man auch hier 4,5:1, müsste die Deckung auf über 90 % steigen.
-     Dann wäre der Weichzeichner wirkungslos und die Fläche schlicht
-     undurchsichtig — ein Material, das einen Fall besteht, den es nie erlebt,
-     indem es aufhört, ein Material zu sein. */
+     Reserve hat die Fläche, bevor sie zusammenbricht". */
   const HARD = [
     { name: 'Signal-Orange', colour: '#f05a28' },
     { name: 'Tinte', colour: '#171614' },
     { name: 'Papier', colour: '#f5f3ef' },
   ];
 
-  for (const probe of HARD) {
-    await page.evaluate((colour) => {
+  const setProbe = (colour) =>
+    page.evaluate((value) => {
       let patch = document.getElementById('contrast-probe');
       if (patch === null) {
         patch = document.createElement('div');
@@ -384,24 +531,229 @@ for (const scheme of ['light', 'dark']) {
         patch.style.insetBlockStart = '0';
         patch.style.width = '100%';
         patch.style.height = '160px';
-        // Unter den Kopf, aber über alles andere.
-        patch.style.zIndex = '4';
-        document.body.append(patch);
+        // Unter den Kopf (z-index 5), aber über den Inhalt (z-index 1).
+        patch.style.zIndex = '2';
+        // In .device und nicht am body, damit die Prüffläche im selben
+        // Stapelzusammenhang liegt wie der Kopf, den sie unterlegen soll.
+        (document.querySelector('.device') ?? document.body).append(patch);
       }
-      patch.style.background = colour;
-    }, probe.colour);
+      patch.style.background = value;
+    }, colour);
+
+  const reserve = [];
+
+  for (const probe of HARD) {
+    await setProbe(probe.colour);
     await page.waitForTimeout(250);
-    await measure(page, {
+    const ratio = await measure(page, {
       scheme,
       label: `Reserve: Kopf ueber ${probe.name}`,
       selector: '.masthead__spec',
       keepScroll: true,
       min: AA_LARGE,
     });
+    if (ratio !== null) reserve.push({ name: probe.name, ratio });
+  }
+
+  /* ── 5. Der Selbsttest: deckt der Kopf wirklich? ─────────────────────────
+     Alles bis hierher ist eine Behauptung über eine Fläche, die es ohne den
+     Browser gar nicht gibt. Wenn der Messaufbau kaputtgeht, bricht er nicht
+     laut zusammen — er liefert weiter Zahlen, nur eben von der falschen Fläche.
+     Genau das ist in V6 passiert.
+
+     Bis V7 stand hier eine Gegenprobe, die durchfallen MUSSTE: Frost auf 30 %
+     verdünnt, und wenn die Probe dann noch bestand, sah das Skript den Kopf
+     nicht. Mit einem deckenden Kopf gibt es nichts mehr zu verdünnen — aber
+     einen Beweis derselben Art, und zwar einen strengeren.
+
+     Ein deckender Kopf muss über Signal-Orange, Tinte und Papier DENSELBEN Wert
+     liefern. Drei Prüfflächen, die weiter auseinander liegen könnten es nicht,
+     und trotzdem ein Wert: Das kann nur herauskommen, wenn zwischen Text und
+     Prüffläche wirklich eine deckende Fläche liegt.
+
+     Der Test ist strenger als die alte Gegenprobe, weil er beide Fehlerarten
+     zugleich fängt:
+
+       • Der Kopf ist versehentlich durchsichtig geworden → die drei Werte gehen
+         auseinander, denn die Prüfflächen schlagen durch.
+       • Das Skript sieht den Kopf gar nicht (der V6-Fehler) → die drei Werte
+         gehen ebenfalls auseinander, denn dann MISST es die Prüfflächen.
+
+     Ein einziger Grenzwert würde nur den ersten Fall fangen, und auch den nur,
+     solange die Palette sich nicht bewegt. Eine Streuung braucht keine
+     Palettenannahme.
+
+     0,15 ist die zugelassene Streuung. Sie ist nicht Null, weil der Kopf eine
+     Haarlinie, einen Schatten und gerundete Ecken hat: Der Ausschnitt liegt an
+     der Textzeile, nicht am Rand, aber die Kantenglättung der Glyphenfläche
+     lässt ein paar Zehntelpixel Rest. Gemessen liegt die Streuung bei 0,00 —
+     0,15 ist Luft, nicht Toleranz für ein bekanntes Problem. */
+  const spread =
+    reserve.length < 2
+      ? 0
+      : Math.max(...reserve.map((r) => r.ratio)) - Math.min(...reserve.map((r) => r.ratio));
+
+  const SPREAD_MAX = 0.15;
+  rows.push({
+    scheme,
+    label: 'Selbsttest: Streuung der drei Reserveproben',
+    ratio: spread.toFixed(2),
+    min: SPREAD_MAX.toFixed(2),
+    ok: spread <= SPREAD_MAX,
+    isSpread: true,
+  });
+
+  if (spread > SPREAD_MAX) {
+    findings.push(
+      `${scheme} · Messaufbau: Die drei Reserveproben streuen um ${spread.toFixed(2)} ` +
+        `(${reserve.map((r) => `${r.name} ${r.ratio.toFixed(2)}`).join(', ')}). ` +
+        `Ein deckender Kopf kann das nicht — entweder ist er durchsichtig geworden, ` +
+        `oder das Skript misst die Pruefflaeche statt den Kopf.`,
+    );
   }
 
   await page.evaluate(() => {
     document.getElementById('contrast-probe')?.remove();
+  });
+
+  /* ── 6. Die Kanten des Geräts ───────────────────────────────────────────
+     Bis V6 gab es zwei Flächenebenen, und der Abstand zwischen ihnen war 1,11:1
+     — das ist kein Tonunterschied mehr, das ist ein Verdacht. V7 hat daraus
+     drei gemacht (Werkbank, Gehäuse, Panels), und hier steht die Zusage dazu:
+
+       Panel  auf  Gehäuse    das Bedienfeld hebt sich vom Gerät ab
+       Gehäuse auf Werkbank   das Gerät hebt sich vom Tisch ab
+
+     1,25 ist keine WCAG-Schwelle — für zwei aneinandergrenzende Flächen gibt es
+     keine. Es ist die Zahl, die dieses Projekt sich gibt, und sie ist von unten
+     begründet: 1,11 war nachweislich zu wenig, denn genau daran hat sich der
+     V7-Auftrag gestört. */
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(300);
+  await measureEdge(page, {
+    scheme,
+    label: 'Kante: Panel auf Gehaeuse',
+    selector: '#zone-codes .zone__body',
+  });
+  await measureEdge(page, {
+    scheme,
+    label: 'Kante: Gehaeuse auf Werkbank',
+    selector: '.device',
+  });
+
+  /* ── 7. Kanten an den Bauteilen ─────────────────────────────────────────
+     Der V8-Auftrag nennt die Borders „fast unsichtbar". Die Ursache lag nicht
+     bei ihnen, sondern an der Fläche darunter (siehe --rule in tokens.css) — aber
+     eine Behauptung über eine Kante gehört gemessen, nicht erklärt.
+
+     Gemessen wird wie bei den Geräteflächen der stärkste Sprung über die
+     Oberkante. 1,3 ist die Zahl, die dieses Projekt sich gibt: Eine Kante, die
+     unter 1,3 liegt, findet das Auge nicht mehr, ohne danach zu suchen.
+
+     Der Umriss-Knopf ist hier der interessante Fall: Er trug bis V7 1 px in der
+     Fugenfarbe und war damit als Bauteil gezeichnet wie eine Trennlinie. */
+  await measureEdge(page, {
+    scheme,
+    label: 'Kante: Eingabefeld',
+    selector: '#secrets',
+    min: 1.3,
+  });
+  await measureEdge(page, {
+    scheme,
+    label: 'Kante: Umriss-Knopf',
+    selector: '#key-file',
+    min: 1.3,
+  });
+  await measureEdge(page, {
+    scheme,
+    label: 'Kante: Chip',
+    selector: '.strip__spec',
+    min: 1.3,
+  });
+
+  /* ── 8. Die Matrix: jede Textstufe auf jeder Fläche ──────────────────────
+     Abschnitt 1 misst, was die App WIRKLICH zeigt — dort steht jede Zeile für
+     ein Bauteil, das es gibt. Das ist die wichtigere Hälfte und bleibt vorn.
+
+     Hier steht die andere: die ZUSAGE. styles/tokens.css behauptet, dass alle
+     drei Textstufen auf jeder Fläche der Leiter mindestens 4,5:1 halten, und
+     genau darauf beruht die Aufräumarbeit von V8 — zwei Sonderregeln aus V7
+     („auf dem Gehäuse eine Stufe kräftiger", „im Kopf noch eine") sind
+     gestrichen worden, weil die Zusage gilt. Eine gestrichene Ausnahme ist nur
+     so viel wert wie die Regel, die sie ersetzt.
+
+     Geprüft wird deshalb das ganze Kreuz, auch die Paare, die heute nirgends
+     vorkommen: vier Flächen × fünf Farben. Wer morgen einen Hinweistext auf die
+     berührte Fläche legt, soll das tun können, ohne nachzumessen.
+
+     Die Prüffläche steht dafür im Dokument und trägt echte Tokens — gerechnet
+     wird auch hier an gezeichneten Pixeln, nicht an Hex-Werten. Der Unterschied
+     ist nicht Pedanterie: `--rule` und `--edge-*` sind halbdeckend, und was
+     daraus auf einer Fläche wird, weiß nur der Browser. */
+  const SURFACES = [
+    ['Gehaeuse', '--case'],
+    ['versenkt', '--surface-recessed'],
+    ['beruehrt', '--surface-active'],
+    ['Panel', '--surface'],
+  ];
+  const INKS = [
+    ['ink', '--ink', AA_TEXT],
+    ['ink-2', '--ink-2', AA_TEXT],
+    ['ink-3', '--ink-3', AA_TEXT],
+    // Der Akzent für Schrift und feine Marken. Derselbe Maßstab wie Text: Er
+    // trägt den ablaufenden Code und die Tresor-Statuszeile.
+    ['signal-text', '--signal-text', AA_TEXT],
+    ['fault', '--fault', AA_TEXT],
+  ];
+
+  await page.evaluate(
+    ([surfaces, inks]) => {
+      const grid = document.createElement('div');
+      grid.id = 'token-matrix';
+      grid.style.position = 'fixed';
+      grid.style.insetInlineStart = '0';
+      grid.style.insetBlockStart = '0';
+      // Über allem, damit nichts anderes in den Ausschnitt gerät.
+      grid.style.zIndex = '9999';
+      grid.style.display = 'flex';
+      grid.style.flexWrap = 'wrap';
+
+      for (const [surfaceName, surfaceToken] of surfaces) {
+        for (const [inkName, inkToken] of inks) {
+          const cell = document.createElement('span');
+          cell.dataset['probe'] = `${surfaceName}/${inkName}`;
+          cell.style.background = `var(${surfaceToken})`;
+          cell.style.color = `var(${inkToken})`;
+          // Gross genug, dass der Ausschnitt sicher Pixel hat, und ohne Rand:
+          // Ein Rahmen käme in den Mittelwert und würde das Ergebnis verfälschen.
+          cell.style.padding = '10px 14px';
+          cell.style.fontSize = '14px';
+          cell.textContent = 'Agmw 0123';
+          grid.append(cell);
+        }
+      }
+      document.body.append(grid);
+    },
+    [SURFACES, INKS],
+  );
+  await page.waitForTimeout(200);
+
+  for (const [surfaceName] of SURFACES) {
+    for (const [inkName, , min] of INKS) {
+      await measure(page, {
+        scheme,
+        label: `Matrix: ${inkName} auf ${surfaceName}`,
+        selector: `[data-probe="${surfaceName}/${inkName}"]`,
+        min,
+        keepScroll: true,
+      });
+    }
+  }
+
+  await page.evaluate(() => {
+    document.getElementById('token-matrix')?.remove();
   });
 
   await context.close();
@@ -420,13 +772,27 @@ for (const row of rows) {
     last = row.scheme;
   }
   const mark = row.ok ? '✓' : '✗';
-  console.log(`  ${mark} ${row.label.padEnd(width)}  ${row.ratio.padStart(6)}:1  (>= ${row.min})`);
+  // Der Selbsttest hat das umgekehrte Ziel — seine Streuung soll KLEIN sein.
+  // Stünde dort dasselbe „>=" wie überall, läse sich eine bestandene Zeile wie
+  // ein Widerspruch. Und er ist kein Kontrastverhältnis, also kein „:1".
+  if (row.isSpread) {
+    console.log(`  ${mark} ${row.label.padEnd(width)}  ${row.ratio.padStart(6)}   (<= ${row.min})`);
+  } else {
+    console.log(
+      `  ${mark} ${row.label.padEnd(width)}  ${row.ratio.padStart(6)}:1  (>= ${row.min})`,
+    );
+  }
 }
+
+const proofs = rows.filter((row) => row.isSpread).length;
 
 if (findings.length > 0) {
   console.error('\nBefunde:');
   for (const finding of findings) console.error('  ✗ ' + finding);
   process.exitCode = 1;
 } else {
-  console.log(`\n✓ Alle ${rows.length} gemessenen Paare erfuellen WCAG AA.`);
+  console.log(
+    `\n✓ Alle ${rows.length - proofs} gemessenen Paare erfuellen ihr Maß.` +
+      `\n✓ ${proofs} Selbsttests zeigen, dass dabei wirklich der Kopf gemessen wurde.`,
+  );
 }

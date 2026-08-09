@@ -33,6 +33,7 @@ export default {
   'input.help.formats': 'Base32、{nameSecret} 或 {uri} —— 可以混排。{hash} 開始一則註記。',
   'input.help.images': 'QR 碼圖片也可以拖到這裡，或者用 {paste} 貼上。',
   'input.help.migration': 'Google 驗證器的匯出（{migration}）會自動轉換。',
+  'input.help.more': '全部輸入格式',
   'shortcut.modifier': 'Ctrl',
 
   // 數字與量詞之間不留空（「3個帳戶」）——這是中文的寫法，
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': '失敗',
 
   'viewfinder.hint': '把 QR 碼放進取景框',
+
+  'filter.label': '篩選帳戶',
+  'filter.placeholder': '依名稱篩選',
+  'filter.empty': '沒有與「{query}」相符的項目。',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { other: '{n} 位' },
@@ -69,9 +74,11 @@ export default {
   'vault.state.locked': '已鎖 —— 需要密碼短語',
   'vault.state.open': '已開 —— secret 在文字方塊裡',
   'vault.explain':
-    'Clockwork 預設什麼都不儲存。願意的話，可以把輸入用密碼短語加密後留在這裡：' +
-    'PBKDF2-SHA-256 迭代 {iterations} 次，然後 AES-256-GCM。沒有密碼短語，儲存下來的那一' +
-    '塊毫無價值。',
+    'Clockwork 預設什麼都不儲存。打開保險箱後，輸入的內容會用你的密碼短語加密後留在這裡；沒有密碼短語，儲存下來的那一塊毫無價值。',
+  'vault.explain.crypto':
+    '金鑰由密碼短語經 PBKDF2-SHA-256 迭代 {iterations} 次導出，加密由 AES-256-GCM ' +
+    '完成。儲存的只有封好的信封：明文、密碼短語和導出的金鑰都不會存下來。',
+  'vault.explain.more': '全部細節',
   'vault.pass.new': '新的密碼短語',
   'vault.pass.existing': '密碼短語',
   'vault.action.seal': '加密儲存',
@@ -120,7 +127,8 @@ export default {
   'import.unnamed': '未命名',
   'import.unreadable': '匯出無法讀取。',
 
-  'vacant.text': '還沒有輸入。在上面放一個 secret。',
+  'vacant.text': '密鑰、otpauth 連結或 QR 圖片——都不會離開這個瀏覽器。',
+  'vacant.demo': '插入測試金鑰',
   'colophon.note': '無網路 · 無儲存 · HMAC 經由 Web Crypto API',
 
   'lang.label': '語言',

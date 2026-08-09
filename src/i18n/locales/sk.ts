@@ -35,6 +35,7 @@ export default {
   'input.help.images': 'Obrázky s QR kódom sa dajú sem aj pretiahnuť alebo vložiť cez {paste}.',
   'input.help.migration':
     'Exporty z Google Authenticatora ({migration}) sa prevádzajú automaticky.',
+  'input.help.more': 'Všetky vstupné formáty',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': {
@@ -61,6 +62,10 @@ export default {
 
   'viewfinder.hint': 'Držte QR kód v rámčeku',
 
+  'filter.label': 'Filtrovať účty',
+  'filter.placeholder': 'Filtrovať podľa názvu',
+  'filter.empty': 'Nič nezodpovedá „{query}“.',
+
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
     one: '{n} číslica',
@@ -84,9 +89,13 @@ export default {
   'vault.state.locked': 'Zamknuté — treba heslovú frázu',
   'vault.state.open': 'Otvorené — secrety sú v textovom poli',
   'vault.explain':
-    'Clockwork štandardne neukladá nič. Kto chce, môže tu nechať vstup zašifrovaný heslovou ' +
-    'frázou: PBKDF2-SHA-256 s {iterations} iteráciami, potom AES-256-GCM. Bez heslovej frázy ' +
-    'je uložený blok bezcenný.',
+    'Clockwork v predvolenom nastavení neukladá nič. Keď zapnete trezor, zostane zadanie ' +
+    'tu zašifrované vašou heslovou frázou — bez nej je uložený blok bezcenný.',
+  'vault.explain.crypto':
+    'Kľúč vzniká z heslovej frázy pomocou PBKDF2-SHA-256 s {iterations} iteráciami, ' +
+    'šifruje AES-256-GCM. Ukladá sa len zapečatená obálka: nikdy otvorený text, nikdy ' +
+    'heslová fráza, nikdy odvodený kľúč.',
+  'vault.explain.more': 'Všetky podrobnosti',
   'vault.pass.new': 'Nová heslová fráza',
   'vault.pass.existing': 'Heslová fráza',
   'vault.action.seal': 'Uložiť zašifrované',
@@ -151,7 +160,8 @@ export default {
   'import.unnamed': 'Bez názvu',
   'import.unreadable': 'Export nečitateľný.',
 
-  'vacant.text': 'Zatiaľ nič zadané. Vložte hore secret.',
+  'vacant.text': 'Secret, odkaz otpauth alebo obrázok QR — nič z toho neopustí tento prehliadač.',
+  'vacant.demo': 'Vložiť testovací kľúč',
   'colophon.note': 'Žiadna sieť · žiadne úložisko · HMAC cez Web Crypto API',
 
   'lang.label': 'Jazyk',

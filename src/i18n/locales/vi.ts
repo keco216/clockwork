@@ -36,6 +36,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} hoặc {uri} — trộn lẫn. {hash} mở đầu một ghi chú.',
   'input.help.images': 'Ảnh mã QR cũng có thể kéo vào đây hoặc dán bằng {paste}.',
   'input.help.migration': 'Bản xuất từ Google Authenticator ({migration}) được chuyển đổi tự động.',
+  'input.help.more': 'Mọi định dạng đầu vào',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { other: '{n} tài khoản' },
@@ -51,6 +52,10 @@ export default {
   'key.copyFailed': 'Thất bại',
 
   'viewfinder.hint': 'Giữ mã QR trong khung',
+
+  'filter.label': 'Lọc tài khoản',
+  'filter.placeholder': 'Lọc theo tên',
+  'filter.empty': 'Không có gì khớp với “{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { other: '{n} chữ số' },
@@ -70,9 +75,14 @@ export default {
   'vault.state.locked': 'Đã khoá — cần cụm mật khẩu',
   'vault.state.open': 'Đang mở — các secret nằm trong ô văn bản',
   'vault.explain':
-    'Mặc định Clockwork không lưu gì. Ai muốn thì có thể để phần nhập ở đây dưới dạng mã hoá ' +
-    'bằng một cụm mật khẩu: PBKDF2-SHA-256 với {iterations} vòng lặp, rồi AES-256-GCM. ' +
-    'Không có cụm mật khẩu thì khối đã lưu chẳng có giá trị gì.',
+    'Theo mặc định Clockwork không lưu gì cả. Nếu bật hầm, phần đã nhập sẽ ở lại đây dưới ' +
+    'dạng mã hoá bằng cụm mật khẩu của bạn — không có nó thì khối đã lưu chẳng có giá ' +
+    'trị.',
+  'vault.explain.crypto':
+    'Khoá được suy ra từ cụm mật khẩu bằng PBKDF2-SHA-256 với {iterations} lần lặp, còn ' +
+    'AES-256-GCM lo việc mã hoá. Chỉ phong bì đã niêm phong được lưu: không bao giờ là ' +
+    'văn bản rõ, không bao giờ là cụm mật khẩu, không bao giờ là khoá dẫn xuất.',
+  'vault.explain.more': 'Mọi chi tiết',
   'vault.pass.new': 'Cụm mật khẩu mới',
   'vault.pass.existing': 'Cụm mật khẩu',
   'vault.action.seal': 'Lưu đã mã hoá',
@@ -122,7 +132,8 @@ export default {
   'import.unnamed': 'Không tên',
   'import.unreadable': 'Bản xuất không đọc được.',
 
-  'vacant.text': 'Chưa nhập gì. Hãy đặt một secret ở trên.',
+  'vacant.text': 'Secret, liên kết otpauth hoặc ảnh QR — không có gì rời khỏi trình duyệt này.',
+  'vacant.demo': 'Chèn khóa thử',
   'colophon.note': 'Không mạng · không lưu trữ · HMAC qua Web Crypto API',
 
   'lang.label': 'Ngôn ngữ',

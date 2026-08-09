@@ -39,6 +39,9 @@ export function startScanner(handlers: ScanHandlers): Scanner {
   const viewfinder = requireElement(document, '#viewfinder');
   const video = requireElement<HTMLVideoElement>(document, '#viewfinder-video');
   const hint = requireElement(document, '#viewfinder-hint');
+  // Oben geholt und nicht erst beim Anmelden des Klicks: stopCamera() gibt den
+  // Fokus an diesen Knopf zurück und steht weiter unten.
+  const cameraKey = requireElement<HTMLButtonElement>(document, '#key-camera');
 
   let stream: MediaStream | null = null;
   let scanTimer = 0;
@@ -136,10 +139,24 @@ export function startScanner(handlers: ScanHandlers): Scanner {
     }
     stream = null;
     video.srcObject = null;
+
+    /* Wer den Sucher mit „Kamera aus" schließt, steht mit dem Fokus AUF diesem
+       Knopf — und der verschwindet gleich mit. Ein Element, das den Fokus hält
+       und `hidden` wird, gibt ihn nicht weiter: Der Browser setzt ihn auf
+       <body> zurück, und wer mit der Tastatur bedient, steht wieder ganz oben
+       im Dokument und tabbt sich durch den halben Kopf zurück.
+
+       Deshalb erst fragen, ob der Fokus überhaupt im Sucher liegt, und nur
+       dann zurückgeben. Sonst würde ein Treffer der Kamera (stopCamera läuft
+       auch dort) den Fokus aus dem Feld reißen, in das gerade jemand tippt. */
+    const returnFocus = viewfinder.contains(document.activeElement);
     viewfinder.hidden = true;
+    if (returnFocus) {
+      cameraKey.focus();
+    }
   }
 
-  requireElement<HTMLButtonElement>(document, '#key-camera').addEventListener('click', () => {
+  cameraKey.addEventListener('click', () => {
     void startCamera();
   });
   requireElement<HTMLButtonElement>(document, '#key-camera-stop').addEventListener(

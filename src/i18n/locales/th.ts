@@ -34,6 +34,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} หรือ {uri} — ปนกันได้ {hash} เริ่มต้นบันทึกย่อ',
   'input.help.images': 'ภาพรหัส QR ลากมาวางที่นี่ก็ได้ หรือวางด้วย {paste}',
   'input.help.migration': 'ไฟล์ส่งออกจาก Google Authenticator ({migration}) จะถูกแปลงให้เอง',
+  'input.help.more': 'รูปแบบข้อมูลทั้งหมด',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { other: '{n} บัญชี' },
@@ -49,6 +50,10 @@ export default {
   'key.copyFailed': 'ล้มเหลว',
 
   'viewfinder.hint': 'ถือรหัส QR ไว้ในกรอบ',
+
+  'filter.label': 'กรองบัญชี',
+  'filter.placeholder': 'กรองตามชื่อ',
+  'filter.empty': 'ไม่มีรายการที่ตรงกับ “{query}”',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { other: '{n} หลัก' },
@@ -68,8 +73,14 @@ export default {
   'vault.state.locked': 'ล็อกอยู่ — ต้องใช้วลีรหัสผ่าน',
   'vault.state.open': 'เปิดอยู่ — secret อยู่ในช่องข้อความ',
   'vault.explain':
-    'โดยปริยาย Clockwork ไม่บันทึกสิ่งใดเลย ผู้ที่ต้องการสามารถเก็บสิ่งที่ป้อนไว้ที่นี่ในรูปแบบเข้ารหัสด้วยวลีรหัสผ่าน: ' +
-    'PBKDF2-SHA-256 จำนวน {iterations} รอบ แล้วตามด้วย AES-256-GCM หากไม่มีวลีรหัสผ่าน บล็อกที่บันทึกไว้ก็ไร้ค่า',
+    'ตามค่าเริ่มต้น Clockwork ไม่เก็บอะไรเลย หากเปิดตู้เซฟ ' +
+    'สิ่งที่ป้อนไว้จะอยู่ที่นี่โดยเข้ารหัสด้วยวลีรหัสผ่านของคุณ — ถ้าไม่มีวลีนั้น ' +
+    'บล็อกที่เก็บไว้ก็ไร้ค่า',
+  'vault.explain.crypto':
+    'กุญแจได้มาจากวลีรหัสผ่านด้วย PBKDF2-SHA-256 จำนวน {iterations} รอบ และ AES-256-GCM ' +
+    'ทำหน้าที่เข้ารหัส ที่เก็บไว้มีเพียงซองที่ปิดผนึกแล้ว ไม่เคยเก็บข้อความธรรมดา ' +
+    'ไม่เคยเก็บวลีรหัสผ่าน และไม่เคยเก็บกุญแจที่ได้มา',
+  'vault.explain.more': 'รายละเอียดทั้งหมด',
   'vault.pass.new': 'วลีรหัสผ่านใหม่',
   'vault.pass.existing': 'วลีรหัสผ่าน',
   'vault.action.seal': 'บันทึกแบบเข้ารหัส',
@@ -118,7 +129,8 @@ export default {
   'import.unnamed': 'ไม่มีชื่อ',
   'import.unreadable': 'ไฟล์ส่งออกอ่านไม่ออก',
 
-  'vacant.text': 'ยังไม่ได้ป้อนอะไร ใส่ secret ไว้ด้านบน',
+  'vacant.text': 'ซีเคร็ต ลิงก์ otpauth หรือรูป QR — ไม่มีสิ่งใดออกจากเบราว์เซอร์นี้',
+  'vacant.demo': 'ใส่คีย์ทดสอบ',
   'colophon.note': 'ไม่มีเครือข่าย · ไม่มีที่เก็บ · HMAC ผ่าน Web Crypto API',
 
   'lang.label': 'ภาษา',

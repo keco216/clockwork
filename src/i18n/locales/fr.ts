@@ -37,6 +37,7 @@ export default {
     'Les images de QR code peuvent aussi être glissées ici ou collées avec {paste}.',
   'input.help.migration':
     'Les exports Google Authenticator ({migration}) sont convertis automatiquement.',
+  'input.help.more': 'Tous les formats acceptés',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} compte', many: '{n} comptes', other: '{n} comptes' },
@@ -52,6 +53,10 @@ export default {
   'key.copyFailed': 'Échec',
 
   'viewfinder.hint': 'Placez le QR code dans le cadre',
+
+  'filter.label': 'Filtrer les comptes',
+  'filter.placeholder': 'Filtrer par nom',
+  'filter.empty': 'Rien ne correspond à « {query} ».',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} chiffre', many: '{n} chiffres', other: '{n} chiffres' },
@@ -71,9 +76,14 @@ export default {
   'vault.state.locked': 'Verrouillé — phrase secrète requise',
   'vault.state.open': 'Ouvert — les secrets sont dans le champ de texte',
   'vault.explain':
-    'Par défaut, Clockwork n’enregistre rien. Si vous le souhaitez, la saisie peut être ' +
-    'conservée ici, chiffrée par une phrase secrète : PBKDF2-SHA-256 avec {iterations} ' +
-    'itérations, puis AES-256-GCM. Sans la phrase secrète, le bloc enregistré ne vaut rien.',
+    'Par défaut, Clockwork ne conserve rien. Si vous activez le coffre, la saisie reste ' +
+    'ici chiffrée par votre phrase secrète — sans elle, le bloc enregistré ne vaut rien.',
+  'vault.explain.crypto':
+    'La clé est dérivée de la phrase secrète par PBKDF2-SHA-256 avec {iterations} ' +
+    'itérations, et AES-256-GCM assure le chiffrement. Seule l’enveloppe scellée est ' +
+    'enregistrée : jamais le texte en clair, jamais la phrase secrète, jamais la clé ' +
+    'dérivée.',
+  'vault.explain.more': 'Tous les détails',
   'vault.pass.new': 'Nouvelle phrase secrète',
   'vault.pass.existing': 'Phrase secrète',
   'vault.action.seal': 'Enregistrer chiffré',
@@ -136,7 +146,8 @@ export default {
   'import.unnamed': 'Sans nom',
   'import.unreadable': 'Export illisible.',
 
-  'vacant.text': 'Rien de saisi pour l’instant. Mettez un secret ci-dessus.',
+  'vacant.text': 'Secret, lien otpauth ou image QR — rien de tout cela ne quitte ce navigateur.',
+  'vacant.demo': 'Insérer une clé de test',
   'colophon.note': 'Pas de réseau · pas de stockage · HMAC via la Web Crypto API',
 
   'lang.label': 'Langue',

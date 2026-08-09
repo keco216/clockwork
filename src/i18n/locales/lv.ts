@@ -35,6 +35,7 @@ export default {
   'input.help.images': 'QR attēlus var arī ievilkt šeit vai ielīmēt ar {paste}.',
   'input.help.migration':
     'Google Authenticator eksporti ({migration}) tiek pārveidoti automātiski.',
+  'input.help.more': 'Visi ievades formāti',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { zero: '{n} kontu', one: '{n} konts', other: '{n} konti' },
@@ -50,6 +51,10 @@ export default {
   'key.copyFailed': 'Neizdevās',
 
   'viewfinder.hint': 'Turiet QR kodu rāmī',
+
+  'filter.label': 'Filtrēt kontus',
+  'filter.placeholder': 'Filtrēt pēc nosaukuma',
+  'filter.empty': 'Nekas neatbilst “{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { zero: '{n} ciparu', one: '{n} cipars', other: '{n} cipari' },
@@ -69,9 +74,13 @@ export default {
   'vault.state.locked': 'Aizslēgts — vajadzīga paroles frāze',
   'vault.state.open': 'Atvērts — secret ir teksta laukā',
   'vault.explain':
-    'Pēc noklusējuma Clockwork nesaglabā neko. Kas vēlas, var atstāt ievadi šeit šifrētu ar ' +
-    'paroles frāzi: PBKDF2-SHA-256 ar {iterations} iterācijām, pēc tam AES-256-GCM. Bez ' +
-    'paroles frāzes saglabātais bloks nav nekā vērts.',
+    'Pēc noklusējuma Clockwork nesaglabā neko. Ja ieslēdz seifu, ievadītais paliek šeit ' +
+    'šifrēts ar tavu paroles frāzi — bez tās saglabātais bloks nav nekā vērts.',
+  'vault.explain.crypto':
+    'Atslēgu no paroles frāzes atvasina PBKDF2-SHA-256 ar {iterations} iterācijām, bet ' +
+    'šifrē AES-256-GCM. Saglabā tikai aizzīmogoto aploksni: nekad atklāto tekstu, nekad ' +
+    'paroles frāzi, nekad atvasināto atslēgu.',
+  'vault.explain.more': 'Visa informācija',
   'vault.pass.new': 'Jauna paroles frāze',
   'vault.pass.existing': 'Paroles frāze',
   'vault.action.seal': 'Saglabāt šifrētu',
@@ -129,7 +138,8 @@ export default {
   'import.unnamed': 'Bez nosaukuma',
   'import.unreadable': 'Eksports nav salasāms.',
 
-  'vacant.text': 'Vēl nekas nav ievadīts. Ielieciet augšā secret.',
+  'vacant.text': 'Noslēpums, otpauth saite vai QR attēls — nekas no tā neatstāj šo pārlūku.',
+  'vacant.demo': 'Ievietot testa atslēgu',
   'colophon.note': 'Bez tīkla · bez krātuves · HMAC caur Web Crypto API',
 
   'lang.label': 'Valoda',

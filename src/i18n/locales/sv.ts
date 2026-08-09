@@ -31,6 +31,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} eller {uri} — blandat. {hash} inleder en notering.',
   'input.help.images': 'QR-bilder går också att dra hit eller klistra in med {paste}.',
   'input.help.migration': 'Exporter från Google Authenticator ({migration}) omvandlas automatiskt.',
+  'input.help.more': 'Alla inmatningsformat',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} konto', other: '{n} konton' },
@@ -46,6 +47,10 @@ export default {
   'key.copyFailed': 'Misslyckades',
 
   'viewfinder.hint': 'Håll QR-koden inom ramen',
+
+  'filter.label': 'Filtrera konton',
+  'filter.placeholder': 'Filtrera på namn',
+  'filter.empty': 'Inget matchar ”{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} siffra', other: '{n} siffror' },
@@ -65,9 +70,13 @@ export default {
   'vault.state.locked': 'Låst — lösenfras behövs',
   'vault.state.open': 'Öppet — dina secrets ligger i textfältet',
   'vault.explain':
-    'Som standard sparar Clockwork ingenting. Den som vill kan låta inmatningen ligga kvar ' +
-    'här krypterad med en lösenfras: PBKDF2-SHA-256 med {iterations} iterationer, sedan ' +
-    'AES-256-GCM. Utan lösenfrasen är det sparade blocket värdelöst.',
+    'Som standard sparar Clockwork ingenting. Slår du på kassaskåpet ligger inmatningen ' +
+    'kvar här krypterad med din lösenfras — utan den är det sparade blocket värdelöst.',
+  'vault.explain.crypto':
+    'Nyckeln härleds ur lösenfrasen med PBKDF2-SHA-256 och {iterations} iterationer, och ' +
+    'AES-256-GCM sköter krypteringen. Bara det förseglade kuvertet sparas: aldrig ' +
+    'klartexten, aldrig lösenfrasen, aldrig den härledda nyckeln.',
+  'vault.explain.more': 'Alla detaljer',
   'vault.pass.new': 'Ny lösenfras',
   'vault.pass.existing': 'Lösenfras',
   'vault.action.seal': 'Spara krypterat',
@@ -123,7 +132,8 @@ export default {
   'import.unnamed': 'Namnlös',
   'import.unreadable': 'Exporten går inte att läsa.',
 
-  'vacant.text': 'Inget inmatat än. Sätt in en secret ovanför.',
+  'vacant.text': 'Secret, otpauth-länk eller QR-bild — inget av det lämnar den här webbläsaren.',
+  'vacant.demo': 'Infoga testnyckel',
   'colophon.note': 'Inget nätverk · ingen lagring · HMAC via Web Crypto API',
 
   'lang.label': 'Språk',

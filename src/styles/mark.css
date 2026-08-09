@@ -28,9 +28,23 @@
   line-height: 1;
 }
 
+/* ── Warum das hier kein inline-flex mehr ist ──────────────────────────────
+   Weil ein inline-flex mit `align-items: center` keine echte Schrift-Grundlinie
+   hat. Der Browser setzt für so einen Kasten eine ERSATZ-Grundlinie an seine
+   Unterkante — und die liegt nicht dort, wo die Buchstaben stehen.
+
+   Der Kopf richtet seine drei Angaben über `align-items: baseline` aus (Wortmarke,
+   Markenzeile, Zustand). Mit der Ersatz-Grundlinie hat das Raster die Wortmarke
+   also an einer Linie ausgerichtet, die es im Zeichen nicht gibt: Gemessen lagen
+   die drei Grundlinien 7 und 1 px auseinander, obwohl das CSS sie auf eine legte.
+
+   Als gewöhnlicher Inline-Text hat die Wortmarke eine echte Grundlinie, und die
+   Ringe brauchen den Flexkasten nicht: Ein `inline-block` sitzt von sich aus mit
+   der Unterkante auf der Grundlinie, und bei 0,7 em Höhe reicht er damit genau
+   bis zur Versalhöhe — das ist die Stellung, die die Vorlage vorgibt („praktisch
+   versalhoch"). Der Flexkasten hat dieselbe Stellung mühsam nachgebaut und dabei
+   die Grundlinie verloren. */
 .wordmark__word {
-  display: inline-flex;
-  align-items: center;
   letter-spacing: var(--track-mark);
   text-transform: uppercase;
 }
@@ -102,6 +116,23 @@
 
 .dialface__hub {
   fill: var(--ink);
+  transition: fill var(--dur-calm) var(--ease-spring);
+}
+
+/* ── Die Kopier-Quittung ───────────────────────────────────────────────────
+   Beim Kopieren springt die Nabe für die Dauer der Rückmeldung auf Signal.
+   Sie ist der einzige Punkt des Zifferblatts, der sonst immer Tinte trägt —
+   im Emblem ist genau ein Punkt farbig, und hier ist es für anderthalb
+   Sekunden dieser.
+
+   Bewusst ein ZUSTAND und keine Animation. Der Unterschied ist nicht
+   akademisch: `prefers-reduced-motion` schaltet in diesem Projekt alle
+   Animationen global auf 0,001 ms. Eine Quittung, die als Keyframe gebaut
+   wäre, verschwände damit für genau die Leute, die ohnehin weniger visuelle
+   Signale bekommen. Als Zustand bleibt sie stehen; nur der weiche Übergang
+   dorthin entfällt. */
+.strip--copied .dialface__hub {
+  fill: var(--signal);
 }
 
 /* Der Zeiger. Eine Umdrehung pro Periode, angetrieben von `--progress`, das die
@@ -124,12 +155,25 @@
   stroke: var(--signal);
 }
 
-/* ── Leerzustand: das Emblem in Ruhe ──────────────────────────────────────── */
+/* ── Leerzustand: das Emblem in Ruhe ──────────────────────────────────────
+   Bis V6 stand das Emblem klein und links neben einem Satz, in einem sonst
+   leeren Codes-Panel. Es war Deko am Rand.
 
+   Im Leerzustand ist es aber das Einzige, was von der Marke zu sehen ist,
+   bevor irgendetwas passiert — also steht es groß und in der Mitte, und der
+   Satz darunter. Zusammen sind sie die Überschrift über dem Eingabefeld, das
+   gleich folgt.
+
+   Es steht still: Es gibt noch nichts zu messen. Der Zeiger wird erst gezeichnet,
+   wenn ein Konto da ist (ui/gauge.ts wird hier mit 30 Marken und ohne Zeiger
+   aufgerufen). */
 .vacant {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--sp-4);
+  gap: var(--gap-stack);
+  padding-block-end: var(--sp-6);
+  text-align: center;
 }
 
 .vacant[hidden] {
@@ -137,22 +181,24 @@
 }
 
 .vacant__emblem {
-  /* Etwas größer als am Kanalzug — hier ist es Marke, nicht Anzeige. */
-  width: calc(var(--dial-size) * 1.3);
-  height: calc(var(--dial-size) * 1.3);
-  opacity: 0.55;
+  /* Deutlich größer als am Kanalzug — hier ist es Marke, nicht Anzeige. Über
+     `--dial-size` und nicht als fester Wert: Wächst das Instrument, wächst
+     das Zeichen mit. */
+  width: calc(var(--dial-size) * 2.2);
+  height: calc(var(--dial-size) * 2.2);
+  opacity: 0.5;
 }
 
 .vacant__text {
-  font-size: var(--t-small);
-  color: var(--ink-3);
-  max-width: 52ch;
+  font-size: var(--t-body);
+  color: var(--ink-2);
+  max-width: 46ch;
   text-wrap: pretty;
 }
 
 @media (max-width: 34rem) {
-  .vacant {
-    flex-direction: column;
-    align-items: flex-start;
+  .vacant__emblem {
+    width: calc(var(--dial-size) * 1.6);
+    height: calc(var(--dial-size) * 1.6);
   }
 }

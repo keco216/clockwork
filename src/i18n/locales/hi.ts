@@ -33,6 +33,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} या {uri} — मिलाजुला. {hash} से टिप्पणी शुरू होती है.',
   'input.help.images': 'QR चित्र यहाँ खींचकर भी लाए जा सकते हैं या {paste} से चिपकाए जा सकते हैं.',
   'input.help.migration': 'Google Authenticator के निर्यात ({migration}) अपने आप बदल दिए जाते हैं.',
+  'input.help.more': 'सभी इनपुट प्रारूप',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} खाता', other: '{n} खाते' },
@@ -48,6 +49,10 @@ export default {
   'key.copyFailed': 'विफल',
 
   'viewfinder.hint': 'QR कोड को फ़्रेम में रखें',
+
+  'filter.label': 'खाते फ़िल्टर करें',
+  'filter.placeholder': 'नाम से फ़िल्टर करें',
+  'filter.empty': 'कुछ भी “{query}” से मेल नहीं खाता।',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} अंक', other: '{n} अंक' },
@@ -67,9 +72,14 @@ export default {
   'vault.state.locked': 'बंद — पासफ़्रेज़ चाहिए',
   'vault.state.open': 'खुली — सीक्रेट टेक्स्ट फ़ील्ड में हैं',
   'vault.explain':
-    'सामान्यतः Clockwork कुछ भी नहीं सहेजता. चाहें तो इनपुट यहाँ पासफ़्रेज़ से एन्क्रिप्ट करके ' +
-    'रखा जा सकता है: {iterations} पुनरावृत्तियों वाला PBKDF2-SHA-256, फिर AES-256-GCM. ' +
-    'पासफ़्रेज़ के बिना सहेजा गया खंड किसी काम का नहीं.',
+    'डिफ़ॉल्ट रूप से Clockwork कुछ भी सहेजता नहीं। तिजोरी चालू करने पर आपकी दर्ज सामग्री ' +
+    'आपके पासफ़्रेज़ से एन्क्रिप्ट होकर यहीं रहती है — उसके बिना सहेजा गया ब्लॉक बेकार ' +
+    'है।',
+  'vault.explain.crypto':
+    'कुंजी पासफ़्रेज़ से PBKDF2-SHA-256 द्वारा {iterations} पुनरावृत्तियों में व्युत्पन्न ' +
+    'होती है, और एन्क्रिप्शन AES-256-GCM करता है। सहेजा जाता है केवल सीलबंद लिफ़ाफ़ा: न ' +
+    'सादा पाठ, न पासफ़्रेज़, न व्युत्पन्न कुंजी।',
+  'vault.explain.more': 'सभी विवरण',
   'vault.pass.new': 'नया पासफ़्रेज़',
   'vault.pass.existing': 'पासफ़्रेज़',
   'vault.action.seal': 'एन्क्रिप्ट करके सहेजें',
@@ -125,7 +135,8 @@ export default {
   'import.unnamed': 'बिना नाम',
   'import.unreadable': 'निर्यात पढ़ा नहीं जा सकता.',
 
-  'vacant.text': 'अभी कुछ नहीं डाला गया. ऊपर कोई सीक्रेट रखें.',
+  'vacant.text': 'सीक्रेट, otpauth लिंक या QR छवि — इनमें से कुछ भी इस ब्राउज़र से बाहर नहीं जाता।',
+  'vacant.demo': 'परीक्षण कुंजी डालें',
   'colophon.note': 'कोई नेटवर्क नहीं · कोई भंडारण नहीं · HMAC Web Crypto API से',
 
   'lang.label': 'भाषा',

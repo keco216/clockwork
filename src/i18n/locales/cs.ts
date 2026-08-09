@@ -34,6 +34,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} nebo {uri} — promíchané. {hash} začíná poznámku.',
   'input.help.images': 'Obrázky s QR kódem lze také přetáhnout sem nebo vložit pomocí {paste}.',
   'input.help.migration': 'Exporty z Google Authenticatoru ({migration}) se převádějí automaticky.',
+  'input.help.more': 'Všechny vstupní formáty',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': {
@@ -60,6 +61,10 @@ export default {
 
   'viewfinder.hint': 'Držte QR kód v rámečku',
 
+  'filter.label': 'Filtrovat účty',
+  'filter.placeholder': 'Filtrovat podle názvu',
+  'filter.empty': 'Nic neodpovídá „{query}“.',
+
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
     one: '{n} číslice',
@@ -83,9 +88,13 @@ export default {
   'vault.state.locked': 'Zamčeno — je potřeba heslová fráze',
   'vault.state.open': 'Otevřeno — secrety jsou v textovém poli',
   'vault.explain':
-    'Ve výchozím nastavení Clockwork neukládá nic. Kdo chce, může tu vstup nechat zašifrovaný ' +
-    'heslovou frází: PBKDF2-SHA-256 s {iterations} iteracemi, poté AES-256-GCM. Bez heslové ' +
-    'fráze je uložený blok bezcenný.',
+    'Clockwork ve výchozím nastavení neukládá nic. Když zapnete trezor, zůstane zadání ' +
+    'zde zašifrované vaší heslovou frází — bez ní je uložený blok bezcenný.',
+  'vault.explain.crypto':
+    'Klíč vzniká z heslové fráze pomocí PBKDF2-SHA-256 s {iterations} iteracemi, šifruje ' +
+    'AES-256-GCM. Ukládá se jen zapečetěná obálka: nikdy otevřený text, nikdy heslová ' +
+    'fráze, nikdy odvozený klíč.',
+  'vault.explain.more': 'Všechny podrobnosti',
   'vault.pass.new': 'Nová heslová fráze',
   'vault.pass.existing': 'Heslová fráze',
   'vault.action.seal': 'Uložit zašifrovaně',
@@ -150,7 +159,8 @@ export default {
   'import.unnamed': 'Bez názvu',
   'import.unreadable': 'Export nečitelný.',
 
-  'vacant.text': 'Zatím nic zadáno. Vložte nahoře secret.',
+  'vacant.text': 'Secret, odkaz otpauth nebo obrázek QR — nic z toho neopustí tento prohlížeč.',
+  'vacant.demo': 'Vložit testovací klíč',
   'colophon.note': 'Žádná síť · žádné úložiště · HMAC přes Web Crypto API',
 
   'lang.label': 'Jazyk',

@@ -33,6 +33,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} or {uri} — mixed. {hash} starts a note.',
   'input.help.images': 'QR images can also be dragged here or pasted with {paste}.',
   'input.help.migration': 'Google Authenticator exports ({migration}) are converted automatically.',
+  'input.help.more': 'All input formats',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} account', other: '{n} accounts' },
@@ -48,6 +49,10 @@ export default {
   'key.copyFailed': 'Failed',
 
   'viewfinder.hint': 'Hold the QR code inside the frame',
+
+  'filter.label': 'Filter accounts',
+  'filter.placeholder': 'Filter by name',
+  'filter.empty': 'Nothing matches “{query}”.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} digit', other: '{n} digits' },
@@ -67,9 +72,14 @@ export default {
   'vault.state.locked': 'Locked — passphrase required',
   'vault.state.open': 'Open — secrets are in the text field',
   'vault.explain':
-    'By default Clockwork stores nothing. If you want to, you can keep the input here ' +
-    'encrypted with a passphrase: PBKDF2-SHA-256 with {iterations} iterations, then ' +
-    'AES-256-GCM. Without the passphrase the stored block is worthless.',
+    'By default Clockwork stores nothing. If you switch the vault on, what you typed ' +
+    'stays here encrypted with your passphrase — without it the stored block is ' +
+    'worthless.',
+  'vault.explain.crypto':
+    'The key is derived from your passphrase by PBKDF2-SHA-256 with {iterations} ' +
+    'iterations, and AES-256-GCM does the encrypting. Only the sealed envelope is stored: ' +
+    'never the plaintext, never the passphrase, never the derived key.',
+  'vault.explain.more': 'All details',
   'vault.pass.new': 'New passphrase',
   'vault.pass.existing': 'Passphrase',
   'vault.action.seal': 'Store encrypted',
@@ -125,7 +135,8 @@ export default {
   'import.unnamed': 'Unnamed',
   'import.unreadable': 'Export unreadable.',
 
-  'vacant.text': 'Nothing entered yet. Put a secret in above.',
+  'vacant.text': 'Secret, otpauth link or QR image — none of it leaves this browser.',
+  'vacant.demo': 'Insert test key',
   'colophon.note': 'No network · no storage · HMAC via the Web Crypto API',
 
   'lang.label': 'Language',

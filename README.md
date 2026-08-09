@@ -80,7 +80,7 @@ Run it from source:
 ```bash
 npm ci
 npm run dev        # http://localhost:5173
-npm test           # 501 tests
+npm test           # 514 tests
 npm run build      # dist/ (PWA) + dist/clockwork.html (single file)
 ```
 
@@ -179,9 +179,13 @@ $env:CLOCKWORK_LANGS = 'de,en,fr'; npm run build  # PowerShell
 
 | Build                  | `dist/clockwork.html` | gzip   |
 | ---------------------- | --------------------- | ------ |
-| default (37 languages) | 612 kB                | 220 kB |
-| `de,en,fr`             | 324 kB                | 148 kB |
-| `en` only              | 308 kB                | 144 kB |
+| default (37 languages) | 659 kB                | 234 kB |
+| `de,en,fr`             | 352 kB                | 156 kB |
+| `en` only              | 335 kB                | 151 kB |
+
+Sizes are decimal kB (1000 bytes). `scripts/check-bundle.mjs` prints both that
+and KiB, because mixing the two silently is a mistake this project has already
+made once.
 
 English is always included, an unknown code stops the build, and the language
 switcher only ever offers what actually shipped. The selection deliberately does
@@ -223,7 +227,7 @@ npm run shots       # Playwright walk-through + screenshots (needs a server on :
 | Target                | What it is                                                      |
 | --------------------- | --------------------------------------------------------------- |
 | `dist/`               | Installable PWA: manifest, service worker, icons, works offline |
-| `dist/clockwork.html` | One file, everything inline — including the fonts. ~612 kB      |
+| `dist/clockwork.html` | One file, everything inline — including the fonts. ~659 kB      |
 
 Hosting is a plain static deploy; `vercel.json` carries the security headers,
 and a test keeps them in step with the policy the build embeds.

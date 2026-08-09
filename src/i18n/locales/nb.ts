@@ -33,6 +33,7 @@ export default {
   'input.help.images': 'QR-bilder kan også dras hit eller limes inn med {paste}.',
   'input.help.migration':
     'Eksporter fra Google Authenticator ({migration}) blir omgjort automatisk.',
+  'input.help.more': 'Alle inndataformater',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} konto', other: '{n} kontoer' },
@@ -48,6 +49,10 @@ export default {
   'key.copyFailed': 'Mislyktes',
 
   'viewfinder.hint': 'Hold QR-koden innenfor rammen',
+
+  'filter.label': 'Filtrer kontoer',
+  'filter.placeholder': 'Filtrer etter navn',
+  'filter.empty': 'Ingenting stemmer med «{query}».',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} siffer', other: '{n} sifre' },
@@ -67,9 +72,14 @@ export default {
   'vault.state.locked': 'Låst — passordfrase trengs',
   'vault.state.open': 'Åpen — dine secrets ligger i tekstfeltet',
   'vault.explain':
-    'Som standard lagrer Clockwork ingenting. Den som vil, kan la inndataene bli liggende her ' +
-    'kryptert med en passordfrase: PBKDF2-SHA-256 med {iterations} runder, deretter ' +
-    'AES-256-GCM. Uten passordfrasen er den lagrede blokken verdiløs.',
+    'Som standard lagrer Clockwork ingenting. Slår du på safen, blir det du skrev ' +
+    'liggende her kryptert med passordfrasen din — uten den er den lagrede blokken ' +
+    'verdiløs.',
+  'vault.explain.crypto':
+    'Nøkkelen utledes fra passordfrasen med PBKDF2-SHA-256 og {iterations} iterasjoner, ' +
+    'og AES-256-GCM gjør krypteringen. Bare den lukkede konvolutten lagres: aldri ' +
+    'klartekst, aldri passordfrasen, aldri den utledede nøkkelen.',
+  'vault.explain.more': 'Alle detaljer',
   'vault.pass.new': 'Ny passordfrase',
   'vault.pass.existing': 'Passordfrase',
   'vault.action.seal': 'Lagre kryptert',
@@ -125,7 +135,9 @@ export default {
   'import.unnamed': 'Uten navn',
   'import.unreadable': 'Eksporten kan ikke leses.',
 
-  'vacant.text': 'Ingenting lagt inn ennå. Sett inn en secret ovenfor.',
+  'vacant.text':
+    'Secret, otpauth-lenke eller QR-bilde — ingenting av det forlater denne nettleseren.',
+  'vacant.demo': 'Sett inn testnøkkel',
   'colophon.note': 'Ikke noe nettverk · ingen lagring · HMAC via Web Crypto API',
 
   'lang.label': 'Språk',

@@ -149,6 +149,41 @@ kbd {
   border: 0;
 }
 
+/* ── Leere Live-Regionen ──────────────────────────────────────────────────
+   Zwei Meldungsfelder sind die meiste Zeit leer: die Import-Rückmeldung im
+   Eingabe-Panel (`role="status"`) und die Tresor-Fehlerzeile (`role="alert"`).
+
+   Leer haben sie die Höhe 0 — und trotzdem Platz gekostet. Der Grund ist
+   `gap`: Ein Flexkind der Höhe 0 ist immer noch ein Kind, und die Fuge fällt vor
+   ihm an. Gemessen waren das 16 px im Eingabe-Panel und 8 px im Tresor, beide
+   unterhalb des letzten Bedienelements — also genau dort, wo eine Lücke wie ein
+   Fehler aussieht. Vorher stand hier `min-height: 0`, was die Höhe wegnahm und
+   die Fuge stehen ließ.
+
+   ── Warum nicht `display: none` ────────────────────────────────────────────
+   Weil das die Region aus dem Zugänglichkeitsbaum nimmt. Eine Live-Region muss
+   DA sein, bevor Text hineinkommt — wird sie im selben Moment eingeblendet und
+   gefüllt, meldet ein Screenreader die Änderung nicht zuverlässig. Genau das ist
+   der Sinn der beiden Elemente: Wer nicht hinsieht, soll erfahren, dass zwei
+   Konten importiert wurden oder die Passphrase falsch war.
+
+   Also aus dem FLUSS statt aus dem BAUM: dasselbe Verfahren wie bei `.sr-only`.
+   Die Region bleibt gerendert und ansprechbar, hat aber keinen Platz im
+   Flexkasten und damit auch keine Fuge. Sobald Text kommt, greift `:empty` nicht
+   mehr, und das Feld steht wieder im Fluss. */
+.note:empty,
+.vault__error:empty {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  /* Ohne das läge ein unsichtbarer Punkt über dem Panel und könnte einen Klick
+     schlucken — dieselbe Falle wie beim Korn bis V7. */
+  pointer-events: none;
+}
+
 .skip {
   position: absolute;
   inset-inline-start: var(--sp-4);
@@ -170,11 +205,23 @@ kbd {
 }
 
 /* Gravur-Beschriftung: kleine gesperrte Versalien, wie auf ein Gehäuse
-   siebgedruckt. Das ist die einzige Textauszeichnung, die die App kennt. */
+   siebgedruckt. Das ist die einzige Textauszeichnung, die die App kennt.
+
+   Zwei Einträge sind mit V8 herausgefallen, und beide aus einem Grund, den man
+   nachmessen konnte:
+
+   `.strip__spec` ist ein Chip geworden. Ein Chip steht in jeder Zeile und trägt
+   drei Angaben; Versalsatz und Sperrung haben ihn auf 212 px getrieben und dem
+   Kontonamen in einer 458 px breiten Karte 0 px übrig gelassen. Die Begründung
+   steht ausführlich bei `.chip`.
+
+   `.gauge__nextLabel` gab es nicht mehr — die Klasse heißt seit dem Umbau der
+   Karte `.strip__metaLabel`, und dieser Eintrag zeigte ins Leere. Genau die
+   Sorte Regel, die niemandem auffällt: Sie tut nichts und schadet nichts, bis
+   jemand sie für einen Beweis nimmt, dass ein Bauteil ausgezeichnet ist. */
 .zone__label,
 .slot__legend,
-.strip__spec,
-.gauge__nextLabel,
+.strip__metaLabel,
 .colophon__specs,
 .masthead__spec,
 .masthead__state,
@@ -190,32 +237,81 @@ kbd {
    Gehäuse
    ========================================================================== */
 
-/* `viewport-fit=cover` lässt die Seite unter Notch und Home-Indicator laufen.
-   Ohne diese Zuschläge stünde die Gravur am iPhone teils unter der Kerbe. */
+/* Das Gerät.
+   `viewport-fit=cover` lässt die Seite unter Notch und Home-Indicator laufen.
+   Ohne diese Zuschläge stünde die Gravur am iPhone teils unter der Kerbe.
+
+   Bis V6 war „Gehäuse" eine Redensart: Es gab Panels auf einem Untergrund, aber
+   kein Gerät. Auf 2560 px stand deshalb eine 1216 px breite Spalte mitten im
+   Nichts, und niemand konnte sagen, wo die App aufhört.
+
+   Seit V7 ist das Gehäuse eine Fläche mit allem, was eine Fläche vom Grund
+   trennt: eigener Ton, Haarlinie, Lichtkante nach innen, weicher Schatten. Die
+   Erhebung ist dieselbe wie beim klebenden Kopf (Ebene 2) — das Gerät liegt auf
+   der Werkbank, so wie der Kopf auf dem Gerät liegt.
+
+   Unter 64 rem verschwindet es wieder (siehe ganz unten): Ein gerahmtes Gerät
+   in einem Fenster, das ohnehin nur eine Spalte trägt, ist ein Rahmen zu viel. */
 .device {
-  max-width: var(--measure);
+  /* `min()` und nicht nur `max-width`: Zwischen 1024 und 1600 px ist das
+     Fenster schmaler als die Zielbreite, und ohne diese Klammer berührte das
+     Gehäuse den Fensterrand — ein Gerät, das den Rand berührt, ist keins mehr. */
+  max-width: min(var(--measure), calc(100% - var(--sp-7)));
   margin-inline: auto;
+  margin-block: var(--sp-6);
   padding-inline: max(var(--device-pad), env(safe-area-inset-left))
     max(var(--device-pad), env(safe-area-inset-right));
-  padding-block: var(--sp-5) calc(var(--sp-8) + env(safe-area-inset-bottom));
+  /* Kopf und Fuß bringen ihren eigenen Innenabstand mit: Sie sind die Deck- und
+     die Bodenplatte des Geräts, nicht Text darin. */
+  padding-block: 0;
+  background: var(--case);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-panel);
+  box-shadow:
+    var(--elev-2),
+    inset 0 1px 0 var(--edge-inner);
 }
 
 /* ── Kopf ─────────────────────────────────────────────────────────────────── */
 
-/* Der Kopf klebt seit V5 oben. Er ist damit die einzige Fläche der App, unter
-   der wirklich etwas durchläuft — und deshalb die einzige, an der ein
-   Frost-Material etwas zu tun hat (siehe .masthead--lifted weiter unten).
+/* Der Kopf klebt seit V5 oben und ist damit die einzige Fläche der App, unter
+   der wirklich etwas durchläuft.
+
+   ── Warum er seit V8 opak ist ─────────────────────────────────────────────
+   Bis V7 war das der Ort des einen Frost-Materials: halbdurchsichtig,
+   weichgezeichnet, Deckung nachgemessen auf 78 % bzw. 84 %. Das hat drei
+   Versionen lang funktioniert und war teuer — eine eigene Messstrecke in
+   scripts/check-contrast.mjs, eine Gegenprobe, die absichtlich durchfallen muss,
+   und ein Rückfall für Browser ohne `backdrop-filter`.
+
+   Bezahlt wurde das für eine Fläche, die nichts trägt, was eine deckende nicht
+   auch trüge. Der Kopf ist die DECKPLATTE des Geräts; eine Deckplatte, durch die
+   man hindurchsieht, ist keine. Und der Frost war der dritte Stapel über Korn
+   und Panelton — zusammen genau der „Matsch", den die V8-Diagnose benennt.
+
+   Deckend hat er außerdem eine Eigenschaft, die der Frost nie hatte: Sein
+   Kontrast ist NACHRECHENBAR, weil er nicht mehr davon abhängt, was gerade
+   darunter durchfährt. Er trägt den Gehäuseton, und die Panels, die unter ihm
+   verschwinden, liegen in beiden Themes höher auf der Leiter — die Kante ist
+   damit in jedem Zustand da, nicht nur ab einer bestimmten Scrollposition.
 
    Der Sprunglink zielt an ihm vorbei auf die Codes-Zone; damit deren Überschrift
    danach nicht unter dem Kopf klemmt, liegt --scroll-anchor unten am :target. */
 .masthead {
+  background: var(--case);
   position: sticky;
-  inset-block-start: 0;
+  /* Nicht 0, sondern der obere Sicherheitsabstand: Als installierte App (das
+     Manifest sagt `standalone`) gibt es keine Browserleiste mehr, und mit
+     `viewport-fit=cover` im Viewport-Tag beginnt die Seite an der PHYSISCHEN
+     Oberkante — also unter Statusleiste und Aussparung. Ein Riegel, der bei 0
+     parkt, parkt dort darunter. Im Browser ist der Wert 0, dort ändert sich
+     nichts. */
+  inset-block-start: env(safe-area-inset-top);
   z-index: 5;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: baseline;
-  gap: var(--sp-2) var(--sp-5);
+  gap: var(--gap-pair) var(--gap-group);
   /* Der Riegel ist breiter als sein Inhalt: Er muss bis an den Gehäuserand
      reichen, sonst schiebt sich ein Kanalzug seitlich an ihm vorbei ins Bild.
      Negative Außenabstände statt eines eigenen Elements — das Raster darüber
@@ -226,36 +322,30 @@ kbd {
      das prüft scripts/shoot.mjs bei 375 px mit, wo --device-pad kleiner ist. */
   margin-inline: calc(var(--device-pad) * -1);
   padding: var(--sp-4) var(--device-pad);
-  border-radius: var(--radius-panel);
+  /* Nur oben gerundet: Der Kopf ist die Deckplatte und sitzt in der Ecke des
+     Gehäuses, nicht als Kachel darin. */
+  border-radius: var(--radius-panel) var(--radius-panel) 0 0;
   border: 1px solid transparent;
+  border-block-end-color: transparent;
   /* Ohne Erhebung, solange nichts darunter liegt. Erst beim Scrollen wird
-     daraus Material — siehe unten. */
+     daraus eine Ebene — siehe unten. */
   transition:
-    background-color var(--dur-calm) var(--ease-spring),
     border-color var(--dur-calm) var(--ease-spring),
     box-shadow var(--dur-calm) var(--ease-spring);
 }
 
-/* Ab hier liegt der Kopf über etwas — und erst ab hier bekommt er Material.
-   Die Klasse setzt ui/masthead.ts über einen Beobachter am Seitenanfang, nicht
-   ein Scroll-Rückruf: Ein Schatten ohne Erhebung wäre eine Behauptung, und eine
-   Fläche, die IMMER schwebt, behauptet sie durchgehend. */
-.masthead--lifted {
-  background: var(--frost-surface);
-  backdrop-filter: var(--frost-filter);
-  -webkit-backdrop-filter: var(--frost-filter);
-  border-color: var(--rule);
-  box-shadow: var(--elev-2);
-}
+/* Ab hier liegt der Kopf über etwas — und erst ab hier bekommt er eine Kante und
+   einen Schatten. Die Klasse setzt ui/masthead.ts über einen Beobachter am
+   Seitenanfang, nicht ein Scroll-Rückruf: Ein Schatten ohne Erhebung wäre eine
+   Behauptung, und eine Fläche, die IMMER schwebt, behauptet sie durchgehend.
 
-/* Kein backdrop-filter (ältere Firefox-Stände, abgeschaltete Beschleunigung):
-   dann eben deckend. Halbtransparent OHNE Blur wäre der schlechteste aller
-   Zustände — der Text bekäme wechselnde Untergründe und niemand könnte den
-   Kontrast noch zusagen. */
-@supports not (backdrop-filter: blur(1px)) {
-  .masthead--lifted {
-    background: var(--surface);
-  }
+   Am Seitenanfang ist der Kopf deshalb nicht unsichtbar, sondern ununterscheidbar
+   — er trägt denselben Ton wie das Gehäuse und ist dort einfach ein Stück
+   Gehäuse. Das ist der Zustand, den er haben soll: Eine Deckplatte hebt sich vom
+   Gerät nicht ab, solange nichts unter ihr durchläuft. */
+.masthead--lifted {
+  border-block-end-color: var(--rule);
+  box-shadow: var(--elev-2);
 }
 
 /* Der Fühler, an dem der Beobachter hängt: ein Pixel ganz oben im Dokument.
@@ -270,20 +360,24 @@ kbd {
   pointer-events: none;
 }
 
-/* Als einziger Gravurtext NICHT in --ink-3, sondern eine Stufe kräftiger.
-   Der Grund ist gemessen: Dieser Text sitzt auf der halbdurchsichtigen
-   Kopffläche, und was hinter ihr durchläuft, wechselt beim Scrollen. Die
-   leiseste Graustufe der Palette hat dort keine Reserve — auf einer Fläche mit
-   wechselndem Grund gehört der Text eine Stufe fester. */
+/* Bis V7 stand hier eine Stufe kräftiger als bei jedem anderen Gravurtext, und
+   der Grund war gemessen: Der Text saß auf der halbdurchsichtigen Kopffläche,
+   und was hinter ihr durchlief, wechselte beim Scrollen — die leiseste
+   Graustufe hatte dort keine Reserve.
+
+   Mit dem opaken Kopf ist der Grund bekannt und fest (--case), und alle drei
+   Textstufen halten darauf AA. Die Ausnahme entfällt, wie die bei .zone__label. */
 .masthead__spec {
-  color: var(--ink-2);
+  color: var(--ink-3);
   text-align: center;
 }
 
+/* Dieselbe Sache wie bei der Wortmarke: Ein Flexkasten mit `align-items: center`
+   hat keine Schrift-Grundlinie, und der Kopf richtet seine drei Angaben genau
+   daran aus. Als Block hat diese Zeile eine echte Grundlinie; die Leuchte hängt
+   als `inline-block` daran und wird über `vertical-align` auf die Mitte der
+   Kleinbuchstaben gehoben, statt über einen Flexkasten zentriert zu werden. */
 .masthead__state {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
   color: var(--ink-2);
   justify-self: end;
 }
@@ -292,40 +386,78 @@ kbd {
    hat genau eine Akzentfarbe, und der Normalzustand ist kein Alarm. Also eine
    kleine ausgefüllte Marke in Ink — sie zeigt „Gerät in Betrieb", nicht mehr. */
 .lamp {
+  display: inline-block;
   width: 6px;
   height: 6px;
   background: var(--ink);
   border-radius: 50%;
-  flex: none;
+  /* Auf die Mitte der Kleinbuchstaben, nicht auf die Grundlinie: Eine Leuchte,
+     die auf der Grundlinie sitzt, sieht aus wie ein Punkt am Satzende. 0,26 em
+     ist die halbe x-Höhe der Oberflächenschrift minus dem halben Durchmesser der
+     Leuchte — ein optischer Wert, der mit der Schriftgröße mitwandert, und
+     deshalb in em und nicht auf der Abstandsskala. */
+  vertical-align: 0.26em;
+  margin-inline-end: var(--gap-pair);
 }
 
-/* Offener Tresor: die einzige Stelle im Kopf, die Farbe zeigt. */
+/* Offener Tresor: die einzige Stelle im Kopf, die Farbe zeigt.
+
+   ── Warum hier der tiefere Signal-Ton steht ───────────────────────────────
+   Weil die Leuchte 6 px groß ist und auf dem GEHÄUSE sitzt, nicht auf einem
+   Panel. Der Markenwert #f05a28 kommt auf dem Gehäuseton auf 2,41:1 — unter den
+   3:1, die WCAG für eine Marke verlangt, die Information trägt. Und diese trägt
+   welche: Sie ist die Auskunft „der Tresor ist offen", die man am Kopf ablesen
+   soll, ohne nach unten zu scrollen.
+
+   Aufgefallen ist das nicht am Bild, sondern an der Matrixprüfung in
+   scripts/check-contrast.mjs: Sie hat für signal-text auf dem Gehäuse 4,26
+   gemeldet und damit die Frage aufgeworfen, was dort überhaupt in Signalfarbe
+   steht. Der Fehler ist älter als V8 — nur gemessen hat ihn niemand. */
 .lamp--signal {
-  background: var(--signal);
+  background: var(--signal-text);
 }
 
 /* ── Zonen ────────────────────────────────────────────────────────────────── */
 
-/* Der linke Streifen mit der Zonenbeschriftung ist das tragende Layout-Element
-   der App: Er benennt Funktionsbereiche, so wie ein Gerät seine Bedienfelder
-   beschriftet. Er ist kein Dekorstreifen — jede Zeile darin steht für einen
-   echten Funktionsblock.
+/* Die Zonenbeschriftung benennt Funktionsbereiche, so wie ein Gerät seine
+   Bedienfelder beschriftet. Sie ist kein Dekorstreifen — jede Zeile steht für
+   einen echten Funktionsblock.
+
+   ── Warum sie seit V7 ÜBER dem Panel steht und nicht daneben ───────────────
+   Bis V6 lief sie als eigene Rasterspalte von 6,5 rem links mit. Auf einer
+   62-rem-Seite war das eine Gravur am Gehäuserand. In der Rail des
+   Arbeitszustands sind 6,5 rem von 23 rem aber mehr als ein Viertel der
+   Bedienfläche — für drei Wörter. Die Spalte war ein Layout-Element, solange es
+   nur eine Spalte gab; neben einer Rail wird sie zur Verschwendung.
+
+   Über dem Panel kostet sie eine Zeile und behält ihre Aufgabe. Es ist dieselbe
+   Umschaltung, die es mobil seit V2 gibt — jetzt gilt sie überall, und damit
+   gibt es einen Fall weniger.
 
    Bis V4 trennte eine Haarlinie oben die Zonen. Seit V5 trennt sie der Abstand
    zwischen zwei erhobenen Gruppen: Wo eine Kante sichtbar ist, braucht es
    keinen Strich, der sie zusätzlich behauptet. */
 .zone {
-  display: grid;
-  grid-template-columns: var(--col-label) minmax(0, 1fr);
-  gap: var(--sp-5);
-  padding-block: var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-pair);
+  min-width: 0;
 }
 
+/* ── Und warum die Sonderregel dafür seit V8 weg ist ───────────────────────
+   V7 brauchte hier eine Ausnahme: Text auf dem GEHÄUSE trug --ink-2, Text auf
+   einem PANEL --ink-3 — weil --ink-3 auf dem dunkleren Gehäuseton nur noch
+   4,00:1 erreichte und AA riss.
+
+   Die neuen Textstufen sind so gewählt, dass alle drei auf JEDER Fläche der
+   Leiter mindestens 4,5:1 halten (siehe styles/tokens.css). Damit ist die
+   Ausnahme unnötig geworden, und die Gravur trägt überall dieselbe Farbe.
+   Gemessen: 5,02:1 auf dem Gehäuse, 6,37:1 auf einem Panel.
+
+   Das ist der Unterschied zwischen einer Regel und einem Flicken: Der Flicken
+   hätte hier stehen bleiben können, ohne dass es auffällt. */
 .zone__label {
   color: var(--ink-3);
-  /* Auf die erste Zeile IM Panel treffen, nicht auf dessen Oberkante — deshalb
-     der Innenabstand der Gruppe plus der übliche Versatz auf die Grundlinie. */
-  padding-top: calc(var(--panel-pad) + 0.2em);
 }
 
 /* ── Die Gehäusegruppe ─────────────────────────────────────────────────────
@@ -337,9 +469,10 @@ kbd {
    Kärtchen wären das genaue Gegenteil davon. Gerundet und erhoben ist die
    Gruppe, nicht ihr Inhalt. */
 .zone__body {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--sp-4);
+  gap: var(--gap-stack);
   min-width: 0;
   padding: var(--panel-pad);
   background: var(--surface);
@@ -348,36 +481,202 @@ kbd {
      heller — siehe --edge-lit in styles/tokens.css. */
   border-top-color: var(--edge-lit);
   border-radius: var(--radius-panel);
-  box-shadow: var(--elev-1);
+  /* Erhebung nach außen UND Lichtkante nach innen, in einer Eigenschaft.
+     Der Innenschatten folgt dem Radius, ein Rahmen täte das nicht — siehe
+     --edge-inner in styles/tokens.css. */
+  box-shadow:
+    var(--elev-1),
+    inset 0 1px 0 var(--edge-inner);
+}
+
+.device {
+  position: relative;
+}
+
+/* ── Korn: nur noch auf der Werkbank ───────────────────────────────────────
+   V6 legte es auf drei Flächen — Panels, Gehäuse und Werkbank. Seit V8 liegt es
+   auf einer, und zwar auf der einzigen, von der man nichts abliest.
+
+   Der Grund ist die Arbeitsteilung, die dieses Projekt seit V5 trägt: Was man
+   anfasst, wird weich; was man abliest, bleibt scharf. Ein Panel liest man. Korn
+   darauf ist kein Material, sondern eine feine Unruhe hinter jeder Ziffer — und
+   zusammen mit der halbdurchsichtigen Kopffläche war es der Stapel, den die
+   V8-Diagnose „Matsch" nennt. Die Werkbank liest niemand; dort macht dieselbe
+   Textur aus einer leeren Fläche einen Tisch.
+
+   `fixed` und nicht `absolute`: Eine Tischplatte scrollt nicht mit. `z-index:
+   -1` legt sie hinter den Inhalt, aber vor den Seitengrund — `body` hat keinen
+   eigenen Stapelzusammenhang, deshalb genügt das.
+
+   `pointer-events: none` ist Pflicht, nicht Vorsicht: Ohne das läge eine
+   unsichtbare Fläche über der ganzen Seite und schluckte jeden Klick. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--grain);
+  opacity: var(--grain-opacity);
+  pointer-events: none;
+}
+
+/* =============================================================================
+   Zwei Zustände, zwei Bühnen
+   ==========================================================================
+
+   Der Fehler von V6 war nicht die zweite Spalte, sondern dass es nur EINE
+   Komposition für zwei völlig verschiedene Situationen gab. Wer nichts
+   eingegeben hat, bekam eine volle Bedienspalte neben einer leeren Kiste.
+
+   Seit V7 entscheidet `data-stage` am Gerät, welche Bühne gilt:
+
+     vacant   nichts geparst — eine zentrierte Onboarding-Bühne
+     working  mindestens ein Eintrag — die Shell aus Rail und Bühne
+
+   Gesetzt wird das Attribut in ui/app.ts, an genau einer Stelle.
+
+   ── Warum „nichts geparst" und nicht „kein GÜLTIGER Eintrag" ───────────────
+   Der Auftrag sagt „kein einziger gültiger Eintrag". Wörtlich genommen bliebe
+   die Onboarding-Bühne stehen, solange nur unlesbare Zeilen im Feld stehen —
+   und dann hätte die Fehlermeldung zu einer solchen Zeile keinen Ort, an dem
+   sie erscheinen könnte: Sie ist ein Kanalzug, und die Kanalzüge leben auf der
+   Bühne. Eine unlesbare Zeile IST etwas zu zeigen. Deshalb zählt hier jeder
+   Eintrag, gültig oder nicht. */
+
+.device[data-stage='vacant'] main {
+  display: block;
+  max-inline-size: var(--stage-w);
+  margin-inline: auto;
+  padding-block: var(--sp-8) var(--sp-7);
+}
+
+/* Kein Sidebar-Gerippe: Was im Leerzustand nichts anzuzeigen hat, ist auch
+   nicht da. `display: none` und nicht `opacity` — ein unsichtbares Panel bliebe
+   sonst im Fluss und für den Screenreader im Baum. */
+.device[data-stage='vacant'] #zone-codes {
+  display: none;
+}
+
+/* Auch die Gravur nicht. Im Leerzustand gibt es keine Funktionsbereiche zu
+   benennen, es gibt eine Handlung — und die trägt ihre eigene Beschriftung. */
+.device[data-stage='vacant'] .zone__label {
+  display: none;
+}
+
+/* Das Feld ist im Leerzustand das Angebot und darf entsprechend atmen. */
+.device[data-stage='vacant'] .slot__field {
+  min-height: 11rem;
+}
+
+.vacant[hidden],
+.device[data-stage='working'] .vacant {
+  display: none;
+}
+
+/* Zonen und Fuß liegen auf Ebene 1 — über der Werkbank samt Korn, unter dem
+   Kopf. Bis V7 war das nötig, damit die Textur nicht über den Codes lag; seit
+   V8 trägt nur noch die Werkbank Korn, und die liegt ohnehin auf z-index −1.
+
+   Die Regel bleibt trotzdem stehen, denn sie ordnet mehr als das Korn: Sie ist
+   die Ebene, gegen die scripts/check-contrast.mjs seine Prüffläche einschiebt
+   (z-index 2, also über dem Inhalt und unter dem Kopf). Ohne sie hätte die
+   Reserveprobe keine definierte Lage mehr.
+
+   Der Kopf steht hier ausdrücklich NICHT mit dabei, und das ist keine
+   Nachlässigkeit: Er hat weiter oben bereits `position: sticky` und
+   `z-index: 5`. Stünde er in dieser Liste, überschriebe sie beides — er wäre
+   wieder `relative` und läge auf Ebene 1 unter allem, was hier steht. Genau
+   das ist einmal passiert; gefunden hat es nicht das Auge, sondern
+   `check-contrast.mjs`: Der Kopf misst über eingeschobenen Prüfflächen
+   plötzlich 1,13:1, weil er unter ihnen lag statt darüber. */
+.zone,
+.colophon {
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Fuß: Seriennummern-Gravur ────────────────────────────────────────────── */
 
-/* Der Fuß steht als einziger Block NICHT auf einer Gehäusegruppe, sondern auf
-   dem blanken Untergrund — wie das Typenschild auf der Rückseite, nicht auf der
-   Frontplatte. Deshalb auch keine Trennlinie mehr: Zwischen ihm und dem letzten
-   Panel liegt bereits eine sichtbare Kante. */
+/* Der Fuß ist seit V7 die Bodenplatte des Geräts: volle Gehäusebreite, eigene
+   Kante nach oben, unten mitgerundet. Bis V6 war er ein freischwebender
+   Textblock unter der letzten Gruppe — auf 2560 px sah das aus, als hätte
+   jemand vergessen, ihn anzuschließen.
+
+   Deshalb zieht er sich, genau wie der Kopf, um den Innenabstand des Gehäuses
+   wieder heraus. Der Betrag MUSS --device-pad sein: Ist er größer, läuft die
+   Seite waagerecht über — dieselbe Falle wie beim Kopf, und scripts/shoot.mjs
+   prüft sie bei 375 px mit. */
 .colophon {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--sp-2) var(--sp-5);
-  padding-block-start: var(--sp-6);
-  padding-inline: var(--panel-pad);
+  gap: var(--gap-pair) var(--gap-group);
+  margin-inline: calc(var(--device-pad) * -1);
+  /* Der Abstand zum letzten Panel darüber — dieselbe Fuge wie zwischen zwei
+     Panels, denn hier stößt genau das aufeinander.
+
+     Bis zum Schlusspass stand er NUR in der Mobil-Abfrage (dort als --sp-5,
+     derselbe Wert). Auf dem Schreibtisch waren es 0: Die Unterkante des
+     letzten Panels lag direkt auf der Oberkante der Bodenplatte, also zwei
+     sichtbare Linien ohne Luft dazwischen. Oben fällt dasselbe Maß nicht auf,
+     weil die Kopfkante in Ruhe durchsichtig ist und der Inhalt dort mit einer
+     Gravurzeile beginnt und nicht mit einem gerahmten Kasten. */
+  margin-block-start: var(--gap-group);
+  padding: var(--sp-4) var(--device-pad);
+  border-block-start: 1px solid var(--rule);
+  border-radius: 0 0 var(--radius-panel) var(--radius-panel);
+}
+
+/* ── Die Tick-Teilung im Fuß ───────────────────────────────────────────────
+   V4 hatte über dem Fuß eine Haarlinie, V5 hat sie entfernt, V6 hat dort eine
+   Teilung hingesetzt: dieselben Marken wie auf dem Zifferblatt, nur abgewickelt.
+   Das Zeichen der Marke in seiner dritten Rolle — Emblem, Countdown, und hier
+   Gravur am Gehäuse.
+
+   Seit V7 trennt die Bodenplatte eine echte Kante, und zwei Trenner übereinander
+   wären einer zu viel. Die Teilung rückt deshalb ans ENDE des Fußes: Sie steht
+   jetzt an der Unterkante des Geräts, wo an einem Gehäuse die Typenschild-Gravur
+   sitzt, und trennt nichts mehr — sie beschriftet.
+
+   Das ist ein `repeating-linear-gradient` mit HARTEN Stops und damit ein
+   Strichraster, kein Verlauf: Es gibt keinen Farbübergang, nur an und aus. Der
+   Bann gegen Deko-Gradients bleibt unberührt.
+
+   Die Maße stammen aus dem Emblem: Strich 1 px auf 8 px Teilung, also
+   dieselbe Dichte, die 30 Marken auf dem Zifferblatt haben.
+
+   `to right` und nicht `to inline-end`: Ein Strichraster hat keine
+   Leserichtung. Dieselbe Trennung wie beim Zifferblatt — Position logisch,
+   Geometrie physisch. */
+.colophon::after {
+  content: '';
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: var(--device-pad);
+  block-size: 4px;
+  background-image: repeating-linear-gradient(to right, var(--ink-3) 0 1px, transparent 1px 8px);
+  /* Die Teilung ist eine Gravur, kein Bauteil: sehr leise, sonst konkurriert
+     sie mit den Angaben darüber. */
+  opacity: 0.35;
 }
 
 .colophon__specs {
   display: flex;
-  gap: var(--sp-3);
-  color: var(--ink-3);
+  gap: var(--gap-pair);
+  color: var(--ink-2);
 }
 
 /* Die Trennzeichen sind gesetzt, nicht getippt — so sitzen sie exakt mittig
-   zwischen den Angaben. */
+   zwischen den Angaben.
+
+   Derselbe Betrag vor und hinter dem Punkt, und derselbe wie in der Metazeile
+   der Karte (.strip__secs::before): Die App hat zwei Stellen mit gesetzten
+   Trennern, und ein Trenner, der an zwei Stellen anders atmet, ist zwei
+   verschiedene Zeichen. */
 .colophon__specs span + span::before {
   content: '·';
-  margin-inline-end: var(--sp-3);
+  margin-inline-end: var(--gap-pair);
 }
 
 /* Die Sprachwahl steht im Fuß wie eine Angabe auf dem Typenschild: einmal
@@ -386,11 +685,11 @@ kbd {
 .colophon__lang {
   display: flex;
   align-items: center;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
 }
 
 .colophon__langLabel {
-  color: var(--ink-3);
+  color: var(--ink-2);
 }
 
 /* Feste Breite, nicht inhaltsabhängig: Das Feld ist beim ersten Anstrich leer
@@ -404,9 +703,11 @@ kbd {
   width: 12rem;
 }
 
+/* Wie die Zonengravur: Text auf dem Gehäuse, nicht auf einem Panel — siehe
+   die Begründung bei .zone__label. */
 .colophon__note {
   font-size: var(--t-small);
-  color: var(--ink-3);
+  color: var(--ink-2);
 }
 
 /* =============================================================================
@@ -418,7 +719,7 @@ kbd {
 .slot {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
 }
 
 .slot__legend {
@@ -437,11 +738,17 @@ kbd {
   line-height: 1.7;
   color: var(--ink);
   background: var(--surface-recessed);
-  border: 1px solid var(--rule);
-  /* Die dunklere Oberkante bleibt: Sie ist der ganze Unterschied zwischen
-     „versenkt" und „aufgeklebt", und ein Radius nimmt ihr davon nichts. */
-  border-top-color: var(--rule-strong);
+  /* Seit V8 die kräftigere Haarlinie, und rundum dieselbe. Das Feld ist ein
+     Bedienelement und keine Fuge — 18 % genügen für eine Trennlinie zwischen
+     zwei Flächen, nicht für die Kante eines Schlitzes, in den man etwas
+     hineinschreibt. */
+  border: 1px solid var(--rule-strong);
   border-radius: var(--radius-field);
+  /* Die Fräsung: eine dunklere Oberkante INNEN. Sie ist der ganze Unterschied
+     zwischen „versenkt" und „aufgeklebt" und die genaue Umkehrung der
+     Lichtkante an erhobenen Flächen. Bis V7 stand sie als `border-top-color`
+     und hellte im dunklen Modus auf — siehe --edge-sunk in styles/tokens.css. */
+  box-shadow: inset 0 1px 0 var(--edge-sunk);
   transition: border-color var(--dur-calm) var(--ease-spring);
 }
 
@@ -450,51 +757,77 @@ kbd {
 }
 
 .field:hover {
-  border-color: var(--rule-strong);
+  border-color: var(--ink-3);
 }
 
-.field:focus-visible {
-  outline-offset: -1px;
-}
+/* Der Fokus-Ring ist derselbe wie überall: 2 px in Signalfarbe, 2 px Abstand.
+   Bis V7 zog `outline-offset: -1px` ihn beim Feld nach innen, als einziges
+   Bauteil der App. Es gab keinen Grund dafür außer Vorsicht — und ein Ring, der
+   an einer Stelle anders sitzt, ist einer, den man an dieser Stelle nicht
+   wiedererkennt. */
 
-/* Nur das mehrzeilige Feld ist hoch und in der Höhe verstellbar. */
+/* Nur das mehrzeilige Feld ist hoch und in der Höhe verstellbar.
+
+   8 rem statt 6: Das Feld ist im Arbeitszustand die Stelle, an der das
+   Schlüsselmaterial steht, und eine `otpauth://`-Zeile ist lang. Bei sechs
+   Zeilen Höhe sieht man von acht Konten drei. */
 .slot__field {
-  min-height: 6rem;
+  min-height: 8rem;
   resize: vertical;
 }
 
+/* Die Hülle reserviert die Höhe, der Chip darin trägt die Zahl. Getrennt, weil
+   ein leerer Chip nichts anzeigen soll, der Platz aber trotzdem stehen muss —
+   sonst springt die Tastenzeile beim ersten Eintrag um eine Chiphöhe nach unten.
+   Genau die Sorte Layout-Sprung, die V7 aus dem Startzustand geräumt hat. */
 .slot__meter {
-  font-family: var(--font-mono);
-  font-size: var(--t-small);
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-3);
-  min-height: 1.2em; /* Platz reservieren, damit nichts springt */
+  display: flex;
+  min-height: var(--chip-h);
 }
 
-/* Taste: ein Objekt mit Kante, seit V5 als Pille.
+/* ── Tasten: drei Varianten auf einer Höhenleiter ──────────────────────────
+   Bis V7 gab es EINE Taste. Rangordnung drückte sie über die Kante aus, und für
+   die leiseste Stufe blieb nur „keine Kante" — also nackter Text. Genau das
+   nennt die V8-Diagnose: „‚Leeren' als nackter Text, blasse Outline-Pillen".
 
-   Gedrückt passieren zwei Dinge gleichzeitig, und beide sind Absicht:
-   Die Taste KEHRT SICH UM — das ist die Antwort dieses Geräts auf „gedrückt",
-   sie stammt aus V2 und bleibt — und sie GIBT NACH, um 3 %. Das eine ist die
-   Marke, das andere die Physik, die Apple jedem Knopf mitgibt. Zusammen fühlt
-   sich die Taste an wie eine, die man wirklich hinunterdrückt. */
+   HeroUI führt zwei UNABHÄNGIGE Achsen (`button.variant` und `button.size`), und
+   das ist der eigentliche Griff: Wie laut ein Knopf ist, und wie schwer er ist,
+   sind zwei Fragen.
+
+     Rang (Fell)          --solid     die eine Haupthandlung eines Panels
+                          --bordered  gleichrangige Angebote
+                          --quiet     leise, aber immer noch ein Knopf
+
+     Gewicht (Höhe)       Vorgabe     --control-h     40 px
+                          --lg        --control-h-lg  48 px
+
+   Der Druckpunkt bleibt, was er seit V2 ist: Die Taste KEHRT SICH UM und GIBT
+   um 3 % NACH. Das eine ist die Marke, das andere die Physik. Eine solide Taste
+   kann sich nicht umkehren — sie ist schon umgekehrt —, deshalb bleibt ihr das
+   Nachgeben allein. */
 .keys {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
 }
 
+/* Die Basis trägt nur Geometrie und Druckpunkt, kein Fell. Sonst muss jede
+   Variante erst zurücknehmen, was die Basis behauptet — und dann entscheidet
+   die Reihenfolge der Regeln, wer gewinnt. */
 .key {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-2);
-  min-height: var(--control-h); /* Zielgröße für Finger und Maus */
+  justify-content: center;
+  gap: var(--gap-pair);
+  min-height: var(--control-h);
   /* Eine Pille braucht mehr Luft an den Seiten als ein Rechteck: Die Rundung
      frisst an den Enden Fläche, die dem Text sonst fehlt. */
   padding: 0 var(--sp-4);
   color: var(--ink-2);
   background: transparent;
-  border: 1px solid var(--rule-strong);
+  /* Die Stärke steht IMMER, auch bei durchsichtiger Kante: Sonst springt die
+     Taste beim Wechsel der Variante oder beim Überfahren um zwei Pixel. */
+  border: var(--border-2) solid transparent;
   border-radius: var(--radius-key);
   cursor: pointer;
   transition:
@@ -504,16 +837,110 @@ kbd {
     transform var(--dur-quick) var(--ease-snap);
 }
 
-.key:hover {
+.key:active {
+  transform: scale(0.97);
+}
+
+/* Gesperrt: halb durchsichtig, kein Zeiger, kein Druckpunkt. Der Zustand kommt
+   nur an einer Stelle vor — der Tresor-Knopf, solange der Schlüssel abgeleitet
+   wird —, und bis V8 sah er dort aus wie ein bedienbarer Knopf. */
+.key:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: default;
+}
+
+.key:disabled:active {
+  transform: none;
+}
+
+/* Die Mindestbreite kommt aus HeroUI (`md: min-w-20`, also 80 px) und hat einen
+   Zweck: Zwei Knöpfe nebeneinander mit „OK" und „Abbrechen" sollen nicht
+   verschieden breit sein, nur weil ein Wort kürzer ist. Die leise Taste bekommt
+   sie NICHT — sie ist ein Textknopf und darf so breit sein wie ihr Wort. */
+.key--solid,
+.key--bordered {
+  min-width: 5rem;
+}
+
+.key--lg {
+  min-height: var(--control-h-lg);
+  min-width: 6rem;
+  padding-inline: var(--sp-5);
+}
+
+/* ── solid ────────────────────────────────────────────────────────────────
+   Die eine Haupthandlung. Beim Überfahren rückt sie eine INK-Stufe vor, so wie
+   eine Fläche eine Flächenstufe vorrückt — und der Text bleibt dabei messbar
+   lesbar: --ink-on-inverted auf --ink-2 sind in beiden Themes 6,15:1.
+
+   HeroUI löst denselben Hover über `hoverOpacity` (.8 hell / .9 dunkel). Das
+   wäre hier der falsche Griff: Deckkraft nimmt auch die Schrift mit, und ein
+   Kontrast, der von einer Deckung abhängt, ist einer, den man nachmessen muss,
+   statt ihn zu kennen. */
+.key--solid {
+  background: var(--surface-inverted);
+  border-color: var(--surface-inverted);
+  color: var(--ink-on-inverted);
+}
+
+.key--solid:hover {
+  background: var(--ink-2);
+  border-color: var(--ink-2);
+}
+
+/* ── bordered ─────────────────────────────────────────────────────────────
+   Zwei Pixel, nicht einer. Das ist der Wert aus HeroUI (`bordered` ist
+   `border-medium`), und er ist der Grund, warum diese Pillen vorher blass
+   wirkten: Sie trugen dieselbe Stärke und dieselbe Farbe wie eine Panelfuge —
+   ein Bedienelement, gezeichnet wie eine Trennlinie. */
+.key--bordered {
+  border-color: var(--rule-strong);
+}
+
+.key--bordered:hover {
   color: var(--ink);
   border-color: var(--ink-3);
 }
 
-.key:active {
+.key--bordered:active {
   background: var(--surface-inverted);
   border-color: var(--surface-inverted);
   color: var(--ink-on-inverted);
-  transform: scale(0.97);
+}
+
+/* ── quiet ────────────────────────────────────────────────────────────────
+   Für „Leeren". Das ist keine Kosmetik, sondern eine Rangordnung: „Leeren"
+   wirft Schlüsselmaterial weg, „QR aus Bild" und „Kamera" holen welches herein.
+   Drei gleich aussehende Pillen behaupten drei gleichwertige Angebote — und die
+   zerstörerische darf nicht die sein, die man aus Versehen zuerst trifft.
+
+   HeroUIs `light` ist im Ruhezustand vollständig durchsichtig. Hier trägt die
+   Variante trotzdem die versenkte Fläche, und zwar auf Anweisung: „leise, aber
+   als Knopf erkennbar, nicht als nackter Text". Eine Tastenkappe ohne Kante ist
+   noch eine Tastenkappe; ein Wort ohne alles ist ein Wort.
+
+   Der doppelte Klassenname aus demselben Grund wie bei `.key.key--danger` in
+   panels.css: Ein Bauteil, dessen Richtigkeit an seiner Zeilennummer hängt, ist
+   eins, das beim nächsten Verschieben kaputtgeht. */
+.key.key--quiet {
+  background: var(--surface-recessed);
+  padding-inline: var(--sp-3);
+}
+
+/* Beim Überfahren bekommt sie die Kante, die sie im Ruhezustand nicht hat —
+   und nicht eine hellere Fläche. Die nächste Sprosse liegt im hellen Modus
+   NÄHER am Panel als die versenkte, ein Hover in diese Richtung würde die Taste
+   also unauffälliger machen statt deutlicher. Die Kante hat diese Schwierigkeit
+   nicht: Sie zeigt in jedem Theme in dieselbe Richtung. */
+.key.key--quiet:hover {
+  border-color: var(--rule-strong);
+  color: var(--ink);
+}
+
+.key.key--quiet:active {
+  background: var(--surface-inverted);
+  border-color: var(--surface-inverted);
+  color: var(--ink-on-inverted);
 }
 
 /* ── Icons ────────────────────────────────────────────────────────────────
@@ -542,10 +969,156 @@ kbd {
   stroke-linejoin: round;
 }
 
+/* ── Chip ─────────────────────────────────────────────────────────────────
+   Eine Angabe, die zu einem Objekt gehört, aber nicht sein Titel ist: die
+   Parameter eines Kontos, die Zahl der Einträge im Feld.
+
+   Bis V7 stand beides als Streutext in einer Ecke — die Parameterzeile oben
+   rechts im Kanalzug, in der leisesten Graustufe, in 11 px. Genau das nennt die
+   V8-Diagnose „Karten-Metadaten als Streutext in der Ecke". Der Unterschied ist
+   nicht die Größe, sondern die Fassung: Ein Wert mit Fläche und Kante ist eine
+   Angabe, dieselben Zeichen ohne beides sind Kleingedrucktes am Rand.
+
+   Ausdrücklich KEIN Bedienelement: kein Hover, kein Fokus, keine Trefferfläche.
+   Deshalb auch seine eigene Höhe (--chip-h) und nicht die der Tastenleiter —
+   HeroUI führt für Chips aus demselben Grund eine eigene Skala. */
+/* `inline-block` mit einer Zeilenhöhe von genau der Chiphöhe, NICHT `inline-flex`
+   mit `align-items: center`. Beides sieht gleich aus und ist es nicht: Ein
+   Flexkasten mit zentrierten Kindern hat keine Schrift-Grundlinie, sondern eine
+   Ersatzlinie an seiner Unterkante. Der Chip steht neben dem Kontonamen, und der
+   Kartenkopf richtet die zwei über ihre Grundlinien aus — mit der Ersatzlinie
+   blieben gemessene 4 px Abstand, obwohl das CSS sie auf eine Linie legte.
+
+   Dieselbe Falle wie bei der Wortmarke (styles/mark.css). Eine Zeilenhöhe zentriert
+   den Text genauso mittig und lässt die Grundlinie, wo sie hingehört. */
+.chip {
+  display: inline-block;
+  min-height: var(--chip-h);
+  line-height: var(--chip-h);
+  padding: 0 var(--sp-2);
+  background: var(--surface-recessed);
+  /* Die Kante als Innenschatten und nicht als Rahmen — dieselbe Technik wie die
+     Lichtkante an erhobenen Flächen, und hier aus demselben Grund plus einem
+     zweiten: Ein Rahmen käme zur Zeilenhöhe DAZU. Gemessen war der Chip damit
+     26 px hoch, also 2 px neben seiner Sprosse. Ein Innenschatten belegt keinen
+     Platz im Boxmodell, folgt dem Radius und sieht genauso aus. */
+  box-shadow: inset 0 0 0 1px var(--rule);
+  border-radius: var(--radius-inset);
+  color: var(--ink-3);
+  font-size: var(--t-micro);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ── Warum ein Chip KEINE Gravur ist ──────────────────────────────────────
+   Der erste Anlauf hat ihm die Gravur-Auszeichnung mitgegeben — Versalien plus
+   0,14 em Sperrung, wie bei jeder anderen Kleinbeschriftung der App. Gemessen
+   wurde daraus ein 212 px breites Bauteil, und in einer 458 px breiten Karte
+   blieb für den Kontonamen genau 0 px. Aus „ACME Co" wurde „A…", aus „Google"
+   ein „G".
+
+   Gravur ist Beschriftung AUF dem Gehäuse: Sie steht selten, kurz und darf
+   Platz kosten. Ein Chip steht in jeder Zeile und trägt drei Angaben — Versalsatz
+   und Sperrung machen ihn ein Drittel breiter, ohne ihn lesbarer zu machen. Ohne
+   beides bleibt er bei rund 150 px, und der Name behält seinen Platz.
+
+   Es ist derselbe Fehler in klein, den V7 mit der Gravur-Spalte gemacht hat:
+   eine Auszeichnung weitergetragen an eine Stelle, an der ihr Grund nicht mehr
+   gilt. */
+
+/* Ein Chip ohne Inhalt ist keine leere Angabe, sondern gar keine. Der Platz
+   bleibt trotzdem reserviert — das macht die Hülle (.slot__meter), nicht der
+   Chip selbst, sonst springt die Zeile beim ersten Eintrag. */
+.chip:empty {
+  display: none;
+}
+
 .note {
   font-size: var(--t-small);
   color: var(--ink-3);
   text-wrap: pretty;
+}
+
+/* Der eine Hinweis, der immer steht. Eine Stufe kräftiger als die
+   aufgeklappten: Er beantwortet die Frage, die man vor dem ersten Tippen hat. */
+.note--lede {
+  color: var(--ink-2);
+}
+
+/* Ein `code` im Fließtext darf NIE umbrechen. `otpauth://…` über zwei Zeilen
+   verteilt liest sich nicht als ein Ding, sondern als zwei kaputte — und genau
+   diese Wortfetzen hat der V7-Auftrag benannt. `scripts/shoot.mjs` prüft es
+   mit: Jedes `code` und `kbd` in einem Hinweis muss ein einziges Rechteck
+   belegen. */
+.note code,
+.note kbd {
+  white-space: nowrap;
+}
+
+/* ── Der Aufklapper ───────────────────────────────────────────────────────
+   Für alles, was man einmal liest und danach nicht mehr braucht. `<details>`
+   bringt Zustand, Tastaturbedienung und Screenreader-Ansage von selbst mit; ein
+   nachgebauter Knopf mit `aria-expanded` wäre mehr Code für dasselbe, nur mit
+   mehr Stellen zum Vergessen. */
+.reveal__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-pair);
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  cursor: pointer;
+  /* Der Systemdreieck-Marker sieht auf jeder Plattform anders aus. Ersetzt wird
+     er durch denselben Winkel, den auch das Auswahlfeld trägt (panels.css). */
+  list-style: none;
+  /* Trefferfläche wie beim Tresor-Aufklapper: Auch ein leiser Kleintext ist ein
+     Bedienelement, sobald man ihn antippen soll. Und wie dort die 44 statt der
+     40 aus der Tastenleiter — eine breite Zeile kostet keine Höhe. */
+  min-height: var(--touch-min);
+  margin-inline: calc(var(--sp-2) * -1);
+  padding-inline: var(--sp-2);
+  border-radius: var(--radius-inset);
+}
+
+/* Safari zeigt den Marker über ein eigenes Pseudo-Element und ignoriert
+   `list-style`. */
+.reveal__summary::-webkit-details-marker {
+  display: none;
+}
+
+.reveal__summary::before {
+  content: '';
+  width: 0.42em;
+  height: 0.42em;
+  flex: none;
+  border-right: 1.5px solid currentcolor;
+  border-bottom: 1.5px solid currentcolor;
+  border-bottom-right-radius: 1px;
+  /* Zeigt zu, also nach vorn; aufgeklappt nach unten. Die DREHUNG ist Geometrie
+     und steht deshalb physisch — die Richtung „nach vorn" ist eine
+     Leserichtung, und die liefert `rotate` in Verbindung mit dem
+     RTL-Sonderfall unten. */
+  transform: rotate(-45deg);
+  transition: transform var(--dur-quick) var(--ease-snap);
+}
+
+:root[dir='rtl'] .reveal__summary::before {
+  transform: rotate(135deg);
+}
+
+.reveal[open] .reveal__summary::before,
+:root[dir='rtl'] .reveal[open] .reveal__summary::before {
+  transform: rotate(45deg);
+}
+
+.reveal__summary:hover {
+  color: var(--ink-2);
+}
+
+.reveal__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-pair);
+  padding-block-start: var(--sp-2);
 }
 
 /* =============================================================================
@@ -568,6 +1141,28 @@ kbd {
    zum Kanal, also läuft die Fuge nicht durch sie hindurch. Dasselbe Detail
    benutzt iOS in gruppierten Listen — hier fällt es mit der Rack-Fuge zusammen,
    die vor dem ersten Bedienelement beginnt. */
+/* ── Die Geometrie der Karte ───────────────────────────────────────────────
+   Drei Spalten, drei Zeilen, und jede Zelle hat eine Aufgabe:
+
+     gauge  head  copy      Zifferblatt · Name und Chip · Kopieren
+     gauge  code  copy      Zifferblatt · der Code      · Kopieren
+     gauge  meta  copy      Zifferblatt · folgt … · … s · Kopieren
+
+   Bis V7 sah das anders aus, und die V8-Diagnose benennt beide Fehler: Die
+   Parameterzeile saß als Streutext in der Kopfzeile rechts, und die Kopiertaste
+   teilte ihre Zeile mit dem Code. Bei einem achtstelligen Code (SHA-256, 8
+   Stellen — die Beispieldaten haben so ein Konto) stieß die Zahl dann an die
+   Taste. Zwei Bauteile in einer Zelle, deren Breite von der Eingabe abhängt: Das
+   ist keine feste Geometrie, das ist eine Wette.
+
+   Jetzt hat die Taste eine eigene Spalte über alle drei Zeilen und steht darin
+   senkrecht in der Mitte. Der Code hat seine Zeile für sich und kann so breit
+   werden, wie die Mittelspalte hergibt.
+
+   `align-items: baseline` ist bewusst WEG: Es hat die drei Zeilen an ihren
+   Schriftlinien ausgerichtet, und weil das Zifferblatt über alle drei läuft,
+   hing es an der Grundlinie der ersten. Jetzt richtet jede Zelle sich selbst
+   aus — das Zifferblatt und die Taste über `align-self: center`. */
 .strip {
   /* Container für die cqi-Einheit des Codes: Die Ziffergröße richtet sich nach
      der Breite des Kanalzugs, nicht nach der des Fensters. */
@@ -575,13 +1170,29 @@ kbd {
   position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
+  /* ── Warum Blatt und Taste nur in der CODE-Zeile stehen ──────────────────
+     Weil sie zum Code gehören und nicht zur Karte. Bis zum Feinpass liefen beide
+     über alle drei Zeilen und waren in diesem Feld senkrecht zentriert — also auf
+     der Mitte von Kopfzeile, Code und Metazeile zusammen. Die drei Zeilen sind
+     aber nicht symmetrisch: Über dem Code stehen Kopfzeile und Fuge (28,5 + 8),
+     darunter Fuge und Metazeile (8 + 21). Gemessen lag der Code damit 4,5 px
+     unter der Mitte, auf der Blatt und Taste standen.
+
+     4,5 px sieht niemand und jeder: Das Zifferblatt zeigt, wie lange DIESER Code
+     noch gilt, und die Taste kopiert IHN — die drei müssen auf einer Achse
+     liegen, sonst liest sich die Karte als drei Dinge nebeneinander statt als
+     eines.
+
+     In der Code-Zeile lösen sich beide von selbst: Die Zeile wird so hoch wie
+     ihr größtes Element (das Blatt), und `align-self: center` setzt alle drei auf
+     dieselbe Mitte. Kein Ausgleichswert, den man beim nächsten Schriftwechsel
+     nachrechnen müsste. */
   grid-template-areas:
-    'gauge id   spec'
+    '.     head .'
     'gauge code copy'
-    'gauge next next';
-  align-items: baseline;
-  column-gap: var(--sp-5);
-  row-gap: var(--sp-2);
+    '.     meta .';
+  column-gap: var(--gap-group);
+  row-gap: var(--gap-pair);
   padding-block: var(--sp-5);
   /* Wie weit die Fuge einrückt. Als eigene Eigenschaft, weil die Fehlerzeile
      kein Zifferblatt hat und ihre Fuge deshalb durchlaufen muss. */
@@ -597,47 +1208,87 @@ kbd {
   background: var(--rule);
 }
 
+/* ── Der Kanalzug reagiert ─────────────────────────────────────────────────
+   Ein Kanalzug ist keine Karte und wird auch beim Überfahren keine: kein
+   eigener Schatten, kein Rahmen, kein Radius. Was er bekommt, ist die
+   Rückmeldung, die eine Zeile braucht, mit der man umgeht — man kopiert aus
+   ihr, man liest aus ihr ab.
+
+   Ein Pixel Hub und ein leiser Flächenton, auf der Federkurve. Mehr wäre eine
+   Behauptung, dass hier ein Objekt schwebt; weniger wäre keine Rückmeldung.
+
+   `:focus-within` zählt mit: Wer sich mit der Tastatur zur Kopiertaste
+   vorarbeitet, soll dieselbe Zeile hervorgehoben sehen wie jemand mit der Maus.
+   Sonst ist der Zusammenhang zwischen Taste und Code nur visuell da, nicht
+   für den, der ihn gerade braucht. */
+.strip {
+  border-radius: var(--radius-field);
+  transition:
+    transform var(--dur-calm) var(--ease-spring),
+    background-color var(--dur-calm) var(--ease-spring);
+}
+
+@media (hover: hover) {
+  .strip:hover {
+    transform: translateY(-1px);
+    background: var(--surface-active);
+  }
+}
+
+.strip:focus-within {
+  background: var(--surface-active);
+}
+
+/* Der Flächenton läuft über die volle Panelbreite, nicht nur über den
+   Textbereich — sonst sähe die Hervorhebung aus wie ein zweites Panel im
+   Panel. Negative Außenabstände plus gleich großer Innenabstand: Die Fläche
+   wächst, das Raster darin bleibt, wo es war. */
+.strip {
+  margin-inline: calc(var(--sp-3) * -1);
+  padding-inline: var(--sp-3);
+}
+
+.strip::before {
+  inset-inline: calc(var(--strip-rule-inset) + var(--sp-3)) var(--sp-3);
+}
+
 /* Das Zifferblatt steht links und trägt alle drei Zeilen — die Anzeige gehört
-   zum ganzen Kanal, nicht zu einer seiner Zeilen. */
+   zum ganzen Kanal, nicht zu einer seiner Zeilen.
+
+   Seit V8 ist es eine reine Zone: nur das Blatt, kein Text darunter. Die
+   Sekundenzahl stand bis V7 als eigene Zeile unter der Skala und hat zwei Dinge
+   angerichtet — sie hat das Blatt aus der senkrechten Mitte gezogen (die Gruppe
+   war höher als das Blatt), und sie hat dieselbe Auskunft zweimal gegeben, die
+   das Blatt ohnehin zeigt. Sie steht jetzt in der Metazeile, wo die anderen
+   Nebenangaben stehen.
+
+   Damit kann das Blatt tun, was es soll: groß sein und in der Mitte stehen. */
 .gauge {
   grid-area: gauge;
   align-self: center;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sp-1);
 }
 
-.gauge__seconds {
-  font-family: var(--font-mono);
-  font-size: var(--t-small);
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-2);
-  white-space: nowrap;
-}
+/* ── Die Metazeile ────────────────────────────────────────────────────────
+   „FOLGT 483 232 · 17 s". Zwei Nebenangaben, die vorher an zwei Stellen standen.
 
-.gauge__seconds abbr {
-  color: var(--ink-3);
-  margin-inline-start: 0.1em;
-}
-
-.strip--expiring .gauge__seconds {
-  color: var(--signal-text);
-}
-
-.strip__next {
-  grid-area: next;
+   Der Trennpunkt ist gesetzt und nicht getippt — dieselbe Lösung wie im Fuß
+   (.colophon__specs). Er steht als Zeichen im CSS und nicht im Katalog, weil
+   hier nichts umzustellen ist: Beide Angaben sind eigenständig, und keine
+   Sprache braucht sie in anderer Reihenfolge. Wo eine Sprache umstellen können
+   MUSS, steht der Punkt mitsamt Platzhaltern im Katalog. */
+.strip__meta {
+  grid-area: meta;
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: var(--sp-2);
+  gap: 0 var(--gap-pair);
   min-width: 0;
 }
 
-.strip__nextLabel {
-  font-size: var(--t-micro);
-  font-weight: 500;
-  letter-spacing: var(--track-caps);
-  text-transform: var(--case-caps);
+/* Größe, Gewicht, Sperrung und Versalsatz kommen aus der Gravur-Sammelregel
+   ganz oben — hier steht nur, was diesem Bauteil eigen ist. */
+.strip__metaLabel {
   color: var(--ink-3);
 }
 
@@ -648,26 +1299,86 @@ kbd {
   color: var(--ink-2);
 }
 
+.strip__secs {
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.strip__secs::before {
+  content: '·';
+  margin-inline-end: var(--sp-2);
+  color: var(--ink-3);
+}
+
+.strip__secs abbr {
+  color: var(--ink-3);
+  margin-inline-start: 0.1em;
+}
+
+/* Die letzten fünf Sekunden. Einer der vier Zustände, für die es die
+   Signalfarbe gibt — und der einzige, der von selbst eintritt. */
+.strip--expiring .strip__secs {
+  color: var(--signal-text);
+}
+
 /* Erster und letzter Kanal stoßen an den Innenabstand der Gruppe — dort braucht
-   es weder Fuge noch zusätzliche Luft. */
-.strip:first-child {
+   es weder Fuge noch zusätzliche Luft.
+
+   `data-lead` und `data-tail` statt `:first-child` und `:last-child`, seit es
+   den Filter gibt: Die Pseudoklassen zählen Geschwister im DOKUMENT, nicht im
+   BILD. Nach einer Suche stand über dem obersten Treffer eine Fuge, die nichts
+   mehr trennte. Gesetzt werden die Marken in ui/app.ts, weil nur dort bekannt
+   ist, wer gerade sichtbar ist. */
+.strip[data-lead='1'] {
   padding-top: 0;
 }
 
-.strip:first-child::before {
+.strip[data-lead='1']::before {
   display: none;
 }
 
-.strip:last-child {
+.strip[data-tail] {
   padding-bottom: 0;
 }
 
+/* Die Kopfzeile der Karte: Name links, Chip rechts. Ein eigener Kasten und
+   nicht zwei Rasterzellen — sonst müsste die Spaltenbreite entscheiden, wie viel
+   Platz der Name bekommt, und ein langer Kontoname würde den Chip erdrücken oder
+   umgekehrt. In einem Flex-Kasten schrumpft nur der Name (`min-width: 0` plus
+   Ellipse), der Chip behält seine Breite. */
+.strip__head {
+  grid-area: head;
+  display: flex;
+  /* Grundlinie statt Mitte: Der Kontoname steht in 19 px, der Chip in 12 px.
+     Zentriert man die beiden KÄSTEN, liegen ihre Schriften nicht auf einer Linie
+     — gemessen 5,75 px Abstand zwischen den Grundlinien, weil eine Grundlinie um
+     so viel tiefer unter der Kastenmitte sitzt, wie die Schrift groß ist. Auf
+     einer Grundlinie ausgerichtet lesen Name und Chip als eine Zeile.
+
+     Der Chip sitzt dadurch ein paar Pixel tiefer im Kasten. Das ist richtig: Um
+     eine Kleinschrift ist über der Grundlinie mehr Luft als darunter. */
+  align-items: baseline;
+  /* Umbrechend, und das ist die tragende Eigenschaft: Wird es eng, rutscht der
+     CHIP in eine eigene Zeile — er ist die Nebenangabe. Ohne `wrap` bleibt beides
+     in einer Zeile, und weil der Chip `flex: none` trägt, schrumpft stattdessen
+     der Name bis zur Ellipse. Gemessen: bis auf 0 px. */
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--gap-pair);
+  min-width: 0;
+}
+
+/* Der Name darf schrumpfen, aber nicht beliebig: Unter 8 rem hört eine Ellipse
+   auf, ein gekürzter Name zu sein, und wird ein Buchstabe mit Punkten. Ab dieser
+   Grenze weicht lieber der Chip in die nächste Zeile. */
 .strip__id {
-  grid-area: id;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0 var(--sp-2);
+  gap: 0 var(--gap-pair);
+  flex: 1 1 8rem;
   min-width: 0;
 }
 
@@ -692,17 +1403,24 @@ kbd {
   display: none;
 }
 
+/* Der Chip trägt sein Aussehen selbst (.chip). Hier steht nur, wo er sitzt:
+   am Ende der Kopfzeile. `auto` als Außenabstand und nicht `justify-content:
+   space-between` am Elternteil — so bleibt der Abstand zwischen Name und Chip
+   erhalten, wenn der Chip einmal fehlt. */
 .strip__spec {
-  grid-area: spec;
-  color: var(--ink-3);
-  justify-self: end;
-  white-space: nowrap;
+  margin-inline-start: auto;
+  flex: none;
 }
 
 /* ── Das Zifferblatt ──────────────────────────────────────────────────────── */
 
 .dial {
   grid-area: code;
+  /* Die Code-Zeile ist so hoch wie das Zifferblatt daneben (also höher als der
+     Code selbst). Ohne diese Zeile streckte sich der Code auf die Zeilenhöhe und
+     seine Ziffern hingen oben — die Achse, auf der Blatt, Code und Taste liegen
+     sollen, wäre wieder weg. */
+  align-self: center;
   display: flex;
   align-items: baseline;
   font-family: var(--font-mono);
@@ -722,10 +1440,20 @@ kbd {
 /* Jede Ziffer ist ein eigenes Element, weil beim Codewechsel nur die Ziffern
    umspringen sollen, die sich tatsächlich ändern — genau wie an einer
    Fallblattanzeige. Siehe ui/dial.ts. */
+/* Kein `will-change: transform`, und das ist eine Entscheidung, keine Lücke.
+   Der Hinweis hat hier bis V8 gestanden und eine Ebene je Ziffer erzwungen —
+   dauerhaft, für eine Bewegung, die 190 ms alle 30 Sekunden läuft. Gemessen
+   über CDP (LayerTree) bei acht Konten, also 48 Ziffern: 66 Ebenen mit dem
+   Hinweis, 18 ohne. Die 48 Ebenen stehen 99,4 % der Zeit ungenutzt herum, und
+   sie wachsen mit jedem Konto weiter.
+
+   Nötig ist er auch nicht: `element.animate()` sagt dem Browser, dass eine
+   Transformation läuft, und der befördert das Element für die Dauer der
+   Animation von sich aus. `will-change` nimmt ihm nur die Möglichkeit, sie
+   danach wieder aufzugeben. */
 .dial__digit {
   display: inline-block;
   transform-origin: 50% 50%;
-  will-change: transform;
 }
 
 /* Die Lücke in „123 456". Ein echtes Leerzeichen wäre zu schmal und würde je
@@ -761,10 +1489,18 @@ kbd {
 
 .strip--fault {
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'id' 'code';
+  grid-template-areas: 'head' 'code';
   row-gap: var(--sp-1);
   /* Ohne Zifferblatt gibt es nichts, hinter dem die Fuge anfangen könnte. */
   --strip-rule-inset: 0;
+}
+
+/* Eine Fehlerzeile hat keinen Chip und deshalb auch keinen Grund, ihre
+   Kopfzeile in einer Zeile zu halten: Die Quellzeile darf umbrechen, sie ist
+   das, was man lesen muss, um den Fehler zu finden. */
+.strip--fault .strip__head {
+  align-items: baseline;
+  flex-wrap: wrap;
 }
 
 .strip--fault .strip__issuer {
@@ -791,17 +1527,261 @@ kbd {
 /* Der Leerzustand steht in styles/mark.css — er ist ein Markenmoment. */
 
 /* =============================================================================
+   Die Shell: Bedienseite links, Bühne rechts
+   ==========================================================================
+
+   V6 hat den Zweispalter auf den Einspalter aufgesattelt: `main` bekam zwei
+   Rasterspalten, die Codes wurden nach rechts geschoben, fertig. Das Ergebnis
+   auf 2560 px war eine zu schmale Eingabespalte mit Hinweistexten, die mitten
+   im Satz umbrachen, daneben eine fast leere Codes-Kiste über einem großen
+   Loch. Additiv gebaut, additiv gescheitert.
+
+   V7 baut stattdessen eine Shell:
+
+     .rail       feste 23 rem — hier wird EINGESTELLT
+     #zone-codes fluid, der ganze Rest — hier wird ABGELESEN
+
+   Die feste Breite ist der Kern. Eine `1fr`-Spalte wächst mit dem Fenster, und
+   ein Eingabefeld auf einem 27-Zöller braucht keine 600 px; die Codes schon.
+   Was man einstellt, behält seine Größe — jede gewonnene Breite gehört dem,
+   was man abliest.
+
+   Unter 64 rem passiert nichts davon: eine Spalte, Reihenfolge unverändert,
+   Eingabe zuerst. Auf dem Handy tippt man, dann liest man. */
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-group);
+  min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --measure: 100rem; /* 1600 px */
+  }
+
+  .device[data-stage='working'] main {
+    display: grid;
+    grid-template-columns: var(--rail-w) minmax(0, 1fr);
+    gap: var(--gap-group);
+    /* Beide Spalten oben ausrichten. Ohne das streckt sich die kürzere auf die
+       Höhe der längeren, und der Tresor stünde in einem Panel, das bis zum
+       letzten Konto hinunterreicht. */
+    align-items: start;
+  }
+
+  /* In der Rail bekommt „Leeren" eine eigene Zeile.
+
+     Die drei Tasten brauchen zusammen rund 330 px, die Rail bietet 320 px
+     Inhaltsbreite — es fehlen zehn. Ohne diese Regel entscheidet der Zufall der
+     Übersetzungslänge, welche Taste allein in der zweiten Zeile landet: auf
+     Deutsch „Kamera", auf Finnisch etwas anderes.
+
+     Der Umbruch ist deshalb festgelegt statt überlassen, und er trennt genau
+     dort, wo die Rangordnung ohnehin trennt — die zerstörerische Taste oben
+     links, die Primärgruppe darunter rechts. Dieselbe Aufteilung wie mobil
+     (siehe .keys__gap in styles/panels.css), nur aus einem anderen Grund. */
+  .device[data-stage='working'] .keys__gap {
+    flex-basis: 100%;
+  }
+
+  /* Die Bedienseite klebt und scrollt eigenständig. Beides gehört zusammen:
+     Ohne `sticky` wandert sie beim Lesen der Codes aus dem Bild, ohne eigene
+     Scrollfläche sprengt ein aufgeklappter Tresor die Fensterhöhe.
+
+     `align-self: start` ist die Bedingung, nicht die Kür: Ein Rasterelement ist
+     standardmäßig `stretch`, und ein gestrecktes Element hat keine Höhe, an der
+     `sticky` greifen könnte. */
+  .device[data-stage='working'] .rail {
+    align-self: start;
+    position: sticky;
+    inset-block-start: var(--scroll-anchor);
+    max-block-size: calc(100vh - var(--scroll-anchor) - var(--sp-6));
+    overflow-y: auto;
+    /* Sonst nimmt eine Scrollbewegung in der Rail am Ende die ganze Seite mit. */
+    overscroll-behavior: contain;
+    /* Platz für den Scrollbalken, damit der Inhalt beim Aufklappen des Tresors
+       nicht um dessen Breite springt. */
+    scrollbar-gutter: stable;
+  }
+}
+
+/* ── Die Bühne ────────────────────────────────────────────────────────────
+   Ausdrücklich NICHT klebend. Der Auftrag sagt es, und es stimmt auch: Eine
+   Liste, die man liest, soll stehen bleiben; nur ihr Filterfeld darf mitkommen.
+   V6 hatte die ganze Codes-Zone klebend, und das Ergebnis war eine Kiste, die
+   beim Scrollen an derselben Stelle hing, während die Seite darunter wegfuhr. */
+
+.stage__filter {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  /* Der Filter klebt an der Panelkante, nicht am Fenster: Er sitzt im
+     scrollbaren Panelfluss, und der Innenabstand des Panels ist seine Null.
+     Die negativen Außenabstände plus derselbe Innenabstand lassen den
+     Flächenton über die volle Panelbreite laufen — sonst schöbe sich beim
+     Scrollen ein Kanalzug seitlich daran vorbei. */
+  margin: calc(var(--panel-pad) * -1) calc(var(--panel-pad) * -1) 0;
+  /* Oben und an den Seiten der Innenabstand des Panels, weil die Zeile ihn
+     überdeckt. Unten eine Paarfuge: Zusammen mit der Stapelfuge des Panels
+     stehen damit 24 px zwischen Filterzeile und erstem Kanalzug — dieselbe
+     Gruppenfuge wie zwischen zwei Panels, denn Filter und Liste sind zwei
+     Gruppen. Vorher standen hier 12, und mit der Stapelfuge ergab das 28: ein
+     Wert, der auf keiner Sprosse liegt. */
+  padding: var(--panel-pad) var(--panel-pad) var(--gap-pair);
+  background: var(--surface);
+  border-radius: var(--radius-panel) var(--radius-panel) 0 0;
+}
+
+.stage__filter[hidden] {
+  display: none;
+}
+
+/* Ein einzeiliges Feld, also dieselbe Höhe wie eine Taste — und nicht die
+   Zeilenhöhe 1,7 aus der `.field`-Basis, die für das mehrzeilige Feld gedacht
+   ist. Dieselbe Begründung wie bei `.vault__pass` in panels.css. */
+.stage__field {
+  min-height: var(--control-h);
+  /* Wie beim Passwortfeld: `min-height` ist eine Untergrenze, und die 12 px
+     Innenabstand aus der `.field`-Basis schieben das einzeilige Feld darüber
+     hinaus. Siehe .vault__pass in styles/panels.css. */
+  padding-block: 0;
+  line-height: 1.4;
+  font-family: var(--font-ui);
+  /* Ein Suchfeld über die volle Bühnenbreite wäre auf 1500 px ein Balken, in
+     den man drei Buchstaben tippt. Es ist so breit wie das, was man
+     hineinschreibt: ein Kontoname. */
+  max-width: 26rem;
+}
+
+.stage__void {
+  font-size: var(--t-small);
+  color: var(--ink-3);
+  padding-block: var(--sp-5);
+}
+
+/* ── Zwei Spalten auf der Bühne ───────────────────────────────────────────
+   Zwei Bedingungen, und beide müssen stimmen: genug Platz UND genug Konten (ab
+   acht, gesetzt von ui/app.ts als `.strips--dense`).
+
+   Die zweite ist die wichtigere. Drei Kanalzüge in zwei Spalten sind kein
+   Raster, sondern eine angefangene Zeile — und die Lücke daneben sieht aus wie
+   ein Fehler. Erst ab acht wird aus der Aufteilung eine Fläche.
+
+   ── Warum die Schwelle seit V8 bei 98 rem liegt und nicht bei 87,5 ─────────
+   Weil die Karte jetzt eine feste Geometrie hat, und eine feste Geometrie hat
+   eine Mindestbreite. V7 hatte keine: Dort teilten Code und Kopiertaste eine
+   Zelle, und die Parameterzeile stand als `nowrap`-Text in der Ecke — was nicht
+   passte, überlappte einfach. Auf einem Standbild sah das nach Layout aus.
+
+   Nachgemessen bei 1440 px, also der alten Schwelle plus etwas: Der Kanalzug war
+   458 px breit, davon Zifferblatt 120, Kopiertaste 132 und zwei Fugen 48 — für
+   Name, Code und Chip blieben 158 px. Der Chip allein wollte 212.
+
+   Der Bedarf, ausgerechnet statt geschätzt: Zifferblatt 104 + Fuge 24 + Code
+   (achtstellig, ~225) + Fuge 24 + Kopiertaste 132 = 509 px je Karte. Zwei davon
+   plus Spaltenfuge und Panelrand sind 1120 px Bühne; dazu Rail 368, Fuge 24 und
+   Gehäuserand 48 — zusammen 1560 px. Aufgerundet 98 rem.
+
+   Zwischen 1400 und 1568 px steht die Bühne jetzt einspaltig. Das ist kein
+   Verlust: Eine Spalte mit ganzen Kontonamen ist mehr wert als zwei mit „G…". */
+@media (min-width: 98rem) {
+  .strips--dense {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--sp-6);
+  }
+
+  /* Im Zweispalter bleibt das Zifferblatt bei 6,5 rem: Die Stufe auf 7,5 rem ab
+     1440 px gilt für eine Karte, die die ganze Bühne hat. In einer halben Bühne
+     sind 120 px Anzeige neben einem 44-px-Code kein Verhältnis mehr, sondern ein
+     Platzproblem. */
+  .strips--dense .strip {
+    --dial-size: 6.5rem;
+  }
+
+  /* Die Fuge trennt Zeilen, nicht Spalten: In zwei Spalten besteht die oberste
+     Zeile aus zwei Kanälen, und beide stoßen oben an den Innenabstand. */
+  .strips--dense .strip[data-lead='2'] {
+    padding-top: 0;
+  }
+
+  .strips--dense .strip[data-lead='2']::before {
+    display: none;
+  }
+
+  /* Und der letzte Kanal ist nicht mehr zwangsläufig der unterste — in einem
+     Raster steht neben ihm noch einer. */
+  .strips--dense .strip[data-tail] {
+    padding-bottom: var(--sp-5);
+  }
+}
+
+/* =============================================================================
    Umbrüche
    ========================================================================== */
 
-/* Unter 46rem gibt es keine Gravur-Spalte mehr: Die Beschriftung rückt über
-   ihre Zone. Das Raster bleibt, es klappt nur um. */
-@media (max-width: 46rem) {
-  .zone {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--sp-3);
+/* ── Unter 1024 px verschwindet das Gehäuse ────────────────────────────────
+   Ein gerahmtes Gerät in einem Fenster, das ohnehin nur eine Spalte trägt, ist
+   ein Rahmen zu viel: Er kostet an jeder Seite Platz und trennt nichts mehr ab,
+   weil links und rechts davon nichts liegt.
+
+   Die Seite bekommt dann den GEHÄUSETON als Grund, nicht den der Werkbank. Das
+   Gerät füllt hier den Schirm — man hält es in der Hand, statt es anzusehen.
+
+   63.9375rem = 1023px, nicht 64rem. Der Auftrag sagt „UNTER 1024 px", und bei
+   `max-width: 64rem` griffe diese Abfrage bei exakt 1024 px zusätzlich zur
+   Shell-Abfrage darüber (`min-width: 64rem`) — beide Zustände auf einmal, und
+   das Ergebnis wäre eine klebende Rail in einem Gerät ohne Gehäuse. Gefunden
+   hat das die Schwellenprüfung in scripts/shoot.mjs, nicht das Auge: Auf einem
+   Standbild bei 1024 px sieht ein fehlendes Gehäuse aus wie Absicht. */
+@media (max-width: 63.9375rem) {
+  body {
+    background: var(--case);
   }
 
+  body::before {
+    /* Ohne Gehäuse gibt es keine Werkbank: Das Gerät füllt hier den Schirm, und
+       der Seitengrund IST der Gehäuseton. Korn darauf wäre Korn auf dem Gerät —
+       genau das, was V8 abgeschafft hat. */
+    display: none;
+  }
+
+  .device {
+    max-width: var(--measure);
+    margin-block: 0;
+    /* Oben derselbe Griff wie unten, und aus demselben Grund: Hier füllt das
+       Gerät den Schirm, es gibt also keinen Rand, der die Aussparung von sich
+       aus freihält. `calc` und nicht `max` — der Sicherheitsabstand ist Fläche,
+       die nicht benutzbar ist, und die 24 px Luft gehören DARUNTER, nicht
+       hinein. Beim Rand links und rechts ist es umgekehrt (siehe .device oben):
+       dort deckt der vorhandene Innenabstand den Fall meist schon ab. */
+    padding-block: calc(var(--sp-5) + env(safe-area-inset-top))
+      calc(var(--sp-8) + env(safe-area-inset-bottom));
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* Der Kopf ist hier keine Deckplatte mehr, sondern wieder ein Riegel, der
+     über den Inhalt fährt: rundum gerundet, ohne feste Unterkante. */
+  .masthead {
+    border-radius: var(--radius-panel);
+    border-block-end-color: transparent;
+  }
+
+  /* Nur die Rundung fällt hier weg — der Abstand nach oben steht in der
+     Grundregel und gilt in beiden Layouts. Er stand bis zum Schlusspass nur
+     hier, und deshalb hatte ihn der Schreibtisch nicht. */
+  .colophon {
+    border-radius: 0;
+  }
+}
+
+/* Unter 46 rem hat der Kopf keine drei Spalten mehr. */
+@media (max-width: 46rem) {
   .masthead {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -838,24 +1818,33 @@ kbd {
   .strip {
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
-      'gauge id'
+      'gauge head'
       'gauge code'
-      'gauge spec'
-      'next next'
-      'copy copy';
+      'meta  meta'
+      'copy  copy';
+  }
+
+  /* Ein 104-px-Blatt neben einem Code auf 375 px lässt für den Namen nichts
+     übrig. Das Zifferblatt bleibt die größte Anzeige im Kanal, aber es muss
+     nicht auf dem Handy dieselben Millimeter haben wie auf einem 27-Zöller. */
+  :root {
+    --dial-size: 5rem;
+  }
+
+  /* Name und Chip nebeneinander brauchen Breite, die hier keiner hat. Der Chip
+     rutscht deshalb unter den Namen — links, nicht rechts: Auf einer Zeile für
+     sich ist „rechts ausgerichtet" nichts als eine Lücke davor. */
+  .strip__head {
+    flex-wrap: wrap;
+    gap: var(--sp-1) var(--gap-pair);
   }
 
   .strip__spec {
-    justify-self: start;
+    margin-inline-start: 0;
   }
 
   .key--copy {
     justify-self: start;
-    align-self: center;
-  }
-
-  .gauge {
-    flex-wrap: wrap;
   }
 }
 
@@ -863,6 +1852,25 @@ kbd {
    Bewegung reduzieren
    ========================================================================== */
 
+/* Der übliche Rundumschlag — hier ausnahmsweise ungefährlich, und das ist der
+   Grund, warum er stehen bleiben darf.
+
+   Ein globales Abschalten ist normalerweise die schlechte Lösung: Es tötet
+   nicht nur Zierbewegung, sondern auch Rückmeldung, und genau die braucht, wer
+   weniger visuelle Reize bekommt, am nötigsten. In diesem Projekt trifft es
+   nichts davon, weil jede Rückmeldung als ZUSTAND gebaut ist und nicht als
+   Bewegung: Die Kopier-Quittung ist eine Füllfarbe (styles/mark.css), der
+   Kanalzug unter dem Zeiger eine Fläche, der gesperrte Knopf eine Deckkraft.
+   Alle bleiben stehen — nur der weiche Weg dorthin entfällt.
+
+   Was Bewegung MITTEILT, hängt ohnehin nicht hier dran: Das Fallblatt und die
+   einfahrende Bühne laufen über `element.animate()` und fragen
+   `prefersReducedMotion()` selbst ab (ui/dial.ts, ui/app.ts). Der Zeiger
+   bekommt seinen Winkel pro Frame von der Uhr und hat gar keinen Übergang.
+
+   Die beiden `animation-*`-Zeilen greifen derzeit ins Leere — im ganzen
+   Projekt gibt es kein einziges `@keyframes`. Sie bleiben trotzdem: Sie kosten
+   zwei Zeilen und fangen die erste CSS-Animation ab, die jemand hinzufügt. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

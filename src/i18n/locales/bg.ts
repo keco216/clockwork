@@ -34,6 +34,7 @@ export default {
   'input.help.images': 'Изображения с QR код може да се влачат тук или да се поставят с {paste}.',
   'input.help.migration':
     'Износите от Google Authenticator ({migration}) се преобразуват автоматично.',
+  'input.help.more': 'Всички входни формати',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': { one: '{n} акаунт', other: '{n} акаунта' },
@@ -49,6 +50,10 @@ export default {
   'key.copyFailed': 'Неуспешно',
 
   'viewfinder.hint': 'Дръжте QR кода в рамката',
+
+  'filter.label': 'Филтриране на акаунтите',
+  'filter.placeholder': 'Филтриране по име',
+  'filter.empty': 'Нищо не съвпада с „{query}“.',
 
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': { one: '{n} цифра', other: '{n} цифри' },
@@ -68,9 +73,13 @@ export default {
   'vault.state.locked': 'Заключен — нужна е парола-фраза',
   'vault.state.open': 'Отворен — secret-ите са в текстовото поле',
   'vault.explain':
-    'По подразбиране Clockwork не запазва нищо. Който желае, може да остави въведеното тук ' +
-    'шифровано с парола-фраза: PBKDF2-SHA-256 с {iterations} итерации, след това ' +
-    'AES-256-GCM. Без паролата-фраза запазеният блок не струва нищо.',
+    'По подразбиране Clockwork не запазва нищо. Ако включите сейфа, въведеното остава тук ' +
+    'шифрирано с вашата парола-фраза — без нея запазеният блок не струва нищо.',
+  'vault.explain.crypto':
+    'Ключът се извежда от парола-фразата чрез PBKDF2-SHA-256 с {iterations} итерации, а ' +
+    'шифрира AES-256-GCM. Запазва се само запечатаният плик: никога открития текст, ' +
+    'никога парола-фразата, никога изведения ключ.',
+  'vault.explain.more': 'Всички подробности',
   'vault.pass.new': 'Нова парола-фраза',
   'vault.pass.existing': 'Парола-фраза',
   'vault.action.seal': 'Запази шифровано',
@@ -127,7 +136,9 @@ export default {
   'import.unnamed': 'Без име',
   'import.unreadable': 'Износът е нечетлив.',
 
-  'vacant.text': 'Все още няма нищо. Поставете горе secret.',
+  'vacant.text':
+    'Секрет, връзка otpauth или QR изображение — нищо от това не напуска този браузър.',
+  'vacant.demo': 'Вмъкване на тестов ключ',
   'colophon.note': 'Без мрежа · без хранилище · HMAC през Web Crypto API',
 
   'lang.label': 'Език',

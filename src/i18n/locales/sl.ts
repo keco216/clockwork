@@ -34,6 +34,7 @@ export default {
   'input.help.formats': 'Base32, {nameSecret} ali {uri} — pomešano. {hash} začne opombo.',
   'input.help.images': 'Slike s kodo QR lahko povlečete sem ali prilepite s {paste}.',
   'input.help.migration': 'Izvozi iz Google Authenticatorja ({migration}) se pretvorijo samodejno.',
+  'input.help.more': 'Vse vhodne oblike',
   'shortcut.modifier': 'Ctrl',
 
   'input.count.accounts': {
@@ -60,6 +61,10 @@ export default {
 
   'viewfinder.hint': 'Kodo QR držite v okvirju',
 
+  'filter.label': 'Filtriraj račune',
+  'filter.placeholder': 'Filtriraj po imenu',
+  'filter.empty': 'Nič se ne ujema z »{query}«.',
+
   'strip.spec': '{algorithm} · {digits} · {period}',
   'strip.digits': {
     one: '{n} števka',
@@ -83,9 +88,13 @@ export default {
   'vault.state.locked': 'Zaklenjen — potrebna je geselna fraza',
   'vault.state.open': 'Odprt — secreti so v besedilnem polju',
   'vault.explain':
-    'Clockwork privzeto ne shrani ničesar. Kdor želi, lahko vnos pusti tukaj šifriran z ' +
-    'geselno frazo: PBKDF2-SHA-256 z {iterations} ponovitvami, nato AES-256-GCM. Brez geselne ' +
-    'fraze je shranjeni blok brez vrednosti.',
+    'Clockwork privzeto ne shrani ničesar. Če vklopite sef, vnos ostane tukaj šifriran z ' +
+    'vašo geselno frazo — brez nje je shranjeni blok brez vrednosti.',
+  'vault.explain.crypto':
+    'Ključ nastane iz geselne fraze s PBKDF2-SHA-256 in {iterations} ponovitvami, šifrira ' +
+    'pa AES-256-GCM. Shrani se le zapečatena ovojnica: nikoli čisto besedilo, nikoli ' +
+    'geselna fraza, nikoli izpeljani ključ.',
+  'vault.explain.more': 'Vse podrobnosti',
   'vault.pass.new': 'Nova geselna fraza',
   'vault.pass.existing': 'Geselna fraza',
   'vault.action.seal': 'Shrani šifrirano',
@@ -151,7 +160,9 @@ export default {
   'import.unnamed': 'Brez imena',
   'import.unreadable': 'Izvoz ni berljiv.',
 
-  'vacant.text': 'Zaenkrat še ni vnosa. Zgoraj vstavite secret.',
+  'vacant.text':
+    'Skrivnost, povezava otpauth ali slika QR — nič od tega ne zapusti tega brskalnika.',
+  'vacant.demo': 'Vstavi testni ključ',
   'colophon.note': 'Brez omrežja · brez shrambe · HMAC prek Web Crypto API',
 
   'lang.label': 'Jezik',

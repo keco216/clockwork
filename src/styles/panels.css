@@ -11,24 +11,122 @@
 .vault {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
+  gap: var(--gap-stack);
 }
 
+/* ── Der Tresor als Aufklapper ────────────────────────────────────────────
+   In der Rail des Arbeitszustands ist der Tresor sonst der größte Block der
+   Bedienseite — für eine Funktion, die man einmal einrichtet und danach nie
+   wieder anfasst.
+
+   Die Statuszeile bleibt die Zusammenfassung und damit immer sichtbar: Ob
+   etwas gespeichert ist, muss ablesbar sein, ohne dass man etwas öffnet.
+   Alles, womit man etwas TUT, liegt dahinter.
+
+   ── Warum die Statuszeile keine Gravur mehr ist ───────────────────────────
+   Weil sie ein SATZ ist und keine Beschriftung. „Aus — es wird nichts
+   gespeichert", „Offen — Secrets liegen im Textfeld": Das sind Auskünfte mit
+   Gedankenstrich, nicht Wörter auf einem Gehäuse.
+
+   Bis V7 stand sie in 11 px gesperrten Versalien, und das ging in der Rail nicht
+   auf: Nachgemessen bleiben zwischen Leuchte und Winkel 289 px, der deutsche
+   Satz brauchte mehr. Er brach auf zwei Zeilen — und weil Leuchte und Winkel
+   senkrecht zentriert sind, saßen beide danach ZWISCHEN den Zeilen statt neben
+   der ersten. Sichtbar war das als eine Zeile, an der nichts auf einer Höhe
+   steht.
+
+   Der Umbruch wäre auch reparierbar (Leuchte an die erste Zeile hängen), aber
+   das hätte das eigentliche Problem gelassen: Die wichtigste Auskunft des Panels
+   — liegt hier etwas gespeichert? — stand in der kleinsten und am weitesten
+   gesperrten Schrift, die die App kennt. Gesperrte Versalien sind für drei Wörter
+   auf einem Gehäuse gemacht, nicht für einen Satz, den man liest.
+
+   Jetzt: eine Stufe größer, normal gesetzt, etwas fester im Gewicht. Sie passt
+   in eine Zeile, und die Zustandsfarbe darunter kann tun, was sie soll. */
 .vault__state {
   display: flex;
   align-items: center;
-  gap: var(--sp-2);
-  font-size: var(--t-micro);
-  font-weight: 500;
-  letter-spacing: var(--track-caps);
-  text-transform: var(--case-caps);
+  gap: var(--gap-pair);
+  font-size: var(--t-small);
+  font-weight: 550;
   color: var(--ink-2);
+  cursor: pointer;
+  list-style: none;
+  /* Ein Aufklapper ist ein Bedienelement, keine Überschrift. Er bekommt deshalb
+     dieselbe Trefferhöhe wie eine Taste — eine 17 px hohe Zeile trifft man mit
+     dem Daumen nicht.
+
+     Die negativen Außenabstände plus derselbe Innenabstand: Die Trefferfläche
+     wächst, der Text bleibt, wo er im Raster steht.
+
+     44 px und nicht die 40 der Tastenleiter: Diese Zeile ist über die ganze
+     Panelbreite anklickbar, Höhe kostet hier also nichts. Wo sie nichts kostet,
+     nimmt man die AAA-Zielgröße. */
+  min-height: var(--touch-min);
+  margin: calc(var(--sp-2) * -1) calc(var(--sp-2) * -1);
+  padding: var(--sp-2);
+  border-radius: var(--radius-inset);
 }
 
-/* Die Zustandsleuchte ist die einzige Stelle, an der eine Fläche Farbe trägt.
-   Aus = leerer Ring, gesperrt = gefüllt in Ink, offen = gefüllt in Signal.
-   Damit ist der Zustand auch ohne den Text ablesbar — aber nie NUR über Farbe:
-   Ring gegen Fläche ist ein Formunterschied. */
+.vault__state::-webkit-details-marker {
+  display: none;
+}
+
+/* Der Winkel steht am ENDE der Zeile, nicht davor: Die Statuszeile ist eine
+   Angabe, die man liest, und erst danach kommt das Angebot, sie aufzuklappen.
+   `margin-inline-start: auto` schiebt ihn dorthin — logisch, weil „Ende" eine
+   Leserichtung ist; die Drehung physisch, weil ein Winkel eine Form ist. */
+.vault__state::after {
+  content: '';
+  width: 0.42em;
+  height: 0.42em;
+  flex: none;
+  margin-inline-start: auto;
+  border-right: 1.5px solid var(--ink-3);
+  border-bottom: 1.5px solid var(--ink-3);
+  border-bottom-right-radius: 1px;
+  transform: translateY(-25%) rotate(45deg);
+  transition: transform var(--dur-quick) var(--ease-snap);
+}
+
+.vault__disclosure[open] .vault__state::after {
+  transform: translateY(10%) rotate(225deg);
+}
+
+.vault__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-stack);
+  /* Zusammen mit dem Innenabstand der Statuszeile darüber (ebenfalls 8) ergibt
+     das eine Stapelfuge — die Statuszeile ist die Kopfzeile dieses Blocks, und
+     zwischen Kopfzeile und Inhalt steht derselbe Abstand wie zwischen zwei
+     Geschwistern darin. */
+  padding-block-start: var(--gap-pair);
+}
+
+/* Erklärung und Aufklapper als eine Einheit — sie erscheinen und verschwinden
+   zusammen (siehe ui/vault-panel.ts). */
+.vault__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-pair);
+}
+
+/* ── Die drei Zustände, in Form UND Farbe ──────────────────────────────────
+   Aus = leerer Ring, gesperrt = gefüllt in Ink, offen = gefüllt im Akzent.
+   Nie NUR über Farbe: Ring gegen Fläche ist ein Formunterschied, und der bleibt
+   auch für jemanden lesbar, der die beiden Töne nicht unterscheiden kann.
+
+   Seit V8 zieht die Statuszeile mit. Bis V7 stand sie in allen drei Zuständen in
+   derselben Graustufe, und nur die 8-px-Leuchte davor sagte, was gilt — für die
+   wichtigste Auskunft des Panels („liegt hier etwas gespeichert?") war das der
+   leiseste verfügbare Ton.
+
+   Die Leiter geht mit dem Gewicht der Auskunft:
+
+     aus       --ink-3           es gibt nichts zu wissen
+     gesperrt  --ink             hier liegt etwas, und es ist zu
+     offen     --signal-text     einer der vier Zustände mit Bedeutung */
 .vault__lamp {
   width: 8px;
   height: 8px;
@@ -39,23 +137,33 @@
 }
 
 .vault[data-state='locked'] .vault__lamp {
-  background: var(--ink-3);
-  border-color: var(--ink-3);
+  background: var(--ink);
+  border-color: var(--ink);
 }
 
+.vault[data-state='locked'] .vault__state {
+  color: var(--ink);
+}
+
+/* Der Akzent, aber im tieferen der beiden Signal-Token. Eine 8-px-Scheibe ist
+   feine Geometrie, und für die gilt seit V8 dieselbe Grenze wie für Schrift:
+   Der Markenwert #f05a28 kommt auf Papier nur auf 3,06:1 und auf jeder
+   dunkleren Fläche der hellen Leiter darunter. Bis V7 stand hier `--signal`
+   auch für den TEXT der Statuszeile — das waren gemessene 3,06:1 für eine
+   Kleinschrift, die 4,5 braucht. */
 .vault[data-state='open'] .vault__lamp {
-  background: var(--signal);
-  border-color: var(--signal);
+  background: var(--signal-text);
+  border-color: var(--signal-text);
 }
 
 .vault[data-state='open'] .vault__state {
-  color: var(--signal);
+  color: var(--signal-text);
 }
 
 .vault__form {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
 }
 
 .vault__form[hidden] {
@@ -69,18 +177,38 @@
 .vault__row {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
   align-items: center;
 }
 
-.vault__pass {
+/* ── Und wieder die Kaskadenfalle, zum dritten Mal ─────────────────────────
+   Dieses Bauteil stand seit V5 hier als `.vault__pass` — und zwei seiner drei
+   Zeilen haben nie gewirkt.
+
+   `.field` (src/style.css) und `.vault__pass` (diese Datei) haben dieselbe
+   Spezifität. `@import`-Regeln stehen IMMER vor den eigenen Regeln der
+   importierenden Datei, also gewinnt `.field`. Und `.field` setzt `padding` als
+   Kurzschreibweise und `line-height: 1.7` — beides hat das hier Notierte
+   überschrieben.
+
+   Gemessen kam das Feld damit auf 51,5 px, neben einem 40-px-Knopf. Der
+   Kommentar an dieser Stelle behauptete drei Versionen lang, beide hätten
+   dieselbe Höhe, „weil beide dieselbe Höhe HABEN". Sie hatten sie nicht.
+
+   Es ist derselbe Fehler wie beim 6 rem hohen Passwortfeld in V2 und bei der
+   unsichtbaren Warnfarbe in V5 — an genau diesem Bauteil sogar zum zweiten Mal.
+   Die Lehre steht seit V5 in CLAUDE.md und lautet: Ein Bauteil in einer
+   importierten Datei, das eine Basisklasse überschreibt, braucht die DOPPELTE
+   Klasse. Nicht die Hoffnung auf eine Zeilennummer. */
+.field.vault__pass {
   flex: 1 1 16rem;
   min-width: 0;
-  /* Dieselbe Höhe wie eine Taste. Die gemeinsame `.field`-Basis bringt bewusst
-     keine mit (sonst entscheidet die @import-Reihenfolge, welche gewinnt), also
-     steht sie hier — und `line-height` muss mit, sonst treibt die 1,7 aus der
-     Basis das einzeilige Feld wieder auseinander. */
+  /* `min-height` ist eine Untergrenze, kein Maß: Die 12 px senkrechter
+     Innenabstand aus der Basis kommen oben drauf. Ein einzeiliges `<input>`
+     zentriert seinen Text selbst — die Höhe macht `min-height`, nicht das
+     Polster. */
   min-height: var(--control-h);
+  padding-block: 0;
   line-height: 1.4;
   font-family: var(--font-mono);
 }
@@ -91,9 +219,8 @@
   min-height: 1.2em;
 }
 
-.vault__error:empty {
-  min-height: 0;
-}
+/* Die Regel steht jetzt gesammelt bei den Live-Regionen in src/style.css: Eine
+   leere Meldung verlässt den Fluss ganz, statt nur ihre Höhe abzugeben. */
 
 /* ── Warum hier .key.key--danger steht und nicht .key--danger ──────────────
    Weil das Einfache nicht funktioniert hat, und zwar seit V2 unbemerkt.
@@ -112,7 +239,12 @@
 
    Der doppelte Klassenname hebt die Spezifität auf (0,2,0) und macht das
    Bauteil damit unabhängig von der Import-Reihenfolge. Das ist die Sorte
-   Wiederholung, die man schreibt, weil ihre Abwesenheit teuer war. */
+   Wiederholung, die man schreibt, weil ihre Abwesenheit teuer war.
+
+   Die Kantenstärke kommt seit V8 aus der Basis (--border-2, also 2 px): Der
+   Löschknopf ist ein Umriss-Knopf wie „Zusperren" daneben, nur in der
+   Fehlerfarbe. Er soll sich von seinen Geschwistern durch die FARBE
+   unterscheiden, nicht durch die Strichstärke. */
 .key.key--danger {
   color: var(--fault);
   border-color: color-mix(in oklab, var(--fault) 45%, var(--rule-strong));
@@ -137,7 +269,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
   font-size: var(--t-small);
   color: var(--ink-3);
 }
@@ -205,9 +337,19 @@
   background: var(--surface-recessed);
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-inset);
-  /* Rechts Platz für den Winkel. */
-  padding: 0.2rem var(--sp-6) 0.2rem var(--sp-3);
-  min-height: 2.25rem;
+  /* Dieselbe Fräsung wie am Eingabefeld: Ein Auswahlfeld ist eine versenkte
+     Fläche, in der etwas steht. */
+  box-shadow: inset 0 1px 0 var(--edge-sunk);
+  /* Rechts Platz für den Winkel. Senkrecht ohne Innenabstand: Ein einzeiliges
+     `<select>` zentriert seinen Text selbst, und die Höhe steht darunter. Bis V8
+     standen hier 0,2 rem — ein Wert, der auf keiner Skala dieses Projekts liegt
+     und den auch keine Höhe gebraucht hat. Gefunden von scripts/check-tokens.mjs. */
+  padding-block: 0;
+  padding-inline: var(--sp-3) var(--sp-6);
+  /* Die kleinste Sprosse der Höhenleiter, und sie hat hier ihren Grund: Sprache
+     und Sperrzeit stellt man einmal ein und fasst sie danach nie wieder an.
+     Was man einmal bedient, braucht keine Daumengröße. */
+  min-height: var(--control-h-sm);
   width: 100%;
   cursor: pointer;
   transition: border-color var(--dur-quick) var(--ease-snap);
@@ -217,10 +359,98 @@
   border-color: var(--ink-3);
 }
 
+/* ── Die Listbox ──────────────────────────────────────────────────────────
+   Der Aufsatz auf dem nativen Feld (ui/listbox.ts). Er übernimmt dessen
+   Aussehen im geschlossenen Zustand — und gestaltet endlich auch den offenen.
+
+   Das native Feld bleibt im Dokument, aber unsichtbar. Bewusst NICHT
+   `display: none`: Ein so entferntes Feld meldet in manchen Browsern keine
+   `change`-Ereignisse mehr, und genau die sind hier die Kupplung zwischen
+   Aufsatz und Wahrheit. */
+.pick--replaced {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Der Knopf ist dasselbe Bauteil wie das Feld — er erbt `.pick` und bringt nur
+   die Textausrichtung mit, die ein `<button>` nicht von sich aus hat. */
+.pick--button {
+  display: inline-flex;
+  align-items: center;
+  text-align: start;
+}
+
+.pick__value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Das Panel. Dieselbe Erhebung wie der klebende Kopf — es liegt über dem
+   Gerät, also Ebene 2. Kein Frost: Was dahinter liegt, ist eine deckende
+   Fläche, und ein Weichzeichner ohne Hintergrund wäre eine Ebene ohne Zweck. */
+.listbox {
+  position: absolute;
+  inset-inline: 0;
+  /* Nach OBEN aufklappen: Der Umschalter sitzt im Fuß, und dort ist unten
+     nichts mehr. */
+  inset-block-end: calc(100% + var(--sp-2));
+  z-index: 20;
+  max-block-size: min(60vh, 22rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--sp-1);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-field);
+  box-shadow:
+    var(--elev-2),
+    inset 0 1px 0 var(--edge-inner);
+}
+
+.listbox[hidden] {
+  display: none;
+}
+
+.listbox__option {
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-inset);
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Die aktive Zeile — die, auf der Tastatur oder Maus gerade steht. Ein
+   Flächenton, kein Rahmen: Ein Rahmen würde die Zeile um einen Pixel
+   verschieben, und eine Liste, in der die Zeilen beim Durchgehen wackeln, ist
+   schwer zu lesen.
+
+   Seit V8 die dafür gemachte Sprosse und nicht mehr `--surface-recessed`. Das
+   war der Fehler, den die neue Leiter aufräumt: Derselbe Ton stand für
+   „versenkt" und für „berührt" — also für eine Fläche, die zurückweicht, und
+   eine, die entgegenkommt. */
+.listbox__option.is-active {
+  background: var(--surface-active);
+  color: var(--ink);
+}
+
+/* Die gewählte Sprache trägt den Akzent. Das ist einer der Zustände mit
+   Bedeutung, für die die Signalfarbe da ist: „das hier gilt gerade". */
+.listbox__option[aria-selected='true'] {
+  color: var(--signal-text);
+  font-weight: 600;
+}
+
 .vault__check {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
 }
 
 /* ── Schalter ─────────────────────────────────────────────────────────────
@@ -292,7 +522,7 @@
 .viewfinder {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
+  gap: var(--gap-pair);
 }
 
 .viewfinder[hidden] {
@@ -337,29 +567,29 @@
 }
 
 .viewfinder__mark[data-corner='tl'] {
-  inset-block-start: 18px;
-  inset-inline-start: 18px;
+  inset-block-start: var(--sp-4);
+  inset-inline-start: var(--sp-4);
   border-inline-end: 0;
   border-block-end: 0;
 }
 
 .viewfinder__mark[data-corner='tr'] {
-  inset-block-start: 18px;
-  inset-inline-end: 18px;
+  inset-block-start: var(--sp-4);
+  inset-inline-end: var(--sp-4);
   border-inline-start: 0;
   border-block-end: 0;
 }
 
 .viewfinder__mark[data-corner='bl'] {
-  inset-block-end: 18px;
-  inset-inline-start: 18px;
+  inset-block-end: var(--sp-4);
+  inset-inline-start: var(--sp-4);
   border-inline-end: 0;
   border-block-start: 0;
 }
 
 .viewfinder__mark[data-corner='br'] {
-  inset-block-end: 18px;
-  inset-inline-end: 18px;
+  inset-block-end: var(--sp-4);
+  inset-inline-end: var(--sp-4);
   border-inline-start: 0;
   border-block-start: 0;
 }
@@ -368,7 +598,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sp-3);
+  gap: var(--gap-pair);
 }
 
 .viewfinder__hint {
@@ -393,9 +623,41 @@
 
 /* ── Kleinigkeiten ────────────────────────────────────────────────────────── */
 
+/* ── Der Zeilenumbruch in der Tastenzeile ─────────────────────────────────
+   Ein Flexkasten kennt keinen Umbruch an einer bestimmten Stelle, nur einen,
+   der sich ergibt. Erzwungen wird er hier mit einem leeren Element, das die
+   ganze Zeile beansprucht — das ist der übliche Griff und hat eine Nebenwirkung,
+   die man nachmessen muss: Der Platzhalter öffnet eine EIGENE Zeile der Höhe 0,
+   und die Fuge fällt damit zweimal an. Zwischen „Leeren" und der Primärgruppe
+   stehen deshalb 16 px, nicht 8.
+
+   Das bleibt so, und zwar absichtlich: Genau diese Trennung soll die Zeile
+   ausdrücken — links die zerstörerische Handlung, rechts die beiden, die etwas
+   hereinholen. Der Wert ist jetzt nur nicht mehr aus Versehen richtig. */
+/* ── Der erzwungene Umbruch kostet zwei Fugen ─────────────────────────────
+   Ein Flexkasten kennt keinen Umbruch an einer bestimmten Stelle. Erzwungen wird
+   er mit einem leeren Element über die ganze Zeile — und das eröffnet eine eigene
+   Zeile, also fällt die Zeilenfuge davor UND danach an. Zwischen „Leeren" und der
+   Primärgruppe standen deshalb 16 px, zwischen „QR aus Bild" und „Kamera" aber 8:
+   dieselbe Gruppe mit zwei verschiedenen Lücken.
+
+   Ein negativer Außenabstand am Platzhalter behebt das NICHT — probiert und
+   nachgemessen: Die Höhe einer Flexzeile ist nie kleiner als null, der negative
+   Betrag verschwindet also. Stattdessen trägt der Platzhalter die Fuge selbst,
+   und die Zeilenfuge des Kastens wird abgeschaltet. Damit fällt sie genau einmal
+   an, und zwar dort, wo sie hingehört.
+
+   `:has()` und nicht eine eigene Klasse am Kasten: Die Regel gilt genau dann,
+   wenn ein Platzhalter drinsteht — und das ist die Bedingung, um die es geht. Die
+   Tastenzeile des Tresors hat keinen und behält ihre normale Zeilenfuge. */
+.keys:has(.keys__gap) {
+  row-gap: 0;
+}
+
 .keys__gap {
   flex: 1 1 var(--sp-4);
   min-width: var(--sp-2);
+  margin-block-start: var(--gap-pair);
 }
 
 /* Die Tastenkappe im Fließtext bekommt --radius-inset und nicht die Pille: Eine
