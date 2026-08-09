@@ -926,6 +926,29 @@
   margin-block-start: var(--gap-pair);
 }
 
+/* ── Im Leerzustand trennt der Platzhalter nichts ──────────────────────────
+   Er ist dafür da, die zerstörerische Taste („Leeren", links) von den beiden
+   zu trennen, die etwas hereinholen (rechts). Im Leerzustand ist „Leeren"
+   aber `hidden` — es gibt nichts zu leeren. Der Platzhalter dehnte sich
+   trotzdem und schob die drei verbliebenen Tasten an den rechten Panelrand,
+   wo sie mit nichts mehr fluchteten: nicht mit dem Feld darüber, nicht mit
+   der Beschriftung, nicht mit dem Hinweis darunter.
+
+   Das ist älter als V11 (nachgemessen: vor und nach dem Pass identisch) und
+   fiel erst auf, als der Leerzustand daneben stand. Ohne den Platzhalter
+   beginnt die Tastenzeile dort, wo alles andere im Panel beginnt.
+
+   Die zweite Zeile holt die Zeilenfuge zurück: `.keys:has(.keys__gap)` oben
+   schaltet sie ab, weil der Platzhalter sie sonst doppelt zählt — ohne ihn
+   gibt es nichts zu doppeln. */
+.device[data-stage='vacant'] .keys__gap {
+  display: none;
+}
+
+.device[data-stage='vacant'] .keys:has(.keys__gap) {
+  row-gap: var(--gap-pair);
+}
+
 /* Die Tastenkappe im Fließtext bekommt --radius-inset und nicht die Pille: Eine
    Kappe mit halbrunden Enden sähe aus wie ein Etikett, nicht wie eine Taste. */
 kbd {
