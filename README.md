@@ -235,6 +235,24 @@ npm run shots       # Playwright walk-through + screenshots (needs a server on :
 Hosting is a plain static deploy; `vercel.json` carries the security headers,
 and a test keeps them in step with the policy the build embeds.
 
+### Android app
+
+The repo contains a Capacitor wrapper that ships the **single-file build** in a
+system WebView — the same `clockwork.html`, as an APK:
+
+```bash
+npm run android                     # web build + stage the single file + sync
+cd android && ./gradlew assembleDebug
+```
+
+The app declares **no INTERNET permission** — the OS-level counterpart of the
+single file's `connect-src 'none'`; check it yourself with
+`aapt2 dump badging`. Camera permission exists solely for the QR scanner and
+is declared optional hardware, and `allowBackup` is off so the encrypted vault
+never rides along in a cloud backup. There is no signed release APK yet —
+build it from source. Details, including the toolchain notes, are in the
+[German documentation](docs/README.de.md#die-android-app-capacitor).
+
 ## Contributing
 
 Improvements are welcome — especially translation fixes from native speakers,

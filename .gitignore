@@ -2,10 +2,11 @@
 node_modules/
 
 # Build output — both targets plus the temporary dirs the build and the
-# subset test write to
+# subset test write to, plus the staging dir for the Android wrap
 dist/
 dist-single/
 dist-test/
+dist-android/
 .vite/
 
 # Test and measurement artefacts

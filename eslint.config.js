@@ -4,7 +4,17 @@ import tseslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
 
 export default tseslint.config(
-  { ignores: ['dist/', 'dist-single/', 'dist-test/', 'node_modules/', 'coverage/'] },
+  {
+    ignores: [
+      'dist/',
+      'dist-single/',
+      'dist-test/',
+      'dist-android/',
+      'node_modules/',
+      'coverage/',
+      'android/',
+    ],
+  },
 
   js.configs.recommended,
 

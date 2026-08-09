@@ -1419,6 +1419,95 @@ mitsamt den gerade abgelesenen Codes wegwischen. Ein Update gilt deshalb ab
 dem nächsten Öffnen; der neue Worker ist bis dahin schon installiert und
 aktiv.
 
+## Die Android-App (Capacitor)
+
+Clockwork lässt sich als Android-App bauen: ein Capacitor-Wrap, der **die
+Einzeldatei** in einem System-WebView trägt — dieselbe `clockwork.html`, die
+auch auf dem USB-Stick liegt. Capacitor stellt nur das Gehäuse (Activity,
+WebView, lokaler Auslieferungspfad); am Web-Code ändert sich nichts. Die drei
+Capacitor-Pakete stehen in den `devDependencies` — die Zahl der
+Laufzeit-Abhängigkeiten der Web-App bleibt eins.
+
+```bash
+npm run android                # Web-Bau + Einzeldatei nach dist-android/ + Sync
+cd android
+.\gradlew.bat assembleDebug    # oder das Projekt in Android Studio öffnen
+# → android/app/build/outputs/apk/debug/app-debug.apk  (~4,4 MB)
+```
+
+Gradle braucht ein JDK; das mitgelieferte von Android Studio genügt
+(`JAVA_HOME` auf `…\Android Studio\jbr`).
+
+### Warum die Einzeldatei und nicht der PWA-Build
+
+- **Kein Service Worker.** Die Dateien liegen ohnehin im APK — ein Cache über
+  lokalen Dateien wäre eine zweite Update-Maschinerie ohne Nutzen. Ein Update
+  kommt als neues APK, so wie es auf Android gedacht ist.
+- **`connect-src 'none'` gilt wörtlich weiter.** Die Einzeldatei trägt die
+  schärfere CSP, und die zieht mit in die App ein.
+
+### Was der Wrap zusagt — nachprüfbar am APK
+
+- **Keine INTERNET-Berechtigung.** Der WebView-Inhalt kommt über Capacitors
+  lokalen Abfangpfad aus dem APK, nicht über ein Socket — die Berechtigung
+  wird schlicht nicht gebraucht. Ohne sie kann der Prozess auf
+  Betriebssystem-Ebene keine Verbindung öffnen: dieselbe Zusage wie
+  `connect-src 'none'`, eine Schicht tiefer, und für jeden nachlesbar mit
+  `aapt2 dump badging app-debug.apk` — dort steht als einzige
+  System-Berechtigung `android.permission.CAMERA`.
+- **Kamera nur fürs Scannen, und nur freiwillig.** Capacitors WebChromeClient
+  übersetzt die `getUserMedia`-Anfrage des Suchers in den
+  Android-Berechtigungsdialog. Beide Feature-Namen (`android.hardware.camera`
+  und `…camera.any`) sind ausdrücklich `required="false"` deklariert — die
+  CAMERA-Berechtigung allein machte die Kamera sonst stillschweigend zur
+  Installationsbedingung, das implizite `uses-feature` ist mit `aapt2`
+  nachgemessen.
+- **Kein Auto-Backup** (`allowBackup="false"`). Ohne Tresor gibt es nichts zu
+  sichern, und der verschlüsselte Tresor-Umschlag soll das Gerät nicht
+  Richtung Google-Backup verlassen — die Web-App lädt auch nichts irgendwohin.
+- **App-ID `io.github.keco216.clockwork`** nach dem F-Droid-Muster für
+  GitHub-Projekte: eine real existierende, vom Projektkonto kontrollierte
+  Domäne, rückwärts gelesen. Eine erfundene `com.`-Adresse wäre eine
+  Behauptung.
+
+### Gehäuse im Markensystem
+
+`scripts/android-icons.mjs` erzeugt Launcher-Icons (eckig, rund und die
+adaptive Vordergrund-Ebene mit 60-%-Schutzzone) sowie die Splash-Flächen aus
+derselben vermessenen C-Werk-Geometrie wie `scripts/icons.mjs` — Nacht als
+Grund, ein Signalpunkt, kein Bildimport. Der Start zeigt ab Android 12 das
+App-Icon auf Nacht (`windowSplashScreenBackground`), davor eine einfarbige
+Nacht-Fläche. Version im APK: `versionName` folgt der Web-Version,
+`versionCode` ist dieselbe Zahl als `Major·10000 + Minor·100 + Patch`.
+
+### Eine Werkzeugketten-Notiz
+
+Capacitor 8.5 liefert Gradle 8.14.3 aus; dessen Groovy scheitert an
+Java-25-Klassendateien, und genau die bringt das JBR des aktuellen Android
+Studio mit. Der Wrapper steht deshalb auf **Gradle 9.5.1** — der jüngsten
+Fassung, die beides kann: auf Java 25 laufen (ab 9.1) und AGP 8.x tragen (ab
+9.6 fehlt dem AGP eine interne API; der Gradle-Fehlertext nennt 9.5 selbst als
+Ausweg). Beide Grenzen sind gemessen, nicht gelesen: einmal „Unsupported class
+file major version 69", einmal der AGP-Abbruch unter 9.7.
+
+### Was offen ist — und was absichtlich nur Ausblick bleibt
+
+Es gibt **kein signiertes Release-APK**. Verteilung (Play Store, F-Droid,
+GitHub-Release) und damit die Schlüsselfrage der Signierung sind bewusst
+offen — ein Debug-APK genügt, um die App auf dem eigenen Gerät zu benutzen,
+und mehr behauptet diese Doku nicht.
+
+**iOS** wäre mit demselben Wrap möglich (`@capacitor/ios`), braucht aber
+macOS und Xcode; das Gerüst ist absichtlich nicht angelegt — ein
+iOS-Ordner, den nie jemand gebaut hat, wäre eine Behauptung.
+
+**Biometrie und nativer Schlüsselspeicher** blieben Architektur-Notiz: Ein
+Capacitor-Plugin könnte den Tresor-Umschlag in Androids Keystore legen und
+per Fingerabdruck aufsperren. Das hieße aber fremder nativer Krypto-Code
+neben `crypto.subtle` und ein zweiter Tresor-Pfad, der nur auf einer
+Plattform existiert. Der Web-Tresor funktioniert in der App unverändert —
+`localStorage` liegt im privaten App-Verzeichnis, und Auto-Backup ist aus.
+
 ## Bewusste Abweichungen
 
 Aus dem Audit gegen die [Web Interface Guidelines](https://github.com/vercel-labs/web-interface-guidelines)

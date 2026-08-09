@@ -2,7 +2,9 @@ node_modules/
 dist/
 dist-single/
 dist-test/
+dist-android/
 coverage/
 package-lock.json
 branding/
 public/
+android/
