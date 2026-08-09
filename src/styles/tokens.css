@@ -306,6 +306,30 @@
   --dur-sheet: 350ms; /* Panel öffnet, Kanalzug kommt dazu */
   --stagger-flap: 20ms;
 
+  /* Die einzige Dauer, die keine Fahrt beschreibt, sondern eine Umdrehung:
+     der Wartezeiger. `--animate-spin-fast: spin 0.75s linear infinite` steht so
+     in @heroui/styles (themes/shared/theme.css). Linear und nicht auf der
+     Feder — ein Wartezeiger, der pulsiert, behauptet Fortschritt, den es
+     nicht gibt. Dieselbe Trennung wie beim Countdown. */
+  --dur-spin: 750ms;
+
+  /* ── Scrollflächen ────────────────────────────────────────────────────────
+     Der Balken kommt aus dem Standard, nicht aus einem Nachbau: `thin` plus
+     eine Daumenfarbe, den Rest macht das System. Der Wert ist der der Referenz
+     (`--scrollbar-thumb: color-mix(… foreground 15%, transparent)`), nur in
+     oklab statt oklch — die Achse, in der dieses Projekt seine abgeleiteten
+     Töne mischt und die check-contrast lesen kann.
+
+     Ausdrücklich JE SCROLL-FLÄCHE und nicht global: HeroUI hat sein globales
+     Scrollbar-Styling selbst wieder zurückgenommen, weil es Overlay-Flächen
+     mitfärbte, die gar keinen eigenen Balken haben sollen.
+
+     Die Breite der Kantenmaske: 32 px, eine Sprosse der Skala. Die Referenz
+     nimmt 40, hat dort aber ganze Seitenspalten im Blick; in einer Rail von
+     368 px wären 40 px ein Neuntel der Höhe. */
+  --scrollbar-thumb: color-mix(in oklab, var(--ink) 15%, transparent);
+  --scroll-fade: var(--sp-6);
+
   /* Der Switch-Daumen ist in BEIDEN Themes Snow — die Referenz trägt fest
      `bg-white`, und auf einer Bahn, die hell wie dunkel dieselben Rollen
      spielt (Füllung → Accent), wandert der Daumen nicht mit dem Theme. */

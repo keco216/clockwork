@@ -50,6 +50,25 @@ const isSpacing = (property) =>
   SPACING_EXACT.includes(property) ||
   SPACING_PREFIX.some((prefix) => property === prefix || property.startsWith(prefix + '-'));
 
+/* Eigenschaften, deren Werte aus der Motion-Skala kommen müssen.
+
+   Neu in V11, und aus demselben Grund wie die drei Gruppen davor: Ein
+   Bauteil, das seine eigene Dauer setzt, sieht genauso aus wie eines, das
+   `var(--dur-calm)` benutzt — bis jemand den Takt ändert und eine Stelle
+   stehen bleibt. Der V11-Pass hat genau so eine Stelle gefunden: Der
+   Tresor-Winkel drehte in 150 ms, der Hinweis-Winkel INNERHALB desselben
+   Aufklappers in 250. */
+const MOTION = [
+  'transition',
+  'transition-duration',
+  'transition-delay',
+  'transition-timing-function',
+  'animation',
+  'animation-duration',
+  'animation-delay',
+  'animation-timing-function',
+];
+
 /* Eigenschaften, deren Werte aus der Palette kommen müssen. */
 const COLOUR = [
   'color',
@@ -98,6 +117,18 @@ const ALLOWED = new Map([
     'Der Switch-Daumen sitzt 2 px in seiner Bahn — die Geometrie der Referenz (Bahn 20, Daumen 16, Rand 2). Bauteilmass, kein Rasterabstand.',
   ],
   ['inset-inline-start: 2px', 'Wie oben: der Daumenrand der Referenzgeometrie.'],
+  [
+    'transition: background-color 9999s ease-in-out 0s',
+    'Autofill-Entschaerfung am Passphrasenfeld (Griff der Referenz): Die Zahl ist keine Dauer, sondern ein NIE — sie soll den Anstrich des Browsers gar nicht erst durchblitzen lassen.',
+  ],
+  [
+    'animation-duration: 0.001ms !important',
+    'Der reduced-motion-Rundumschlag. Kein Takt, sondern seine Abschaffung — 0 waere hier ein anderer Fall (manche Engines feuern dann kein animationend).',
+  ],
+  [
+    'transition-duration: 0.001ms !important',
+    'Wie oben: die Rücknahme aller Uebergaenge, nicht die Dauer eines Bauteils.',
+  ],
 ]);
 
 /** Prüft eine Deklaration und gibt einen Befund zurück, oder null. */
@@ -125,6 +156,25 @@ function inspect(property, value, declaration) {
     // 50 % ist ein Kreis, 0 eine Rücknahme — beides keine Rundung aus der Leiter.
     if (/-?[0-9.]+\s*(px|rem|em)/.test(bare)) {
       return `Radius mit festem Wert: ${declaration}`;
+    }
+    return null;
+  }
+
+  if (MOTION.includes(property)) {
+    /* `0s` ist eine Rücknahme wie `border-radius: 0` und keine Dauer: Es sagt
+       „sofort", nicht „so lange". Alles andere mit einer Zeiteinheit ist ein
+       Literal. */
+    const times = bare.match(/-?[0-9.]+\s*m?s\b/g) ?? [];
+    const real = times.filter((time) => Number.parseFloat(time) !== 0);
+    if (real.length > 0) {
+      return `Dauer mit festem Wert: ${declaration}`;
+    }
+    /* Kurven: Die benannten Schlüsselwörter sind erlaubt, wo sie etwas
+       BEDEUTEN — `linear` an einer Umdrehung, `steps()` an einem Zählwerk.
+       Eine ausgeschriebene `cubic-bezier(…)` dagegen ist immer eine zweite
+       Wahrheit neben --ease-spring und --ease-snap. */
+    if (/cubic-bezier\(/.test(bare)) {
+      return `Kurve mit festem Wert: ${declaration}`;
     }
     return null;
   }
@@ -240,5 +290,5 @@ if (findings.length > 0) {
   );
   process.exitCode = 1;
 } else {
-  console.log('\n✓ Kein Bauteil setzt eigene Abstaende, Farben oder Radien.');
+  console.log('\n✓ Kein Bauteil setzt eigene Abstaende, Farben, Radien, Dauern oder Kurven.');
 }

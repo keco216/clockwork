@@ -29,14 +29,50 @@ import type { Account, ParsedEntry } from '../lib/accounts';
 import { groupDigits, truncateForDisplay } from '../lib/format';
 import { generateTotpForCounter } from '../lib/totp';
 import { Dial } from './dial';
-import { cloneTemplate, copyText, requireElement } from './dom';
+import { cloneTemplate, copyText, prefersReducedMotion, requireElement } from './dom';
 import { buildGauge } from './gauge';
+import { easingToken, motionToken } from './tokens';
 
 /** Ab wie vielen Restsekunden das Gerät Signalfarbe zeigt. */
 const EXPIRING_SECONDS = 5;
 
 /** Wie lange die Rückmeldung an der Kopiertaste stehen bleibt. */
 const COPY_FEEDBACK_MS = 1600;
+
+/**
+ * Der Wortwechsel an der Kopiertaste — „Kopieren" wird „Kopiert".
+ *
+ * Die Werte sind der Wert-Eintritt der Referenz (`slot-value-in` in
+ * input-otp.css: `translateY(8px) scale(0.8)` aus der Durchsicht, 250 ms,
+ * Ursprung unten mittig). Dort erscheint eine frisch getippte Ziffer in ihrer
+ * Zelle; hier erscheint das Ergebnis einer Handlung in seiner Taste. Dieselbe
+ * Sache: ein Wert, der gerade entstanden ist.
+ *
+ * ── Was das ausdrücklich NICHT ersetzt ─────────────────────────────────────
+ * Die Quittung selbst. Die Tönung der Taste und der Signalpunkt an der Nabe
+ * bleiben ZUSTÄNDE (`data-state`, `.strip--copied`) und keine Animation —
+ * `prefers-reduced-motion` schaltet in diesem Projekt alle Übergänge ab, und
+ * eine Quittung als Keyframe verschwände damit für genau die Leute, die
+ * ohnehin weniger visuelle Signale bekommen. Animiert ist nur der WEG, auf dem
+ * das neue Wort ankommt.
+ */
+const LABEL_IN: Keyframe[] = [
+  { opacity: 0, transform: 'translateY(8px) scale(0.8)' },
+  { opacity: 1, transform: 'none' },
+];
+
+/**
+ * Der Rückweg nach 1,6 s ist nur ein Ausblenden — bewusst.
+ *
+ * Der Eintritt meldet ein ERGEBNIS: Jemand hat gedrückt, und das Wort ist die
+ * Antwort darauf. Der Rückweg meldet nichts; er räumt auf, weil eine Uhr
+ * abgelaufen ist. Dieselbe Bewegung noch einmal zöge den Blick auf ein
+ * Ereignis, das keines ist. Ein harter Wechsel wäre die Alternative gewesen und
+ * ist es nicht geworden: Das Wort steht in einer Taste, die man womöglich
+ * gerade ansieht, und ein Wort, das ohne Übergang umspringt, liest sich als
+ * Fehler. 150 ms Deckkraft sind die leiseste Fassung, die beides vermeidet.
+ */
+const LABEL_OUT: Keyframe[] = [{ opacity: 0 }, { opacity: 1 }];
 
 export interface Strip {
   readonly element: HTMLElement;
@@ -245,15 +281,42 @@ class CodeStrip implements Strip {
     window.clearTimeout(this.#copyResetTimer);
     this.#copyButton.dataset['state'] = state;
     this.#copyLabel.textContent = label;
+    this.#playLabel(LABEL_IN, motionToken('--dur-calm', 250));
     this.element.classList.toggle('strip--copied', state === 'done');
     this.#context.announce(announcement);
 
     this.#copyResetTimer = window.setTimeout(() => {
       delete this.#copyButton.dataset['state'];
       this.#copyLabel.textContent = t('key.copy');
+      this.#playLabel(LABEL_OUT, motionToken('--dur-quick', 150));
       this.element.classList.remove('strip--copied');
       this.#copyButton.setAttribute('aria-label', t('strip.copyAria', { name: this.#title }));
     }, COPY_FEEDBACK_MS);
+  }
+
+  /**
+   * Spielt eine Bewegung an der Beschriftung.
+   *
+   * `fill: 'backwards'` ist der Grund, warum der Text schon vor dem Aufruf
+   * gesetzt werden darf: Das erste Bild gilt rückwirkend ab dem Setzen, das
+   * neue Wort steht also nie ungetarnt da, bevor die Fahrt beginnt.
+   *
+   * Ein laufender Wechsel wird abgebrochen — wer zweimal hintereinander
+   * kopiert, soll den zweiten Eintritt sehen und nicht die Überlagerung
+   * beider.
+   */
+  #playLabel(frames: Keyframe[], duration: number): void {
+    if (prefersReducedMotion()) {
+      return;
+    }
+    for (const animation of this.#copyLabel.getAnimations()) {
+      animation.cancel();
+    }
+    this.#copyLabel.animate(frames, {
+      duration,
+      easing: easingToken('--ease-spring', 'cubic-bezier(0.32, 0.72, 0, 1)'),
+      fill: 'backwards',
+    });
   }
 }
 

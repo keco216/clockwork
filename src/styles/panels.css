@@ -93,7 +93,17 @@
   border-bottom: 1.5px solid var(--ink-3);
   border-bottom-right-radius: 1px;
   transform: translateY(-25%) rotate(45deg);
-  transition: transform var(--dur-quick) var(--ease-snap);
+  /* 250 ms auf der Feder, wie die beiden anderen Aufklapper des Geräts (der
+     Hinweis-Aufklapper und die V10-Zusammenfassungszeile) — und wie der
+     Disclosure-Indikator der Referenz, der ausdrücklich `duration-250` trägt,
+     während ihr Select-Indikator 150 nimmt.
+
+     Hier standen bis V11 150 ms auf `--ease-snap`. Das war kein Fehler mit
+     Wirkung, aber eine Ungereimtheit mit einer: Der Hinweis-Aufklapper liegt
+     INNERHALB dieses Aufklappers, und zwei ineinandergeschachtelte Winkel, die
+     verschieden schnell drehen, sehen aus wie zwei Bauteile aus zwei
+     Systemen. */
+  transition: transform var(--dur-calm) var(--ease-spring);
 }
 
 .vault__disclosure[open] .vault__state::after {
@@ -220,6 +230,41 @@
   font-family: var(--font-mono);
 }
 
+/* ── Autofill ─────────────────────────────────────────────────────────────
+   Geprüft, bevor etwas gebaut wurde: Bietet dieses Feld überhaupt Autofill an?
+   Ja, und zwar absichtlich. Es ist das EINZIGE Feld des Geräts mit einem
+   `autocomplete`-Wert — Textfeld und Filter tragen beide `off`, und dieses
+   hier wechselt in ui/vault-panel.ts zwischen `new-password` und
+   `current-password`. Das ist die richtige Entscheidung und bleibt: Eine
+   Tresor-Passphrase gehört in einen Passwortmanager, nicht auf einen Zettel.
+
+   Damit greift aber auch der Autofill-Anstrich des Browsers, und der ist ein
+   hellblaues bzw. gelbes Rechteck aus der Benutzeroberfläche — mitten in einem
+   Gerät, das seine Flächen nachrechnet, und im dunklen Modus ein Leuchtkasten.
+
+   Der Griff ist der der Referenz (`input-group.css`): ein Innenschatten von
+   1000 px in der Feldfläche legt sich über den Anstrich, Text- und Cursorfarbe
+   werden ausdrücklich gesetzt, und `transition: background-color 9999s`
+   verhindert, dass der Browser die Fläche beim Fokuswechsel doch noch kurz
+   durchblitzen lässt.
+
+   Anders als bei der Referenz steht hier NICHT `transparent`: Deren Feld hat
+   eine eigene Fläche darunter, unseres bekommt seine aus `--surface-fill` —
+   durchsichtig hieße hier, den Anstrich durchzulassen.
+
+   Doppelte Klasse, wie an jedem Bauteil dieser Datei, das `.field`
+   überschreibt: `@import` steht vor den eigenen Regeln der importierenden
+   Datei. */
+.field.vault__pass:-webkit-autofill,
+.field.vault__pass:-webkit-autofill:hover,
+.field.vault__pass:-webkit-autofill:focus,
+.field.vault__pass:autofill {
+  box-shadow: 0 0 0 1000px var(--surface-fill) inset;
+  -webkit-text-fill-color: var(--ink);
+  caret-color: var(--ink);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 .vault__error {
   font-size: var(--t-small);
   color: var(--fault);
@@ -331,6 +376,32 @@
   border-bottom-right-radius: 1px;
   transform: translateY(-25%) rotate(45deg);
   pointer-events: none;
+  /* 150 ms wie der Select-Indikator der Referenz (`.select__indicator`:
+     `transition duration-150`, `[data-open] { rotate-180 }`) — dieselbe
+     Dauer wie die Feldfläche darunter, damit Fläche und Winkel eine
+     Bewegung sind und nicht zwei. */
+  transition: transform var(--dur-quick) var(--ease-snap);
+}
+
+/* ── Aufgeklappt: der Winkel dreht ────────────────────────────────────────
+   Bis V11 stand er starr — als einziger Aufklapper-Winkel des Geräts. Tresor
+   und Hinweis drehen seit V8 bzw. V9, das Auswahlfeld nicht: Es hatte bis zur
+   Listbox gar keinen Zustand, den es hätte anzeigen können, und danach hat es
+   niemand nachgezogen.
+
+   Der Zustand steht am KNOPF (`aria-expanded`, gesetzt in ui/listbox.ts) und
+   der Winkel an der HÜLLE — ein `<select>` kann kein Pseudo-Element tragen,
+   deshalb liegt er dort. `:has()` verbindet beides, ohne dass das Skript eine
+   zweite Klasse pflegen muss: Der Zustand hat schon einen Namen, und der ist
+   der barrierefreie. (Ab Chrome 105 verfügbar; die WebView-Untergrenze des
+   APK ist 111, siehe capacitor.config.ts. Dieselbe Technik wie bei
+   `.keys:has(.keys__gap)` weiter unten.)
+
+   Ohne Listbox — also ohne Skript — gibt es keinen `aria-expanded`-Knopf und
+   damit auch keine Drehung. Richtig so: Dann klappt die Systemliste auf, und
+   die hat ihren eigenen Zeiger. */
+.pick-shell:has(.pick--button[aria-expanded='true'])::after {
+  transform: translateY(10%) rotate(225deg);
 }
 
 .pick {
@@ -399,7 +470,20 @@
    steckt in --elev-2, tokens.css). Kein Rahmen. Beim Öffnen fährt es in
    150 ms ein (Fade + zoom-in-95 + 4 px aus seiner Richtung), wie das
    Select-Popover der Referenz; die globale reduced-motion-Regel in style.css
-   schaltet die Animation mit ab. */
+   schaltet die Animation mit ab.
+
+   ── Der Eintritt steht HIER, der Abgang in ui/listbox.ts ──────────────────
+   Und zwar genau einmal, seit V11. Bis dahin liefen zwei Eintritte
+   übereinander: diese CSS-Animation und ein zweites `list.animate()` im
+   Skript, 250 ms und mit `translateY(-4px)` — also von OBEN, obwohl das Panel
+   nach oben aufklappt und folglich von unten kommen muss. Nachgewiesen am
+   laufenden Gerät über `getAnimations()` (zwei Einträge, CSSAnimation 150 ms
+   und WAAPI 250 ms), nicht im Quelltext vermutet. Die JS-Fassung ist weg; das
+   CSS ist die eine Quelle.
+
+   Der Abgang kann nicht hier stehen: Wer `hidden` setzt, nimmt das Element aus
+   dem Layout, bevor eine CSS-Animation laufen könnte. Er läuft deshalb über
+   die Web Animations API, und `hidden` kommt erst nach `finished`. */
 .listbox {
   position: absolute;
   inset-inline: 0;
@@ -431,6 +515,17 @@
   display: none;
 }
 
+/* Während des Abgangs steht das Panel noch 100 ms im Bild, ist aber nicht mehr
+   gemeint. Ohne diese Zeile schluckte es genau in dieser Zeitspanne den Klick,
+   mit dem jemand daneben etwas anderes treffen wollte — und der Klick nach
+   außen ist der häufigste Weg, ein Popover zu schließen.
+
+   Der Attributname ist der der Referenz (`[data-exiting="true"]`); gesetzt
+   wird er in ui/listbox.ts. */
+.listbox[data-exiting] {
+  pointer-events: none;
+}
+
 .listbox__option {
   display: flex;
   align-items: center;
@@ -443,6 +538,16 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* Der Druckpunkt der Referenz (`.list-box-item:active { scale(0.98) }`,
+     transform über 250 ms). Eine Zeile in einer Liste ist ein Bedienelement
+     wie eine Taste — und die gibt seit V9 um 3 % nach. Eine Listenzeile ist
+     breiter, also reichen 2 %: Derselbe Weg in Pixeln fiele bei 320 px
+     Breite sonst doppelt so weit aus wie an einer 80-px-Taste. */
+  transition: transform var(--dur-calm) var(--ease-spring);
+}
+
+.listbox__option:active {
+  transform: scale(0.98);
 }
 
 /* Die aktive Zeile — die, auf der Tastatur oder Maus gerade steht. Der
@@ -470,6 +575,29 @@
   border-right: 1.5px solid currentcolor;
   border-bottom: 1.5px solid currentcolor;
   transform: rotate(40deg);
+  /* Das Häkchen wächst herein, statt dazustehen — der Auswahl-Indikator der
+     Referenz (`.menu-item__indicator [data-slot=…--dot]`: Ruhe `scale-70
+     opacity-0`, gewählt `scale-100 opacity-100`, 250 ms).
+
+     ── Warum @keyframes und nicht transition ────────────────────────────────
+     Weil es dieses Pseudo-Element vorher gar nicht GIBT: `content` steht erst
+     unter `[aria-selected='true']`. Ein Übergang braucht zwei Zustände an
+     einem bestehenden Kasten; hier entsteht der Kasten mit dem Zustand. Eine
+     Animation braucht nur einen Anfangswert und läuft beim Entstehen los —
+     auch dann, wenn die Liste aufgeht und alles neu gezeichnet wird.
+
+     Kein Abgang: Wer die Sprache wechselt, sieht das alte Häkchen sofort
+     verschwinden. Die Referenz macht es genauso und begründet es in
+     select.css — bei einfacher Auswahl schließt das Popover so schnell, dass
+     von einem Abgang nichts mehr zu sehen wäre. */
+  animation: listbox-check-in var(--dur-calm) var(--ease-spring);
+}
+
+@keyframes listbox-check-in {
+  from {
+    opacity: 0;
+    transform: rotate(40deg) scale(0.7);
+  }
 }
 
 .vault__check {
@@ -539,6 +667,120 @@
 
 .vault__check input:hover:not(:checked) {
   background: var(--fill-active);
+}
+
+/* ── Scrollflächen: Kantenzeichen und Balken ───────────────────────────────
+   Zwei Stellen im Gerät scrollen eigenständig — die Bedienseite ab 64 rem und
+   dieses Popover. Beide bekommen dasselbe: einen schmalen Balken aus dem
+   Standard und eine Kante, die nur dann da ist, wenn dahinter wirklich etwas
+   liegt (geschaltet von ui/scroll-edge.ts).
+
+   ── Warum die Kante eine Maske ist ────────────────────────────────────────
+   Weil `.rail` keinen eigenen Grund hat: weiße Karten auf hellgrauem
+   Seitengrund. Ein Verlauf in `--surface` läge als weißer Streifen über dem
+   Grund, einer in `--ground` als grauer über den Karten — es gibt keine Farbe,
+   die an beiden Stellen stimmt. Eine Maske blendet aus, was da ist, statt
+   etwas darüberzulegen. Genau deshalb arbeitet auch `scroll-shadow.css` der
+   Referenz mit `mask-image`.
+
+   ── Warum die Fade-Länge eine registrierte Eigenschaft ist ────────────────
+   Ein `mask-image` lässt sich nicht überblenden — Bilder sind diskret. Eine
+   über `@property` registrierte Länge dagegen schon, und damit wächst die
+   Kante in 150 ms herein statt aufzuspringen. Ab Chrome 85, also weit
+   unterhalb der WebView-Untergrenze 111. */
+@property --fade-start {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --fade-end {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+/* ── Die Kaskadenfalle, zum vierten Mal — und diesmal in derselben Datei ───
+   Hier stand `position: relative`, damit der obere Fühler sich auf seine
+   Scrollfläche bezieht. Das war als Absicherung gedacht und war ein Fehler:
+   `.scroll-edge` steht in dieser Datei WEITER UNTEN als `.listbox`, beide
+   haben dieselbe Spezifität — also gewann `relative` gegen das `absolute` des
+   Popovers. Die Folge war auf einem Bildschirmfoto sofort zu sehen und in
+   keinem Testlauf: Das Sprach-Popover fiel in den Fluss, verlor seine Breite
+   (die Sprachnamen waren abgeschnitten) und klappte nach unten statt nach oben.
+
+   Es ist derselbe Fehler wie in V6, als
+   `.zone, .colophon, .masthead { position: relative }` den klebenden Kopf von
+   `sticky` zurücksetzte — eine Sammelregel, die eine Einzelregel weiter oben
+   tötet.
+
+   `:where()` hat die Spezifität 0 und kann damit nichts überschreiben. Es ist
+   genau das, was hier gemeint war: ein RÜCKFALL für eine Scrollfläche, die
+   noch keine Position hat. Beide heutigen tragen längst eine — die Rail
+   `sticky`, das Popover `absolute` —, und beide sind damit von sich aus der
+   Bezugsrahmen ihres Fühlers. */
+:where(.scroll-edge) {
+  position: relative;
+}
+
+.scroll-edge {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  transition:
+    --fade-start var(--dur-quick) var(--ease-snap),
+    --fade-end var(--dur-quick) var(--ease-snap);
+}
+
+/* ── Warum die Maske nur dann dasteht, wenn sie etwas tut ──────────────────
+   Weil sie sonst eine Compositor-Ebene kostet, dauerhaft. Gemessen über
+   `LayerTree` bei acht Konten im Ruhezustand: 19 Ebenen mit der Maske, 18
+   ohne — die Fühler und die Balkenfarbe kosten nichts. 18 ist die Zusage aus
+   V8, und sie gilt weiter.
+
+   Der Preis dieser Lösung ist ehrlich zu nennen: Die Kante WÄCHST in 150 ms
+   herein (die Länge ist über @property registriert und damit animierbar),
+   verschwindet aber ohne Übergang — mit dem Attribut geht auch die Maske. Die
+   Referenz hat an derselben Stelle gar keinen Übergang (`scroll-shadow.css`
+   schaltet ihre Maske hart), also ist das in einer Richtung besser als das
+   Vorbild und in der anderen gleich. */
+.scroll-edge[data-scroll-start],
+.scroll-edge[data-scroll-end] {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--fade-start),
+    #000 calc(100% - var(--fade-end)),
+    transparent 100%
+  );
+}
+
+.scroll-edge[data-scroll-start] {
+  --fade-start: var(--scroll-fade);
+}
+
+.scroll-edge[data-scroll-end] {
+  --fade-end: var(--scroll-fade);
+}
+
+/* Die Fühler: je ein Streifen von 1 px an einer Kante des INHALTS.
+
+   Der obere steht absolut und kostet damit in einem Flexkasten keine Fuge.
+   Der untere kann das nicht: Ein absolut positioniertes Kind bezieht sich auf
+   die Polsterbox seines Scrollers, und die ist so hoch wie das Sichtfenster,
+   nicht wie der Inhalt — `inset-block-end: 0` markierte damit die Unterkante
+   des BILDES, und die ist immer sichtbar. Gemessen: `data-scroll-end` kam nie.
+   Er steht deshalb im Fluss und bekommt seine Fuge in ui/scroll-edge.ts als
+   negativen Außenabstand zurückgerechnet. */
+.scroll-edge__sentinel {
+  height: 1px;
+  flex: none;
+  pointer-events: none;
+}
+
+.scroll-edge__sentinel[data-edge='start'] {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
 }
 
 /* ── Kamerasucher ─────────────────────────────────────────────────────────── */
@@ -682,6 +924,29 @@
   flex: 1 1 var(--sp-4);
   min-width: var(--sp-2);
   margin-block-start: var(--gap-pair);
+}
+
+/* ── Im Leerzustand trennt der Platzhalter nichts ──────────────────────────
+   Er ist dafür da, die zerstörerische Taste („Leeren", links) von den beiden
+   zu trennen, die etwas hereinholen (rechts). Im Leerzustand ist „Leeren"
+   aber `hidden` — es gibt nichts zu leeren. Der Platzhalter dehnte sich
+   trotzdem und schob die drei verbliebenen Tasten an den rechten Panelrand,
+   wo sie mit nichts mehr fluchteten: nicht mit dem Feld darüber, nicht mit
+   der Beschriftung, nicht mit dem Hinweis darunter.
+
+   Das ist älter als V11 (nachgemessen: vor und nach dem Pass identisch) und
+   fiel erst auf, als der Leerzustand daneben stand. Ohne den Platzhalter
+   beginnt die Tastenzeile dort, wo alles andere im Panel beginnt.
+
+   Die zweite Zeile holt die Zeilenfuge zurück: `.keys:has(.keys__gap)` oben
+   schaltet sie ab, weil der Platzhalter sie sonst doppelt zählt — ohne ihn
+   gibt es nichts zu doppeln. */
+.device[data-stage='vacant'] .keys__gap {
+  display: none;
+}
+
+.device[data-stage='vacant'] .keys:has(.keys__gap) {
+  row-gap: var(--gap-pair);
 }
 
 /* Die Tastenkappe im Fließtext bekommt --radius-inset und nicht die Pille: Eine

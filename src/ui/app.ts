@@ -19,11 +19,14 @@ import { parseEntries, type ParsedEntry } from '../lib/accounts';
 import { isMigrationUri, MigrationError, parseMigrationUri } from '../lib/google-auth';
 import { createStrip, type Strip, type StripContext } from './strip';
 import { startClock } from './clock';
+import { enhanceReveals } from './disclosure';
 import { prefersReducedMotion, requireElement } from './dom';
 import { describeForSearch, matchesFilter } from './filter';
 import { buildGauge } from './gauge';
 import { startLanguageSwitch } from './lang-switch';
 import { startMasthead } from './masthead';
+import { setMessage } from './message';
+import { enhanceScroller } from './scroll-edge';
 import { startScanner } from './scan';
 import { easingToken, motionToken } from './tokens';
 import { startVaultPanel } from './vault-panel';
@@ -90,10 +93,10 @@ export function startApp(): void {
    */
   function setNote(message: string): void {
     window.clearTimeout(noteTimer);
-    importNote.textContent = message;
+    setMessage(importNote, message);
     if (message !== '') {
       noteTimer = window.setTimeout(() => {
-        importNote.textContent = '';
+        setMessage(importNote, '');
       }, 12_000);
     }
   }
@@ -495,6 +498,15 @@ export function startApp(): void {
 
   startLanguageSwitch();
   startMasthead(requireElement(document, '.masthead'));
+  // Die Hinweis-Aufklapper fahren, statt zu poppen. Der Tresor-Aufklapper
+  // gehört vault-panel.ts — es schaltet ihn auch programmatisch und braucht
+  // dafür den Griff, den `enhanceDisclosure` zurückgibt.
+  enhanceReveals();
+  // Die Bedienseite ist ab 64 rem eine eigene Scrollfläche. Darunter scrollt
+  // sie nicht, dann melden beide Fühler „drin" und es gibt keine Kante —
+  // die Prüfung erledigt der Beobachter, nicht eine zweite Media Query im
+  // JavaScript.
+  enhanceScroller(requireElement(document, '.rail'));
 
   // Der Leerzustand trägt das Emblem — dieselbe Teilung, die gleich die Codes
   // begleitet. Es steht still: Es gibt noch nichts zu messen.
@@ -568,7 +580,7 @@ function revealStrips(elements: HTMLElement[]): void {
   }
 
   const duration = motionToken('--dur-sheet', 350);
-  const stagger = motionToken('--stagger-flap', 16);
+  const stagger = motionToken('--stagger-flap', 20);
   const easing = easingToken('--ease-spring', 'cubic-bezier(0.32, 0.72, 0, 1)');
 
   elements.forEach((element, index) => {

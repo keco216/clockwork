@@ -252,6 +252,107 @@ for (const skin of SKINS) {
   }
 }
 
+/* ══ Der Kopf weicht beim Runterscrollen (V11) ═══════════════════════════════
+   Eigener Durchgang, weil er als Einziger SCROLLT — die Aufnahmen oben zeigen
+   alle den Startzustand, und der muss unberührt bleiben (der V10-Beweis
+   „erster Code bei y = 206" hängt daran).
+
+   Geprüft wird das Verhalten, nicht die Optik: verstaut nach einem Abwärtsweg,
+   zurück nach 12 px aufwärts, oben immer da — und auf dem Schreibtisch nie.
+   Der reduced-motion-Durchgang verlangt DIESELBEN Endzustände: Verstauen ist
+   kein Effekt, sondern gewonnener Platz. */
+console.log('\nKopf beim Scrollen:');
+
+for (const [breite, hoeheFenster, bewegung, erwartetVerstaut] of [
+  [375, 812, 'reduce', true],
+  [375, 812, 'no-preference', true],
+  [1024, 900, 'no-preference', false],
+]) {
+  const context = await browser.newContext({
+    viewport: { width: breite, height: hoeheFenster },
+    reducedMotion: bewegung,
+    deviceScaleFactor: 1,
+  });
+  const page = await context.newPage();
+  await page.goto(url, { waitUntil: 'networkidle' });
+  await page.fill('#secrets', DEMO_12);
+  // Fokus abgeben: Liegt er in der Eingabezone, hält V10 die Schublade
+  // absichtlich offen — das ist ein anderer Startzustand.
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  });
+  await page.waitForTimeout(700);
+
+  const lesen = () =>
+    page.evaluate(() => {
+      const m = document.querySelector('.masthead');
+      return {
+        verstaut: m.classList.contains('masthead--stowed'),
+        erhoben: m.classList.contains('masthead--lifted'),
+        unten: Math.round(m.getBoundingClientRect().bottom),
+        hoehe: Math.round(m.getBoundingClientRect().height),
+      };
+    });
+
+  const marke = `${String(breite)} px${bewegung === 'reduce' ? ', reduced-motion' : ''}`;
+  const start = await lesen();
+  if (start.verstaut) {
+    problems.push(`[Kopf ${marke}] am Seitenanfang verstaut`);
+  }
+
+  // Zweimal Kopfhöhe abwärts, in Schritten — eine Richtungserkennung mit
+  // Hysterese braucht mehr als einen Sprung.
+  for (let schritt = 0; schritt < 4; schritt++) {
+    await page.evaluate((d) => {
+      window.scrollBy(0, d);
+    }, start.hoehe);
+    await page.waitForTimeout(120);
+  }
+  await page.waitForTimeout(450);
+  const abwaerts = await lesen();
+
+  if (erwartetVerstaut) {
+    if (!abwaerts.verstaut || abwaerts.unten > 0) {
+      problems.push(
+        `[Kopf ${marke}] nach ${String(4 * start.hoehe)} px abwaerts nicht verstaut (Unterkante ${String(abwaerts.unten)})`,
+      );
+    }
+  } else if (abwaerts.verstaut) {
+    problems.push(`[Kopf ${marke}] auf dem Schreibtisch verstaut`);
+  }
+
+  await page.evaluate(() => {
+    window.scrollBy(0, -12);
+  });
+  await page.waitForTimeout(450);
+  const aufwaerts = await lesen();
+  if (aufwaerts.verstaut || aufwaerts.unten <= 0) {
+    problems.push(
+      `[Kopf ${marke}] nach 12 px aufwaerts nicht zurueck (Unterkante ${String(aufwaerts.unten)})`,
+    );
+  }
+  // Mitten in der Seite gehört er MIT Ebene zurück — sonst schwebte er ohne
+  // Kante über dem Inhalt, den er verdeckt.
+  if (!aufwaerts.erhoben) {
+    problems.push(`[Kopf ${marke}] kehrt ohne Ebene zurueck`);
+  }
+
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(450);
+  const wiederOben = await lesen();
+  if (wiederOben.verstaut || wiederOben.erhoben) {
+    problems.push(`[Kopf ${marke}] am Seitenanfang nicht flach und sichtbar`);
+  }
+
+  console.log(
+    `  ${marke.padEnd(24)} oben ${String(start.unten)} · abwaerts ${String(abwaerts.unten)}` +
+      ` · +12 ${String(aufwaerts.unten)} · zurueck ${String(wiederOben.unten)}`,
+  );
+  await context.close();
+}
+
 await browser.close();
 
 console.log('\nAufnahmen:');
