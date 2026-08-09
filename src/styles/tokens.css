@@ -72,11 +72,19 @@
        dunkel  Werkbank →1,107→ Gehäuse →1,124→ versenkt →1,181→ Panel
                →1,150→ berührt                                 gesamt 1,690
 
-     Die dunkle Leiter war vorher gesamt 1,146 — sie hat also nicht eine Stufe
-     dazubekommen, sondern ihren Weg vervierfacht. Die erste Stufe (1,107) ist
-     die einzige, die unter der Referenz bleibt, und sie kann es nicht besser:
-     1,122 ist das physikalische Maximum unter Nacht. Was dort trägt, ist die
-     Kante, nicht der Ton — siehe --edge-lit. */
+     Die dunkle Leiter hatte vorher zwei Stufen (1,037 und 1,063), zusammen
+     also 1,102. Sie hat nicht eine Sprosse dazubekommen, sondern ihren Weg
+     vervielfacht: Was zählt, ist der Abstand zu 1,000 — „kein Unterschied" —,
+     und der wächst von 0,102 auf 0,690, also auf das 6,8-Fache.
+
+     (Hier stand bis zum Schlusspass „gesamt 1,146" und „vervierfacht". Die
+     beiden Einzelstufen waren richtig gemessen, ihr Produkt war falsch
+     ausgerechnet — 1,037 × 1,063 sind 1,102. Nachgerechnet mit der
+     WCAG-Formel, nicht überschlagen.)
+
+     Die erste Stufe (1,107) ist die einzige, die unter der Referenz bleibt,
+     und sie kann es nicht besser: 1,122 ist das physikalische Maximum unter
+     Nacht. Was dort trägt, ist die Kante, nicht der Ton — siehe --edge-lit. */
   --ground: #c9c3b6; /* Werkbank — der Tisch, auf dem das Gerät liegt */
   --case: #ded9cf; /* Gehäuse — das Gerät selbst, Deck- und Bodenplatte */
   --surface-recessed: #e9e6e0; /* versenkt: Eingabeschlitz */
