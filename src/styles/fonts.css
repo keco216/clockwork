@@ -5,65 +5,63 @@
    als Paketabhängigkeit, die zur Bauzeit aufgelöst wird. Kein Google-Fonts-Link,
    kein CDN: Ein Font-Download wäre eine Netzwerkanfrage, und genau die darf
    diese App nicht machen. Im Single-File-Build landen die Dateien als data:-URI
-   direkt in der HTML-Datei — sie bleibt damit auch auf einem USB-Stick
-   vollständig lauffähig.
+   direkt in der HTML-Datei.
 
-   Herkunft: Google Fonts über @fontsource-variable, Latin-Subset, aufrechte
-   Variable-Schnitte. Beide unter SIL Open Font License 1.1; die Lizenztexte
-   liegen daneben (LICENSE-*.txt).
+   Seit V9 ist die Oberflächenschrift INTER — die Hausschrift der
+   HeroUI-Referenz (heroui.com setzt sie selbst). Instrument Sans ist damit
+   vollständig ersetzt, auch in der Wortmarke: Zwei UI-Schriften zu bündeln,
+   damit ein einzelnes Wort im Kopf anders aussieht, wäre 30 kB für eine
+   Fußnote. Chivo Mono bleibt für die Codes — ein TOTP-Code wird abgetippt
+   und braucht dicktengleiche Ziffern.
 
-   Es sind Variable Fonts: eine Datei deckt alle Gewichte ab. Zwei statische
-   Schnitte pro Familie wären zusammen größer.
+   Herkunft: Google Fonts über @fontsource-variable, aufrechte
+   Variable-Schnitte, SIL Open Font License 1.1 (LICENSE-*.txt daneben).
 
-   Nur der Latin-Subset und nur die aufrechten Schnitte — Kursive braucht ein
-   Messgerät nicht.
+   Die Kosten, gemessen an den Dateien: Inter latin wiegt 48 kB, wo Instrument
+   Sans 30 wog; latin-ext wiegt 85 statt 11 — Inter deckt dort schlicht mehr
+   Zeichen ab. Rund 92 kB mehr im Single-File-Build, und sie stehen im
+   Bundle-Delta der Release-Notiz. Der `unicode-range` unten sorgt in der PWA
+   weiter dafür, dass eine deutsche Sitzung den ext-Schnitt nie lädt.
 
    `font-display: swap` statt `block`: `block` verschweigt den Text bis zu drei
-   Sekunden lang, und genau das bemängelt Lighthouse zu Recht. Die Dateien liegen
-   auf demselben Origin und sind unter 30 kB groß — die Tauschphase ist damit
-   praktisch nicht wahrnehmbar.
-
-   Bewusst KEIN `<link rel="preload">`: Im Single-File-Build stecken die Schriften
-   als data:-URI im CSS. Ein Preload-Link würde dieselben Bytes ein zweites Mal in
-   die Datei schreiben und sie ohne Nutzen um rund 80 kB aufblähen.
+   Sekunden lang. Bewusst KEIN `<link rel="preload">` im Single-File-Build —
+   dort stecken die Bytes schon als data:-URI im CSS.
    ========================================================================== */
 
 @font-face {
-  font-family: 'Instrument Sans Variable';
+  font-family: 'Inter Variable';
   font-style: normal;
   font-display: swap;
-  font-weight: 400 700;
-  src: url('../assets/fonts/instrument-sans-latin-wght-normal.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  src: url('../assets/fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
     U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 /*
-  Latin-Extended — seit V3 dazugekommen (11 kB).
-
-  Elf der 37 Sprachen brauchen Zeichen außerhalb von Latin-1: Polnisch (ł ą ę ś
-  ż), Tschechisch und Slowakisch (č ř š ž ě), Ungarisch (ő ű), Slowenisch,
-  Kroatisch, Rumänisch (ă ș ț), Türkisch (ğ ş), Lettisch, Litauisch, Estnisch.
-  Ohne diesen Schnitt käme in einem polnischen Satz jedes zweite Wort aus einer
-  Ersatzschrift — der Text bestünde sichtbar aus zwei Schriften.
+  Latin-Extended — elf der 37 Sprachen brauchen Zeichen außerhalb von Latin-1:
+  Polnisch (ł ą ę ś ż), Tschechisch und Slowakisch (č ř š ž ě), Ungarisch
+  (ő ű), Slowenisch, Kroatisch, Rumänisch (ă ș ț), Türkisch (ğ ş), Lettisch,
+  Litauisch, Estnisch. Ohne diesen Schnitt käme in einem polnischen Satz jedes
+  zweite Wort aus einer Ersatzschrift.
 
   Der Browser lädt die Datei nur, wenn wirklich ein Zeichen aus diesem Bereich
-  vorkommt: Genau dafür ist `unicode-range` da. Eine deutsche oder englische
-  Sitzung zahlt also nichts. Im Single-File-Build steckt sie als data:-URI mit
-  drin und wird beim Parsen des CSS ohnehin nicht angefasst, solange kein
-  Zeichen sie anfordert.
+  vorkommt — genau dafür ist `unicode-range` da. Eine deutsche oder englische
+  Sitzung zahlt nichts.
 
-  Kyrillisch, Griechisch und Vietnamesisch fehlen weiterhin — für die bringt
-  Instrument Sans keinen Schnitt mit. Sie bekommen eine Systemschrift
-  (styles/scripts.css).
+  Kyrillisch, Griechisch und Vietnamesisch bekommen weiterhin eine
+  Systemschrift (styles/scripts.css) — Inter BRÄCHTE die Schnitte mit, aber
+  je Schrift wären das weitere 30–80 kB im Single-File-Build, und die
+  V3-Abwägung gilt unverändert: Eine ganze Systemschrift ist besser als ein
+  gesprengtes Bündel.
 */
 @font-face {
-  font-family: 'Instrument Sans Variable';
+  font-family: 'Inter Variable';
   font-style: normal;
   font-display: swap;
-  font-weight: 400 700;
-  src: url('../assets/fonts/instrument-sans-latin-ext-wght-normal.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  src: url('../assets/fonts/inter-latin-ext-wght-normal.woff2') format('woff2-variations');
   unicode-range:
     U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
     U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,

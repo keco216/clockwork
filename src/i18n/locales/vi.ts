@@ -8,7 +8,7 @@
  * Dấu ngoặc kép: “ … ”.
  * Số nhiều: tiếng Việt không đổi hình thái theo số, CLDR chỉ có một dạng
  *   (other).
- * Chữ viết: dấu tiếng Việt nằm ngoài bộ chữ đi kèm của Instrument Sans, nên
+ * Chữ viết: dấu tiếng Việt nằm ngoài bộ chữ đi kèm của Inter, nên
  *   nhóm chữ „vietnamese“ dùng phông hệ thống (xem styles/scripts.css).
  */
 

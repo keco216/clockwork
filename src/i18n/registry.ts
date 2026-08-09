@@ -16,7 +16,7 @@
  * Schriftsystem-Gruppen. Sie entscheiden über den Schrift-Stack (siehe
  * styles/scripts.css) — nicht über die Sprache.
  *
- * `latin` deckt alles ab, was die gebündelte Instrument Sans mit ihren beiden
+ * `latin` deckt alles ab, was das gebündelte Inter mit seinen beiden
  * Subsets (latin + latin-ext) darstellen kann. `vietnamese`, `cyrillic` und
  * `greek` sind eigene Gruppen, weil die Markenschrift für sie KEINEN Schnitt
  * mitbringt: Dort würde jedes zweite Zeichen aus einer Systemschrift kommen und

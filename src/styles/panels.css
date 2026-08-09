@@ -65,7 +65,14 @@
   min-height: var(--touch-min);
   margin: calc(var(--sp-2) * -1) calc(var(--sp-2) * -1);
   padding: var(--sp-2);
-  border-radius: var(--radius-inset);
+  border-radius: var(--radius-item);
+  transition: background-color var(--dur-flash) var(--ease-snap);
+}
+
+/* Der Trigger ist im Sinn der Referenz eine Ghost-Taste: Der Hover ist eine
+   Fläche, wie beim Aufklapper der Eingabeformate. */
+.vault__state:hover {
+  background: var(--fill-soft);
 }
 
 .vault__state::-webkit-details-marker {
@@ -241,28 +248,28 @@
    Bauteil damit unabhängig von der Import-Reihenfolge. Das ist die Sorte
    Wiederholung, die man schreibt, weil ihre Abwesenheit teuer war.
 
-   Die Kantenstärke kommt seit V8 aus der Basis (--border-2, also 2 px): Der
-   Löschknopf ist ein Umriss-Knopf wie „Zusperren" daneben, nur in der
-   Fehlerfarbe. Er soll sich von seinen Geschwistern durch die FARBE
-   unterscheiden, nicht durch die Strichstärke. */
+   Seit V9 trägt der Löschknopf das `danger-soft`-Muster der Referenz mit
+   Clockworks Fehlerton: eine leise Tönung statt eines Umrisses — Umrisse gibt
+   es im Tastensatz nicht mehr. Er unterscheidet sich von seinen Geschwistern
+   durch die FARBE, nicht durch die Bauart. */
 .key.key--danger {
-  color: var(--fault);
-  border-color: color-mix(in oklab, var(--fault) 45%, var(--rule-strong));
-}
-
-.key.key--danger:hover {
-  color: var(--fault);
-  border-color: var(--fault);
+  --key-bg: var(--fault-soft);
+  --key-bg-hover: var(--fault-soft-hover);
+  --key-ink: var(--fault-soft-ink);
 }
 
 /* Der scharfgestellte Zustand hatte durch das Attribut schon genug Gewicht und
    war deshalb nie kaputt. Er trägt die doppelte Klasse trotzdem — sonst steht
    in einer Datei zweierlei Schreibweise für dasselbe Bauteil, und die nächste
-   Person muss raten, welche gilt. */
+   Person muss raten, welche gilt.
+
+   Scharfgestellt wird er DECKEND (die `danger`-Vollvariante der Referenz):
+   Die Schrift darauf ist die Panelfläche — gemessen 7,7:1 hell und 7,0:1
+   dunkel gegen den jeweiligen Fehlerton. */
 .key.key--danger[data-armed] {
-  background: var(--fault);
-  border-color: var(--fault);
-  color: var(--surface);
+  --key-bg: var(--fault);
+  --key-bg-hover: var(--fault);
+  --key-ink: var(--surface);
 }
 
 .vault__config {
@@ -333,30 +340,28 @@
   color: var(--ink-2);
   /* Ausdrücklich gesetzt, nicht geerbt: Ein `<select>` ohne eigene Farbangabe
      zieht sich unter Windows im dunklen Modus die Systemfarben und steht dann
-     als weißer Kasten in einem schwarzen Gerät. */
-  background: var(--surface-recessed);
-  border: 1px solid var(--rule-strong);
-  border-radius: var(--radius-inset);
-  /* Dieselbe Fräsung wie am Eingabefeld: Ein Auswahlfeld ist eine versenkte
-     Fläche, in der etwas steht. */
-  box-shadow: inset 0 1px 0 var(--edge-sunk);
+     als weißer Kasten in einem schwarzen Gerät.
+
+     Seit V9 der Select-Trigger der Referenz: eine flache Feldfläche, kein
+     Rahmen, keine Fräsung — Fläche und Radius wie jedes andere Feld. */
+  background: var(--surface-fill);
+  border: 0;
+  border-radius: var(--radius-field);
   /* Rechts Platz für den Winkel. Senkrecht ohne Innenabstand: Ein einzeiliges
-     `<select>` zentriert seinen Text selbst, und die Höhe steht darunter. Bis V8
-     standen hier 0,2 rem — ein Wert, der auf keiner Skala dieses Projekts liegt
-     und den auch keine Höhe gebraucht hat. Gefunden von scripts/check-tokens.mjs. */
+     `<select>` zentriert seinen Text selbst, und die Höhe steht darunter. */
   padding-block: 0;
   padding-inline: var(--sp-3) var(--sp-6);
-  /* Die kleinste Sprosse der Höhenleiter, und sie hat hier ihren Grund: Sprache
-     und Sperrzeit stellt man einmal ein und fasst sie danach nie wieder an.
-     Was man einmal bedient, braucht keine Daumengröße. */
+  /* Der Select-Trigger der Referenz ist fest min 36 px (`min-h-9`) — die
+     einzige Höhe der Leiter ohne Touch-Schrumpfstufe: Sprache und Sperrzeit
+     stellt man einmal ein und fasst sie danach nie wieder an. */
   min-height: var(--control-h-sm);
   width: 100%;
   cursor: pointer;
-  transition: border-color var(--dur-quick) var(--ease-snap);
+  transition: background-color var(--dur-quick) var(--ease-snap);
 }
 
 .pick:hover {
-  border-color: var(--ink-3);
+  background: var(--fill-active);
 }
 
 /* ── Die Listbox ──────────────────────────────────────────────────────────
@@ -389,9 +394,12 @@
   white-space: nowrap;
 }
 
-/* Das Panel. Dieselbe Erhebung wie der klebende Kopf — es liegt über dem
-   Gerät, also Ebene 2. Kein Frost: Was dahinter liegt, ist eine deckende
-   Fläche, und ein Weichzeichner ohne Hintergrund wäre eine Ebene ohne Zweck. */
+/* Das Popover der Referenz: Overlay-Fläche, großer Radius, Overlay-Schatten —
+   hell die dreilagige Diffusion, dunkel die 1-px-Innenlichtkante (beides
+   steckt in --elev-2, tokens.css). Kein Rahmen. Beim Öffnen fährt es in
+   150 ms ein (Fade + zoom-in-95 + 4 px aus seiner Richtung), wie das
+   Select-Popover der Referenz; die globale reduced-motion-Regel in style.css
+   schaltet die Animation mit ab. */
 .listbox {
   position: absolute;
   inset-inline: 0;
@@ -402,13 +410,21 @@
   max-block-size: min(60vh, 22rem);
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: var(--sp-1);
+  /* 8 px Rand + 16 px Zeilenradius = 24 px Panelradius: Die Rundungen laufen
+     konzentrisch, nichts stößt an. */
+  padding: var(--sp-2);
   background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-field);
-  box-shadow:
-    var(--elev-2),
-    inset 0 1px 0 var(--edge-inner);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--elev-2);
+  transform-origin: bottom center;
+  animation: listbox-in var(--dur-quick) var(--ease-spring);
+}
+
+@keyframes listbox-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.95);
+  }
 }
 
 .listbox[hidden] {
@@ -416,8 +432,11 @@
 }
 
 .listbox__option {
-  padding: var(--sp-2) var(--sp-3);
-  border-radius: var(--radius-inset);
+  display: flex;
+  align-items: center;
+  min-height: var(--control-h-sm);
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-item);
   font-size: var(--t-small);
   color: var(--ink-2);
   cursor: pointer;
@@ -426,25 +445,31 @@
   text-overflow: ellipsis;
 }
 
-/* Die aktive Zeile — die, auf der Tastatur oder Maus gerade steht. Ein
-   Flächenton, kein Rahmen: Ein Rahmen würde die Zeile um einen Pixel
-   verschieben, und eine Liste, in der die Zeilen beim Durchgehen wackeln, ist
-   schwer zu lesen.
-
-   Seit V8 die dafür gemachte Sprosse und nicht mehr `--surface-recessed`. Das
-   war der Fehler, den die neue Leiter aufräumt: Derselbe Ton stand für
-   „versenkt" und für „berührt" — also für eine Fläche, die zurückweicht, und
-   eine, die entgegenkommt. */
+/* Die aktive Zeile — die, auf der Tastatur oder Maus gerade steht. Der
+   Hover-Ton der Referenz-Listenzeile ist die Feldfüllung (`bg-default`). */
 .listbox__option.is-active {
-  background: var(--surface-active);
+  background: var(--surface-fill);
   color: var(--ink);
 }
 
-/* Die gewählte Sprache trägt den Akzent. Das ist einer der Zustände mit
-   Bedeutung, für die die Signalfarbe da ist: „das hier gilt gerade". */
+/* Die gewählte Sprache: Häkchen am Ende der Zeile, wie der
+   Auswahl-Indikator der Referenz — dazu der Akzent, denn „das hier gilt
+   gerade" ist einer der Zustände mit Bedeutung. Das Häkchen ist derselbe
+   Zwei-Strich-Winkel wie die Chevrons, nur anders gedreht. */
 .listbox__option[aria-selected='true'] {
   color: var(--signal-text);
   font-weight: 600;
+}
+
+.listbox__option[aria-selected='true']::after {
+  content: '';
+  width: 0.36em;
+  height: 0.62em;
+  flex: none;
+  margin-inline-start: auto;
+  border-right: 1.5px solid currentcolor;
+  border-bottom: 1.5px solid currentcolor;
+  transform: rotate(40deg);
 }
 
 .vault__check {
@@ -454,67 +479,66 @@
 }
 
 /* ── Schalter ─────────────────────────────────────────────────────────────
-   Ein iOS-naher Kippschalter, gezeichnet auf dem echten `<input
+   Der Switch der Referenz, gezeichnet auf dem echten `<input
    type="checkbox">`. Kein nachgebautes div mit `role="switch"`: Das Original
    bringt Fokus, Tastatur, Beschriftungsbindung und den Zustand für
-   Screenreader schon mit, und alles davon müsste man sonst von Hand nachbauen
-   und dabei etwas vergessen.
+   Screenreader schon mit.
 
-   Bewusst NICHT in Signalfarbe, wenn er an ist: Eine angehakte Einstellung ist
-   kein Betriebszustand. Das Orange bleibt den vier Stellen vorbehalten, an
-   denen es etwas bedeutet — ablaufender Code, bestätigtes Kopieren, offener
-   Tresor, Sucherrahmen. Der Schalter zeigt „an" in Tinte. */
+   Geometrie exakt aus @heroui/styles (Größe md): Bahn 40 × 20 px, Daumen
+   22 × 16 px mit 2 px Rand, Weg 14 px, Daumenfahrt 300 ms auf der Federkurve.
+   Der Daumen ist IMMER Snow mit Feldschatten — wie bei der Referenz, deren
+   `.switch__thumb` fest `bg-white` trägt.
+
+   Eingeschaltet ist die Bahn ACCENT, also Signal-Orange. Das ist eine
+   V9-Entscheidung gegen die V8-Regel („an" in Tinte): In einem HeroUI-Theme
+   ist der Accent die Farbe jedes eingeschalteten Schalters — die Regel „genau
+   ein Akzent" bleibt wahr, sie umfasst jetzt auch diesen Zustand. */
 .vault__check input {
   appearance: none;
   position: relative;
   flex: none;
-  width: 1.75rem;
-  height: 1.0625rem;
+  width: 2.5rem;
+  height: 1.25rem;
   margin: 0;
-  background: var(--surface-recessed);
-  border: 1px solid var(--rule-strong);
+  background: var(--surface-fill);
+  border: 0;
   border-radius: var(--radius-key);
   cursor: pointer;
-  transition:
-    background-color var(--dur-calm) var(--ease-spring),
-    border-color var(--dur-calm) var(--ease-spring);
+  transition: background-color var(--dur-calm) var(--ease-spring);
 }
 
 .vault__check input::before {
   content: '';
   position: absolute;
-  inset-block-start: 1px;
-  inset-inline-start: 1px;
-  width: 0.8125rem;
-  height: 0.8125rem;
-  border-radius: 50%;
-  background: var(--ink-3);
-  /* Der Knopf fährt, er blendet nicht um: `translate` statt `inset-inline-start`
-     bleibt auf dem Compositor und läuft auch auf einem müden Gerät flüssig. */
-  transition:
-    transform var(--dur-calm) var(--ease-spring),
-    background-color var(--dur-calm) var(--ease-spring);
+  inset-block-start: 2px;
+  inset-inline-start: 2px;
+  width: 1.375rem;
+  height: 1rem;
+  border-radius: var(--radius-inset);
+  background: var(--switch-thumb);
+  box-shadow: var(--elev-1);
+  /* Der Daumen fährt, er blendet nicht um: `translate` bleibt auf dem
+     Compositor und läuft auch auf einem müden Gerät flüssig. */
+  transition: transform var(--dur-glide) var(--ease-spring);
 }
 
 .vault__check input:checked {
-  background: var(--ink);
-  border-color: var(--ink);
+  background: var(--signal);
 }
 
 .vault__check input:checked::before {
-  background: var(--surface);
-  /* Bahnbreite minus Knopf minus beide Ränder. */
-  transform: translateX(0.6875rem);
+  /* Bahnbreite minus Daumen minus beide Ränder: 40 − 22 − 4 = 14 px. */
+  transform: translateX(0.875rem);
 }
 
-/* Rechtsläufig fährt der Knopf nach links — sonst säße er im eingeschalteten
+/* Rechtsläufig fährt der Daumen nach links — sonst säße er im eingeschalteten
    Zustand auf der falschen Seite der Bahn. */
 :root[dir='rtl'] .vault__check input:checked::before {
-  transform: translateX(-0.6875rem);
+  transform: translateX(-0.875rem);
 }
 
-.vault__check input:hover {
-  border-color: var(--ink-3);
+.vault__check input:hover:not(:checked) {
+  background: var(--fill-active);
 }
 
 /* ── Kamerasucher ─────────────────────────────────────────────────────────── */
@@ -532,11 +556,11 @@
 .viewfinder__frame {
   position: relative;
   /* Quadratisch, weil ein QR-Code quadratisch ist — und begrenzt, damit der
-     Sucher nicht die halbe Seite einnimmt. */
+     Sucher nicht die halbe Seite einnimmt. Flat wie jedes Feld: Fläche statt
+     Rahmen. */
   width: min(100%, 22rem);
   aspect-ratio: 1;
-  background: var(--surface-recessed);
-  border: 1px solid var(--rule-strong);
+  background: var(--surface-fill);
   border-radius: var(--radius-panel);
   overflow: hidden;
   /* Ohne das schaut das Video an den vier Ecken unter der Rundung hervor:

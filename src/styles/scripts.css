@@ -12,18 +12,18 @@
    jedem System vorhanden, kosten null Byte und null Netzwerkanfragen.
 
    Ausgewählt ist jeweils die neutrale Grotesk des Systems — dieselbe
-   Gestaltungsabsicht wie bei Instrument Sans, nur mit den Mitteln, die schon da
-   sind. Reihenfolge immer: ui-sans-serif und system-ui zuerst (dann trifft der
+   Gestaltungsabsicht wie bei Inter, nur mit den Mitteln, die schon da sind.
+   Reihenfolge immer: ui-sans-serif und system-ui zuerst (dann trifft der
    Browser selbst die beste Wahl), danach die bekannten Namen je Plattform.
 
    ── Warum auch Kyrillisch und Griechisch hier stehen ───────────────────────
-   Weil das mitgelieferte Instrument Sans nur die Subsets `latin` und
-   `latin-ext` enthält — für diese Schriften bringt die Markenschrift schlicht
-   keinen Schnitt mit. Ließe man sie an erster Stelle stehen, käme jedes zweite
-   Zeichen aus einer Ersatzschrift und der Text bestünde sichtbar aus zwei
-   Schriften. Eine durchgehende Systemschrift ist das kleinere Übel.
-   Vietnamesisch steht aus demselben Grund dabei: Die vietnamesischen
-   Mehrfachdiakritika liegen außerhalb von `latin-ext`.
+   Weil das mitgelieferte Inter nur in den Subsets `latin` und `latin-ext`
+   gebündelt ist. Inter BRÄCHTE weitere Schnitte mit (siehe fonts.css) — aber
+   gebündelt ist, was gebündelt ist, und ließe man die Oberflächenschrift an
+   erster Stelle stehen, käme jedes zweite Zeichen aus einer Ersatzschrift.
+   Eine durchgehende Systemschrift ist das kleinere Übel. Vietnamesisch steht
+   aus demselben Grund dabei: Die vietnamesischen Mehrfachdiakritika liegen
+   außerhalb von `latin-ext`.
    ========================================================================== */
 
 /* ── 1. Der System-Stack je Schriftsystem ──────────────────────────────────
@@ -79,41 +79,24 @@
     'Noto Sans TC', sans-serif;
 }
 
-/* ── 2. Wo die Markenschrift ganz weichen muss ─────────────────────────────
-   Für Kyrillisch, Griechisch und Vietnamesisch bringt Instrument Sans keinen
-   Schnitt mit. Hier hilft kein Rückfall: Stünde die Markenschrift vorne, kämen
-   die lateinischen Grundbuchstaben aus ihr und alles Übrige aus dem System —
-   ein Text aus zwei Schriften. Also tritt sie ganz zurück.
+/* ── 2. Wo die gebündelte Schrift ganz weichen muss ────────────────────────
+   Für Kyrillisch, Griechisch und Vietnamesisch ist kein Inter-Schnitt
+   gebündelt. Hier hilft kein Rückfall: Stünde Inter vorne, kämen die
+   lateinischen Grundbuchstaben aus ihr und alles Übrige aus dem System — ein
+   Text aus zwei Schriften. Also tritt sie ganz zurück.
 
    Bei Arabisch, Hebräisch, Thai, Devanagari und CJK erledigt das der Rückfall
-   von selbst, weil dort ohnehin kein Zeichen in Instrument Sans steht. */
+   von selbst, weil dort ohnehin kein Zeichen im Latin-Subset steht. */
 :root[data-script='cyrillic'],
 :root[data-script='greek'],
 :root[data-script='vietnamese'] {
   --font-ui: var(--font-system);
 }
 
-/* ── Gravur-Beschriftung außerhalb der Alphabetschriften ────────────────────
-   Die kleinen gesperrten Versalien sind ein tragendes Gestaltungsmittel dieser
-   App — aber sie setzen ein Alphabet mit Groß- und Kleinschreibung voraus.
-   Arabisch, Hebräisch, Devanagari, Thai und die CJK-Schriften kennen keine
-   Versalien; `text-transform: uppercase` tut dort nichts, und eine Sperrung von
-   0,14 em reißt Silben und Ligaturen auseinander (im Arabischen bricht sie
-   sogar die Verbindung zwischen den Buchstaben auf).
-
-   Deshalb kippen diese Schriften zwei Tokens. Größe, Farbe und Stellung der
-   Beschriftung bleiben — nur Versalsatz und Sperrung entfallen. */
-:root[data-script='arabic'],
-:root[data-script='hebrew'],
-:root[data-script='devanagari'],
-:root[data-script='thai'],
-:root[data-script='japanese'],
-:root[data-script='korean'],
-:root[data-script='hans'],
-:root[data-script='hant'] {
-  --case-caps: none;
-  --track-caps: 0.02em;
-}
+/* Die Gravur-Sonderregeln (--case-caps, --track-caps) sind mit V9 entfallen:
+   Es gibt keine gesperrten Versalien mehr in der Oberfläche — HeroUI
+   beschriftet in normaler Schreibung, und was es nicht gibt, muss für
+   Arabisch oder CJK auch nicht abgeschaltet werden. Eine Sonderregel weniger. */
 
 /* ── Thailändischer Zeilenumbruch ───────────────────────────────────────────
    Thailändisch schreibt ohne Wortzwischenräume. Wo eine Zeile brechen darf,
