@@ -39,6 +39,8 @@ Drei Messwerkzeuge stehen daneben — für die Zusagen, die man nicht ansehen ka
 node scripts/check-bundle.mjs      # das Offline-Versprechen am fertigen Bündel
 node scripts/check-contrast.mjs    # WCAG AA an den tatsächlich gezeichneten Pixeln
 node scripts/check-tokens.mjs      # kein Bauteil setzt eigene Werte
+node scripts/check-motion.mjs      # jede Bewegung läuft — und unter
+                                   # prefers-reduced-motion keine
 ```
 
 **Zum Ausprobieren** — der Testschlüssel aus RFC 4226 (das ist Base32 für den
@@ -65,7 +67,7 @@ Schloss billiger als die Frage, ob das erste noch hält.
 | Ziel                  | Was es ist                                                           |
 | --------------------- | -------------------------------------------------------------------- |
 | `dist/`               | Installierbare PWA: Manifest, Service Worker, Icons, offline nutzbar |
-| `dist/clockwork.html` | **Eine einzige Datei**, ~781 kB, alles inline — auch die Schriften   |
+| `dist/clockwork.html` | **Eine einzige Datei**, ~801 kB, alles inline — auch die Schriften   |
 
 `dist/clockwork.html` ist die Datei für den täglichen Gebrauch: irgendwohin
 kopieren, doppelklicken, fertig. Kein Server, keine Internetverbindung. Sie hat
@@ -241,15 +243,15 @@ In PowerShell:
 $env:CLOCKWORK_LANGS = 'de,en,fr'; npm run build
 ```
 
-Gemessen an der einen Datei (Stand v1.4.0, alle Zahlen frisch nachgemessen):
+Gemessen an der einen Datei (Stand v1.5.0, alle Zahlen frisch nachgemessen):
 
 | Bau                       | `dist/clockwork.html` | gzip   |
 | ------------------------- | --------------------- | ------ |
-| ohne Angabe (37 Sprachen) | 794 kB                | 328 kB |
-| `de,en,fr`                | 482 kB                | 250 kB |
-| nur `en`                  | 465 kB                | 245 kB |
+| ohne Angabe (37 Sprachen) | 801 kB                | 331 kB |
+| `de,en,fr`                | 490 kB                | 252 kB |
+| nur `en`                  | 473 kB                | 247 kB |
 
-Drei Sprachen kosten also 312 kB weniger als alle 37. Die übrigen 465 kB sind
+Drei Sprachen kosten also 311 kB weniger als alle 37. Die übrigen 473 kB sind
 Schriften, jsQR und die App selbst — daran ändert die Auswahl nichts.
 
 Gegenüber v1.2.0 ist der volle Bau um **122 kB gewachsen** (659 → 781), und
@@ -258,7 +260,11 @@ HeroUI-Optik wiegt als data-URI mehr als Instrument Sans — latin 48 statt
 30 kB, latin-ext 85 statt 11, jeweils mal 4/3 für Base64. Nichts davon ist
 Bibliothek: Die Zahl der Laufzeit-Abhängigkeiten steht unverändert bei eins.
 v1.4.0 legt 13 kB darauf: der übersetzte Platzhalter in 37 Sprachen, das
-Klappzeilen-Gerüst des Einspalters und die Kommentare dazu.
+Klappzeilen-Gerüst des Einspalters und die Kommentare dazu. v1.5.0 noch
+einmal **7 kB** (794 → 801) für die drei neuen Bewegungsmodule
+(`disclosure.ts`, `message.ts`, `scroll-edge.ts`), den Wartezeiger und die
+Kommentare dazu — gemessen gegen einen frisch gebauten `main`, nicht gegen
+die letzte notierte Zahl.
 
 **Zur Einheit:** Das sind dezimale Kilobyte (1 kB = 1000 Byte), so wie ein
 Dateimanager sie anzeigt. `node scripts/check-bundle.mjs` rechnet zusätzlich in
@@ -1054,6 +1060,105 @@ Fallblattanzeige als Literal im JavaScript und noch einmal als Token im CSS —
 zwei Wahrheiten über dieselbe Bewegung. Seit V5 liest `src/ui/tokens.ts` sie
 genauso aus dem Stylesheet wie die Dauern, über `easingToken()`.
 
+### v1.5.0: Die Micro-Interaktionen auf Referenzniveau
+
+V9 und V10 haben Flächen, Geometrie und Zustände von HeroUI übernommen, die
+Bewegungen aber nur teilweise. Dieser Pass schließt die Lücken. Alle
+Referenzwerte stammen aus dem ausgelieferten CSS von `@heroui/styles@3.2.4`
+(`npm pack`, `dist/components/*.css`) — nicht aus der Doku, die ihre Zahlen
+clientseitig rendert.
+
+**Was sich jetzt bewegt, und in welcher Zeit:**
+
+| Was                            | Zeit                        | Woher                                    |
+| ------------------------------ | --------------------------- | ---------------------------------------- |
+| Popover auf                    | 150 ms, Fade + zoom-95      | `select.css` `[data-entering]`           |
+| Popover zu                     | 100 ms, Fade + zoom-95      | `select.css` `[data-exiting]`            |
+| Winkel am Auswahlfeld          | 150 ms, 180°                | `.select__indicator` `duration-150`      |
+| Winkel an den Aufklappern      | 250 ms, 180°                | `.disclosure__indicator` `duration-250`  |
+| Häkchen in der Liste           | 250 ms, `scale(.7)` → 1     | `.menu-item__indicator` Punkt            |
+| Listenzeile gedrückt           | 250 ms, `scale(.98)`        | `.list-box-item:active`                  |
+| Aufklapper (Höhe + Deckkraft)  | 250 ms, Feder               | `.disclosure__content` (Zeit hausintern) |
+| Meldungszeilen                 | 150 ms Deckkraft / 250 Höhe | `.field-error` (150/350)                 |
+| Wartezeiger                    | 750 ms, linear, endlos      | `--animate-spin-fast`                    |
+| Kopier-Beschriftung            | 250 ms, aus 8 px + `.8`     | `slot-value-in` am OTP-Wert              |
+| Scroll-Kante                   | 150 ms                      | `scroll-shadow.css` (dort ohne Übergang) |
+| Kopf verstaut sich (nur mobil) | 250 ms, Feder               | Browserleiste, nicht HeroUI              |
+
+Die Dauern sind Haus-Token (`--dur-flash` 100 · `--dur-quick` 150 ·
+`--dur-calm` 250 · `--dur-spin` 750), die Kurve ist überall `--ease-spring` —
+außer beim Wartezeiger, der linear dreht. Ein Wartezeiger, der pulsiert,
+behauptet Fortschritt, den es nicht gibt; dieselbe Trennung wie beim
+Countdown.
+
+**Der eine Messentscheid: Wie klappt ein `<details>` auf?** Beide Wege wurden
+gebaut und am `<details>` selbst gemessen (Höhe in px, alle 50 ms, Chrome 151):
+
+| Fassung                     | auf                | zu               |
+| --------------------------- | ------------------ | ---------------- |
+| WAAPI (`ui/disclosure.ts`)  | 44→128→162→171→173 | 173→122→54→47→44 |
+| CSS (`::details-content`)   | 44→128→162→171→173 | 173→88→54→46→44  |
+| CSS ohne `interpolate-size` | **44→173 sofort**  | **44 sofort**    |
+
+Die dritte Zeile entscheidet. `::details-content` braucht Chrome 131,
+`interpolate-size` braucht 129 — `capacitor.config.ts` garantiert **WebView
+111**. Zwischen 111 und 130 poppt die CSS-Fassung ersatzlos, und zwar auf
+genau den Geräten, für die die Untergrenze überhaupt dasteht. Der Emulator
+(WebView 133) trägt beide; das entscheidet nichts, weil er nicht die
+Untergrenze ist. Die CSS-Fassung war 715 Byte kleiner (506 gegen 1221
+minifiziert) — 0,09 % des Bündels. Der WAAPI-Weg trägt außerdem die
+Meldungszeilen und die Kopier-Beschriftung mit: ein Mechanismus statt zwei.
+
+**Zwei Bestandsfehler kamen dabei heraus, beide gemessen und nicht gesehen:**
+
+- Beim Öffnen des Sprach-Popovers liefen **zwei** Eintrittsanimationen
+  übereinander — die richtige aus `panels.css` (150 ms, von unten) und eine
+  zweite aus der Zeit vor V9 (250 ms, von **oben**, also gegen die
+  Aufklapprichtung). Nachgewiesen über `getAnimations()` am laufenden Gerät.
+- Der Winkel am Tresor drehte in 150 ms, der Winkel des Aufklappers **darin**
+  in 250. Zwei ineinandergeschachtelte Winkel mit verschiedenem Tempo sehen
+  aus wie zwei Bauteile aus zwei Systemen.
+
+**Geprüft und verworfen** — damit die nächste Version nicht dieselbe Runde
+dreht:
+
+| Muster                            | Warum nicht                                                                                               |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Federkurve am Countdown           | Der Zeiger rechnet mit der Uhr. Eine Feder darauf wäre eine Lüge über die Zeit.                           |
+| Toast für Rückmeldungen           | Die Quittung bleibt am Ort der Handlung. Ein Toast nimmt sie von dort weg.                                |
+| Skeleton-Flächen                  | Es gibt keine Ladezustände — alles ist da, bevor das Skript läuft.                                        |
+| Tabs                              | Gibt es in diesem Gerät nicht.                                                                            |
+| View Transitions am Bühnenwechsel | Der Wechsel hängt am Tippen, und Tippen darf auf nichts warten.                                           |
+| Flächiges `will-change`           | V8-Messung: 66 statt 18 Compositor-Ebenen. Erlaubt ist nur das Muster der Referenz — solange etwas fährt. |
+| CSS-Fassung der Aufklapper        | Siehe Messtabelle oben: poppt unterhalb von Chrome 129/131.                                               |
+
+**Nachgemessen wird das jetzt dauerhaft**: `node scripts/check-motion.mjs`
+prüft 25 Zusagen am laufenden Gerät — acht Übergänge gegen eine Soll-Tabelle,
+den Wartezeiger, sechs WAAPI-Wege (je Auslöser einzeln und am richtigen
+Element), vier Geometriezeilen am Popover und einen Durchgang mit
+`prefers-reduced-motion`, in dem **nichts** laufen darf. Dazu prüft
+`check-tokens.mjs` seit diesem Pass auch Dauern und Kurven: Ein Bauteil mit
+eigener Zeit sieht aus wie eines mit `var(--dur-calm)`, bis jemand den Takt
+ändert.
+
+### v1.5.0: Zwei Layout-Befunde nebenbei
+
+- **Die Bodenplatte hing in der Luft.** Auf einem hohen Fenster mit einem
+  Konto stand der Fuß mitten im Bild, darunter lief blanker Grund weiter. Es
+  gab schlicht keinen Mechanismus dafür: `body` hatte keine Mindesthöhe, und
+  seit V9 ist `.device` nur noch Zentrierhülle. Das V7-Konzept „Fuß =
+  Bodenplatte des Gehäuses" war richtig, solange es ein Gehäuse gab. Jetzt
+  `min-block-size: 100dvh` und ein auto-Rand am Fuß; gemessen sitzt seine
+  Unterkante bei 1 Konto exakt auf Fensterhöhe − 32 px (1280/1680/2560), bei
+  12 Konten folgt er unverändert dem Fluss, und die V10-Zusage „Seitenhöhe =
+  Fensterhöhe" bei 375 × 812 hält.
+- **Der Kopf weicht auf dem Handy.** Unter 46 rem ist er dreizeilig — ein
+  Zehntel eines 812-px-Schirms, dauerhaft belegt von etwas, das man einmal
+  liest. Jetzt das Muster der Browserleiste: runter heißt lesen, hoch heißt
+  suchen. Bewegt wird nur `transform`; die Richtung kommt aus dem gepufferten
+  `window.scrollY`, die Kopfhöhe aus einem `ResizeObserver` — im Scroll wird
+  nichts gemessen. Auf dem Schreibtisch läuft nicht einmal ein Zuhörer.
+
 ---
 
 ## Sicherheit
@@ -1294,19 +1399,29 @@ Screenshots entstehen in **de, en, ar und ja**, je Desktop und 375 px.
 
 Lighthouse gegen `dist/` (Chromium headless):
 
-| Kategorie      | V2  | V3  | V5 Desktop | V5 mobil, 4× CPU-Drossel |
-| -------------- | --- | --- | ---------- | ------------------------ |
-| Performance    | 99  | 98  | **100**    | **98**                   |
-| Accessibility  | 100 | 100 | **100**    | **100**                  |
-| Best Practices | 100 | 100 | **100**    | **100**                  |
-| SEO            | 100 | 100 | **100**    | **100**                  |
+| Kategorie      | V2  | V3  | v1.5.0 Desktop | v1.5.0 mobil, 4× CPU-Drossel |
+| -------------- | --- | --- | -------------- | ---------------------------- |
+| Performance    | 99  | 98  | **100**        | **98**                       |
+| Accessibility  | 100 | 100 | **100**        | **100**                      |
+| Best Practices | 100 | 100 | **100**        | **100**                      |
+| SEO            | 100 | 100 | **100**        | **100**                      |
 
-**Der Lauf mit Drossel steht hier, weil `backdrop-filter` auf schwachen Geräten
-Scroll-Kosten haben kann** — das war die offene Frage bei der einen
-durchsichtigen Fläche. Gemessen mit dem Standard-Mobilprofil (4× CPU,
-gedrosseltes Netz): Total Blocking Time **10 ms**, Cumulative Layout Shift
-**0,02**. Der Weichzeichner kostet nichts Messbares; es gab also keinen Grund,
-ihn zu reduzieren.
+Frisch gemessen für v1.5.0 gegen `npx vite preview`: Desktop CLS **0,001**,
+TBT **0 ms**, LCP **0,4 s**; mobil mit vierfacher CPU-Drossel CLS **0,002**,
+TBT **10 ms**, LCP **2,1 s**.
+
+**Warum der Drossel-Lauf überhaupt dasteht:** Er stammt aus V5 und war die
+Antwort auf eine konkrete Frage — `backdrop-filter` kann auf schwachen Geräten
+Scroll-Kosten haben. Den Weichzeichner gibt es seit V8 nicht mehr, den Lauf
+schon: Er ist inzwischen die Stelle, an der jede Bewegung ihre Rechnung
+vorlegt. Die V11-Bewegungen ändern an den Werten nichts, weil sie
+`transform` und `opacity` bewegen und die Höhenfahrten an Klicks hängen, nicht
+am Laden.
+
+**CLS misst man gegen den BAU, nicht gegen den Dev-Server.** Am Dev-Server
+liegt der Wert bei 0,70 — dort kommen Module einzeln und die Seite baut sich
+sichtbar auf. Diese Zahl sagt über die ausgelieferte App nichts, und wer sie
+für einen Befund hält, sucht danach an der falschen Stelle.
 
 Laufzeit-Netzwerkanfragen: nur eigene Dateien vom selben Origin. Die
 Single-File-Variante erzeugt genau **eine** Anfrage — das Dokument selbst.
