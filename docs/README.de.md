@@ -1490,12 +1490,23 @@ Fassung, die beides kann: auf Java 25 laufen (ab 9.1) und AGP 8.x tragen (ab
 Ausweg). Beide Grenzen sind gemessen, nicht gelesen: einmal „Unsupported class
 file major version 69", einmal der AGP-Abbruch unter 9.7.
 
-### Was offen ist
+### Was offen ist — und was absichtlich nur Ausblick bleibt
 
 Es gibt **kein signiertes Release-APK**. Verteilung (Play Store, F-Droid,
 GitHub-Release) und damit die Schlüsselfrage der Signierung sind bewusst
 offen — ein Debug-APK genügt, um die App auf dem eigenen Gerät zu benutzen,
 und mehr behauptet diese Doku nicht.
+
+**iOS** wäre mit demselben Wrap möglich (`@capacitor/ios`), braucht aber
+macOS und Xcode; das Gerüst ist absichtlich nicht angelegt — ein
+iOS-Ordner, den nie jemand gebaut hat, wäre eine Behauptung.
+
+**Biometrie und nativer Schlüsselspeicher** blieben Architektur-Notiz: Ein
+Capacitor-Plugin könnte den Tresor-Umschlag in Androids Keystore legen und
+per Fingerabdruck aufsperren. Das hieße aber fremder nativer Krypto-Code
+neben `crypto.subtle` und ein zweiter Tresor-Pfad, der nur auf einer
+Plattform existiert. Der Web-Tresor funktioniert in der App unverändert —
+`localStorage` liegt im privaten App-Verzeichnis, und Auto-Backup ist aus.
 
 ## Bewusste Abweichungen
 
