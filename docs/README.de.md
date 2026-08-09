@@ -245,11 +245,11 @@ Gemessen an der einen Datei (Stand v1.4.0, alle Zahlen frisch nachgemessen):
 
 | Bau                       | `dist/clockwork.html` | gzip   |
 | ------------------------- | --------------------- | ------ |
-| ohne Angabe (37 Sprachen) | 793 kB                | 328 kB |
+| ohne Angabe (37 Sprachen) | 794 kB                | 328 kB |
 | `de,en,fr`                | 482 kB                | 250 kB |
 | nur `en`                  | 465 kB                | 245 kB |
 
-Drei Sprachen kosten also 311 kB weniger als alle 37. Die übrigen 465 kB sind
+Drei Sprachen kosten also 312 kB weniger als alle 37. Die übrigen 465 kB sind
 Schriften, jsQR und die App selbst — daran ändert die Auswahl nichts.
 
 Gegenüber v1.2.0 ist der volle Bau um **122 kB gewachsen** (659 → 781), und
@@ -257,7 +257,7 @@ diese Zahl hat genau eine Ursache: Inter. Die Oberflächenschrift der
 HeroUI-Optik wiegt als data-URI mehr als Instrument Sans — latin 48 statt
 30 kB, latin-ext 85 statt 11, jeweils mal 4/3 für Base64. Nichts davon ist
 Bibliothek: Die Zahl der Laufzeit-Abhängigkeiten steht unverändert bei eins.
-v1.4.0 legt 12 kB darauf: der übersetzte Platzhalter in 37 Sprachen, das
+v1.4.0 legt 13 kB darauf: der übersetzte Platzhalter in 37 Sprachen, das
 Klappzeilen-Gerüst des Einspalters und die Kommentare dazu.
 
 **Zur Einheit:** Das sind dezimale Kilobyte (1 kB = 1000 Byte), so wie ein

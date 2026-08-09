@@ -182,7 +182,7 @@ $env:CLOCKWORK_LANGS = 'de,en,fr'; npm run build  # PowerShell
 
 | Build                  | `dist/clockwork.html` | gzip   |
 | ---------------------- | --------------------- | ------ |
-| default (37 languages) | 793 kB                | 328 kB |
+| default (37 languages) | 794 kB                | 328 kB |
 | `de,en,fr`             | 482 kB                | 250 kB |
 | `en` only              | 465 kB                | 245 kB |
 
@@ -230,7 +230,7 @@ npm run shots       # Playwright walk-through + screenshots (needs a server on :
 | Target                | What it is                                                      |
 | --------------------- | --------------------------------------------------------------- |
 | `dist/`               | Installable PWA: manifest, service worker, icons, works offline |
-| `dist/clockwork.html` | One file, everything inline — including the fonts. ~793 kB      |
+| `dist/clockwork.html` | One file, everything inline — including the fonts. ~794 kB      |
 
 Hosting is a plain static deploy; `vercel.json` carries the security headers,
 and a test keeps them in step with the policy the build embeds.

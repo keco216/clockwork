@@ -83,7 +83,7 @@ Dazu die Zusagen, die unverändert halten müssen — alle nachgemessen:
 | Lighthouse mobil, 4×-Drossel         | 98/100/100/100  | 98/100/100/100    |
 | Lighthouse Desktop                   | 100/100/100/100 | 100/100/100/100   |
 | CLS beim Laden                       | 0,01            | 0,002             |
-| `dist/clockwork.html`                | 781 kB dezimal  | 793 kB dezimal    |
+| `dist/clockwork.html`                | 781 kB dezimal  | 794 kB dezimal    |
 | Tests                                | 514             | 514               |
 
 ## Der Beweis in 27 Bildern
