@@ -808,8 +808,9 @@ kein Tailwind, keine Abhängigkeit. Die Flächenleiter steht oben; dazu kamen:
   und den Zeiger über 3:1 hält — der Markenton hat auf Papier selbst nur 3,06
   Reserve.
 
-Der Vorher/Nachher-Vergleich mit allen Messwerten liegt in
-[`docs/v8-vergleich/`](v8-vergleich/README.md).
+Der Vorher/Nachher-Vergleich mit allen Messwerten liegt als
+`clockwork-v8-vergleich.zip` am
+[Release v1.2.0](https://github.com/keco216/clockwork/releases/tag/v1.2.0).
 
 ### v1.3.0: HeroUI-Optik
 

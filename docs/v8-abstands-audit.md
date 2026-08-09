@@ -4,8 +4,10 @@ Kein Redesign. Farben, Komponenten und Struktur von V8 stehen unverändert; hier
 ging es um Rhythmus und Ausrichtung. `src/lib/` unangetastet, 514 Tests grün.
 
 Alle Zahlen sind am laufenden Dokument gemessen (1450 px, dunkel, deutsch), nicht
-aus den Tokens gerechnet. Die Rasterbilder je Panel liegen unter
-[`v8-vergleich/`](v8-vergleich/); erzeugen lassen sie sich mit
+aus den Tokens gerechnet. Die Rasterbilder je Panel liegen als
+`clockwork-v8-vergleich.zip` am
+[Release v1.2.0](https://github.com/keco216/clockwork/releases/tag/v1.2.0);
+erzeugen lassen sie sich mit
 
 ```bash
 node scripts/shoot-grid.mjs vorher     # vor der Änderung

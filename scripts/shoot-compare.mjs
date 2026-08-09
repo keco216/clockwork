@@ -31,7 +31,7 @@ if (side !== 'vorher' && side !== 'nachher') {
 const target = process.argv[3];
 if (target === undefined || target.startsWith('http')) {
   throw new Error(
-    'Zweites Argument muss der Zielordner sein, z. B. docs/v8-vergleich\n' +
+    'Zweites Argument muss der Zielordner sein, z. B. docs/v10-vergleich\n' +
       '  node scripts/shoot-compare.mjs <vorher|nachher> <zielordner> [url]',
   );
 }
