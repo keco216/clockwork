@@ -624,6 +624,100 @@
   background: var(--fill-active);
 }
 
+/* ── Scrollflächen: Kantenzeichen und Balken ───────────────────────────────
+   Zwei Stellen im Gerät scrollen eigenständig — die Bedienseite ab 64 rem und
+   dieses Popover. Beide bekommen dasselbe: einen schmalen Balken aus dem
+   Standard und eine Kante, die nur dann da ist, wenn dahinter wirklich etwas
+   liegt (geschaltet von ui/scroll-edge.ts).
+
+   ── Warum die Kante eine Maske ist ────────────────────────────────────────
+   Weil `.rail` keinen eigenen Grund hat: weiße Karten auf hellgrauem
+   Seitengrund. Ein Verlauf in `--surface` läge als weißer Streifen über dem
+   Grund, einer in `--ground` als grauer über den Karten — es gibt keine Farbe,
+   die an beiden Stellen stimmt. Eine Maske blendet aus, was da ist, statt
+   etwas darüberzulegen. Genau deshalb arbeitet auch `scroll-shadow.css` der
+   Referenz mit `mask-image`.
+
+   ── Warum die Fade-Länge eine registrierte Eigenschaft ist ────────────────
+   Ein `mask-image` lässt sich nicht überblenden — Bilder sind diskret. Eine
+   über `@property` registrierte Länge dagegen schon, und damit wächst die
+   Kante in 150 ms herein statt aufzuspringen. Ab Chrome 85, also weit
+   unterhalb der WebView-Untergrenze 111. */
+@property --fade-start {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --fade-end {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+.scroll-edge {
+  /* Der Fühler liegt absolut IN dieser Fläche — ohne diese Zeile bezöge er
+     sich auf das nächste positionierte Elternteil und meldete Unsinn. */
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  transition:
+    --fade-start var(--dur-quick) var(--ease-snap),
+    --fade-end var(--dur-quick) var(--ease-snap);
+}
+
+/* ── Warum die Maske nur dann dasteht, wenn sie etwas tut ──────────────────
+   Weil sie sonst eine Compositor-Ebene kostet, dauerhaft. Gemessen über
+   `LayerTree` bei acht Konten im Ruhezustand: 19 Ebenen mit der Maske, 18
+   ohne — die Fühler und die Balkenfarbe kosten nichts. 18 ist die Zusage aus
+   V8, und sie gilt weiter.
+
+   Der Preis dieser Lösung ist ehrlich zu nennen: Die Kante WÄCHST in 150 ms
+   herein (die Länge ist über @property registriert und damit animierbar),
+   verschwindet aber ohne Übergang — mit dem Attribut geht auch die Maske. Die
+   Referenz hat an derselben Stelle gar keinen Übergang (`scroll-shadow.css`
+   schaltet ihre Maske hart), also ist das in einer Richtung besser als das
+   Vorbild und in der anderen gleich. */
+.scroll-edge[data-scroll-start],
+.scroll-edge[data-scroll-end] {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--fade-start),
+    #000 calc(100% - var(--fade-end)),
+    transparent 100%
+  );
+}
+
+.scroll-edge[data-scroll-start] {
+  --fade-start: var(--scroll-fade);
+}
+
+.scroll-edge[data-scroll-end] {
+  --fade-end: var(--scroll-fade);
+}
+
+/* Die Fühler: je ein Streifen von 1 px an einer Kante des INHALTS.
+
+   Der obere steht absolut und kostet damit in einem Flexkasten keine Fuge.
+   Der untere kann das nicht: Ein absolut positioniertes Kind bezieht sich auf
+   die Polsterbox seines Scrollers, und die ist so hoch wie das Sichtfenster,
+   nicht wie der Inhalt — `inset-block-end: 0` markierte damit die Unterkante
+   des BILDES, und die ist immer sichtbar. Gemessen: `data-scroll-end` kam nie.
+   Er steht deshalb im Fluss und bekommt seine Fuge in ui/scroll-edge.ts als
+   negativen Außenabstand zurückgerechnet. */
+.scroll-edge__sentinel {
+  height: 1px;
+  flex: none;
+  pointer-events: none;
+}
+
+.scroll-edge__sentinel[data-edge='start'] {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+}
+
 /* ── Kamerasucher ─────────────────────────────────────────────────────────── */
 
 .viewfinder {

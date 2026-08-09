@@ -26,6 +26,7 @@ import { buildGauge } from './gauge';
 import { startLanguageSwitch } from './lang-switch';
 import { startMasthead } from './masthead';
 import { setMessage } from './message';
+import { enhanceScroller } from './scroll-edge';
 import { startScanner } from './scan';
 import { easingToken, motionToken } from './tokens';
 import { startVaultPanel } from './vault-panel';
@@ -501,6 +502,11 @@ export function startApp(): void {
   // gehört vault-panel.ts — es schaltet ihn auch programmatisch und braucht
   // dafür den Griff, den `enhanceDisclosure` zurückgibt.
   enhanceReveals();
+  // Die Bedienseite ist ab 64 rem eine eigene Scrollfläche. Darunter scrollt
+  // sie nicht, dann melden beide Fühler „drin" und es gibt keine Kante —
+  // die Prüfung erledigt der Beobachter, nicht eine zweite Media Query im
+  // JavaScript.
+  enhanceScroller(requireElement(document, '.rail'));
 
   // Der Leerzustand trägt das Emblem — dieselbe Teilung, die gleich die Codes
   // begleitet. Es steht still: Es gibt noch nichts zu messen.

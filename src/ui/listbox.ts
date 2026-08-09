@@ -34,6 +34,7 @@
  */
 
 import { prefersReducedMotion } from './dom';
+import { enhanceScroller } from './scroll-edge';
 import { easingToken, motionToken } from './tokens';
 
 /** Wie lange eine Tippsuche zusammenhängt, bevor sie neu beginnt. */
@@ -120,6 +121,10 @@ export function enhanceSelect({ select, label }: ListboxOptions): void {
   }
 
   shell.append(button, list);
+  // 37 Sprachen passen nicht in 22 rem — diese Liste scrollt fast immer, und
+  // sie ist die einzige Stelle des Geräts, an der man das nicht schon an der
+  // Seite sieht.
+  enhanceScroller(list);
   // Das native Feld bleibt im Dokument und bleibt die Wahrheit — es wird nur
   // unsichtbar und aus der Tastaturreihenfolge genommen, damit nicht zwei
   // Bedienelemente dasselbe tun. `hidden` ginge nicht: Ein verstecktes Feld
