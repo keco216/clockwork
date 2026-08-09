@@ -153,12 +153,14 @@ extracted reference values live in `docs/heroui-referenz.md`.
 
 ### Measure it, do not eyeball it
 
-Three scripts exist because three claims cannot be checked by looking:
+Four scripts exist because four claims cannot be checked by looking:
 
 ```bash
 node scripts/check-bundle.mjs      # the offline promise, measured on the bundle
 node scripts/check-contrast.mjs    # WCAG AA, measured on rendered pixels
 node scripts/check-tokens.mjs      # no component sets its own values
+node scripts/check-motion.mjs      # every motion runs — and none under
+                                   # prefers-reduced-motion
 ```
 
 `check-contrast.mjs` reads the pixels the browser actually painted — including

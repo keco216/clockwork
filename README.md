@@ -33,6 +33,10 @@ position 5` beats a blank screen.
 - **Speaks 37 languages**, all bundled, including right-to-left layouts.
 - **Installs as a PWA**, or runs as one self-contained HTML file you can carry
   on a USB stick and open with a double click.
+- **Moves with intent, not for show.** Disclosures glide, the language
+  popover fades out, a spinner appears while your passphrase is stretched, and
+  on a phone the header steps out of the way while you scroll down. Every one
+  of those honours `prefers-reduced-motion`, and a check script proves it.
 - **Puts the codes first on a phone.** Below 1024 px the code cards sit right
   under the header, copy buttons in thumb reach; input and vault fold into
   single rows until you tap them. The desktop layout is unchanged.
@@ -83,7 +87,7 @@ Run it from source:
 ```bash
 npm ci
 npm run dev        # http://localhost:5173
-npm test           # 514 tests
+npm test           # 517 tests
 npm run build      # dist/ (PWA) + dist/clockwork.html (single file)
 ```
 
@@ -182,9 +186,9 @@ $env:CLOCKWORK_LANGS = 'de,en,fr'; npm run build  # PowerShell
 
 | Build                  | `dist/clockwork.html` | gzip   |
 | ---------------------- | --------------------- | ------ |
-| default (37 languages) | 794 kB                | 328 kB |
-| `de,en,fr`             | 482 kB                | 250 kB |
-| `en` only              | 465 kB                | 245 kB |
+| default (37 languages) | 801 kB                | 331 kB |
+| `de,en,fr`             | 490 kB                | 252 kB |
+| `en` only              | 473 kB                | 247 kB |
 
 Sizes are decimal kB (1000 bytes). `scripts/check-bundle.mjs` prints both that
 and KiB, because mixing the two silently is a mistake this project has already
@@ -230,7 +234,7 @@ npm run shots       # Playwright walk-through + screenshots (needs a server on :
 | Target                | What it is                                                      |
 | --------------------- | --------------------------------------------------------------- |
 | `dist/`               | Installable PWA: manifest, service worker, icons, works offline |
-| `dist/clockwork.html` | One file, everything inline — including the fonts. ~794 kB      |
+| `dist/clockwork.html` | One file, everything inline — including the fonts. ~801 kB      |
 
 Hosting is a plain static deploy; `vercel.json` carries the security headers,
 and a test keeps them in step with the policy the build embeds.
