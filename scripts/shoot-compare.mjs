@@ -1,11 +1,17 @@
 /**
  * Vorher/Nachher für den Versionsvergleich in docs/.
  *
- *   node scripts/shoot-compare.mjs <vorher|nachher> [url]
+ *   node scripts/shoot-compare.mjs <vorher|nachher> <zielordner> [url]
  *
  * Getrennt von scripts/shoot.mjs, weil dieses Werkzeug ZWEIMAL läuft — einmal
  * mit ausgechecktem alten Stand, einmal mit dem neuen — und die Bilder in
  * denselben Ordner legt. Es prüft nichts; die Prüfungen stehen in shoot.mjs.
+ *
+ * ── Warum der Zielordner ein Argument ist ─────────────────────────────────
+ * Er stand bis V8 fest im Skript (`docs/v7-vergleich`). Das ist genau einmal
+ * gutgegangen: Beim nächsten Vergleich hätte der Lauf die Bilder der vorigen
+ * Version überschrieben, und zwar unbemerkt — die Dateinamen sind ja dieselben.
+ * Ein Werkzeug, das je Version läuft, darf sein Ziel nicht kennen.
  *
  * ── Warum deviceScaleFactor 1 ─────────────────────────────────────────────
  * Weil diese Bilder ins Repo wandern. `docs/v5-vergleich/` wiegt in doppelter
@@ -22,8 +28,15 @@ const side = process.argv[2];
 if (side !== 'vorher' && side !== 'nachher') {
   throw new Error('Erstes Argument muss »vorher« oder »nachher« sein');
 }
-const url = process.argv[3] ?? 'http://localhost:5180';
-const outDir = path.resolve('docs/v7-vergleich');
+const target = process.argv[3];
+if (target === undefined || target.startsWith('http')) {
+  throw new Error(
+    'Zweites Argument muss der Zielordner sein, z. B. docs/v8-vergleich\n' +
+      '  node scripts/shoot-compare.mjs <vorher|nachher> <zielordner> [url]',
+  );
+}
+const url = process.argv[4] ?? 'http://localhost:5180';
+const outDir = path.resolve(target);
 await mkdir(outDir, { recursive: true });
 
 /* Acht Konten: Erst ab dieser Zahl zeigt V7 Filterzeile und zweite Spalte, und
