@@ -41,6 +41,29 @@ export function prefersReducedMotion(): boolean {
 }
 
 /**
+ * Schaltet den Wartezustand einer Taste und ihrer Zone.
+ *
+ * Zwei Angaben, weil sie zwei verschiedene Leute erreichen: `data-pending`
+ * zeichnet den Wartezeiger (style.css), `aria-busy` sagt einem Screenreader,
+ * dass dieser Bereich gerade arbeitet und sein Inhalt sich gleich ändert.
+ *
+ * Bewusst OHNE `disabled`: Eine Taste, die den Fokus hält und gesperrt wird,
+ * gibt ihn je nach Browser nicht weiter — dieselbe Falle wie beim
+ * verschwindenden Kamerasucher. Wo eine zweite Auslösung schaden würde, hält
+ * der Aufrufer eine eigene Sperre (siehe ui/scan.ts); der Tresor-Knopf ist
+ * zusätzlich `disabled`, weil er in einem Formular sitzt und ein zweites
+ * Absenden sonst eine zweite Ableitung startet.
+ */
+export function setPending(key: HTMLElement, zone: HTMLElement, pending: boolean): void {
+  key.toggleAttribute('data-pending', pending);
+  if (pending) {
+    zone.setAttribute('aria-busy', 'true');
+  } else {
+    zone.removeAttribute('aria-busy');
+  }
+}
+
+/**
  * Kopiert Text in die Zwischenablage.
  *
  * Zwei Wege, weil ein Weg allein nicht reicht:

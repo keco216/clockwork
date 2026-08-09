@@ -18,7 +18,7 @@
 
 import { t } from '../i18n/runtime';
 import { decodeQr, decodeQrFromBlob } from './qr-decode';
-import { requireElement } from './dom';
+import { requireElement, setPending } from './dom';
 
 /** Wie oft das Kamerabild geprüft wird. 8/s reicht — mehr kostet nur Akku. */
 const SCAN_INTERVAL_MS = 125;
@@ -42,11 +42,35 @@ export function startScanner(handlers: ScanHandlers): Scanner {
   // Oben geholt und nicht erst beim Anmelden des Klicks: stopCamera() gibt den
   // Fokus an diesen Knopf zurück und steht weiter unten.
   const cameraKey = requireElement<HTMLButtonElement>(document, '#key-camera');
+  // „QR aus Bild" trägt den Wartezeiger, die Eingabezone das `aria-busy` —
+  // auch beim Ziehen und Einfügen: Es ist dieselbe Arbeit, und diese Taste ist
+  // ihr sichtbarer Vertreter.
+  const fileKey = requireElement<HTMLButtonElement>(document, '#key-file');
+  const inputZone = requireElement(document, '#zone-input');
 
   let stream: MediaStream | null = null;
   let scanTimer = 0;
 
   /* ── Bilddatei ──────────────────────────────────────────────────────────── */
+
+  /* ── Warum das Dekodieren einen Wartezeiger bekommt ───────────────────────
+     Weil es messbar dauert. Gemessen über den echten Weg (Datei ins Feld, Zeit
+     bis die Rückmeldung steht, jsQR-Pfad ohne eingebauten `BarcodeDetector`):
+
+       Handy-Screenshot 1080 × 2400     87 · 98 · 94 ms
+       Schreibtisch-Screenshot 1440    234 · 157 · 154 ms
+       Schreibtisch-Screenshot 2560    522 · 544 · 640 ms
+
+     Die 150-ms-Schwelle, ab der eine Rückmeldung nötig ist, wird also im
+     häufigsten Fall überschritten — jemand macht ein Bildschirmfoto der
+     Einrichtungsseite, und das ist so breit wie sein Bildschirm. Mit dem
+     eingebauten Detektor (Chrome, Android-WebView) liegt es darunter; ohne ihn
+     (Firefox, Safari, `file://`) nicht, und genau dort läuft jsQR.
+
+     Kein `disabled` an der Taste: Eine Taste, die den Fokus hält und gesperrt
+     wird, gibt ihn nicht weiter. Gegen ein zweites Bild in derselben Sekunde
+     hilft die Sperre unten, und die kostet keinen Fokus. */
+  let decoding = false;
 
   /**
    * Die Meldung unterscheidet nicht mehr, WOHER das Bild kam („dem gezogenen
@@ -56,6 +80,11 @@ export function startScanner(handlers: ScanHandlers): Scanner {
    * gerade ein Bild eingefügt hat, weiß ohnehin, welches gemeint ist.
    */
   async function readImage(blob: Blob): Promise<void> {
+    if (decoding) {
+      return;
+    }
+    decoding = true;
+    setPending(fileKey, inputZone, true);
     try {
       const text = await decodeQrFromBlob(blob);
       if (text === null) {
@@ -65,6 +94,9 @@ export function startScanner(handlers: ScanHandlers): Scanner {
       handlers.onResult(text);
     } catch {
       handlers.onProblem(t('scan.unreadable'));
+    } finally {
+      decoding = false;
+      setPending(fileKey, inputZone, false);
     }
   }
 
@@ -77,7 +109,7 @@ export function startScanner(handlers: ScanHandlers): Scanner {
     fileInput.value = '';
   });
 
-  requireElement<HTMLButtonElement>(document, '#key-file').addEventListener('click', () => {
+  fileKey.addEventListener('click', () => {
     fileInput.click();
   });
 

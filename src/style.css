@@ -788,6 +788,43 @@ kbd {
   cursor: default;
 }
 
+/* ── Warten ───────────────────────────────────────────────────────────────
+   Bis V10 sagte eine laufende Arbeit nur „gesperrt": Der Tresor-Knopf wurde
+   halb durchsichtig, während 600 000 PBKDF2-Runden liefen. Halb durchsichtig
+   heißt aber „geht gerade nicht", nicht „läuft gerade" — der Unterschied ist
+   für den, der wartet, der ganze Unterschied.
+
+   Der Wartezeiger der Referenz: ein Ring mit einer Lücke, 0,75 s je Umdrehung,
+   LINEAR (`--animate-spin-fast`). Er trägt `currentcolor` und damit keine neue
+   Farbe — auf dem Primary-Knopf ist das die gemessene Schrift auf Signal, auf
+   einer neutralen Taste die Tintenstufe der Taste.
+
+   Die Lücke im Ring steht PHYSISCH (`border-top-color`) und nicht logisch: Sie
+   ist eine Form, keine Leserichtung. Dieselbe Trennung wie beim Zifferblatt und
+   beim Auswahl-Winkel — ein rechtsläufig gespiegelter Wartezeiger liefe
+   rückwärts.
+
+   `prefers-reduced-motion` braucht keinen Sonderfall: Die globale Regel am
+   Dateiende hält die Animation an, und stehen bleibt genau das, was hier
+   gezeichnet ist — ein Ring mit einer Lücke. Ein statisches Zeichen, wie es der
+   Auftrag verlangt. */
+.key[data-pending]::before {
+  content: '';
+  width: 1em;
+  height: 1em;
+  flex: none;
+  border: 1.5px solid currentcolor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: key-spin var(--dur-spin) linear infinite;
+}
+
+@keyframes key-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .key:disabled:active {
   transform: none;
   background: var(--key-bg);

@@ -306,6 +306,13 @@
   --dur-sheet: 350ms; /* Panel öffnet, Kanalzug kommt dazu */
   --stagger-flap: 20ms;
 
+  /* Die einzige Dauer, die keine Fahrt beschreibt, sondern eine Umdrehung:
+     der Wartezeiger. `--animate-spin-fast: spin 0.75s linear infinite` steht so
+     in @heroui/styles (themes/shared/theme.css). Linear und nicht auf der
+     Feder — ein Wartezeiger, der pulsiert, behauptet Fortschritt, den es
+     nicht gibt. Dieselbe Trennung wie beim Countdown. */
+  --dur-spin: 750ms;
+
   /* Der Switch-Daumen ist in BEIDEN Themes Snow — die Referenz trägt fest
      `bg-white`, und auf einer Bahn, die hell wie dunkel dieselben Rollen
      spielt (Füllung → Accent), wandert der Daumen nicht mit dem Theme. */
