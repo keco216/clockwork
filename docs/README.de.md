@@ -65,7 +65,7 @@ Schloss billiger als die Frage, ob das erste noch hält.
 | Ziel                  | Was es ist                                                           |
 | --------------------- | -------------------------------------------------------------------- |
 | `dist/`               | Installierbare PWA: Manifest, Service Worker, Icons, offline nutzbar |
-| `dist/clockwork.html` | **Eine einzige Datei**, ~659 kB, alles inline — auch die Schriften   |
+| `dist/clockwork.html` | **Eine einzige Datei**, ~781 kB, alles inline — auch die Schriften   |
 
 `dist/clockwork.html` ist die Datei für den täglichen Gebrauch: irgendwohin
 kopieren, doppelklicken, fertig. Kein Server, keine Internetverbindung. Sie hat
@@ -184,7 +184,8 @@ wiegt mehrere Megabyte und würde die Single-File-Datei sprengen. Stattdessen gi
 es je Schriftsystem einen kuratierten System-Stack (`src/styles/scripts.css`),
 angesteuert über `data-script` am `<html>`.
 
-Dazu kam **ein** neuer Schnitt: Instrument Sans `latin-ext` (11 kB). Elf Sprachen
+Dazu kommt **ein** zweiter Schnitt: Inter `latin-ext` (85 kB — Inter deckt dort
+deutlich mehr Zeichen ab als das frühere Instrument Sans mit 11). Elf Sprachen
 brauchen Zeichen jenseits von Latin-1 — Polnisch (ł ą ę), Tschechisch (č ř ž),
 Ungarisch (ő ű), Rumänisch (ă ș ț), Türkisch (ğ ş) und andere. Ohne diesen
 Schnitt käme in einem polnischen Satz jedes zweite Wort aus einer Ersatzschrift.
@@ -192,8 +193,8 @@ Der Browser lädt ihn nur, wenn wirklich so ein Zeichen vorkommt — dafür ist
 `unicode-range` da.
 
 Kyrillisch, Griechisch und Vietnamesisch bekommen dagegen eine durchgehende
-Systemschrift: Für sie bringt Instrument Sans gar keinen Schnitt mit, und eine
-halb gesetzte Schrift ist schlechter als eine andere ganze.
+Systemschrift: Diese Schnitte sind nicht gebündelt, und eine halb gesetzte
+Schrift ist schlechter als eine andere ganze.
 
 Die **Wortmarke bleibt in jeder Sprache lateinisch** und in der Markenschrift.
 Ein Logo wird nicht übersetzt.
@@ -240,21 +241,22 @@ In PowerShell:
 $env:CLOCKWORK_LANGS = 'de,en,fr'; npm run build
 ```
 
-Gemessen an der einen Datei (Stand v1.2.0, alle Zahlen frisch nachgemessen):
+Gemessen an der einen Datei (Stand v1.3.0, alle Zahlen frisch nachgemessen):
 
 | Bau                       | `dist/clockwork.html` | gzip   |
 | ------------------------- | --------------------- | ------ |
-| ohne Angabe (37 Sprachen) | 659 kB                | 234 kB |
-| `de,en,fr`                | 352 kB                | 156 kB |
-| nur `en`                  | 335 kB                | 151 kB |
+| ohne Angabe (37 Sprachen) | 781 kB                | 325 kB |
+| `de,en,fr`                | 474 kB                | 248 kB |
+| nur `en`                  | 457 kB                | 243 kB |
 
-Drei Sprachen kosten also 307 kB weniger als alle 37. Die übrigen 335 kB sind
+Drei Sprachen kosten also 307 kB weniger als alle 37. Die übrigen 457 kB sind
 Schriften, jsQR und die App selbst — daran ändert die Auswahl nichts.
 
-Gegenüber v1.1.0 ist der volle Bau um **47 kB gewachsen** (612 → 659). Das sind
-die vier neuen Zeichenketten aus V7 und die zwei aus V8, in 37 Sprachen, plus
-das Markup der neuen Bauteile. Nichts davon ist Bibliothek: Die Zahl der
-Laufzeit-Abhängigkeiten steht unverändert bei eins.
+Gegenüber v1.2.0 ist der volle Bau um **122 kB gewachsen** (659 → 781), und
+diese Zahl hat genau eine Ursache: Inter. Die Oberflächenschrift der
+HeroUI-Optik wiegt als data-URI mehr als Instrument Sans — latin 48 statt
+30 kB, latin-ext 85 statt 11, jeweils mal 4/3 für Base64. Nichts davon ist
+Bibliothek: Die Zahl der Laufzeit-Abhängigkeiten steht unverändert bei eins.
 
 **Zur Einheit:** Das sind dezimale Kilobyte (1 kB = 1000 Byte), so wie ein
 Dateimanager sie anzeigt. `node scripts/check-bundle.mjs` rechnet zusätzlich in
@@ -572,6 +574,10 @@ Nachhinein, sondern der Grund, warum die Mischung nicht zu Brei wird.
 
 #### Die Flächenleiter: fünf Sprossen, jede mit einer Aufgabe
 
+_(Stand v1.2.0 — die heutige Leiter ist die der HeroUI-Referenz und steht
+unter [v1.3.0](#v130-heroui-optik); dieser Abschnitt bleibt als Begründung
+der damaligen Werte.)_
+
 Eine Erhebung, die man sehen soll, braucht etwas, worüber sie sich erhebt. Läge
 das Gerät auf derselben Fläche, aus der es besteht, bliebe vom Schatten nur ein
 Schmutzrand. Seit V5 gibt es deshalb einen **Untergrund** unter der
@@ -669,15 +675,16 @@ Zeichnen; aus Tokens war das nicht zu sehen.
 
 Die Reserveproben aus der Frost-Zeit sind geblieben, obwohl ein deckender Kopf
 sie zwangsläufig besteht. Sie kosten nichts und fangen den Tag, an dem jemand den
-Kopf wieder durchsichtig macht:
+Kopf wieder durchsichtig macht (Werte Stand v1.3.0 — der Kopf trägt jetzt den
+Seitengrund):
 
-| Was                                     | Hell   | Dunkel |
-| --------------------------------------- | ------ | ------ |
-| Kopf über der Gehäusefläche (kommt vor) | 5,02:1 | 7,22:1 |
-| Zustandszeile im Kopf                   | 6,15:1 | 9,39:1 |
-| Kopf über Signal-Orange (Reserveprobe)  | 5,02:1 | 7,22:1 |
-| Kopf über Tinte (Reserveprobe)          | 5,02:1 | 7,22:1 |
-| Kopf über Papier (Reserveprobe)         | 5,02:1 | 7,22:1 |
+| Was                                    | Hell   | Dunkel  |
+| -------------------------------------- | ------ | ------- |
+| Kopf auf dem Seitengrund (kommt vor)   | 5,14:1 | 7,72:1  |
+| Zustandszeile im Kopf                  | 7,08:1 | 11,43:1 |
+| Kopf über Signal-Orange (Reserveprobe) | 5,14:1 | 7,72:1  |
+| Kopf über Eclipse (Reserveprobe)       | 5,14:1 | 7,72:1  |
+| Kopf über Weiß (Reserveprobe)          | 5,14:1 | 7,72:1  |
 
 **Dass in den unteren drei Zeilen dreimal derselbe Wert steht, ist das
 eigentliche Ergebnis.** Genau das ist seit v1.2.0 der Selbsttest: Das Skript
@@ -687,11 +694,13 @@ einen versehentlich durchsichtigen Kopf und einen, den das Skript gar nicht
 sieht. Der zweite Fall ist nicht erfunden: Bis V7 maß das Skript wegen einer
 scrollenden Elementaufnahme den Kopf überhaupt nicht mit.
 
-Insgesamt misst das Skript **92 Paare** (46 je Modus), und alle erfüllen AA. Der
-größte Block darin ist neu: die Matrix **jede Textstufe auf jeder Fläche der
-Leiter**. Sie hat zwei Ausnahmen weggeräumt, die bis v1.1.0 nötig waren („auf dem
-Gehäuse eine Stufe kräftiger", „im Kopf noch eine") — nicht durch Nachlassen,
-sondern durch Messen.
+Insgesamt misst das Skript **88 Paare** (44 je Modus), und alle erfüllen ihr
+Maß. Der größte Block ist die Matrix **jede Textstufe auf jeder Fläche der
+Leiter** — seit v1.3.0 auf den vier Flächen Werkbank, Panel, Füllung und
+berührt. Sie hat in v1.3.0 wieder gearbeitet: HeroUIs helles `--muted`
+(`#71717a`) hält auf der Füllfläche nur 4,06:1 und wurde deshalb eine Nuance
+tiefer gesetzt (`#676770`, gemessen 4,70) — im dunklen Modus passt der
+Referenzwert unverändert.
 
 Die **Gravur-Zonenspalte am linken Rand ist entfallen.** Bis v1.1.0 stand
 EINGABE / TRESOR / CODES in einer eigenen Spalte von 6,5 rem und galt als
@@ -798,6 +807,53 @@ kein Tailwind, keine Abhängigkeit. Die Flächenleiter steht oben; dazu kamen:
 Der Vorher/Nachher-Vergleich mit allen Messwerten liegt in
 [`docs/v8-vergleich/`](v8-vergleich/README.md).
 
+### v1.3.0: HeroUI-Optik
+
+Mit v1.3.0 ist Clockwork ein **HeroUI-Theme mit Signal-Orange als Primary**:
+Die Werte stammen aus `@heroui/styles@3.2.4` — dem CSS, das
+[heroui.com](https://heroui.com) selbst ausliefert —, nachgebaut in
+handgeschriebenem Vanilla-CSS. Kein React, kein Tailwind, keine Abhängigkeit;
+die vollständige Referenzlage steht in
+[`heroui-referenz.md`](heroui-referenz.md).
+
+- **Flächen statt Kanten.** Ein Panel ist eine randlose Karte: hell Weiß auf
+  Hellgrau (`#ffffff` auf `#f5f5f5`), dunkel `#18181b` auf Fast-Schwarz
+  (`#060607`). Hell trennt der Surface-Schatten der Referenz, dunkel allein
+  die Helligkeit — `--surface-shadow: transparent` steht dort wörtlich im
+  Paket. Damit sind Haarlinien um Panels, Lichtkanten, Fräsungen, das Gehäuse
+  aus V7 und das Korn ersatzlos entfallen.
+- **Felder sind flat:** gefüllte Fläche (`#ebebec` / `#27272a`), kein Rahmen,
+  Fokus-Ring 2 px in Signal-Orange direkt auf der Feldkante (Tasten tragen
+  denselben Ring mit 2 px Versatz).
+- **Drei Tastenvarianten, alle gefüllt:** `primary` in Signal-Orange für die
+  eine Haupthandlung, `default` als neutrale Füllung, `flat` (halbe Füllung)
+  für „Leeren". Umriss-Tasten gibt es nicht mehr. Die Schrift auf dem
+  Primary-Knopf ist **gemessen, nicht übernommen**: Snow auf `#f05a28` sind
+  3,39:1 — Eclipse hält 5,23, und genau so löst es die Referenz bei ihrem
+  Amber (`--warning-foreground`). Der Markenwert bleibt unverfälscht auf der
+  Fläche.
+- **Chips getönt** (Soft-Muster): die Kontoparameter in der Signal-Tönung,
+  „n Konten" neutral. Der Schalter im Tresor trägt die Referenzgeometrie
+  (Bahn 40 × 20, Daumen 22 × 16) und ist eingeschaltet **orange** — in einem
+  HeroUI-Theme ist der Accent die Farbe jedes Ein-Zustands.
+- **Höhen touch-first wie die Referenz:** Tasten und Felder 40 px, ab 768 px
+  36; die Haupthandlung 44/40; das Auswahlfeld fest 36; die Aufklapper 44;
+  Chips 24. Radien: Karten und Popover 24, Listenzeilen und Chips 16, Felder
+  12, Kleinteile 8.
+- **Inter als Oberflächenschrift** (lokal gebündelt, +122 kB im
+  Single-File-Build — die Zahl steht oben bei den Bundle-Größen). Chivo Mono
+  bleibt für die Codes.
+- **Die Gravur ist entfallen.** Beschriftung folgt der Referenz-Hierarchie:
+  Labels 14 px im Gewicht 500, Beschreibungen 12 px auf der leisen Stufe —
+  keine gesperrten Versalien mehr, und mit ihnen starb ein Sonderfall für
+  Schriften ohne Versalien.
+- **Was blieb:** das Zifferblatt samt Proportionen (die Marke), Chivo Mono,
+  die Abstands-Token aus V8, die Federkurve — sie ist wörtlich
+  `--ease-out-fluid` der Referenz —, alle Sicherheitszusagen und die Regel,
+  dass jede Behauptung gemessen wird. Der Code als größtes Element der Karte
+  stand im Probelauf gegen einen InputOTP-Zellenstil zur Wahl; die große
+  Mono-Zahl hat gewonnen, denn Clockwork ZEIGT Codes.
+
 ### Markensystem
 
 Alle drei Zeichen aus `branding/` sind im Einsatz — sie teilen dieselbe
@@ -876,14 +932,17 @@ trägt der Markenwert selbst und beide Token sind identisch.
 Genau zwei Familien, beide **lokal im Repository** unter `src/assets/fonts/`
 (SIL Open Font License, Lizenztexte liegen daneben):
 
-- **Instrument Sans** für die Oberfläche — neutrale Grotesk, technisch, ohne
-  Manierismen. Bewusst nicht Inter oder Space Grotesk: Das sind die Schriften,
-  zu denen generisches Interface-Design greift.
+- **Inter** für die Oberfläche — seit v1.3.0, und zwar mit Ansage: Es ist die
+  Hausschrift der HeroUI-Referenz, und ein HeroUI-Theme in einer anderen
+  Grotesk wäre eine halbe Übernahme. Bis v1.2.0 stand hier Instrument Sans,
+  gewählt, WEIL es nicht Inter war; diese Begründung ist mit der
+  Referenz-Entscheidung bewusst gefallen.
 - **Chivo Mono** für die Codes — geometrische Mono mit gleichmäßigen,
-  geschlossenen Ziffern.
+  geschlossenen Ziffern. Sie bleibt: Ein Code wird abgetippt und braucht
+  dicktengleiche Ziffern, und daran ändert keine Optik etwas.
 
 Kein Google-Fonts-Link, kein CDN: Ein Font-Download wäre eine Netzwerkanfrage.
-Beide sind Variable Fonts im Latin-Subset (30 kB und 26 kB) und werden im
+Beide sind Variable Fonts im Latin-Subset (48 kB und 26 kB) und werden im
 Single-File-Build als `data:`-URI eingebettet.
 
 `font-display: swap` statt `block` — `block` verschweigt den Text bis zu drei

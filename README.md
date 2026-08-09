@@ -179,9 +179,9 @@ $env:CLOCKWORK_LANGS = 'de,en,fr'; npm run build  # PowerShell
 
 | Build                  | `dist/clockwork.html` | gzip   |
 | ---------------------- | --------------------- | ------ |
-| default (37 languages) | 659 kB                | 234 kB |
-| `de,en,fr`             | 352 kB                | 156 kB |
-| `en` only              | 335 kB                | 151 kB |
+| default (37 languages) | 781 kB                | 325 kB |
+| `de,en,fr`             | 474 kB                | 248 kB |
+| `en` only              | 457 kB                | 243 kB |
 
 Sizes are decimal kB (1000 bytes). `scripts/check-bundle.mjs` prints both that
 and KiB, because mixing the two silently is a mistake this project has already
@@ -227,7 +227,7 @@ npm run shots       # Playwright walk-through + screenshots (needs a server on :
 | Target                | What it is                                                      |
 | --------------------- | --------------------------------------------------------------- |
 | `dist/`               | Installable PWA: manifest, service worker, icons, works offline |
-| `dist/clockwork.html` | One file, everything inline — including the fonts. ~659 kB      |
+| `dist/clockwork.html` | One file, everything inline — including the fonts. ~781 kB      |
 
 Hosting is a plain static deploy; `vercel.json` carries the security headers,
 and a test keeps them in step with the policy the build embeds.
@@ -247,8 +247,8 @@ public issue.
 
 [MIT](LICENSE) © 2026 Kevin.
 
-The fonts under `src/assets/fonts/` are Instrument Sans and Chivo Mono, both
-under the SIL Open Font License; their licence texts sit next to them.
+The fonts under `src/assets/fonts/` are Inter and Chivo Mono, both under the
+SIL Open Font License; their licence texts sit next to them.
 
 ---
 

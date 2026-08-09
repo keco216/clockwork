@@ -106,53 +106,50 @@ one of them will be turned down even if the code is good.
 
 ## Design system
 
-The guiding idea is a **precision instrument** in the spirit of Dieter Rams,
-softened since v5 by Apple's sense of material. The one rule that decided every
-detail: **what you touch is soft, what you read is sharp.**
+Since v1.3.0 Clockwork is a **HeroUI theme with signal orange as the primary
+colour** — the values of [heroui.com](https://heroui.com) (`@heroui/styles`),
+rebuilt in hand-written vanilla CSS. No React, no Tailwind, no dependency; the
+extracted reference values live in `docs/heroui-referenz.md`.
 
 - **Every value comes from `src/styles/tokens.css`.** No component ever sets its
-  own colour, size, radius, shadow or easing.
-- **The palette is binding:** ink `#171614`, paper `#F5F3EF`, night `#131210`,
-  signal `#F05A28`. Paper and night sit on the panels — they are the _housing_.
-  `--ground` underneath them is a derived tone, the desk the device rests on.
-- **Two signal tokens:** `--signal` (brand value, for marks and areas, 3:1 is
-  enough) and `--signal-text` (deeper, 4.6:1, for small text on paper).
-- **Exactly one accent**, only for states that mean something: the last five
-  seconds, a confirmed copy, an open vault, the scanner frame. Never decoration.
-- **Two typefaces**, local under `src/assets/fonts/`: Instrument Sans for the
-  interface, Chivo Mono for the codes. No Google Fonts link.
+  own colour, size, radius, shadow or easing. `scripts/check-tokens.mjs`
+  enforces it.
+- **Surfaces are borderless.** A panel is a white card on light grey
+  (`#ffffff` on `#f5f5f5`), in dark mode `#18181b` on near-black (`#060607`).
+  Light mode separates with the reference's surface shadow, dark mode with
+  lightness alone — the reference ships `--surface-shadow: transparent` there
+  on purpose. Visible borders around panels and fields do not exist.
+- **Fields are flat:** a filled area (`--surface-fill`, `#ebebec` / `#27272a`),
+  no border, and a 2 px focus ring in signal orange sitting directly on the
+  field edge (buttons get the same ring with a 2 px offset).
+- **One accent, now the primary:** `#F05A28` fills the one primary action per
+  panel, the focus ring, the tinted chips and the switch's on-state. The text
+  on it is measured, not assumed: snow on signal is 3.39:1, so primary buttons
+  carry near-black text (5.23:1) — the same pattern HeroUI uses for its amber
+  warning colour. `--signal-text` (`#a8360c` / `#f4825c`) covers small text
+  and fine marks like the dial hand.
+- **Three button variants, all filled:** `primary` (signal), `default`
+  (neutral fill) and `flat` (half fill, for "Clear"). Outline buttons are gone.
+- **Heights follow the reference, touch-first:** buttons and fields are 40 px,
+  36 px from 768 px up; the large primary 44/40; the select fixed 36; the two
+  disclosures 44; chips 24.
+- **Radii:** cards and popovers 24 px, list rows and chips 16 px, fields
+  12 px, small parts 8 px, buttons are pills.
+- **Two typefaces**, local under `src/assets/fonts/`: Inter for the interface
+  (the reference's house face), Chivo Mono for the codes — a code gets typed
+  into other people's login fields and needs tabular digits. No Google Fonts
+  link.
 - **No donut ring.** The countdown is a radial 30-mark scale with a rotating
-  hand — the same geometry as the brand emblem.
-- **Three radii and no more:** `--radius-panel` (18 px) for housing groups,
-  `--radius-field` (12 px) for inputs, `--radius-inset` (8 px) for small parts,
-  plus `--radius-key` for the pill every button is.
-- **Five surface rungs, each with a job:** workbench → housing → recessed →
-  panel → touched. Until v1.2.0 there were three, and one token stood for both
-  "recessed" and "touched" — that is, for opposites. In dark mode the ladder
-  climbs _upward_: night is the housing and the panels rise above it, because
-  night on the panels leaves at most 1.122:1 of room underneath.
-- **Two elevation levels and no more:** level 1 is a housing group on the
-  ground, level 2 is the sticky masthead above everything. Every raised surface
-  also carries a hairline — a shadow alone does not survive a high-contrast
-  setting or a printout.
-- **A height ladder for controls:** 32 px for the select, 40 px
-  (`--control-h`) for fields and buttons, 44 px for the two disclosures
-  (`--touch-min`), 48 px for a panel's one primary action, 24 px for chips.
-- **Accounts are still not cards.** The _group_ is rounded and raised; the
-  channel strips inside it stay strips, separated by hairlines that start
-  behind the dial. Turning each account into its own card would undo the whole
-  idea.
-- **`backdrop-filter` does not appear at all.** Up to v1.1.0 it sat on the
-  sticky masthead. It is gone: a cover plate you can see through is not one,
-  and an opaque masthead has a contrast you can actually compute, because it no
-  longer depends on whatever happens to scroll underneath it.
-- **Grain only on the workbench**, outside the device. On a surface you read
-  from, grain is not material — it is unrest.
-- **No gradients, no glow.** Soft diffusion yes, glowing no. There is no shadow
-  in the signal colour.
+  hand — the same geometry as the brand emblem. The dial did not change in the
+  restyle.
+- **Accounts are still not cards.** The codes panel is ONE card; the channel
+  strips inside it stay strips, separated by solid hairline seams. Turning
+  each account into its own card would undo the whole idea.
 - **Springs for the surface, linear for the instrument.** UI motion uses
-  `--ease-spring` at 150–350 ms. The countdown hand keeps computing linearly
-  from the clock: a spring curve on a time display is a lie about time.
+  `--ease-spring` — which is literally the reference's `--ease-out-fluid`,
+  `cubic-bezier(0.32, 0.72, 0, 1)`. The countdown hand keeps computing
+  linearly from the clock: a spring curve on a time display is a lie about
+  time.
 
 ### Measure it, do not eyeball it
 
@@ -165,8 +162,8 @@ node scripts/check-tokens.mjs      # no component sets its own values
 ```
 
 `check-contrast.mjs` reads the pixels the browser actually painted — including
-opacity and half-covering hairlines — rather than computing from tokens, because
-overlapping surfaces only exist once something is drawn. It measures **92 pairs**
+opacity and colour-mix tints — rather than computing from tokens, because
+overlapping surfaces only exist once something is drawn. It measures **88 pairs**
 across both colour schemes, including the full matrix of every text step on
 every surface of the ladder. Run it after any change to colours or opacity. It
 needs a server on port 5180.
