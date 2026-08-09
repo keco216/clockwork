@@ -29,8 +29,18 @@ const FORBIDDEN = ['fetch(', 'XMLHttpRequest', 'WebSocket', 'sendBeacon', 'Event
  */
 const MARKERS = { de: 'Tresor', en: 'Vault', fr: 'Coffre', ja: '金庫', ru: 'Сейф', nl: 'Kluis' };
 
-/** Obergrenze fuer einen Teil-Bau, in KiB. Der volle Bau wiegt rund 643 KiB. */
-const SUBSET_LIMIT_KIB = 400;
+/** Obergrenze fuer einen Teil-Bau, in KiB. Der volle Bau wiegt rund 763 KiB.
+ *
+ * Bis V8 stand hier 400. V9 hat Inter gebuendelt (+122 KiB als data-URI,
+ * siehe fonts.css), und ein de,en-Bau wiegt seither 454 KiB — die Schwelle
+ * traegt die Schrift mit und liegt weiter gut 250 KiB unter dem vollen Bau.
+ * Ihre Aufgabe ist unveraendert: einen Teil-Bau zu fangen, aus dem die
+ * abgewaehlten Kataloge NICHT verschwunden sind. Dieselbe Anpassung mit
+ * derselben Begruendung steht in locale-subset.test.ts — beide Schwellen
+ * gehoeren zusammen nachgezogen, und genau das ist beim ersten V9-Anlauf
+ * schiefgegangen: Die Test-Schwelle war angepasst, diese hier nicht, und
+ * die CI hat es gefunden. */
+const SUBSET_LIMIT_KIB = 500;
 
 const problems = [];
 
