@@ -192,9 +192,8 @@ kbd {
   padding: var(--sp-2) var(--sp-3);
   background: var(--surface-inverted);
   color: var(--ink-on-inverted);
-  font-size: var(--t-micro);
-  letter-spacing: var(--track-caps);
-  text-transform: var(--case-caps);
+  font-size: var(--t-small);
+  font-weight: 500;
   text-decoration: none;
   border-radius: var(--radius-key);
   transition: inset-block-start var(--dur-calm) var(--ease-spring);
@@ -204,72 +203,51 @@ kbd {
   inset-block-start: var(--sp-4);
 }
 
-/* Gravur-Beschriftung: kleine gesperrte Versalien, wie auf ein Gehäuse
-   siebgedruckt. Das ist die einzige Textauszeichnung, die die App kennt.
+/* ── Die Textauszeichnung ist seit V9 die der Referenz ─────────────────────
+   Die Gravur (11-px-Versalien, 0,14 em gesperrt) ist ersatzlos entfallen —
+   HeroUI beschriftet in normaler Schreibung, und die Hierarchie entsteht aus
+   genau zwei Stufen:
 
-   Zwei Einträge sind mit V8 herausgefallen, und beide aus einem Grund, den man
-   nachmessen konnte:
+     Label         14 px, Gewicht 500, --ink     benennt ein Bedienfeld
+     Beschreibung  12 px, Gewicht 400, --ink-3   erklärt oder ergänzt es
 
-   `.strip__spec` ist ein Chip geworden. Ein Chip steht in jeder Zeile und trägt
-   drei Angaben; Versalsatz und Sperrung haben ihn auf 212 px getrieben und dem
-   Kontonamen in einer 458 px breiten Karte 0 px übrig gelassen. Die Begründung
-   steht ausführlich bei `.chip`.
-
-   `.gauge__nextLabel` gab es nicht mehr — die Klasse heißt seit dem Umbau der
-   Karte `.strip__metaLabel`, und dieser Eintrag zeigte ins Leere. Genau die
-   Sorte Regel, die niemandem auffällt: Sie tut nichts und schadet nichts, bis
-   jemand sie für einen Beweis nimmt, dass ein Bauteil ausgezeichnet ist. */
+   Damit stirbt auch der Sonderfall für Schriften ohne Versalien in
+   scripts.css: Was es nicht gibt, muss man nicht abschalten. */
 .zone__label,
-.slot__legend,
+.slot__legend {
+  font-size: var(--t-small);
+  font-weight: 500;
+}
+
 .strip__metaLabel,
 .colophon__specs,
 .masthead__spec,
 .masthead__state,
-.colophon__langLabel,
-.key {
+.colophon__langLabel {
   font-size: var(--t-micro);
-  font-weight: 500;
-  letter-spacing: var(--track-caps);
-  text-transform: var(--case-caps);
 }
 
 /* =============================================================================
    Gehäuse
    ========================================================================== */
 
-/* Das Gerät.
+/* Die Hülle der Anwendung.
    `viewport-fit=cover` lässt die Seite unter Notch und Home-Indicator laufen.
-   Ohne diese Zuschläge stünde die Gravur am iPhone teils unter der Kerbe.
 
-   Bis V6 war „Gehäuse" eine Redensart: Es gab Panels auf einem Untergrund, aber
-   kein Gerät. Auf 2560 px stand deshalb eine 1216 px breite Spalte mitten im
-   Nichts, und niemand konnte sagen, wo die App aufhört.
-
-   Seit V7 ist das Gehäuse eine Fläche mit allem, was eine Fläche vom Grund
-   trennt: eigener Ton, Haarlinie, Lichtkante nach innen, weicher Schatten. Die
-   Erhebung ist dieselbe wie beim klebenden Kopf (Ebene 2) — das Gerät liegt auf
-   der Werkbank, so wie der Kopf auf dem Gerät liegt.
-
-   Unter 64 rem verschwindet es wieder (siehe ganz unten): Ein gerahmtes Gerät
-   in einem Fenster, das ohnehin nur eine Spalte trägt, ist ein Rahmen zu viel. */
+   Das GEHÄUSE aus V7 — eigener Ton, Haarlinie, Lichtkante, Schatten — ist mit
+   V9 entfallen. HeroUI kennt keinen Gerätekörper: Die Panels sind Karten und
+   liegen direkt auf dem Grund; was die Anwendung zusammenhält, ist ihre
+   gemeinsame Mittelachse und die gemeinsame Breite. `.device` bleibt als
+   LAYOUT-Hülle bestehen (Breite, Zentrierung, Sicherheitsabstände) und als
+   der Ort, an dem `data-stage` die Bühnen schaltet — es zeichnet nur nichts
+   mehr. */
 .device {
-  /* `min()` und nicht nur `max-width`: Zwischen 1024 und 1600 px ist das
-     Fenster schmaler als die Zielbreite, und ohne diese Klammer berührte das
-     Gehäuse den Fensterrand — ein Gerät, das den Rand berührt, ist keins mehr. */
   max-width: min(var(--measure), calc(100% - var(--sp-7)));
   margin-inline: auto;
   margin-block: var(--sp-6);
   padding-inline: max(var(--device-pad), env(safe-area-inset-left))
     max(var(--device-pad), env(safe-area-inset-right));
-  /* Kopf und Fuß bringen ihren eigenen Innenabstand mit: Sie sind die Deck- und
-     die Bodenplatte des Geräts, nicht Text darin. */
   padding-block: 0;
-  background: var(--case);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-panel);
-  box-shadow:
-    var(--elev-2),
-    inset 0 1px 0 var(--edge-inner);
 }
 
 /* ── Kopf ─────────────────────────────────────────────────────────────────── */
@@ -298,7 +276,11 @@ kbd {
    Der Sprunglink zielt an ihm vorbei auf die Codes-Zone; damit deren Überschrift
    danach nicht unter dem Kopf klemmt, liegt --scroll-anchor unten am :target. */
 .masthead {
-  background: var(--case);
+  /* Deckend im Seitengrund: Der Kopf ist seit V9 keine Gehäuse-Deckplatte
+     mehr, sondern eine Leiste AUF dem Grund — wie die Navbar der Referenz.
+     In Ruhe ist er vom Grund ununterscheidbar; erst wenn etwas unter ihm
+     durchfährt, bekommt er Kante und Erhebung (siehe --lifted). */
+  background: var(--ground);
   position: sticky;
   /* Nicht 0, sondern der obere Sicherheitsabstand: Als installierte App (das
      Manifest sagt `standalone`) gibt es keine Browserleiste mehr, und mit
@@ -312,37 +294,28 @@ kbd {
   grid-template-columns: auto 1fr auto;
   align-items: baseline;
   gap: var(--gap-pair) var(--gap-group);
-  /* Der Riegel ist breiter als sein Inhalt: Er muss bis an den Gehäuserand
+  /* Der Riegel ist breiter als sein Inhalt: Er muss bis an den Rand der Hülle
      reichen, sonst schiebt sich ein Kanalzug seitlich an ihm vorbei ins Bild.
-     Negative Außenabstände statt eines eigenen Elements — das Raster darüber
-     bleibt so, wie es ist.
 
      Der Betrag MUSS --device-pad sein und nicht irgendein Wert: Ist er größer
-     als der Innenabstand des Gehäuses, läuft die Seite waagerecht über. Genau
+     als der Innenabstand der Hülle, läuft die Seite waagerecht über. Genau
      das prüft scripts/shoot.mjs bei 375 px mit, wo --device-pad kleiner ist. */
   margin-inline: calc(var(--device-pad) * -1);
   padding: var(--sp-4) var(--device-pad);
-  /* Nur oben gerundet: Der Kopf ist die Deckplatte und sitzt in der Ecke des
-     Gehäuses, nicht als Kachel darin. */
-  border-radius: var(--radius-panel) var(--radius-panel) 0 0;
-  border: 1px solid transparent;
-  border-block-end-color: transparent;
-  /* Ohne Erhebung, solange nichts darunter liegt. Erst beim Scrollen wird
-     daraus eine Ebene — siehe unten. */
+  border-block-end: 1px solid transparent;
   transition:
     border-color var(--dur-calm) var(--ease-spring),
     box-shadow var(--dur-calm) var(--ease-spring);
 }
 
-/* Ab hier liegt der Kopf über etwas — und erst ab hier bekommt er eine Kante und
-   einen Schatten. Die Klasse setzt ui/masthead.ts über einen Beobachter am
+/* Ab hier liegt der Kopf über etwas — und erst ab hier bekommt er eine Kante
+   und eine Erhebung. Die Klasse setzt ui/masthead.ts über einen Beobachter am
    Seitenanfang, nicht ein Scroll-Rückruf: Ein Schatten ohne Erhebung wäre eine
    Behauptung, und eine Fläche, die IMMER schwebt, behauptet sie durchgehend.
 
-   Am Seitenanfang ist der Kopf deshalb nicht unsichtbar, sondern ununterscheidbar
-   — er trägt denselben Ton wie das Gehäuse und ist dort einfach ein Stück
-   Gehäuse. Das ist der Zustand, den er haben soll: Eine Deckplatte hebt sich vom
-   Gerät nicht ab, solange nichts unter ihr durchläuft. */
+   Die Fuge trägt in beiden Themes; die Erhebung dazu ist --elev-2 und damit
+   je Theme das Richtige von selbst — hell der Overlay-Schatten der Referenz,
+   dunkel deren 1-px-Innenlichtkante (siehe tokens.css). */
 .masthead--lifted {
   border-block-end-color: var(--rule);
   box-shadow: var(--elev-2);
@@ -365,7 +338,7 @@ kbd {
    und was hinter ihr durchlief, wechselte beim Scrollen — die leiseste
    Graustufe hatte dort keine Reserve.
 
-   Mit dem opaken Kopf ist der Grund bekannt und fest (--case), und alle drei
+   Mit dem opaken Kopf ist der Grund bekannt und fest (--ground), und alle drei
    Textstufen halten darauf AA. Die Ausnahme entfällt, wie die bei .zone__label. */
 .masthead__spec {
   color: var(--ink-3);
@@ -460,14 +433,16 @@ kbd {
   color: var(--ink-3);
 }
 
-/* ── Die Gehäusegruppe ─────────────────────────────────────────────────────
-   Eine Fläche je Zone, gerundet, mit Haarlinie und genau einer Erhebung.
+/* ── Das Panel ist eine Karte ──────────────────────────────────────────────
+   Eine Fläche je Zone, borderless, wie die Card der Referenz: Fläche auf dem
+   Grund, hell durch den Surface-Schatten getrennt, dunkel allein durch die
+   Helligkeit. Keine Haarlinie, keine Lichtkante — der Flächenkontrast IST die
+   Kante.
 
-   Was hier ausdrücklich NICHT passiert: aus jedem Konto eine eigene Karte
-   machen. Die Konten bleiben Kanalzüge in EINEM Gehäuse, getrennt durch
-   Haarlinien — das ist die Identität dieser App, und drei Dutzend schwebende
-   Kärtchen wären das genaue Gegenteil davon. Gerundet und erhoben ist die
-   Gruppe, nicht ihr Inhalt. */
+   Was hier ausdrücklich NICHT passiert, auch in V9 nicht: aus jedem Konto
+   eine eigene Karte machen. Die Konten bleiben Kanalzüge in EINER Karte,
+   getrennt durch Fugen — drei Dutzend schwebende Kärtchen wären das genaue
+   Gegenteil dieser App. */
 .zone__body {
   position: relative;
   display: flex;
@@ -476,49 +451,17 @@ kbd {
   min-width: 0;
   padding: var(--panel-pad);
   background: var(--surface);
-  border: 1px solid var(--rule);
-  /* Die Lichtkante. Im hellen Modus derselbe Wert wie ringsum, im dunklen
-     heller — siehe --edge-lit in styles/tokens.css. */
-  border-top-color: var(--edge-lit);
   border-radius: var(--radius-panel);
-  /* Erhebung nach außen UND Lichtkante nach innen, in einer Eigenschaft.
-     Der Innenschatten folgt dem Radius, ein Rahmen täte das nicht — siehe
-     --edge-inner in styles/tokens.css. */
-  box-shadow:
-    var(--elev-1),
-    inset 0 1px 0 var(--edge-inner);
+  box-shadow: var(--elev-1);
 }
 
 .device {
   position: relative;
 }
 
-/* ── Korn: nur noch auf der Werkbank ───────────────────────────────────────
-   V6 legte es auf drei Flächen — Panels, Gehäuse und Werkbank. Seit V8 liegt es
-   auf einer, und zwar auf der einzigen, von der man nichts abliest.
-
-   Der Grund ist die Arbeitsteilung, die dieses Projekt seit V5 trägt: Was man
-   anfasst, wird weich; was man abliest, bleibt scharf. Ein Panel liest man. Korn
-   darauf ist kein Material, sondern eine feine Unruhe hinter jeder Ziffer — und
-   zusammen mit der halbdurchsichtigen Kopffläche war es der Stapel, den die
-   V8-Diagnose „Matsch" nennt. Die Werkbank liest niemand; dort macht dieselbe
-   Textur aus einer leeren Fläche einen Tisch.
-
-   `fixed` und nicht `absolute`: Eine Tischplatte scrollt nicht mit. `z-index:
-   -1` legt sie hinter den Inhalt, aber vor den Seitengrund — `body` hat keinen
-   eigenen Stapelzusammenhang, deshalb genügt das.
-
-   `pointer-events: none` ist Pflicht, nicht Vorsicht: Ohne das läge eine
-   unsichtbare Fläche über der ganzen Seite und schluckte jeden Klick. */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-image: var(--grain);
-  opacity: var(--grain-opacity);
-  pointer-events: none;
-}
+/* Das Korn ist mit V9 ersatzlos entfallen — HeroUI-Flächen sind glatt, und
+   auch die Werkbank ist jetzt eine davon. Damit ist die letzte Textur des
+   Geräts weg; was Flächen trennt, steht in tokens.css bei der Leiter. */
 
 /* =============================================================================
    Zwei Zustände, zwei Bühnen
@@ -597,15 +540,14 @@ body::before {
 
 /* ── Fuß: Seriennummern-Gravur ────────────────────────────────────────────── */
 
-/* Der Fuß ist seit V7 die Bodenplatte des Geräts: volle Gehäusebreite, eigene
-   Kante nach oben, unten mitgerundet. Bis V6 war er ein freischwebender
-   Textblock unter der letzten Gruppe — auf 2560 px sah das aus, als hätte
-   jemand vergessen, ihn anzuschließen.
+/* Der Fuß: seit V9 die schlichte Fußzeile der Referenz — Beschreibungstext
+   auf dem Grund, vom Inhalt durch eine Fuge getrennt. Die Bodenplatten-Rolle
+   aus V7 ist mit dem Gehäuse entfallen, die Tick-Teilung (die Gravur am
+   Gehäuse) mit ihm: Eine Gravur braucht ein Gehäuse, auf dem sie stehen kann.
 
-   Deshalb zieht er sich, genau wie der Kopf, um den Innenabstand des Gehäuses
-   wieder heraus. Der Betrag MUSS --device-pad sein: Ist er größer, läuft die
-   Seite waagerecht über — dieselbe Falle wie beim Kopf, und scripts/shoot.mjs
-   prüft sie bei 375 px mit. */
+   Er zieht sich, genau wie der Kopf, um den Innenabstand der Hülle heraus.
+   Der Betrag MUSS --device-pad sein: Ist er größer, läuft die Seite waagerecht
+   über — scripts/shoot.mjs prüft das bei 375 px mit. */
 .colophon {
   display: flex;
   flex-wrap: wrap;
@@ -614,51 +556,12 @@ body::before {
   gap: var(--gap-pair) var(--gap-group);
   margin-inline: calc(var(--device-pad) * -1);
   /* Der Abstand zum letzten Panel darüber — dieselbe Fuge wie zwischen zwei
-     Panels, denn hier stößt genau das aufeinander.
-
-     Bis zum Schlusspass stand er NUR in der Mobil-Abfrage (dort als --sp-5,
-     derselbe Wert). Auf dem Schreibtisch waren es 0: Die Unterkante des
-     letzten Panels lag direkt auf der Oberkante der Bodenplatte, also zwei
-     sichtbare Linien ohne Luft dazwischen. Oben fällt dasselbe Maß nicht auf,
-     weil die Kopfkante in Ruhe durchsichtig ist und der Inhalt dort mit einer
-     Gravurzeile beginnt und nicht mit einem gerahmten Kasten. */
+     Panels. Er steht HIER und nicht nur in einer Media Query: Ein Abstand,
+     der nur in einer Abfrage steht, fehlt in der anderen (die Falle aus dem
+     V8-Schlusspass). */
   margin-block-start: var(--gap-group);
   padding: var(--sp-4) var(--device-pad);
   border-block-start: 1px solid var(--rule);
-  border-radius: 0 0 var(--radius-panel) var(--radius-panel);
-}
-
-/* ── Die Tick-Teilung im Fuß ───────────────────────────────────────────────
-   V4 hatte über dem Fuß eine Haarlinie, V5 hat sie entfernt, V6 hat dort eine
-   Teilung hingesetzt: dieselben Marken wie auf dem Zifferblatt, nur abgewickelt.
-   Das Zeichen der Marke in seiner dritten Rolle — Emblem, Countdown, und hier
-   Gravur am Gehäuse.
-
-   Seit V7 trennt die Bodenplatte eine echte Kante, und zwei Trenner übereinander
-   wären einer zu viel. Die Teilung rückt deshalb ans ENDE des Fußes: Sie steht
-   jetzt an der Unterkante des Geräts, wo an einem Gehäuse die Typenschild-Gravur
-   sitzt, und trennt nichts mehr — sie beschriftet.
-
-   Das ist ein `repeating-linear-gradient` mit HARTEN Stops und damit ein
-   Strichraster, kein Verlauf: Es gibt keinen Farbübergang, nur an und aus. Der
-   Bann gegen Deko-Gradients bleibt unberührt.
-
-   Die Maße stammen aus dem Emblem: Strich 1 px auf 8 px Teilung, also
-   dieselbe Dichte, die 30 Marken auf dem Zifferblatt haben.
-
-   `to right` und nicht `to inline-end`: Ein Strichraster hat keine
-   Leserichtung. Dieselbe Trennung wie beim Zifferblatt — Position logisch,
-   Geometrie physisch. */
-.colophon::after {
-  content: '';
-  position: absolute;
-  inset-block-end: 0;
-  inset-inline: var(--device-pad);
-  block-size: 4px;
-  background-image: repeating-linear-gradient(to right, var(--ink-3) 0 1px, transparent 1px 8px);
-  /* Die Teilung ist eine Gravur, kein Bauteil: sehr leise, sonst konkurriert
-     sie mit den Angaben darüber. */
-  opacity: 0.35;
 }
 
 .colophon__specs {
@@ -714,22 +617,29 @@ body::before {
    Bedienelemente
    ========================================================================== */
 
-/* Eingabeschlitz: versenkt, mit einer dunkleren Oberkante — so sieht eine
-   Fräsung aus. Kein Schatten, kein Verlauf, nur zwei Linien. */
 .slot {
   display: flex;
   flex-direction: column;
   gap: var(--gap-pair);
 }
 
+/* Beschriftungen tragen seit V9 die Label-Stufe der Referenz: --ink, nicht
+   mehr die leiseste Graustufe — ein Label benennt, es flüstert nicht. */
 .slot__legend {
-  color: var(--ink-3);
+  color: var(--ink);
 }
 
-/* Gemeinsame Basis für alle Eingabefelder. Die Höhe steht bewusst NICHT hier:
-   Sonst müsste jedes abweichende Feld sie überschreiben — und zwei Klassen
-   gleicher Spezifität in verschiedenen Dateien entscheiden sich am Ende über
-   die Reihenfolge der @import-Zeilen. Das ist keine Gestaltung, das ist Zufall. */
+/* Gemeinsame Basis für alle Eingabefelder — seit V9 im Flat-Stil der
+   Referenz: eine GEFÜLLTE Fläche, kein Rahmen. Das ist wörtlich HeroUIs
+   Feldvariante `secondary` („without shadow, suitable for use in Surface
+   components"): Alle Felder dieser App liegen in Panels, also gilt überall
+   die Panel-Fassung — Fläche `--surface-fill`, Hover eine Nuance zur
+   Textfarbe hin, und der Fokus-Ring sitzt DIREKT auf der Feldkante
+   (Versatz 0, siehe unten). Fräsung und Rahmen sind ersatzlos entfallen.
+
+   Die Höhe steht bewusst NICHT hier: Sonst müsste jedes abweichende Feld sie
+   überschreiben — und zwei Klassen gleicher Spezifität in verschiedenen
+   Dateien entscheiden sich über die Reihenfolge der @import-Zeilen. */
 .field {
   width: 100%;
   padding: var(--sp-3);
@@ -737,19 +647,10 @@ body::before {
   font-size: var(--t-body);
   line-height: 1.7;
   color: var(--ink);
-  background: var(--surface-recessed);
-  /* Seit V8 die kräftigere Haarlinie, und rundum dieselbe. Das Feld ist ein
-     Bedienelement und keine Fuge — 18 % genügen für eine Trennlinie zwischen
-     zwei Flächen, nicht für die Kante eines Schlitzes, in den man etwas
-     hineinschreibt. */
-  border: 1px solid var(--rule-strong);
+  background: var(--surface-fill);
+  border: 0;
   border-radius: var(--radius-field);
-  /* Die Fräsung: eine dunklere Oberkante INNEN. Sie ist der ganze Unterschied
-     zwischen „versenkt" und „aufgeklebt" und die genaue Umkehrung der
-     Lichtkante an erhobenen Flächen. Bis V7 stand sie als `border-top-color`
-     und hellte im dunklen Modus auf — siehe --edge-sunk in styles/tokens.css. */
-  box-shadow: inset 0 1px 0 var(--edge-sunk);
-  transition: border-color var(--dur-calm) var(--ease-spring);
+  transition: background-color var(--dur-quick) var(--ease-snap);
 }
 
 .field::placeholder {
@@ -757,14 +658,24 @@ body::before {
 }
 
 .field:hover {
-  border-color: var(--ink-3);
+  background: var(--fill-active);
 }
 
-/* Der Fokus-Ring ist derselbe wie überall: 2 px in Signalfarbe, 2 px Abstand.
-   Bis V7 zog `outline-offset: -1px` ihn beim Feld nach innen, als einziges
-   Bauteil der App. Es gab keinen Grund dafür außer Vorsicht — und ein Ring, der
-   an einer Stelle anders sitzt, ist einer, den man an dieser Stelle nicht
-   wiedererkennt. */
+/* Der Fokus hält die Ruhefläche: Die Referenz setzt `--field-focus` auf die
+   Grundfläche zurück — ein fokussiertes Feld ist ausgewählt, nicht überfahren. */
+.field:focus-visible {
+  background: var(--surface-fill);
+}
+
+/* ── Der Fokus-Ring an Feldern sitzt OHNE Versatz ──────────────────────────
+   Die Referenz führt zwei Ringlagen: 2 px MIT 2 px Versatz für Tasten und
+   Schalter, 2 px OHNE Versatz für Felder („no separation — ring sits directly
+   against the element"). Ein Feld ist eine Fläche, in der man schon steht;
+   ein Ring mit Luft darum würde behaupten, man stünde noch davor. */
+.field:focus-visible,
+.pick:focus-visible {
+  outline-offset: 0;
+}
 
 /* Nur das mehrzeilige Feld ist hoch und in der Höhe verstellbar.
 
@@ -785,35 +696,30 @@ body::before {
   min-height: var(--chip-h);
 }
 
-/* ── Tasten: drei Varianten auf einer Höhenleiter ──────────────────────────
-   Bis V7 gab es EINE Taste. Rangordnung drückte sie über die Kante aus, und für
-   die leiseste Stufe blieb nur „keine Kante" — also nackter Text. Genau das
-   nennt die V8-Diagnose: „‚Leeren' als nackter Text, blasse Outline-Pillen".
+/* ── Tasten: die Knopfleiste der Referenz ──────────────────────────────────
+   Drei Varianten, und jede ist eine FLÄCHE — Umriss-Knöpfe gibt es seit V9
+   nicht mehr (HeroUIs `outline` kommt in dieser App nicht vor):
 
-   HeroUI führt zwei UNABHÄNGIGE Achsen (`button.variant` und `button.size`), und
-   das ist der eigentliche Griff: Wie laut ein Knopf ist, und wie schwer er ist,
-   sind zwei Fragen.
+     --primary   Signal-Orange              die eine Haupthandlung eines Panels
+     --default   neutrale Füllung           gleichrangige Angebote
+                 (HeroUIs `tertiary`)       (QR aus Bild, Kamera, Kopieren)
+     --flat      halbe Füllung              „Leeren" — leise, aber sichtbar
+                 (HeroUIs Soft-Tönung)      eine Taste, kein nackter Text
 
-     Rang (Fell)          --solid     die eine Haupthandlung eines Panels
-                          --bordered  gleichrangige Angebote
-                          --quiet     leise, aber immer noch ein Knopf
+   Jede Variante setzt nur ihre drei Flächen-Token (Ruhe, Hover, Schrift) —
+   Geometrie und Druckpunkt trägt die Basis, exakt wie im Referenz-CSS
+   (`--button-bg`, `--button-bg-hover`, `--button-fg`).
 
-     Gewicht (Höhe)       Vorgabe     --control-h     40 px
-                          --lg        --control-h-lg  48 px
-
-   Der Druckpunkt bleibt, was er seit V2 ist: Die Taste KEHRT SICH UM und GIBT
-   um 3 % NACH. Das eine ist die Marke, das andere die Physik. Eine solide Taste
-   kann sich nicht umkehren — sie ist schon umgekehrt —, deshalb bleibt ihr das
-   Nachgeben allein. */
+   Der Druckpunkt ist der der Referenz: `scale(0.97)` auf 250 ms, die Fläche
+   wechselt in 100. Die V2-Umkehrung (Taste wird beim Druck invers) ist mit
+   den Umrissen gegangen — eine gefüllte Taste zeigt „gedrückt" über Weg und
+   Hover-Fläche, wie jede HeroUI-Taste. */
 .keys {
   display: flex;
   flex-wrap: wrap;
   gap: var(--gap-pair);
 }
 
-/* Die Basis trägt nur Geometrie und Druckpunkt, kein Fell. Sonst muss jede
-   Variante erst zurücknehmen, was die Basis behauptet — und dann entscheidet
-   die Reihenfolge der Regeln, wer gewinnt. */
 .key {
   display: inline-flex;
   align-items: center;
@@ -823,21 +729,32 @@ body::before {
   /* Eine Pille braucht mehr Luft an den Seiten als ein Rechteck: Die Rundung
      frisst an den Enden Fläche, die dem Text sonst fehlt. */
   padding: 0 var(--sp-4);
-  color: var(--ink-2);
-  background: transparent;
-  /* Die Stärke steht IMMER, auch bei durchsichtiger Kante: Sonst springt die
-     Taste beim Wechsel der Variante oder beim Überfahren um zwei Pixel. */
-  border: var(--border-2) solid transparent;
+  font-size: var(--t-small);
+  font-weight: 500;
+  border: 0;
   border-radius: var(--radius-key);
   cursor: pointer;
+
+  --key-bg: transparent;
+  --key-bg-hover: var(--key-bg);
+  --key-ink: var(--ink);
+
+  background: var(--key-bg);
+  color: var(--key-ink);
   transition:
-    color var(--dur-quick) var(--ease-snap),
-    border-color var(--dur-quick) var(--ease-snap),
-    background-color var(--dur-quick) var(--ease-snap),
-    transform var(--dur-quick) var(--ease-snap);
+    background-color var(--dur-flash) var(--ease-snap),
+    color var(--dur-flash) var(--ease-snap),
+    transform var(--dur-calm) var(--ease-spring);
+}
+
+@media (hover: hover) {
+  .key:hover {
+    background: var(--key-bg-hover);
+  }
 }
 
 .key:active {
+  background: var(--key-bg-hover);
   transform: scale(0.97);
 }
 
@@ -851,14 +768,14 @@ body::before {
 
 .key:disabled:active {
   transform: none;
+  background: var(--key-bg);
 }
 
-/* Die Mindestbreite kommt aus HeroUI (`md: min-w-20`, also 80 px) und hat einen
-   Zweck: Zwei Knöpfe nebeneinander mit „OK" und „Abbrechen" sollen nicht
-   verschieden breit sein, nur weil ein Wort kürzer ist. Die leise Taste bekommt
-   sie NICHT — sie ist ein Textknopf und darf so breit sein wie ihr Wort. */
-.key--solid,
-.key--bordered {
+/* Die Mindestbreite (HeroUI `min-w-20`): Zwei Knöpfe nebeneinander sollen
+   nicht verschieden breit sein, nur weil ein Wort kürzer ist. Die flache
+   Taste bekommt sie NICHT — sie darf so breit sein wie ihr Wort. */
+.key--primary,
+.key--default {
   min-width: 5rem;
 }
 
@@ -868,79 +785,44 @@ body::before {
   padding-inline: var(--sp-5);
 }
 
-/* ── solid ────────────────────────────────────────────────────────────────
-   Die eine Haupthandlung. Beim Überfahren rückt sie eine INK-Stufe vor, so wie
-   eine Fläche eine Flächenstufe vorrückt — und der Text bleibt dabei messbar
-   lesbar: --ink-on-inverted auf --ink-2 sind in beiden Themes 6,15:1.
-
-   HeroUI löst denselben Hover über `hoverOpacity` (.8 hell / .9 dunkel). Das
-   wäre hier der falsche Griff: Deckkraft nimmt auch die Schrift mit, und ein
-   Kontrast, der von einer Deckung abhängt, ist einer, den man nachmessen muss,
-   statt ihn zu kennen. */
-.key--solid {
-  background: var(--surface-inverted);
-  border-color: var(--surface-inverted);
-  color: var(--ink-on-inverted);
+.key--lg:active {
+  transform: scale(0.96);
 }
 
-.key--solid:hover {
-  background: var(--ink-2);
-  border-color: var(--ink-2);
+/* ── primary ──────────────────────────────────────────────────────────────
+   Die eine Haupthandlung, in Signal-Orange — der Markenwert unverfälscht auf
+   der Fläche. Die Schrift darauf ist GEMESSEN, nicht übernommen: Snow käme
+   auf 3,39:1, --signal-ink hält 5,23 (tokens.css). Der Hover hellt auf statt
+   abzudunkeln, aus demselben gemessenen Grund. */
+.key--primary {
+  --key-bg: var(--signal);
+  --key-bg-hover: var(--signal-hover);
+  --key-ink: var(--signal-ink);
 }
 
-/* ── bordered ─────────────────────────────────────────────────────────────
-   Zwei Pixel, nicht einer. Das ist der Wert aus HeroUI (`bordered` ist
-   `border-medium`), und er ist der Grund, warum diese Pillen vorher blass
-   wirkten: Sie trugen dieselbe Stärke und dieselbe Farbe wie eine Panelfuge —
-   ein Bedienelement, gezeichnet wie eine Trennlinie. */
-.key--bordered {
-  border-color: var(--rule-strong);
+/* ── default ──────────────────────────────────────────────────────────────
+   Die neutrale gefüllte Taste (HeroUIs `tertiary`): dieselbe Fläche wie ein
+   Feld, eine Nuance dunkler beim Überfahren. */
+.key--default {
+  --key-bg: var(--surface-fill);
+  --key-bg-hover: var(--fill-active);
 }
 
-.key--bordered:hover {
-  color: var(--ink);
-  border-color: var(--ink-3);
-}
-
-.key--bordered:active {
-  background: var(--surface-inverted);
-  border-color: var(--surface-inverted);
-  color: var(--ink-on-inverted);
-}
-
-/* ── quiet ────────────────────────────────────────────────────────────────
-   Für „Leeren". Das ist keine Kosmetik, sondern eine Rangordnung: „Leeren"
-   wirft Schlüsselmaterial weg, „QR aus Bild" und „Kamera" holen welches herein.
-   Drei gleich aussehende Pillen behaupten drei gleichwertige Angebote — und die
-   zerstörerische darf nicht die sein, die man aus Versehen zuerst trifft.
-
-   HeroUIs `light` ist im Ruhezustand vollständig durchsichtig. Hier trägt die
-   Variante trotzdem die versenkte Fläche, und zwar auf Anweisung: „leise, aber
-   als Knopf erkennbar, nicht als nackter Text". Eine Tastenkappe ohne Kante ist
-   noch eine Tastenkappe; ein Wort ohne alles ist ein Wort.
-
-   Der doppelte Klassenname aus demselben Grund wie bei `.key.key--danger` in
-   panels.css: Ein Bauteil, dessen Richtigkeit an seiner Zeilennummer hängt, ist
-   eins, das beim nächsten Verschieben kaputtgeht. */
-.key.key--quiet {
-  background: var(--surface-recessed);
+/* ── flat ─────────────────────────────────────────────────────────────────
+   Für „Leeren". Die Rangordnung bleibt die von V7: „Leeren" wirft
+   Schlüsselmaterial weg und darf nicht aussehen wie die Tasten, die welches
+   hereinholen. Die halbe Füllung (HeroUIs Soft-Ton) ist leiser als ein Feld
+   und trotzdem eine sichtbare Kappe — kein nackter Text. Der Hover rückt auf
+   die volle Füllung vor. */
+.key--flat {
+  --key-bg: var(--fill-soft);
+  --key-bg-hover: var(--surface-fill);
+  --key-ink: var(--ink-2);
   padding-inline: var(--sp-3);
 }
 
-/* Beim Überfahren bekommt sie die Kante, die sie im Ruhezustand nicht hat —
-   und nicht eine hellere Fläche. Die nächste Sprosse liegt im hellen Modus
-   NÄHER am Panel als die versenkte, ein Hover in diese Richtung würde die Taste
-   also unauffälliger machen statt deutlicher. Die Kante hat diese Schwierigkeit
-   nicht: Sie zeigt in jedem Theme in dieselbe Richtung. */
-.key.key--quiet:hover {
-  border-color: var(--rule-strong);
+.key--flat:hover {
   color: var(--ink);
-}
-
-.key.key--quiet:active {
-  background: var(--surface-inverted);
-  border-color: var(--surface-inverted);
-  color: var(--ink-on-inverted);
 }
 
 /* ── Icons ────────────────────────────────────────────────────────────────
@@ -989,25 +871,33 @@ body::before {
    Kartenkopf richtet die zwei über ihre Grundlinien aus — mit der Ersatzlinie
    blieben gemessene 4 px Abstand, obwohl das CSS sie auf eine Linie legte.
 
-   Dieselbe Falle wie bei der Wortmarke (styles/mark.css). Eine Zeilenhöhe zentriert
-   den Text genauso mittig und lässt die Grundlinie, wo sie hingehört. */
+   Seit V9 ist der Chip GETÖNT statt umrandet — HeroUIs Soft-Chip: eine
+   halbtransparente Fläche in der Farbe seiner Aussage, keine Kante, Radius
+   `rounded-2xl`. Zwei Tönungen gibt es:
+
+     .chip           neutral (halbe Füllung)   „1 Konto" — eine Bilanz
+     .chip--accent   Signal-Tönung             die Parameter eines Kontos —
+                                               eine Angabe MIT Bedeutung
+
+   Die Schrift der getönten Chips ist die Soft-Textmischung der Referenz
+   (Signalton tief genug gemischt, dass er auf der Tönung 4,5 hält —
+   nachgemessen von check-contrast.mjs). */
 .chip {
   display: inline-block;
   min-height: var(--chip-h);
   line-height: var(--chip-h);
   padding: 0 var(--sp-2);
-  background: var(--surface-recessed);
-  /* Die Kante als Innenschatten und nicht als Rahmen — dieselbe Technik wie die
-     Lichtkante an erhobenen Flächen, und hier aus demselben Grund plus einem
-     zweiten: Ein Rahmen käme zur Zeilenhöhe DAZU. Gemessen war der Chip damit
-     26 px hoch, also 2 px neben seiner Sprosse. Ein Innenschatten belegt keinen
-     Platz im Boxmodell, folgt dem Radius und sieht genauso aus. */
-  box-shadow: inset 0 0 0 1px var(--rule);
-  border-radius: var(--radius-inset);
-  color: var(--ink-3);
+  background: var(--fill-soft);
+  border-radius: var(--radius-item);
+  color: var(--ink-2);
   font-size: var(--t-micro);
   font-weight: 500;
   white-space: nowrap;
+}
+
+.chip--accent {
+  background: var(--signal-soft);
+  color: var(--signal-soft-ink);
 }
 
 /* ── Warum ein Chip KEINE Gravur ist ──────────────────────────────────────
@@ -1065,7 +955,8 @@ body::before {
   align-items: center;
   gap: var(--gap-pair);
   font-size: var(--t-small);
-  color: var(--ink-3);
+  font-weight: 500;
+  color: var(--ink-2);
   cursor: pointer;
   /* Der Systemdreieck-Marker sieht auf jeder Plattform anders aus. Ersetzt wird
      er durch denselben Winkel, den auch das Auswahlfeld trägt (panels.css). */
@@ -1076,7 +967,10 @@ body::before {
   min-height: var(--touch-min);
   margin-inline: calc(var(--sp-2) * -1);
   padding-inline: var(--sp-2);
-  border-radius: var(--radius-inset);
+  border-radius: var(--radius-item);
+  transition:
+    background-color var(--dur-flash) var(--ease-snap),
+    color var(--dur-flash) var(--ease-snap);
 }
 
 /* Safari zeigt den Marker über ein eigenes Pseudo-Element und ignoriert
@@ -1085,7 +979,12 @@ body::before {
   display: none;
 }
 
-.reveal__summary::before {
+/* Der Winkel der Referenz: Er zeigt IMMER nach unten und dreht beim Öffnen um
+   180° nach oben (`.disclosure__indicator[data-expanded]` ist `-rotate-180`).
+   „Unten" ist richtungsneutral — der RTL-Sonderfall des alten
+   Nach-vorn-Winkels ist damit ersatzlos entfallen. Der Winkel steht am ENDE
+   der Zeile, wie bei der Referenz (`ms-auto`). */
+.reveal__summary::after {
   content: '';
   width: 0.42em;
   height: 0.42em;
@@ -1093,25 +992,19 @@ body::before {
   border-right: 1.5px solid currentcolor;
   border-bottom: 1.5px solid currentcolor;
   border-bottom-right-radius: 1px;
-  /* Zeigt zu, also nach vorn; aufgeklappt nach unten. Die DREHUNG ist Geometrie
-     und steht deshalb physisch — die Richtung „nach vorn" ist eine
-     Leserichtung, und die liefert `rotate` in Verbindung mit dem
-     RTL-Sonderfall unten. */
-  transform: rotate(-45deg);
-  transition: transform var(--dur-quick) var(--ease-snap);
+  transform: translateY(-25%) rotate(45deg);
+  transition: transform var(--dur-calm) var(--ease-spring);
 }
 
-:root[dir='rtl'] .reveal__summary::before {
-  transform: rotate(135deg);
+.reveal[open] .reveal__summary::after {
+  transform: translateY(10%) rotate(225deg);
 }
 
-.reveal[open] .reveal__summary::before,
-:root[dir='rtl'] .reveal[open] .reveal__summary::before {
-  transform: rotate(45deg);
-}
-
+/* Der Hover ist eine Fläche, kein Farbwechsel allein — die Zeile ist im Sinn
+   der Referenz eine Ghost-Taste (Disclosure-Trigger). */
 .reveal__summary:hover {
-  color: var(--ink-2);
+  background: var(--fill-soft);
+  color: var(--ink);
 }
 
 .reveal__body {
@@ -1210,27 +1103,21 @@ body::before {
 
 /* ── Der Kanalzug reagiert ─────────────────────────────────────────────────
    Ein Kanalzug ist keine Karte und wird auch beim Überfahren keine: kein
-   eigener Schatten, kein Rahmen, kein Radius. Was er bekommt, ist die
-   Rückmeldung, die eine Zeile braucht, mit der man umgeht — man kopiert aus
-   ihr, man liest aus ihr ab.
-
-   Ein Pixel Hub und ein leiser Flächenton, auf der Federkurve. Mehr wäre eine
-   Behauptung, dass hier ein Objekt schwebt; weniger wäre keine Rückmeldung.
+   eigener Schatten, kein Radius als Objekt. Die Rückmeldung ist die der
+   Referenz-Listenzeile — der Flächenton `--surface-active`, sonst nichts.
+   Der 1-px-Hub aus V6 ist mit V9 entfallen: HeroUI hebt Zeilen nicht an,
+   und eine Bewegung, die die Referenz nicht kennt, wäre hier Dekoration.
 
    `:focus-within` zählt mit: Wer sich mit der Tastatur zur Kopiertaste
-   vorarbeitet, soll dieselbe Zeile hervorgehoben sehen wie jemand mit der Maus.
-   Sonst ist der Zusammenhang zwischen Taste und Code nur visuell da, nicht
-   für den, der ihn gerade braucht. */
+   vorarbeitet, soll dieselbe Zeile hervorgehoben sehen wie jemand mit der
+   Maus. */
 .strip {
-  border-radius: var(--radius-field);
-  transition:
-    transform var(--dur-calm) var(--ease-spring),
-    background-color var(--dur-calm) var(--ease-spring);
+  border-radius: var(--radius-item);
+  transition: background-color var(--dur-quick) var(--ease-snap);
 }
 
 @media (hover: hover) {
   .strip:hover {
-    transform: translateY(-1px);
     background: var(--surface-active);
   }
 }
@@ -1467,6 +1354,11 @@ body::before {
   color: var(--signal-text);
 }
 
+/* Die Code-Darstellung ist die große Mono-Zahl (V9-Probelauf, Kevin hat A
+   gegen die InputOTP-Zellen gewählt): Clockwork ZEIGT Codes, und eine Zahl,
+   die man abliest und abtippt, bleibt das größte Element ihrer Karte. Das
+   Zellen-Gerüst ist mit der Entscheidung wieder aus dem Baum. */
+
 /* ── Kopiertaste ──────────────────────────────────────────────────────────── */
 
 .key--copy {
@@ -1475,14 +1367,19 @@ body::before {
   justify-self: end;
 }
 
+/* Die Quittung wechselt die TÖNUNG, nicht nur die Schrift — eine gefüllte
+   Taste hat keine Kante mehr, die sie färben könnte. Dasselbe Soft-Muster wie
+   bei den Chips: Signal-Tönung für „kopiert", Fehler-Tönung für „fehlgeschlagen". */
 .key--copy[data-state='done'] {
-  color: var(--signal-text);
-  border-color: var(--signal);
+  --key-bg: var(--signal-soft);
+  --key-bg-hover: var(--signal-soft);
+  --key-ink: var(--signal-soft-ink);
 }
 
 .key--copy[data-state='failed'] {
-  color: var(--fault);
-  border-color: var(--fault);
+  --key-bg: var(--fault-soft);
+  --key-bg-hover: var(--fault-soft);
+  --key-ink: var(--fault-soft-ink);
 }
 
 /* ── Fehlerhafte Zeile ────────────────────────────────────────────────────── */
@@ -1722,61 +1619,28 @@ body::before {
    Umbrüche
    ========================================================================== */
 
-/* ── Unter 1024 px verschwindet das Gehäuse ────────────────────────────────
-   Ein gerahmtes Gerät in einem Fenster, das ohnehin nur eine Spalte trägt, ist
-   ein Rahmen zu viel: Er kostet an jeder Seite Platz und trennt nichts mehr ab,
-   weil links und rechts davon nichts liegt.
+/* ── Unter 1024 px füllt die Anwendung den Schirm ──────────────────────────
+   Die Hülle rückt an den Rand und die Panels tragen die Fläche allein — der
+   Grund bleibt in beiden Layouts derselbe (--ground), denn ein Gehäuse, auf
+   das er umschalten könnte, gibt es seit V9 nicht mehr. Die Karten liegen
+   hier wie dort auf dem Grund; nur Außenabstand und Sicherheitszonen ändern
+   sich.
 
-   Die Seite bekommt dann den GEHÄUSETON als Grund, nicht den der Werkbank. Das
-   Gerät füllt hier den Schirm — man hält es in der Hand, statt es anzusehen.
-
-   63.9375rem = 1023px, nicht 64rem. Der Auftrag sagt „UNTER 1024 px", und bei
-   `max-width: 64rem` griffe diese Abfrage bei exakt 1024 px zusätzlich zur
-   Shell-Abfrage darüber (`min-width: 64rem`) — beide Zustände auf einmal, und
-   das Ergebnis wäre eine klebende Rail in einem Gerät ohne Gehäuse. Gefunden
-   hat das die Schwellenprüfung in scripts/shoot.mjs, nicht das Auge: Auf einem
-   Standbild bei 1024 px sieht ein fehlendes Gehäuse aus wie Absicht. */
+   63.9375rem = 1023px, nicht 64rem. Bei `max-width: 64rem` griffe diese
+   Abfrage bei exakt 1024 px zusätzlich zur Shell-Abfrage darüber
+   (`min-width: 64rem`) — beide Zustände auf einmal. Gefunden hat das die
+   Schwellenprüfung in scripts/shoot.mjs, nicht das Auge. */
 @media (max-width: 63.9375rem) {
-  body {
-    background: var(--case);
-  }
-
-  body::before {
-    /* Ohne Gehäuse gibt es keine Werkbank: Das Gerät füllt hier den Schirm, und
-       der Seitengrund IST der Gehäuseton. Korn darauf wäre Korn auf dem Gerät —
-       genau das, was V8 abgeschafft hat. */
-    display: none;
-  }
-
   .device {
     max-width: var(--measure);
     margin-block: 0;
-    /* Oben derselbe Griff wie unten, und aus demselben Grund: Hier füllt das
-       Gerät den Schirm, es gibt also keinen Rand, der die Aussparung von sich
-       aus freihält. `calc` und nicht `max` — der Sicherheitsabstand ist Fläche,
+    /* Oben wie unten der Sicherheitsabstand: Hier füllt die Anwendung den
+       Schirm, es gibt also keinen Rand, der die Aussparung von sich aus
+       freihält. `calc` und nicht `max` — der Sicherheitsabstand ist Fläche,
        die nicht benutzbar ist, und die 24 px Luft gehören DARUNTER, nicht
-       hinein. Beim Rand links und rechts ist es umgekehrt (siehe .device oben):
-       dort deckt der vorhandene Innenabstand den Fall meist schon ab. */
+       hinein. */
     padding-block: calc(var(--sp-5) + env(safe-area-inset-top))
       calc(var(--sp-8) + env(safe-area-inset-bottom));
-    background: none;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  /* Der Kopf ist hier keine Deckplatte mehr, sondern wieder ein Riegel, der
-     über den Inhalt fährt: rundum gerundet, ohne feste Unterkante. */
-  .masthead {
-    border-radius: var(--radius-panel);
-    border-block-end-color: transparent;
-  }
-
-  /* Nur die Rundung fällt hier weg — der Abstand nach oben steht in der
-     Grundregel und gilt in beiden Layouts. Er stand bis zum Schlusspass nur
-     hier, und deshalb hatte ihn der Schreibtisch nicht. */
-  .colophon {
-    border-radius: 0;
   }
 }
 

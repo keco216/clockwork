@@ -16,22 +16,18 @@
       content="Clockwork — TOTP authenticator. Generates two-factor codes entirely in the browser, without any network requests."
     />
     <!--
-      Die Farbe der Browserleiste ist der GEHÄUSETON (--case), nicht der der
-      Werkbank.
+      Die Farbe der Browserleiste ist der SEITENGRUND (--ground): Seit V9 gibt
+      es keinen Gehäuseton mehr — `body` trägt in jedem Layout --ground, und
+      die Leiste grenzt an genau diese Fläche.
 
-      Bis V7 stand hier --ground, mit der Begründung, die Leiste grenze an den
-      Untergrund. Das stimmt am Schreibtisch — nur zeigt keine Browserleiste
-      dort etwas an. Sichtbar wird sie auf dem Handy, und unter 64 rem gibt es
-      gar keine Werkbank mehr: Das Gerät füllt den Schirm, `body` trägt dann
-      --case (siehe style.css, die Abfrage bei 63.9375rem). Die Leiste grenzt
-      also an das Gehäuse.
-
-      Zweiter Grund, es überhaupt anzufassen: V8 hat die Flächenleiter
-      umgebaut, und die Werte hier sind seit V5 nicht mitgewandert. Sie waren
-      das alte --ground und passten zu nichts mehr auf der Seite.
+      HTML kann kein var() lesen; diese beiden Werte sind die einzige Stelle
+      im Projekt, an der eine Palettenfarbe von Hand kopiert steht. Deshalb
+      prüft scripts/check-tokens.mjs sie bei jedem Lauf gegen tokens.css —
+      kopierte Werte wandern nicht von selbst mit, das haben drei Versionen
+      veraltete theme-color-Tags bewiesen.
     -->
-    <meta name="theme-color" content="#ded9cf" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#131210" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f5f5f5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#060607" media="(prefers-color-scheme: dark)" />
 
     <!--
       Angaben für geteilte Links. Sie bleiben englisch, auch wenn die Oberfläche
@@ -213,7 +209,7 @@
                      Tasten. -->
                 <button
                   type="button"
-                  class="key key--quiet"
+                  class="key key--flat"
                   id="key-clear"
                   hidden
                   data-i18n="key.clear"
@@ -230,7 +226,7 @@
                   überschreiben könnte. Der Handler prüft zusätzlich auf ein
                   leeres Feld.
                 -->
-                <button type="button" class="key key--solid key--lg" id="key-demo">
+                <button type="button" class="key key--primary key--lg" id="key-demo">
                   <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                     <path d="M8 3.25v9.5M3.25 8h9.5" />
                   </svg>
@@ -247,7 +243,7 @@
                 keinen Ordner, er nimmt ein Bild entgegen; ein Ordnersymbol
                 versprach die falsche Handlung.
               -->
-                <button type="button" class="key key--bordered" id="key-file">
+                <button type="button" class="key key--default" id="key-file">
                   <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                     <rect x="2" y="3" width="12" height="10" rx="2.75" />
                     <circle cx="5.6" cy="6.4" r="1" />
@@ -257,7 +253,7 @@
                      das Icon mit wegwischen. -->
                   <span data-i18n="key.qrImage">QR from image</span>
                 </button>
-                <button type="button" class="key key--bordered" id="key-camera">
+                <button type="button" class="key key--default" id="key-camera">
                   <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
                     <rect x="1.75" y="4.4" width="12.5" height="9.1" rx="2.75" />
                     <path d="M5.5 4.4 6.4 2.5h3.2l.9 1.9" />
@@ -291,7 +287,7 @@
                   </p>
                   <button
                     type="button"
-                    class="key key--bordered"
+                    class="key key--default"
                     id="key-camera-stop"
                     data-i18n="key.cameraStop"
                   >
@@ -444,11 +440,12 @@
                           autocomplete="current-password"
                           spellcheck="false"
                         />
-                        <!-- Die Haupthandlung des Panels, also solid. Die Höhe
-                             bleibt die mittlere: Der Knopf steht neben dem
-                             Passwortfeld, und zwei Bauteile in einer Zeile
-                             haben dieselbe Höhe, weil sie dieselbe HABEN. -->
-                        <button type="submit" class="key key--solid" id="vault-primary">
+                        <!-- Die Haupthandlung des Panels, also primary in
+                             Signal-Orange. Die Höhe bleibt die mittlere: Der
+                             Knopf steht neben dem Passwortfeld, und zwei
+                             Bauteile in einer Zeile haben dieselbe Höhe, weil
+                             sie dieselbe HABEN. -->
+                        <button type="submit" class="key key--primary" id="vault-primary">
                           Store encrypted
                         </button>
                       </div>
@@ -458,7 +455,7 @@
                     <div class="keys" id="vault-actions">
                       <button
                         type="button"
-                        class="key key--bordered"
+                        class="key key--default"
                         id="vault-lock"
                         hidden
                         data-i18n="vault.action.lock"
@@ -467,7 +464,7 @@
                       </button>
                       <button
                         type="button"
-                        class="key key--bordered"
+                        class="key key--default"
                         id="vault-update"
                         hidden
                         data-i18n="vault.action.update"
@@ -610,7 +607,9 @@
             <span class="strip__issuer" data-issuer></span>
             <span class="strip__account" data-account></span>
           </p>
-          <p class="chip strip__spec" data-spec translate="no"></p>
+          <!-- Die Parameter tragen die Signal-Tönung (chip--accent): Sie sind
+               die Angabe MIT Bedeutung — „1 Konto" daneben bleibt neutral. -->
+          <p class="chip chip--accent strip__spec" data-spec translate="no"></p>
         </div>
 
         <output class="dial" data-dial aria-live="off" translate="no" dir="ltr"></output>
@@ -645,7 +644,7 @@
           </span>
         </p>
 
-        <button type="button" class="key key--bordered key--copy" data-copy>
+        <button type="button" class="key key--default key--copy" data-copy>
           <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
             <rect x="5.6" y="5.6" width="8.2" height="8.2" rx="2.25" />
             <path

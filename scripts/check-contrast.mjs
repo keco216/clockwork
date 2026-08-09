@@ -213,13 +213,48 @@ function contrast(foreground, background) {
   return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }
 
-/** `rgb(23, 22, 20)` bzw. `rgba(…)` in [r, g, b]. */
+/* ── oklab → sRGB (Ottosson-Matrizen) ──────────────────────────────────────
+   Seit V9 stehen abgeleitete Töne als `color-mix(in oklab, …)` in tokens.css,
+   und Chromium gibt deren computed value als `oklab(L a b)` zurück — nicht als
+   `rgb(…)`. Der alte Parser fischte mit /[\d.]+/ drei Zahlen heraus und hielt
+   L, a, b für RGB-Kanäle: Aus einem hellen Orange wurde praktisch Schwarz,
+   und die Parameterzeile „bestand" im Hellen mit einer Zahl, die gar nichts
+   maß, während sie im Dunkeln mit 1,35 durchfiel. Ein Parser, der das falsche
+   Format stillschweigend als Zahlen liest, ist derselbe Fehler wie das `?.`
+   im alten shoot.mjs — deshalb wirft er jetzt bei allem, was er nicht kennt. */
+function oklabToRgb(L, a, b) {
+  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  const linear = [
+    4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+    -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+    -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
+  ];
+  return linear.map((x) => {
+    const gamma = x <= 0.0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - 0.055;
+    return Math.max(0, Math.min(255, gamma * 255));
+  });
+}
+
+/** `rgb(23, 22, 20)`, `rgba(…)`, `oklab(…)` oder `oklch(…)` in [r, g, b]. */
 function parseColour(value) {
-  const numbers = value.match(/[\d.]+/g);
+  const numbers = value.match(/-?[\d.]+(?:e-?\d+)?/g)?.map(Number);
   if (!numbers || numbers.length < 3) {
     throw new Error(`Farbe nicht lesbar: ${value}`);
   }
-  return numbers.slice(0, 3).map(Number);
+  if (value.startsWith('oklab(')) {
+    return oklabToRgb(numbers[0], numbers[1], numbers[2]);
+  }
+  if (value.startsWith('oklch(')) {
+    const [L, C, H] = numbers;
+    const rad = (H * Math.PI) / 180;
+    return oklabToRgb(L, C * Math.cos(rad), C * Math.sin(rad));
+  }
+  if (value.startsWith('rgb')) {
+    return numbers.slice(0, 3);
+  }
+  throw new Error(`Farbformat nicht unterstuetzt: ${value}`);
 }
 
 /* ── Die Messung selbst ────────────────────────────────────────────────────── */
@@ -316,24 +351,19 @@ async function measure(page, { label, selector, scheme, min = AA_TEXT, keepScrol
 /**
  * Wie deutlich hebt sich eine Fläche von der ab, auf der sie liegt?
  *
- * ── Warum das nicht der Abstand zweier Flächenfarben ist ───────────────────
- * Weil er im dunklen Modus gar nicht existieren kann. Nacht (#131210) liegt bei
- * einer relativen Leuchtdichte von 0,0074; selbst gegen reines Schwarz wären
- * daraus höchstens 1,15:1. Ein Panel im Dunkeln über seinen TON von seinem
- * Grund abzuheben ist physikalisch nicht möglich — und genau deshalb tragen
- * dort Haarlinie und Lichtkante die Erhebung (siehe --edge-lit in tokens.css).
- *
- * Gemessen wird deshalb, was das Auge tatsächlich benutzt, um eine Kante zu
- * finden: der STÄRKSTE SPRUNG über sie hinweg. Ein schmaler senkrechter
- * Streifen quer über die Oberkante, Zeile für Zeile gemittelt, dann der größte
- * Kontrast zwischen zwei benachbarten Zeilen. Was ihn erzeugt — Tonunterschied,
- * Haarlinie oder Lichtkante —, ist der Messung gleichgültig; sie fragt nur, ob
- * es ihn gibt.
+ * Gemessen wird, was das Auge tatsächlich benutzt, um eine Grenze zu finden:
+ * der STÄRKSTE SPRUNG über sie hinweg. Ein schmaler senkrechter Streifen quer
+ * über die Oberkante, Zeile für Zeile gemittelt, dann der größte Kontrast
+ * zwischen zwei benachbarten Zeilen. Was ihn erzeugt — Flächenstufe, Schatten
+ * oder (bis V8) eine Haarlinie —, ist der Messung gleichgültig; sie fragt nur,
+ * ob es ihn gibt. Genau deshalb überlebt sie jeden Umbau der Trennmittel:
+ * V9 hat Kanten durch Flächenkontrast ersetzt, die Messung blieb dieselbe,
+ * nur ihre Sollwerte gehören jetzt dem neuen Design (siehe Abschnitt 6).
  *
  * Der Streifen ist absichtlich schmal und sitzt in der Mitte der Kante: An den
  * gerundeten Ecken läuft die Kante schräg durch die Zeilen und verschmiert.
  */
-async function measureEdge(page, { label, selector, scheme, min = 1.25 }) {
+async function measureEdge(page, { label, selector, scheme, min = 1.25, at = 0.5 }) {
   const handle = await page.$(selector);
   if (handle === null) {
     findings.push(`${scheme} · ${label}: Element nicht gefunden (${selector})`);
@@ -349,8 +379,14 @@ async function measureEdge(page, { label, selector, scheme, min = 1.25 }) {
     return { x: box.x, y: box.y, width: box.width };
   });
 
+  // `at` verschiebt den Streifen entlang der Oberkante (0 = Anfang, 1 = Ende).
+  // Der Normalfall ist die Mitte; das Eingabefeld braucht eine Stelle weiter
+  // rechts, weil seine Beschriftung 8 px über der Kante endet und ihre
+  // Glyphen sonst im oberen Messband liegen — gemessen drückte das den
+  // hellen Sprung von 1,19 auf 1,09, und zwar durch TEXT, nicht durch die
+  // Fläche, um die es geht.
   const clip = visibleClip(
-    { x: rect.x + rect.width / 2 - 20, y: rect.y - BAND, width: 40, height: BAND * 2 },
+    { x: rect.x + rect.width * at - 20, y: rect.y - BAND, width: 40, height: BAND * 2 },
     page.viewportSize(),
   );
   if (clip === null) {
@@ -359,9 +395,15 @@ async function measureEdge(page, { label, selector, scheme, min = 1.25 }) {
   }
 
   const image = decodePng(await page.screenshot({ clip }));
+  // Zeilen im Abstand von 3 vergleichen, nicht Nachbarzeilen: Die
+  // Kantenglättung verschmiert eine Kante über zwei bis drei Zeilen, und zwei
+  // halbe Spruenge sind je kleiner als der ganze. Gemessen: Die helle
+  // Feldkante (Soll 1,17) kam zeilenweise nur auf 1,09 — mit dem Abstand
+  // springt sie sauber ueber die Verschmierung hinweg.
+  const STRIDE = 3;
   let best = 1;
-  for (let y = 1; y < image.height; y++) {
-    best = Math.max(best, contrast(rowColour(image, y - 1), rowColour(image, y)));
+  for (let y = STRIDE; y < image.height; y++) {
+    best = Math.max(best, contrast(rowColour(image, y - STRIDE), rowColour(image, y)));
   }
 
   const ok = best >= min;
@@ -514,10 +556,12 @@ for (const scheme of ['light', 'dark']) {
      Der Maßstab bleibt 3:1 und nicht 4,5:1: Gefragt ist nicht „ist dieser Text
      bequem zu lesen" — er steht nie auf so einem Grund —, sondern „wie viel
      Reserve hat die Fläche, bevor sie zusammenbricht". */
+  /* Die drei Prüfflächen sind die Enden der V9-Palette: der Akzent, die
+     dunkelste und die hellste Fläche, die es gibt. */
   const HARD = [
     { name: 'Signal-Orange', colour: '#f05a28' },
-    { name: 'Tinte', colour: '#171614' },
-    { name: 'Papier', colour: '#f5f3ef' },
+    { name: 'Eclipse', colour: '#18181b' },
+    { name: 'Weiss', colour: '#ffffff' },
   ];
 
   const setProbe = (colour) =>
@@ -616,61 +660,82 @@ for (const scheme of ['light', 'dark']) {
     document.getElementById('contrast-probe')?.remove();
   });
 
-  /* ── 6. Die Kanten des Geräts ───────────────────────────────────────────
-     Bis V6 gab es zwei Flächenebenen, und der Abstand zwischen ihnen war 1,11:1
-     — das ist kein Tonunterschied mehr, das ist ein Verdacht. V7 hat daraus
-     drei gemacht (Werkbank, Gehäuse, Panels), und hier steht die Zusage dazu:
+  /* ── 6. Die Flächentrennung ─────────────────────────────────────────────
+     Bis V8 stand hier eine KANTEN-Zusage (stärkster Sprung ≥ 1,25), und sie
+     gehörte dem Gehäuse-Design: Haarlinie plus Lichtkante plus Schatten. V9
+     trennt wie die Referenz — hell Schatten und Flächenstufe, dunkel NUR die
+     Flächenstufe („--surface-shadow: transparent" steht wörtlich im Paket).
 
-       Panel  auf  Gehäuse    das Bedienfeld hebt sich vom Gerät ab
-       Gehäuse auf Werkbank   das Gerät hebt sich vom Tisch ab
-
-     1,25 ist keine WCAG-Schwelle — für zwei aneinandergrenzende Flächen gibt es
-     keine. Es ist die Zahl, die dieses Projekt sich gibt, und sie ist von unten
-     begründet: 1,11 war nachweislich zu wenig, denn genau daran hat sich der
-     V7-Auftrag gestört. */
+     Die Referenzstufen selbst sind kleiner als 1,25 (hell 1,09, dunkel 1,14 —
+     nahe Schwarz staucht die WCAG-Formel, der oklch-Schritt 12 % → 21 % ist
+     trotzdem deutlich). Eine Schwelle DARÜBER würde also das Design
+     durchfallen lassen, das sie schützen soll. Geprüft wird deshalb, was
+     kaputtgehen kann: dass die Stufe ÜBERHAUPT da ist. 1,05 fängt den Tag,
+     an dem ein Panel versehentlich im Grundton steht — mehr behauptet die
+     Zahl nicht, und mehr gibt es hier nicht zu behaupten. */
   await page.evaluate(() => {
     window.scrollTo(0, 0);
   });
   await page.waitForTimeout(300);
   await measureEdge(page, {
     scheme,
-    label: 'Kante: Panel auf Gehaeuse',
+    label: 'Stufe: Panel auf Grund',
     selector: '#zone-codes .zone__body',
-  });
-  await measureEdge(page, {
-    scheme,
-    label: 'Kante: Gehaeuse auf Werkbank',
-    selector: '.device',
+    min: 1.05,
   });
 
-  /* ── 7. Kanten an den Bauteilen ─────────────────────────────────────────
-     Der V8-Auftrag nennt die Borders „fast unsichtbar". Die Ursache lag nicht
-     bei ihnen, sondern an der Fläche darunter (siehe --rule in tokens.css) — aber
-     eine Behauptung über eine Kante gehört gemessen, nicht erklärt.
+  /* ── 7. Die Füllung der Bauteile ────────────────────────────────────────
+     Umrisse gibt es seit V9 nicht mehr — Feld und neutrale Taste sind
+     GEFÜLLTE Flächen auf dem Panel (HeroUIs Flat-Stil). Was ihnen ihre
+     Sichtbarkeit gibt, ist die Füllstufe Panel → Füllung (Sollwert 1,19 in
+     beiden Themes, aus tokens.css). Gemessen wird der Sprung über die
+     Oberkante; 1,12 lässt der Kantenglättung Luft und fängt trotzdem den
+     Fall, dass ein Feld seine Füllung verliert und unsichtbar auf dem Panel
+     liegt.
 
-     Gemessen wird wie bei den Geräteflächen der stärkste Sprung über die
-     Oberkante. 1,3 ist die Zahl, die dieses Projekt sich gibt: Eine Kante, die
-     unter 1,3 liegt, findet das Auge nicht mehr, ohne danach zu suchen.
+     Der Chip steht nicht mehr in dieser Liste: Seine Tönung (15 % Signal)
+     ist bewusst leiser als eine Feldfüllung, und seine Sichtbarkeit trägt
+     die SCHRIFT auf der Tönung — die misst Abschnitt 1 als „Parameterzeile"
+     gegen 4,5:1.
 
-     Der Umriss-Knopf ist hier der interessante Fall: Er trug bis V7 1 px in der
-     Fugenfarbe und war damit als Bauteil gezeichnet wie eine Trennlinie. */
+     ── Erst zurück an den Seitenanfang, und zwar ausdrücklich ─────────────
+     Die Panel-Messung darüber hat gescrollt (das Codes-Panel ist höher als
+     das Fenster, `scrollIntoViewIfNeeded` holt so viel davon ins Bild wie
+     möglich). Das Feld blieb dabei trotzdem sichtbar — die Rail KLEBT — und
+     sein oberer Rand stand damit direkt unter dem klebenden Kopf. Die zehn
+     Bandzeilen über der Feldkante gehörten dann dem Kopf im Grundton, und
+     gemessen wurde Grund gegen Füllung (1,09) statt Panel gegen Füllung
+     (1,17). Eine Messung an einem klebenden Layout muss ihre Scrollposition
+     selbst herstellen — dieselbe Lehre wie beim V6-Blocker, nur eine Ebene
+     tiefer.
+
+     Und zwar BEIDE Scrollpositionen: Die Rail ist seit V7 eine eigene
+     Scrollfläche, und die Elementaufnahmen weiter oben haben ihren scrollTop
+     verstellt, während das Fenster längst wieder bei 0 stand. `window.scrollTo`
+     allein ließ das Feld deshalb weiter unter dem Kopf hängen — gemessen an
+     clip.y = 75 statt 157. */
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+    document.querySelector('.rail')?.scrollTo(0, 0);
+    // Der Fokus liegt seit page.fill() im Feld, und sein Ring liegt genau auf
+    // der Kante, die hier gemessen wird. Mit Ring bestuende die Pruefung auch
+    // bei fehlender Fuellung — gemessen wuerde dann der Ring, nicht die
+    // Flaeche, um die es geht.
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  });
+  await page.waitForTimeout(300);
   await measureEdge(page, {
     scheme,
-    label: 'Kante: Eingabefeld',
+    label: 'Fuellung: Eingabefeld',
     selector: '#secrets',
-    min: 1.3,
+    min: 1.12,
+    at: 0.85,
   });
   await measureEdge(page, {
     scheme,
-    label: 'Kante: Umriss-Knopf',
+    label: 'Fuellung: neutrale Taste',
     selector: '#key-file',
-    min: 1.3,
-  });
-  await measureEdge(page, {
-    scheme,
-    label: 'Kante: Chip',
-    selector: '.strip__spec',
-    min: 1.3,
+    min: 1.12,
   });
 
   /* ── 8. Die Matrix: jede Textstufe auf jeder Fläche ──────────────────────
@@ -693,10 +758,10 @@ for (const scheme of ['light', 'dark']) {
      ist nicht Pedanterie: `--rule` und `--edge-*` sind halbdeckend, und was
      daraus auf einer Fläche wird, weiß nur der Browser. */
   const SURFACES = [
-    ['Gehaeuse', '--case'],
-    ['versenkt', '--surface-recessed'],
-    ['beruehrt', '--surface-active'],
+    ['Werkbank', '--ground'],
     ['Panel', '--surface'],
+    ['Fuellung', '--surface-fill'],
+    ['beruehrt', '--surface-active'],
   ];
   const INKS = [
     ['ink', '--ink', AA_TEXT],

@@ -132,7 +132,7 @@
    Signale bekommen. Als Zustand bleibt sie stehen; nur der weiche Übergang
    dorthin entfällt. */
 .strip--copied .dialface__hub {
-  fill: var(--signal);
+  fill: var(--signal-text);
 }
 
 /* Der Zeiger. Eine Umdrehung pro Periode, angetrieben von `--progress`, das die
@@ -144,15 +144,20 @@
   transform-box: view-box;
 }
 
+/* Der tiefe Signal-Ton, nicht der Markenwert — die V8-Grenze „grobe Geometrie
+   gegen feine" gilt auf den V9-Flächen erst recht: Der Zeiger ist 3 px stark,
+   und #f05a28 hält auf der berührten Fläche hell nur 2,89:1. Gemessen, nicht
+   geschätzt — dieselbe Rechnung wie in tokens.css. */
 .dialface__handMark {
-  stroke: var(--signal);
+  stroke: var(--signal-text);
 }
 
 /* Die letzten Sekunden: Der Zeiger allein genügt nicht mehr, jetzt zieht auch
    die Teilung an. Das ist der einzige Moment, in dem das Gerät von sich aus
-   Signalfarbe zeigt. */
+   Signalfarbe zeigt. Auch hier der tiefe Ton: Eine Skalenmarke ist feine
+   Geometrie. */
 .strip--expiring .dialface__tick {
-  stroke: var(--signal);
+  stroke: var(--signal-text);
 }
 
 /* ── Leerzustand: das Emblem in Ruhe ──────────────────────────────────────
