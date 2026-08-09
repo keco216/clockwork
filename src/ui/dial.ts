@@ -78,7 +78,7 @@ export class Dial {
 
     const animate = !prefersReducedMotion();
     const duration = motionToken('--dur-snap', 190);
-    const stagger = motionToken('--stagger-flap', 16);
+    const stagger = motionToken('--stagger-flap', 20);
     const easing = easingToken('--ease-spring', 'cubic-bezier(0.32, 0.72, 0, 1)');
     let flapped = 0;
 

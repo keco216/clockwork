@@ -2082,14 +2082,23 @@ kbd {
    Kanalzug unter dem Zeiger eine Fläche, der gesperrte Knopf eine Deckkraft.
    Alle bleiben stehen — nur der weiche Weg dorthin entfällt.
 
-   Was Bewegung MITTEILT, hängt ohnehin nicht hier dran: Das Fallblatt und die
-   einfahrende Bühne laufen über `element.animate()` und fragen
-   `prefersReducedMotion()` selbst ab (ui/dial.ts, ui/app.ts). Der Zeiger
-   bekommt seinen Winkel pro Frame von der Uhr und hat gar keinen Übergang.
+   Was Bewegung MITTEILT, hängt ohnehin nicht hier dran: Das Fallblatt, die
+   einfahrende Bühne, die Aufklapper, die Meldungszeilen, der Abgang des
+   Popovers und der Wortwechsel an der Kopiertaste laufen über
+   `element.animate()` und fragen `prefersReducedMotion()` selbst ab
+   (ui/dial.ts, ui/app.ts, ui/disclosure.ts, ui/message.ts, ui/listbox.ts,
+   ui/strip.ts). Der Zeiger bekommt seinen Winkel pro Frame von der Uhr und hat
+   gar keinen Übergang.
 
-   Die beiden `animation-*`-Zeilen greifen derzeit ins Leere — im ganzen
-   Projekt gibt es kein einziges `@keyframes`. Sie bleiben trotzdem: Sie kosten
-   zwei Zeilen und fangen die erste CSS-Animation ab, die jemand hinzufügt. */
+   ── Die beiden `animation-*`-Zeilen greifen inzwischen ────────────────────
+   Bis V8 stand hier, im Projekt gebe es „kein einziges `@keyframes`", und die
+   Zeilen seien Vorsorge. Das stimmt seit V9 nicht mehr (`listbox-in`) und seit
+   V11 dreifach nicht: Dazu kamen `listbox-check-in` und `key-spin`.
+
+   Für den Wartezeiger ist dieser Rundumschlag sogar die ganze Lösung: Die
+   Umdrehung hält an, und stehen bleibt der Ring mit seiner Lücke — ein
+   statisches Zeichen, das weiter „hier läuft etwas" sagt, ohne sich zu drehen.
+   Gemessen: Dauer 1e-06 s, `getAnimations()` leer, Ring sichtbar. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

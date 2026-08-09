@@ -93,7 +93,17 @@
   border-bottom: 1.5px solid var(--ink-3);
   border-bottom-right-radius: 1px;
   transform: translateY(-25%) rotate(45deg);
-  transition: transform var(--dur-quick) var(--ease-snap);
+  /* 250 ms auf der Feder, wie die beiden anderen Aufklapper des Geräts (der
+     Hinweis-Aufklapper und die V10-Zusammenfassungszeile) — und wie der
+     Disclosure-Indikator der Referenz, der ausdrücklich `duration-250` trägt,
+     während ihr Select-Indikator 150 nimmt.
+
+     Hier standen bis V11 150 ms auf `--ease-snap`. Das war kein Fehler mit
+     Wirkung, aber eine Ungereimtheit mit einer: Der Hinweis-Aufklapper liegt
+     INNERHALB dieses Aufklappers, und zwei ineinandergeschachtelte Winkel, die
+     verschieden schnell drehen, sehen aus wie zwei Bauteile aus zwei
+     Systemen. */
+  transition: transform var(--dur-calm) var(--ease-spring);
 }
 
 .vault__disclosure[open] .vault__state::after {
@@ -218,6 +228,41 @@
   padding-block: 0;
   line-height: 1.4;
   font-family: var(--font-mono);
+}
+
+/* ── Autofill ─────────────────────────────────────────────────────────────
+   Geprüft, bevor etwas gebaut wurde: Bietet dieses Feld überhaupt Autofill an?
+   Ja, und zwar absichtlich. Es ist das EINZIGE Feld des Geräts mit einem
+   `autocomplete`-Wert — Textfeld und Filter tragen beide `off`, und dieses
+   hier wechselt in ui/vault-panel.ts zwischen `new-password` und
+   `current-password`. Das ist die richtige Entscheidung und bleibt: Eine
+   Tresor-Passphrase gehört in einen Passwortmanager, nicht auf einen Zettel.
+
+   Damit greift aber auch der Autofill-Anstrich des Browsers, und der ist ein
+   hellblaues bzw. gelbes Rechteck aus der Benutzeroberfläche — mitten in einem
+   Gerät, das seine Flächen nachrechnet, und im dunklen Modus ein Leuchtkasten.
+
+   Der Griff ist der der Referenz (`input-group.css`): ein Innenschatten von
+   1000 px in der Feldfläche legt sich über den Anstrich, Text- und Cursorfarbe
+   werden ausdrücklich gesetzt, und `transition: background-color 9999s`
+   verhindert, dass der Browser die Fläche beim Fokuswechsel doch noch kurz
+   durchblitzen lässt.
+
+   Anders als bei der Referenz steht hier NICHT `transparent`: Deren Feld hat
+   eine eigene Fläche darunter, unseres bekommt seine aus `--surface-fill` —
+   durchsichtig hieße hier, den Anstrich durchzulassen.
+
+   Doppelte Klasse, wie an jedem Bauteil dieser Datei, das `.field`
+   überschreibt: `@import` steht vor den eigenen Regeln der importierenden
+   Datei. */
+.field.vault__pass:-webkit-autofill,
+.field.vault__pass:-webkit-autofill:hover,
+.field.vault__pass:-webkit-autofill:focus,
+.field.vault__pass:autofill {
+  box-shadow: 0 0 0 1000px var(--surface-fill) inset;
+  -webkit-text-fill-color: var(--ink);
+  caret-color: var(--ink);
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 .vault__error {
