@@ -64,6 +64,35 @@ html {
 
 body {
   margin: 0;
+  /* ── Die Bodenplatte hängt nicht mehr in der Luft ────────────────────────
+     Auf einem hohen Fenster mit einem Konto stand der Fuß mitten im Bild, und
+     darunter lief blanker Grund bis zur Unterkante weiter. Es gab schlicht
+     keinen Mechanismus dafür: `body` hatte keine Mindesthöhe, und seit V9 ist
+     `.device` nur noch Zentrierhülle — der Fuß folgte dem Fluss.
+
+     Das V7-Konzept „Fuß = Bodenplatte des Gehäuses" war richtig, solange es
+     ein Gehäuse gab, das dort endete. Mit V9 ist es entfallen, die Regel aber
+     nie nachgezogen worden.
+
+     `dvh` und nicht `vh`: Auf dem Handy ändert die Adressleiste die
+     Sichthöhe, und `vh` rechnet mit der GRÖSSTEN — die Seite wäre dann bei
+     eingeblendeter Leiste immer ein Stück zu hoch und ließe sich sinnlos
+     scrollen. Ab Chrome 108, die WebView-Untergrenze des APK ist 111.
+
+     Ein Raster mit einer Zeile: `.device` ist das einzige Kind im Fluss (der
+     Sprunglink, die Live-Region und der Fühler des Kopfes stehen alle
+     absolut) und wird damit auf die Zeilenhöhe gestreckt.
+
+     Die Spalte steht ausdrücklich da, und das ist keine Förmlichkeit: Ohne
+     `grid-template-columns` legt der Browser eine `auto`-Spalte an, und die
+     misst sich am INHALT. `.device` trägt aber ein `max-width` mit `100%`
+     darin — das bezieht sich dann auf eine Spalte, deren Breite gerade erst
+     aus dem Inhalt entsteht. Gemessen: Das Gerät fiel auf einem 1680er
+     Fenster von 1600 auf 1021 px, und die Kanalzüge brachen um. `minmax(0,
+     1fr)` füllt die Zeile und gibt dem Prozentwert wieder etwas Festes. */
+  min-block-size: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   /* Explizit gesetzt: Ein transparenter Body übernimmt sonst den Grund des
      umgebenden Kontexts, und dann steht ein Theme auf dem falschen Untergrund.
 
@@ -242,6 +271,26 @@ kbd {
    der Ort, an dem `data-stage` die Bühnen schaltet — es zeichnet nur nichts
    mehr. */
 .device {
+  /* Spalte, damit der Fuß über einen auto-Außenabstand nach unten rücken kann
+     (siehe `.colophon`). Sonst ändert sich dadurch nichts: Ein Flexkind in
+     einer Spalte ist quer gestreckt, also genau so breit wie ein Blockkind —
+     und wo eines eigene Ränder mitbringt (`main` im Leerzustand mit
+     `margin-inline: auto`), gewinnen die wie zuvor. Nachgemessen mit der
+     Geometrie-Sonde über alle Desktop-Breiten. */
+  display: flex;
+  flex-direction: column;
+  /* ── Warum hier jetzt eine Breite steht ──────────────────────────────────
+     Weil `margin-inline: auto` in einem RASTER etwas anderes bedeutet als in
+     einem Blockfluss. Im Blockfluss füllt ein Element mit `width: auto` seinen
+     Elternteil, und die beiden auto-Ränder verteilen den Rest — daher die
+     Zentrierung. Als Rasterelement schaltet derselbe auto-Rand die Streckung
+     AB, und das Element bemisst sich am Inhalt.
+
+     Gemessen, als die Zeile noch fehlte: Das Gerät fiel auf einem 1680er
+     Fenster von 1600 auf 1021 px, und die Kanalzüge brachen um. `width: 100%`
+     macht die Breite wieder eindeutig; `max-width` klemmt sie wie zuvor, und
+     die auto-Ränder zentrieren nur noch den Rest. */
+  width: 100%;
   max-width: min(var(--measure), calc(100% - var(--sp-7)));
   margin-inline: auto;
   margin-block: var(--sp-6);
@@ -508,8 +557,21 @@ kbd {
    Bühne. Eine unlesbare Zeile IST etwas zu zeigen. Deshalb zählt hier jeder
    Eintrag, gültig oder nicht. */
 
+/* Die Fuge zwischen letztem Panel und Bodenplatte. Sie steht seit V11 hier
+   und nicht mehr am Fuß, weil dessen `margin-block-start` die Bodenplatte
+   nach unten drückt und sich dabei bei vollem Inhalt zu 0 auflöst — die
+   Begründung steht bei `.colophon`. Der sichtbare Abstand ist derselbe wie
+   zwischen zwei Panels und derselbe wie vorher. */
+main {
+  margin-block-end: var(--gap-group);
+}
+
 .device[data-stage='vacant'] main {
   display: block;
+  /* Dieselbe Sache wie an `.device`, eine Ebene tiefer: `margin-inline: auto`
+     schaltet die Streckung eines Flexkindes quer ab, und die Bühne bemäße
+     sich am Inhalt. Gemessen waren das 584 statt 704 px. */
+  inline-size: 100%;
   max-inline-size: var(--stage-w);
   margin-inline: auto;
   padding-block: var(--sp-8) var(--sp-7);
@@ -577,11 +639,20 @@ kbd {
   justify-content: space-between;
   gap: var(--gap-pair) var(--gap-group);
   margin-inline: calc(var(--device-pad) * -1);
-  /* Der Abstand zum letzten Panel darüber — dieselbe Fuge wie zwischen zwei
-     Panels. Er steht HIER und nicht nur in einer Media Query: Ein Abstand,
-     der nur in einer Abfrage steht, fehlt in der anderen (die Falle aus dem
-     V8-Schlusspass). */
-  margin-block-start: var(--gap-group);
+  /* ── Warum hier `auto` steht und die Fuge eine Zeile höher ───────────────
+     `auto` schiebt den Fuß an die Unterkante, solange Platz übrig ist — das
+     ist die ganze Bodenplatten-Mechanik.
+
+     Die 24 px Fuge zum letzten Panel kann NICHT hier stehen: In einer
+     Flexspalte verteilt ein `auto`-Rand den freien Platz, und ist keiner da
+     (12 Konten, Seite länger als das Fenster), löst er sich zu 0 auf — die
+     Fuge wäre genau dann weg, wenn man sie sieht. Sie sitzt deshalb als
+     `margin-block-end` an `main` und gilt immer; `auto` legt nur drauf, was
+     übrig ist.
+
+     Der Abstand steht damit weiterhin an EINER Stelle und nicht nur in einer
+     Media Query — die Falle aus dem V8-Schlusspass gilt unverändert. */
+  margin-block-start: auto;
   padding: var(--sp-4) var(--device-pad);
   border-block-start: 1px solid var(--rule);
 }
