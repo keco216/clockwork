@@ -25,7 +25,7 @@ mitgebündelt und ohne eine einzige Netzwerkanfrage — auch die
 ```bash
 npm install      # einmalig
 npm run dev      # Dev-Server, danach http://localhost:5173 öffnen
-npm test         # 501 Tests
+npm test         # 514 Tests
 npm run build    # dist/ (PWA) + dist/clockwork.html (eine Datei)
 ```
 
@@ -33,12 +33,12 @@ Weitere Skripte: `npm run typecheck`, `npm run lint`, `npm run format`,
 `npm run preview`, `npm run test:watch`, `npm run shots` (Screenshots über
 Playwright).
 
-Zwei Messwerkzeuge stehen daneben — für die beiden Zusagen, die man nicht
-ansehen kann:
+Drei Messwerkzeuge stehen daneben — für die Zusagen, die man nicht ansehen kann:
 
 ```bash
 node scripts/check-bundle.mjs      # das Offline-Versprechen am fertigen Bündel
 node scripts/check-contrast.mjs    # WCAG AA an den tatsächlich gezeichneten Pixeln
+node scripts/check-tokens.mjs      # kein Bauteil setzt eigene Werte
 ```
 
 **Zum Ausprobieren** — der Testschlüssel aus RFC 4226 (das ist Base32 für den
@@ -48,17 +48,24 @@ Text `12345678901234567890`):
 GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ
 ```
 
-Diese Zeile ins Textfeld einfügen, fertig. Die App bringt bewusst **keinen**
-Demo-Knopf mit: Sie ist für den täglichen Gebrauch gebaut, und ein Knopf, der
+Diese Zeile ins Textfeld einfügen, fertig — oder den Knopf **„Testschlüssel
+einfügen"** nehmen, der genau sie einträgt.
+
+Bis v1.0.0 gab es diesen Knopf bewusst nicht: Ein Knopf, der
 Beispiel-Schlüsselmaterial in dasselbe Feld schreibt wie die echten Secrets,
-gehört dort nicht hin.
+gehört dort nicht hin. Der Einwand galt, und die Lösung nimmt ihm die Grundlage,
+statt ihn zu überstimmen. Der Knopf lebt nur im Leerzustand: Sobald eine Zeile
+im Feld steht, ist er `hidden` und damit unerreichbar, und der Handler prüft
+zusätzlich auf ein leeres Feld. **Es gibt keinen Zustand, in dem er echtes
+Schlüsselmaterial überschreiben könnte** — bei Schlüsselmaterial ist ein zweites
+Schloss billiger als die Frage, ob das erste noch hält.
 
 ### Zwei Build-Ziele
 
 | Ziel                  | Was es ist                                                           |
 | --------------------- | -------------------------------------------------------------------- |
 | `dist/`               | Installierbare PWA: Manifest, Service Worker, Icons, offline nutzbar |
-| `dist/clockwork.html` | **Eine einzige Datei**, ~612 kB, alles inline — auch die Schriften   |
+| `dist/clockwork.html` | **Eine einzige Datei**, ~659 kB, alles inline — auch die Schriften   |
 
 `dist/clockwork.html` ist die Datei für den täglichen Gebrauch: irgendwohin
 kopieren, doppelklicken, fertig. Kein Server, keine Internetverbindung. Sie hat
@@ -233,22 +240,32 @@ In PowerShell:
 $env:CLOCKWORK_LANGS = 'de,en,fr'; npm run build
 ```
 
-Gemessen an der einen Datei (Stand V5, alle Zahlen frisch nachgemessen):
+Gemessen an der einen Datei (Stand v1.2.0, alle Zahlen frisch nachgemessen):
 
 | Bau                       | `dist/clockwork.html` | gzip   |
 | ------------------------- | --------------------- | ------ |
-| ohne Angabe (37 Sprachen) | 612 kB                | 220 kB |
-| `de,en,fr`                | 324 kB                | 148 kB |
-| nur `en`                  | 308 kB                | 144 kB |
+| ohne Angabe (37 Sprachen) | 659 kB                | 234 kB |
+| `de,en,fr`                | 352 kB                | 156 kB |
+| nur `en`                  | 335 kB                | 151 kB |
 
-Drei Sprachen kosten also 288 kB weniger als alle 37. Die übrigen 308 kB sind
+Drei Sprachen kosten also 307 kB weniger als alle 37. Die übrigen 335 kB sind
 Schriften, jsQR und die App selbst — daran ändert die Auswahl nichts.
 
+Gegenüber v1.1.0 ist der volle Bau um **47 kB gewachsen** (612 → 659). Das sind
+die vier neuen Zeichenketten aus V7 und die zwei aus V8, in 37 Sprachen, plus
+das Markup der neuen Bauteile. Nichts davon ist Bibliothek: Die Zahl der
+Laufzeit-Abhängigkeiten steht unverändert bei eins.
+
 **Zur Einheit:** Das sind dezimale Kilobyte (1 kB = 1000 Byte), so wie ein
-Dateimanager sie anzeigt. `node scripts/check-bundle.mjs` rechnet in KiB
-(1 KiB = 1024 Byte) und nennt für denselben Bau 598. Bis V4 standen beide
-Zählweisen unmarkiert nebeneinander in der Doku und sahen aus wie
-widersprüchliche Messungen.
+Dateimanager sie anzeigt. `node scripts/check-bundle.mjs` rechnet zusätzlich in
+KiB (1 KiB = 1024 Byte) und nennt für denselben Bau 643.
+
+Diese Doppelung hat schon zweimal Schaden angerichtet. Bis V4 standen beide
+Zählweisen unmarkiert nebeneinander und sahen aus wie widersprüchliche
+Messungen. Und bis v1.2.0 teilte `check-bundle.mjs` selbst durch 1024, schrieb
+aber „kB" daran — diese Zahl ist abgeschrieben worden und hätte den Bau als
+„642 kB dezimal" in die Release-Notiz gebracht, obwohl 642 die KiB-Zahl war.
+Das Skript beschriftet jetzt beide Zählweisen.
 
 **Was dabei gilt:**
 
@@ -513,7 +530,9 @@ Clockwork ist ein Messgerät für Zeit, gestaltet im Geist von Dieter Rams
 
 Von Braun zu Apple ist historisch ein kurzer Weg — Jony Ive hat Rams offen
 zitiert. V5 geht denselben Weg: **Das Instrument bleibt, die Härte weicht.**
-Vorher/Nachher-Bilder liegen in [`v5-vergleich/`](v5-vergleich/).
+Die Vorher/Nachher-Bilder zu V5 hängen als Archiv am Release; wo die Vergleiche
+aller Versionen liegen, steht in
+[`aeltere-vergleiche.md`](aeltere-vergleiche.md).
 
 Die Regel, nach der jede einzelne Entscheidung fiel: **Was man anfasst, wird
 weich. Was man abliest, bleibt scharf.** Sie ist keine Formulierung im
@@ -525,11 +544,13 @@ Nachhinein, sondern der Grund, warum die Mischung nicht zu Brei wird.
   Eingabefelder, 8 px für Kleinteile — dazu die Pille für jede Taste. Ein
   vierter Wert „irgendwo dazwischen" wäre der Anfang vom Ende; Radien, die
   niemand mehr begründen kann, sehen aus wie Radien, die niemand gewählt hat.
-- **Erhebung statt Kante.** Zwei Ebenen, nicht mehr: Ebene 1 sind die
+- **Erhebung statt Kante.** Zwei Erhebungsebenen, nicht mehr: Ebene 1 sind die
   Gehäusegruppen auf dem Untergrund, Ebene 2 ist der klebende Kopf über allem.
   Weiche, großflächige Schatten im macOS-Fenster-Stil, dazu immer eine
   Haarlinie — ein Schatten allein trägt die Kante nicht, sobald jemand den
-  Kontrast hochdreht oder die Seite ausdruckt.
+  Kontrast hochdreht oder die Seite ausdruckt. (Erhebung ist etwas anderes als
+  die Flächenleiter weiter unten: Die hat fünf Sprossen und beschreibt, wie
+  hell eine Fläche ist, nicht wie hoch sie liegt.)
 - **Tasten geben nach.** 3 % Verkleinerung auf einer Federkurve, zusätzlich zur
   Umkehrung aus V2. Das eine ist die Marke, das andere die Physik; zusammen
   fühlt sich die Taste an wie eine, die man wirklich hinunterdrückt.
@@ -549,30 +570,51 @@ Nachhinein, sondern der Grund, warum die Mischung nicht zu Brei wird.
 - **Die Palette**, die Ein-Akzent-Regel, die Gravur-Beschriftung, die
   Zonenspalte, alle drei Markenzeichen.
 
-#### Zwei Ebenen Grund, und warum die Marke dabei gewinnt
+#### Die Flächenleiter: fünf Sprossen, jede mit einer Aufgabe
 
 Eine Erhebung, die man sehen soll, braucht etwas, worüber sie sich erhebt. Läge
 das Gerät auf derselben Fläche, aus der es besteht, bliebe vom Schatten nur ein
-Schmutzrand. Also gibt es seit V5 einen **Untergrund** unter der
-**Gehäusefläche**.
+Schmutzrand. Seit V5 gibt es deshalb einen **Untergrund** unter der
+**Gehäusefläche**; seit v1.2.0 sind daraus fünf Stufen geworden.
 
-Welche Farbe wohin kommt, entschied nicht der Geschmack, sondern das
-Markenhandbuch: Papier und Nacht sind dort ausdrücklich die _Gehäuseflächen_.
-Sie liegen deshalb auf den Panels — dort, wo das Gerät ist. Der Untergrund ist
-ein abgeleiteter Ton, so wie `--ink-2` und `--ink-3` auch: die Tischplatte, auf
-der das Gerät liegt.
+| Token                | Rolle                    | Hell      | Dunkel    |
+| -------------------- | ------------------------ | --------- | --------- |
+| `--ground`           | Werkbank, außerhalb      | `#c9c3b6` | `#030201` |
+| `--case`             | Gehäuse, Deck- und Boden | `#ded9cf` | `#131210` |
+| `--surface-recessed` | versenkt: Eingabeschlitz | `#e9e6e0` | `#1f1e1c` |
+| `--surface`          | das Panel                | `#f5f3ef` | `#2d2b29` |
+| `--surface-active`   | berührt oder fokussiert  | `#eeebe5` | `#363532` |
 
-| Token       | Hell               | Dunkel            |
-| ----------- | ------------------ | ----------------- |
-| `--ground`  | `#eae7e0`          | `#070706`         |
-| `--surface` | `#f5f3ef` (Papier) | `#131210` (Nacht) |
+Bis v1.1.0 waren es drei, und **ein Token stand für zwei entgegengesetzte
+Rollen**: `--surface-recessed` bezeichnete sowohl den versenkten Eingabeschlitz
+als auch den hervorgehobenen Kanalzug. Zwei Bedeutungen, eine Farbe — und damit
+keine.
 
-Im dunklen Modus kippt dabei die Gewichtung, und genau das ist die Falle, in die
-ein bloß invertiertes Theme läuft: Auf fast schwarzem Grund gibt es für einen
-Schatten kaum noch Spielraum. Dort trägt die **Lichtkante** — eine hellere
-Haarlinie an der Oberkante, wie Licht, das von oben auf eine Kante fällt. Es ist
-die genaue Umkehrung der Fräsung am Eingabefeld: Versenktes hat eine dunklere
-Oberkante, Erhobenes eine hellere. Zwei Bauteile, eine Regel.
+Die Reihenfolge nach Helligkeit ist in den beiden Themes **nicht** dieselbe, und
+das ist Absicht: `--surface-active` liegt immer auf der Seite des Panels, auf
+der noch Platz ist. Im Dunkeln ist das oben, im Hellen unten — über Papier liegt
+nur Reinweiß, und das ist seit V2 verboten.
+
+**Im Dunkeln läuft die Leiter seit v1.2.0 nach oben.** Nacht ist jetzt das
+Gehäuse, die Panels steigen darüber. Der Grund ist Physik und nicht Geschmack:
+Lag Nacht auf den Panels, blieb darunter höchstens 1,122:1 bis Schwarz — für
+zwei Stufen. Gemessen waren es 1,037 und 1,063, zusammen also 1,102. Das sind
+zwei Grenzen, die man nicht sieht. Jetzt sind es 1,107 / 1,124 / 1,181 / 1,150,
+zusammen 1,690. Gemessen am Abstand zu 1,000 — „kein Unterschied" — wächst der
+Weg von 0,102 auf 0,690, also auf das 6,8-Fache.
+
+Das Markenhandbuch nennt Papier und Nacht ausdrücklich die _Gehäuseflächen_.
+Nacht auf dem Gehäuse ist damit die wörtlichere Lesart, nicht die freiere.
+
+Im **hellen** Modus ist bewusst nichts passiert: Dort ist nur eine Sprosse
+zwischen zwei bestehende gesetzt worden. Von der Werkbank bis zum Panel sind es
+vorher wie nachher 1,584.
+
+Und wo der Ton nicht mehr trägt, trägt die **Lichtkante** — eine hellere
+Haarlinie an der Oberkante, wie Licht, das von oben auf eine Kante fällt. Sie
+ist die genaue Umkehrung der Fräsung am Eingabefeld: Versenktes hat eine
+dunklere Oberkante (`--edge-sunk`), Erhobenes eine hellere (`--edge-lit`). Zwei
+Bauteile, eine Regel.
 
 #### Die Kanten der Kanalzüge: eine Fuge, die hinter dem Zifferblatt beginnt
 
@@ -589,72 +631,172 @@ Dasselbe Detail benutzt iOS in gruppierten Listen. Hier fällt es mit der
 Rack-Fuge zusammen, die vor dem ersten Bedienelement beginnt — dieselbe Linie,
 zwei Begründungen.
 
-#### Frost: genau eine Fläche, und die muss sich verdienen
+#### Der Frost ist wieder abgeschafft — und warum das ein Fortschritt ist
 
-`backdrop-filter: blur(20px) saturate(180%)` steht an **einer** Stelle: am
-klebenden Kopf. Die Sättigung ist dabei kein Effekt, sondern die Korrektur —
-Blur allein wäscht die Farbe hinter der Fläche aus, `saturate` holt sie zurück.
+Von V5 bis v1.1.0 trug der klebende Kopf ein Frostmaterial:
+`backdrop-filter: blur(20px) saturate(180%)`, an genau einer Stelle, und auch
+dort erst, wenn etwas darunter lag. Das hat drei Versionen lang funktioniert.
 
-Und er ist nicht immer da. Am Seitenanfang liegt unter dem Kopf nichts als der
-blanke Untergrund; eine Fläche, die dort schon schwebt, behauptet eine Erhebung,
-die es nicht gibt, und der Weichzeichner hat nichts zu zeichnen. Der Kopf
-bekommt sein Material deshalb genau dann, wenn er anfängt, etwas zu verdecken —
-geschaltet über einen `IntersectionObserver` an einem Pixel am Dokumentanfang
-(`src/ui/masthead.ts`), nicht über einen Scroll-Rückruf: Der liefe bei jedem
-Bild und müsste jedes Mal eine Position abfragen, also eine Layout-Messung
-mitten im Scrollen.
+Seit v1.2.0 ist es weg. Der Kopf ist deckend im Gehäuseton. Zwei Gründe:
 
-**Der Tresor hat bewusst KEIN Frostglas bekommen**, obwohl der Auftrag ihn
-nannte. Der Grund steht in derselben Checkliste, die den Auftrag begleitet:
-„Keine Ebene ohne Zweck." Das Tresor-Panel liegt auf einer deckenden Fläche —
-hinter ihm ist nichts, was ein Weichzeichner weichzeichnen könnte. Es wäre eine
-Materialbehauptung ohne Wirkung. Der Tresor bleibt, was er seit V2 ist: ein
-sichtbarer Betriebszustand des Geräts, kein Overlay.
+1. **Eine Deckplatte, durch die man hindurchsieht, ist keine.** Der Kopf ist das
+   Oberteil des Gehäuses, nicht ein Fenster darin.
+2. **Ein deckender Kopf hat einen nachrechenbaren Kontrast.** Der Frost hatte
+   keinen: Sein Wert hing davon ab, was gerade darunter durchfuhr.
 
-#### Die Deckung ist gemessen, nicht gewählt
+Mit ihm entfallen `--frost-surface`, `--frost-filter`, der `@supports`-Rückfall
+für Browser ohne `backdrop-filter` und eine eigene Messstrecke. **`backdrop-filter`
+kommt im Projekt jetzt nirgends mehr vor.** Was bleibt, ist der
+`IntersectionObserver` in [`src/ui/masthead.ts`](../src/ui/masthead.ts): Der Kopf
+bekommt Kante und Schatten weiterhin erst dann, wenn er anfängt, etwas zu
+verdecken. Ein Schatten ohne Erhebung wäre eine Behauptung.
 
-Der Auftrag nannte als schlimmsten Fall eine Signal-Orange-Fläche, die unter den
-Kopf scrollt. Genau daran ist die erste Fassung gescheitert: Bei 72 % Deckung
-kam der Kopftext über Tinte auf **2,78:1** — weit unter AA.
+Was ebenfalls blieb, ist der **Tresor ohne Frostglas** — er hatte nie eins, und
+der Grund von damals gilt jetzt für die ganze App: keine Ebene ohne Zweck.
 
-Deshalb gibt es jetzt [`scripts/check-contrast.mjs`](../scripts/check-contrast.mjs).
-Es rechnet nicht aus Tokens, sondern misst **Pixel**: Textfarbe aus
-`getComputedStyle`, dann denselben Text auf `transparent` stellen und genau
-seine Fläche aufnehmen. Übrig bleibt der reine Hintergrund — Weichzeichner,
-Sättigung und Deckung fertig gerechnet vom Browser. Den PNG-Ausschnitt liest das
+#### Die Kontraste sind gemessen, nicht gerechnet
+
+[`scripts/check-contrast.mjs`](../scripts/check-contrast.mjs) rechnet nicht aus
+Tokens, sondern misst **Pixel**: Textfarbe aus `getComputedStyle`, dann denselben
+Text auf `transparent` stellen und genau seine Fläche aufnehmen. Übrig bleibt der
+reine Hintergrund, fertig gezeichnet vom Browser. Den PNG-Ausschnitt liest das
 Skript selbst (Node bringt `zlib` mit), aus demselben Grund, aus dem
 `scripts/icons.mjs` seine PNGs selbst schreibt.
 
-Zwei Änderungen folgten daraus, beide aus der Messung:
+Das Verfahren stammt aus einer Niederlage: Die erste Frost-Fassung sah gut aus
+und kam bei 72 % Deckung auf **2,78:1**. Halbdeckende Flächen entstehen erst beim
+Zeichnen; aus Tokens war das nicht zu sehen.
 
-1. **Deckung 72 % → 78 % (hell) bzw. 84 % (dunkel).** Mehr wäre keine Sicherheit
-   mehr, sondern eine deckende Fläche mit einem Weichzeichner ohne Aufgabe.
-2. **Der Kopftext steht als einziger Gravurtext in `--ink-2` statt `--ink-3`.**
-   Auf einer Fläche mit wechselndem Grund hat die leiseste Graustufe der Palette
-   keine Reserve.
-
-Danach:
+Die Reserveproben aus der Frost-Zeit sind geblieben, obwohl ein deckender Kopf
+sie zwangsläufig besteht. Sie kosten nichts und fangen den Tag, an dem jemand den
+Kopf wieder durchsichtig macht:
 
 | Was                                     | Hell   | Dunkel |
 | --------------------------------------- | ------ | ------ |
-| Kopf über der Gehäusegruppe (kommt vor) | 6,25:1 | 6,16:1 |
-| Kopf über Signal-Orange (Reserveprobe)  | 4,81:1 | 5,29:1 |
-| Kopf über Tinte (Reserveprobe)          | 3,97:1 | 6,23:1 |
-| Kopf über Papier (Reserveprobe)         | 6,41:1 | 4,00:1 |
+| Kopf über der Gehäusefläche (kommt vor) | 5,02:1 | 7,22:1 |
+| Zustandszeile im Kopf                   | 6,15:1 | 9,39:1 |
+| Kopf über Signal-Orange (Reserveprobe)  | 5,02:1 | 7,22:1 |
+| Kopf über Tinte (Reserveprobe)          | 5,02:1 | 7,22:1 |
+| Kopf über Papier (Reserveprobe)         | 5,02:1 | 7,22:1 |
 
-Die Reserveproben werden gegen **3:1** geprüft, nicht gegen 4,5:1, und das ist
-kein Weichspülen: Es sind Gründe, die diese App nicht erzeugt — die Signalfarbe
-trägt hier nur Marken und Schrift, nie eine Fläche. Gefragt ist dort nicht „ist
-das bequem zu lesen", sondern „wie viel Reserve hat das Material, bevor es
-zusammenbricht". Für 4,5:1 auch dort müsste die Deckung über 90 % steigen — das
-Material würde einen Fall bestehen, den es nie erlebt, indem es aufhört, ein
-Material zu sein.
+**Dass in den unteren drei Zeilen dreimal derselbe Wert steht, ist das
+eigentliche Ergebnis.** Genau das ist seit v1.2.0 der Selbsttest: Das Skript
+verlangt, dass der Kopf über drei extrem verschiedenen Prüfflächen denselben Wert
+liefert — gemessene Streuung 0,00. Diese eine Zeile fängt zwei Fehler auf einmal,
+einen versehentlich durchsichtigen Kopf und einen, den das Skript gar nicht
+sieht. Der zweite Fall ist nicht erfunden: Bis V7 maß das Skript wegen einer
+scrollenden Elementaufnahme den Kopf überhaupt nicht mit.
 
-Insgesamt misst das Skript **42 Paare** (21 je Modus), und alle erfüllen AA.
+Insgesamt misst das Skript **92 Paare** (46 je Modus), und alle erfüllen AA. Der
+größte Block darin ist neu: die Matrix **jede Textstufe auf jeder Fläche der
+Leiter**. Sie hat zwei Ausnahmen weggeräumt, die bis v1.1.0 nötig waren („auf dem
+Gehäuse eine Stufe kräftiger", „im Kopf noch eine") — nicht durch Nachlassen,
+sondern durch Messen.
 
-Die Zonenspalte am linken Rand (EINGABE / TRESOR / CODES) ist das tragende
-Layout-Element. Sie ist kein Zierstreifen: Jede Zeile darin benennt einen echten
-Funktionsblock, so wie ein Gerät seine Bedienfelder beschriftet.
+Die **Gravur-Zonenspalte am linken Rand ist entfallen.** Bis v1.1.0 stand
+EINGABE / TRESOR / CODES in einer eigenen Spalte von 6,5 rem und galt als
+tragendes Layout-Element. In einer Bedienseite von 368 px ist das ein Viertel der
+Fläche — für Beschriftung. Die Zonennamen stehen jetzt über ihrem Panel, so wie
+sie es mobil seit V2 tun.
+
+### v1.2.0: Textur, Struktur, Klarheit
+
+Zwischen v1.1.0 und v1.2.0 liegen drei Gestaltungsdurchgänge. Keiner davon ist
+einzeln veröffentlicht worden — sie erscheinen zusammen, weil nur der letzte
+Stand je öffentlich lief.
+
+#### Textur (V6): Material, das keinen Platz kostet
+
+- **Korn.** Gleichverteiltes Rauschen aus `feTurbulence`, als data-URI im
+  Stylesheet, 2,2 % hell und 5 % dunkel. Kein Verlauf: Ein Verlauf hat eine
+  Richtung und behauptet damit eine Lichtquelle. Seit V8 liegt es **nur noch auf
+  der Werkbank**, außerhalb des Geräts — auf einer Fläche, die man abliest, ist
+  Korn keine Materialität, sondern Unruhe. Wie viel Unruhe, lässt sich beziffern:
+  Dieselben vier Vergleichsaufnahmen wiegen ohne die beiden inneren Kornlagen
+  56 % weniger, weil Rauschen nicht komprimiert.
+- **Die Lichtkante ist ein `inset`-Schatten geworden**, keine Rahmenfarbe mehr.
+  Sie folgt damit dem Radius und kostet keinen Platz im Boxmodell.
+- **Tick-Trenner** über dem Fuß, aus derselben 30er-Teilung wie das Emblem —
+  `repeating-linear-gradient` mit harten Stops, also ein Muster und kein Verlauf.
+- **Die Sprachwahl bekam eine eigene Listbox** ([`src/ui/listbox.ts`](../src/ui/listbox.ts)),
+  als Aufsatz auf dem nativen `<select>`. Das Feld bleibt die Wahrheit; ohne
+  Skript bleibt die Systemliste bedienbar. Ein nachgebautes Auswahlfeld, das ohne
+  JavaScript nichts mehr ist, wäre der schlechtere Tausch.
+- **Der Kanalzug hebt sich beim Überfahren um 1 px**, `:focus-within` zählt mit,
+  und die Kopier-Quittung sitzt an der Nabe des Zifferblatts — als **Zustand**,
+  nicht als Animation. Der Unterschied ist nicht akademisch:
+  `prefers-reduced-motion` schaltet in diesem Projekt alle Übergänge ab, und eine
+  Quittung als Keyframe verschwände damit für genau die Leute, die ohnehin
+  weniger visuelle Signale bekommen.
+
+#### Struktur (V7): zwei Zustände statt einer Komposition
+
+Der eigentliche Fehler bis v1.1.0 war nicht die Spaltenzahl, sondern dass **eine
+einzige Anordnung zwei völlig verschiedene Situationen bedienen musste**. Wer
+nichts eingegeben hatte, bekam eine volle Bedienspalte neben einer leeren Kiste.
+
+- **`data-stage="vacant|working"`** am Gerät, gesetzt an genau einer Stelle in
+  [`src/ui/app.ts`](../src/ui/app.ts). Der Leerzustand ist eine eigene Bühne:
+  Emblem in 2,2-facher Größe, ein Satz, das Feld selbst, drei Wege hinein. Kein
+  Tresor, keine leere Codes-Zone.
+- Ausgelöst wird er von **`entries.length === 0`**, nicht von „kein gültiger
+  Eintrag": Eine unlesbare Zeile IST etwas zu zeigen, und ihre Fehlermeldung ist
+  ein Kanalzug. Eine Ausnahme mit Grund: Ein **gesperrter** Tresor bleibt
+  sichtbar, sonst wäre sein Passphrasenfeld beim Laden unerreichbar.
+- **Die Shell:** links eine feste Bedienseite von 23 rem, rechts die fluide
+  Bühne. Die Bedienseite klebt und scrollt eigenständig; unter 1024 px gibt es
+  eine Spalte und kein Gehäuse.
+- **Das Gehäuse ist eine echte Fläche geworden** — 1600 px statt 1216, eigener
+  Ton, Haarlinie, Innenlichtkante, Schatten. Kopf und Fuß laufen über die volle
+  Breite; der Fuß ist die Bodenplatte, kein freischwebender Text.
+- **Ab acht Konten** erscheint die Filterzeile, ab acht Konten UND genug Breite
+  wird die Bühne zweispaltig. Drei Kanäle in zwei Spalten sind kein Raster,
+  sondern eine angefangene Zeile.
+- **Der Filter faltet beide Seiten über NFD** und wirft kombinierende Zeichen weg
+  ([`src/ui/filter.ts`](../src/ui/filter.ts)): „Müller" findet man mit „muller",
+  „İSTANBUL" mit „istanbul". `toLocaleLowerCase()` ohne Sprachangabe hätte das
+  nicht getan.
+
+#### Klarheit (V8): Bauteile mit einem System
+
+Vorbild war [HeroUI](v8-referenzen.md) — die Werte und das System, kein React,
+kein Tailwind, keine Abhängigkeit. Die Flächenleiter steht oben; dazu kamen:
+
+- **Drei Knopfvarianten auf zwei unabhängigen Achsen.** `solid` für die eine
+  Haupthandlung eines Panels, `bordered` für gleichrangige Angebote, `quiet` für
+  „Leeren". Die Höhe ist die zweite Achse, nicht Teil der Variante.
+  Umriss-Knöpfe tragen **2 px** statt 1 — das ist der Grund, warum die Pillen
+  vorher blass wirkten.
+- **Eine Höhenleiter:** 32 px für das Auswahlfeld, 40 für Felder und Tasten, 44
+  für die beiden Aufklapper, 48 für die Haupthandlung, 24 für Chips. Bis v1.1.0
+  gab es genau eine Höhe. Keine Taste ist 32 hoch: Die Trefferfläche über ein
+  Pseudo-Element aufzublasen ließe bei 8 px Abstand zwei Nachbarn überlappen.
+- **Chips für Metadaten.** „SHA-1 · 6 Stellen · 30 s" steht am Kartenkopf rechts
+  statt als Streutext in der Ecke. Ein Chip ist **keine Gravur** — mit Versalsatz
+  und Sperrung war er 212 px breit und ließ dem Kontonamen in einer 458 px
+  breiten Karte 0 px. Ohne beides sind es 136.
+- **Die Code-Karte hat eine feste Geometrie:** Zifferblatt links und Kopiertaste
+  rechts stehen in der Code-Zeile und sind darin zentriert, also mit dem Code auf
+  einer Achse (nachgemessen: 0 Abweichung). Darunter eine Zeile „FOLGT 483 232 ·
+  17 s". Das hat einen Preis, und er steht hier: **Die Zweispalten-Schwelle
+  steigt von 87,5 auf 98 rem**, denn eine feste Geometrie hat eine Mindestbreite.
+- **Drei Abstands-Token nach Rolle:** `--gap-pair` 8 px (was zusammengehört),
+  `--gap-stack` 16 (Geschwister in einem Panel), `--gap-group` 24 (zwischen
+  Panels und als Panel-Innenabstand). Die Skala hat acht Sprossen:
+  4 · 8 · 12 · 16 · 24 · 32 · 48 · 64. Alle ersetzten Werte stehen mit Messwerten
+  in [`v8-abstands-audit.md`](v8-abstands-audit.md).
+- **`:disabled` hat endlich eine Gestaltung** (Deckkraft 0,5). Der Tresor-Knopf
+  ist während der Schlüsselableitung gesperrt und sah dabei aus wie ein
+  bedienbarer.
+- **Die Grenze zwischen den beiden Signal-Token heißt jetzt „grobe Geometrie
+  gegen feine"**, nicht mehr „Fläche gegen Schrift". `--signal` ab 2 px Strich
+  und für Flächen, `--signal-text` für Schrift und feine Marken. Der Auslöser war
+  gemessen: Es gibt im Hellen **keinen** Hover-Ton, der gleichzeitig sichtbar ist
+  und den Zeiger über 3:1 hält — der Markenton hat auf Papier selbst nur 3,06
+  Reserve.
+
+Der Vorher/Nachher-Vergleich mit allen Messwerten liegt in
+[`docs/v8-vergleich/`](v8-vergleich/README.md).
 
 ### Markensystem
 
@@ -902,7 +1044,7 @@ src/
 │   ├── qr-decode.ts        BarcodeDetector mit jsQR-Rückfall
 │   ├── vault-panel.ts      Tresor-Bedienung und Zeitschaltung
 │   ├── lang-switch.ts      Der Sprachumschalter im Fuß
-│   ├── masthead.ts         Klebender Kopf, Frost erst bei Bedarf
+│   ├── masthead.ts         Klebender Kopf, Kante erst bei Bedarf
 │   ├── app.ts              Verdrahtung
 │   ├── tokens.ts           Dauern und Kurven aus dem CSS lesen
 │   └── dom.ts              Kleine Helfer, Zwischenablage
@@ -963,7 +1105,7 @@ berechnet wird und der dadurch von selbst auf die Sekundengrenze einrastet.
 npm test
 ```
 
-501 Tests. Die wichtigsten stammen unverändert aus den Standards:
+514 Tests. Die wichtigsten stammen unverändert aus den Standards:
 
 | Datei                    | Tests | Inhalt                                                                              |
 | ------------------------ | ----- | ----------------------------------------------------------------------------------- |
@@ -1060,15 +1202,18 @@ keine Redundanz, die sich wegkürzen ließe; es ist einfach viel Text.
 
 Was das praktisch heißt:
 
-- **Die PWA über einen Server**: Dort greift Kompression. 216 kB gzip für die
+- **Die PWA über einen Server**: Dort greift Kompression. 234 kB gzip für die
   komplette App inklusive zweier Schriften ist unauffällig, und der Service
   Worker holt sie genau einmal.
-- **Die eine Datei auf dem USB-Stick**: 612 kB. Sie wird lokal geöffnet, es gibt
+- **Die eine Datei auf dem USB-Stick**: 659 kB. Sie wird lokal geöffnet, es gibt
   keine Leitung, über die das dauern könnte.
 - **Lighthouse**: Performance fiel zunächst auf 90, weil der Browser bei diesem
   Bündel einmal malt, BEVOR das Skript läuft — alles, was danach eingesetzt wird,
-  schiebt die Seite (siehe „Gefundene Fehler"). Nach drei gezielten Änderungen
-  steht sie wieder bei 98.
+  schiebt die Seite (siehe „Gefundene Fehler"). Gemessen für v1.2.0 steht sie bei
+  **100 auf dem Schreibtisch und 98 mobil** mit vierfacher CPU-Drossel, bei einem
+  Layout-Shift von 0,001. Der große Sprung kam daher, dass der Leerzustand seit
+  V7 schon im ausgelieferten HTML steht — vorher zeigte der erste Anstrich die
+  volle Oberfläche und das Skript räumte sie danach ab (0,175).
 
 **Was nicht gemacht wurde und warum:** Sprachen einzeln nachladen wäre die
 naheliegende Kur und ist hier ausgeschlossen — ein `import()` je Sprache ist eine
@@ -1076,8 +1221,8 @@ Netzwerkanfrage, und die Single-File-Datei verbietet sie per CSP
 (`connect-src 'none'`). Offline schlägt Bundle-Größe.
 
 **Was stattdessen geht:** weniger Sprachen, entschieden beim Bauen statt beim
-Laden. `CLOCKWORK_LANGS=de,en,fr npm run build` liefert dieselbe App in 324 kB
-statt 612 kB (Einzelheiten oben unter [Sprachen](#nur-bestimmte-sprachen-bauen)).
+Laden. `CLOCKWORK_LANGS=de,en,fr npm run build` liefert dieselbe App in 352 kB
+statt 659 kB (Einzelheiten oben unter [Sprachen](#nur-bestimmte-sprachen-bauen)).
 Das ist kein Widerspruch zur Voreinstellung, sondern ihre Ergänzung: Wer die
 Datei weitergibt, will alle 37 Sprachen; wer sie für den eigenen USB-Stick baut,
 meistens zwei.

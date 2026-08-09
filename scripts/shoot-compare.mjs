@@ -14,7 +14,7 @@
  * Ein Werkzeug, das je Version läuft, darf sein Ziel nicht kennen.
  *
  * ── Warum deviceScaleFactor 1 ─────────────────────────────────────────────
- * Weil diese Bilder ins Repo wandern. `docs/v5-vergleich/` wiegt in doppelter
+ * Weil diese Bilder ins Repo wandern. Ein Vergleichsordner wiegt in doppelter
  * Auflösung 2,7 MB für acht Bilder — für einen Vergleich, den man einmal
  * ansieht, ist das viel Platz für wenig Erkenntnis. Beurteilt wird hier
  * Komposition, nicht Kantenschärfe.

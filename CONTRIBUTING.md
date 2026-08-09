@@ -126,17 +126,28 @@ detail: **what you touch is soft, what you read is sharp.**
 - **Three radii and no more:** `--radius-panel` (18 px) for housing groups,
   `--radius-field` (12 px) for inputs, `--radius-inset` (8 px) for small parts,
   plus `--radius-key` for the pill every button is.
+- **Five surface rungs, each with a job:** workbench → housing → recessed →
+  panel → touched. Until v1.2.0 there were three, and one token stood for both
+  "recessed" and "touched" — that is, for opposites. In dark mode the ladder
+  climbs _upward_: night is the housing and the panels rise above it, because
+  night on the panels leaves at most 1.122:1 of room underneath.
 - **Two elevation levels and no more:** level 1 is a housing group on the
   ground, level 2 is the sticky masthead above everything. Every raised surface
   also carries a hairline — a shadow alone does not survive a high-contrast
   setting or a printout.
+- **A height ladder for controls:** 32 px for the select, 40 px
+  (`--control-h`) for fields and buttons, 44 px for the two disclosures
+  (`--touch-min`), 48 px for a panel's one primary action, 24 px for chips.
 - **Accounts are still not cards.** The _group_ is rounded and raised; the
   channel strips inside it stay strips, separated by hairlines that start
   behind the dial. Turning each account into its own card would undo the whole
   idea.
-- **`backdrop-filter` appears exactly once**, on the sticky masthead, and only
-  once something is actually behind it. A frosted surface with nothing to blur
-  is a layer without a purpose. The vault deliberately does not have one.
+- **`backdrop-filter` does not appear at all.** Up to v1.1.0 it sat on the
+  sticky masthead. It is gone: a cover plate you can see through is not one,
+  and an opaque masthead has a contrast you can actually compute, because it no
+  longer depends on whatever happens to scroll underneath it.
+- **Grain only on the workbench**, outside the device. On a surface you read
+  from, grain is not material — it is unrest.
 - **No gradients, no glow.** Soft diffusion yes, glowing no. There is no shadow
   in the signal colour.
 - **Springs for the surface, linear for the instrument.** UI motion uses
@@ -145,18 +156,31 @@ detail: **what you touch is soft, what you read is sharp.**
 
 ### Measure it, do not eyeball it
 
-Two scripts exist because two claims cannot be checked by looking:
+Three scripts exist because three claims cannot be checked by looking:
 
 ```bash
 node scripts/check-bundle.mjs      # the offline promise, measured on the bundle
 node scripts/check-contrast.mjs    # WCAG AA, measured on rendered pixels
+node scripts/check-tokens.mjs      # no component sets its own values
 ```
 
 `check-contrast.mjs` reads the pixels the browser actually painted — including
-blur, saturation and opacity — rather than computing from tokens, because the
-masthead's background is decided at paint time and changes as you scroll. It
-measures 42 pairs across both colour schemes. Run it after any change to
-colours, opacity or the frosted surface. It needs a server on port 5180.
+opacity and half-covering hairlines — rather than computing from tokens, because
+overlapping surfaces only exist once something is drawn. It measures **92 pairs**
+across both colour schemes, including the full matrix of every text step on
+every surface of the ladder. Run it after any change to colours or opacity. It
+needs a server on port 5180.
+
+It also checks its own setup. If the "self-test" line fails, the measurement is
+broken rather than the colour — the two self-tests require that the masthead
+reads the same value over three very different test surfaces, which catches both
+an accidentally transparent masthead and one the script never saw at all.
+
+`check-tokens.mjs` reads the source instead: no component may set its own
+spacing, colour or radius. It also compares the two `theme-color` meta tags
+against `--case`, because those are the only place in the project where a
+palette value has to be copied by hand — and copied values do not travel. They
+had been stale for three versions before anyone noticed.
 
 ## Traps that have already caught someone
 
