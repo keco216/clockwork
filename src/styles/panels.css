@@ -331,6 +331,32 @@
   border-bottom-right-radius: 1px;
   transform: translateY(-25%) rotate(45deg);
   pointer-events: none;
+  /* 150 ms wie der Select-Indikator der Referenz (`.select__indicator`:
+     `transition duration-150`, `[data-open] { rotate-180 }`) — dieselbe
+     Dauer wie die Feldfläche darunter, damit Fläche und Winkel eine
+     Bewegung sind und nicht zwei. */
+  transition: transform var(--dur-quick) var(--ease-snap);
+}
+
+/* ── Aufgeklappt: der Winkel dreht ────────────────────────────────────────
+   Bis V11 stand er starr — als einziger Aufklapper-Winkel des Geräts. Tresor
+   und Hinweis drehen seit V8 bzw. V9, das Auswahlfeld nicht: Es hatte bis zur
+   Listbox gar keinen Zustand, den es hätte anzeigen können, und danach hat es
+   niemand nachgezogen.
+
+   Der Zustand steht am KNOPF (`aria-expanded`, gesetzt in ui/listbox.ts) und
+   der Winkel an der HÜLLE — ein `<select>` kann kein Pseudo-Element tragen,
+   deshalb liegt er dort. `:has()` verbindet beides, ohne dass das Skript eine
+   zweite Klasse pflegen muss: Der Zustand hat schon einen Namen, und der ist
+   der barrierefreie. (Ab Chrome 105 verfügbar; die WebView-Untergrenze des
+   APK ist 111, siehe capacitor.config.ts. Dieselbe Technik wie bei
+   `.keys:has(.keys__gap)` weiter unten.)
+
+   Ohne Listbox — also ohne Skript — gibt es keinen `aria-expanded`-Knopf und
+   damit auch keine Drehung. Richtig so: Dann klappt die Systemliste auf, und
+   die hat ihren eigenen Zeiger. */
+.pick-shell:has(.pick--button[aria-expanded='true'])::after {
+  transform: translateY(10%) rotate(225deg);
 }
 
 .pick {
@@ -467,6 +493,16 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* Der Druckpunkt der Referenz (`.list-box-item:active { scale(0.98) }`,
+     transform über 250 ms). Eine Zeile in einer Liste ist ein Bedienelement
+     wie eine Taste — und die gibt seit V9 um 3 % nach. Eine Listenzeile ist
+     breiter, also reichen 2 %: Derselbe Weg in Pixeln fiele bei 320 px
+     Breite sonst doppelt so weit aus wie an einer 80-px-Taste. */
+  transition: transform var(--dur-calm) var(--ease-spring);
+}
+
+.listbox__option:active {
+  transform: scale(0.98);
 }
 
 /* Die aktive Zeile — die, auf der Tastatur oder Maus gerade steht. Der
@@ -494,6 +530,29 @@
   border-right: 1.5px solid currentcolor;
   border-bottom: 1.5px solid currentcolor;
   transform: rotate(40deg);
+  /* Das Häkchen wächst herein, statt dazustehen — der Auswahl-Indikator der
+     Referenz (`.menu-item__indicator [data-slot=…--dot]`: Ruhe `scale-70
+     opacity-0`, gewählt `scale-100 opacity-100`, 250 ms).
+
+     ── Warum @keyframes und nicht transition ────────────────────────────────
+     Weil es dieses Pseudo-Element vorher gar nicht GIBT: `content` steht erst
+     unter `[aria-selected='true']`. Ein Übergang braucht zwei Zustände an
+     einem bestehenden Kasten; hier entsteht der Kasten mit dem Zustand. Eine
+     Animation braucht nur einen Anfangswert und läuft beim Entstehen los —
+     auch dann, wenn die Liste aufgeht und alles neu gezeichnet wird.
+
+     Kein Abgang: Wer die Sprache wechselt, sieht das alte Häkchen sofort
+     verschwinden. Die Referenz macht es genauso und begründet es in
+     select.css — bei einfacher Auswahl schließt das Popover so schnell, dass
+     von einem Abgang nichts mehr zu sehen wäre. */
+  animation: listbox-check-in var(--dur-calm) var(--ease-spring);
+}
+
+@keyframes listbox-check-in {
+  from {
+    opacity: 0;
+    transform: rotate(40deg) scale(0.7);
+  }
 }
 
 .vault__check {
