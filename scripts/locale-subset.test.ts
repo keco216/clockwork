@@ -205,9 +205,16 @@ describe('Subset-Build', () => {
       expect(html).not.toContain(nl['zone.vault']);
 
       // Nachgewogen: Die Textmenge ist raus, nicht bloß unerreichbar. Das volle
-      // Bündel wiegt rund 600 kB.
+      // Bündel wiegt rund 780 kB.
+      //
+      // Die Schwelle stand bis V8 bei 400 KiB. V9 hat Instrument Sans durch
+      // Inter ersetzt (die Hausschrift der HeroUI-Referenz), und Inter wiegt
+      // als data-URI rund 122 KiB mehr — latin 48 statt 30 kB, latin-ext 85
+      // statt 11, mal 4/3 fuer Base64. Gemessen lag das de,en,fr-Subset danach
+      // bei 464 KiB. Die Schwelle prueft weiterhin dasselbe: dass der Katalog
+      // WIRKLICH schrumpft — sie liegt gut 250 KiB unter dem vollen Bau.
       const bytes = Buffer.byteLength(html, 'utf8');
-      expect(bytes).toBeLessThan(400 * 1024);
+      expect(bytes).toBeLessThan(500 * 1024);
 
       // Das Versprechen der Datei bleibt, wie es war: eine Datei, keine
       // Verbindung, kein Nachladen.

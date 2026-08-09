@@ -290,8 +290,16 @@ async function checkNoDeadGaps(page, name) {
  *
  * Die Textarea steht nicht in der Liste — sie ist mehrzeilig und in der Höhe
  * verstellbar, also hat sie keine Sprosse.
+ *
+ * ── Die Sprossen sind seit V9 die der HeroUI-Referenz ──────────────────────
+ * Chips 24 · Auswahlfeld 36 (fest) · Tasten und Felder 40, ab 768 px 36 ·
+ * lg-Taste 44, ab 768 px 40 · Aufklapper 44. Als MENGE gefuehrt, nicht je
+ * Fenster: Die Pruefung fragt „steht die Hoehe auf einer Sprosse", nicht
+ * „steht sie auf der richtigen" — Letzteres sieht man auf den Screenshots.
+ * 32 und 48 sind mit V8 gegangen (HeroUI kennt im Bestand dieser App beide
+ * nicht), 36 ist neu dazugekommen.
  */
-const LADDER = [24, 32, 40, 44, 48];
+const LADDER = [24, 36, 40, 44];
 
 async function checkControlHeights(page, name) {
   const off = await page.evaluate(
@@ -679,7 +687,6 @@ for (const skin of CHAIN_SKINS) {
             stage: document.querySelector('.device')?.dataset.stage,
             railSticky: getComputedStyle(rail).position === 'sticky',
             columns: getComputedStyle(main).gridTemplateColumns.split(' ').length,
-            cased: getComputedStyle(document.querySelector('.device')).borderTopWidth !== '0px',
           };
         });
         const wide = size.width >= 1024;
@@ -691,8 +698,15 @@ for (const skin of CHAIN_SKINS) {
             `[${name}] Rail klebt ${shell.railSticky ? '' : 'nicht '}— erwartet anders`,
           );
         }
-        if (shell.cased !== wide) {
-          problems.push(`[${name}] Gehaeuse ${shell.cased ? 'da' : 'weg'} — erwartet anders`);
+        // Das Gehäuse ist mit V9 entfallen (die Panels liegen als Karten
+        // direkt auf dem Grund) — geprüft wird stattdessen die zweite Hälfte
+        // der Schwelle: Ab 1024 px hat main zwei Rasterspalten, darunter eine.
+        // Genau diese Doppelpruefung hat den 64rem/63.9375rem-Fehler gefunden,
+        // und sie funktioniert ohne Gehaeuse genauso.
+        if (shell.columns >= 2 !== wide) {
+          problems.push(
+            `[${name}] main hat ${shell.columns} Rasterspalte(n) — erwartet ${wide ? 'zwei' : 'eine'}`,
+          );
         }
 
         /* ── Die Karte muss in ihre Spalte passen ──────────────────────────

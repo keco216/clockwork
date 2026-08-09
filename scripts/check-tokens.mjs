@@ -94,10 +94,10 @@ const ALLOWED = new Map([
     'Der Auswahl-Winkel wird an seiner EIGENEN Groesse zentriert (0,42em), 0,22em ist die Haelfte davon.',
   ],
   [
-    'inset-block-start: 1px',
-    'Der Schalterknopf sitzt innerhalb der 1-px-Kante seiner Bahn. Das ist die Kantenstaerke, kein Abstand.',
+    'inset-block-start: 2px',
+    'Der Switch-Daumen sitzt 2 px in seiner Bahn — die Geometrie der Referenz (Bahn 20, Daumen 16, Rand 2). Bauteilmass, kein Rasterabstand.',
   ],
-  ['inset-inline-start: 1px', 'Wie oben: die Kantenstaerke der Schalterbahn.'],
+  ['inset-inline-start: 2px', 'Wie oben: der Daumenrand der Referenzgeometrie.'],
 ]);
 
 /** Prüft eine Deklaration und gibt einen Befund zurück, oder null. */
@@ -180,12 +180,15 @@ for (const file of files) {
    niemandem, weil man die Leiste nur auf einem echten Geraet sieht und dort
    nichts danebenliegt, womit man sie vergleichen koennte.
 
-   Verglichen wird gegen --case und nicht gegen --ground: Sichtbar ist die
-   Leiste auf dem Handy, und unter 64 rem traegt `body` den Gehaeuseton. */
+   Seit V9 wird gegen --ground verglichen: Den Gehaeuseton --case gibt es
+   nicht mehr, `body` traegt in jedem Layout den Seitengrund — die Leiste
+   grenzt also an genau diese Flaeche. */
 const html = readFileSync('index.html', 'utf8');
 const tokens = readFileSync('src/styles/tokens.css', 'utf8');
 
-const caseTones = [...tokens.matchAll(/^\s*--case:\s*(#[0-9a-fA-F]{3,8})\s*;/gm)].map((m) => m[1]);
+const caseTones = [...tokens.matchAll(/^\s*--ground:\s*(#[0-9a-fA-F]{3,8})\s*;/gm)].map(
+  (m) => m[1],
+);
 const metaTones = new Map(
   [
     ...html.matchAll(
@@ -200,7 +203,7 @@ const metaTones = new Map(
    Pruefskript schlimmer als gar keine Pruefung. */
 if (caseTones.length !== 2) {
   findings.push(
-    `tokens.css  --case nicht zweimal gefunden (hell/dunkel), sondern ${caseTones.length}x`,
+    `tokens.css  --ground nicht zweimal gefunden (hell/dunkel), sondern ${caseTones.length}x`,
   );
 }
 if (metaTones.size !== 2) {
@@ -218,7 +221,7 @@ if (caseTones.length === 2 && metaTones.size === 2) {
     const meta = metaTones.get(scheme);
     if (meta.toLowerCase() !== tone.toLowerCase()) {
       findings.push(
-        `index.html  theme-color (${scheme}) ist ${meta}, --case ist ${tone} — die Browserleiste passt nicht zum Gehaeuse`,
+        `index.html  theme-color (${scheme}) ist ${meta}, --ground ist ${tone} — die Browserleiste passt nicht zum Seitengrund`,
       );
     }
   }
@@ -226,7 +229,7 @@ if (caseTones.length === 2 && metaTones.size === 2) {
 
 console.log(`Geprueft: ${checked} Deklarationen in ${files.length} Stylesheets.`);
 console.log(`Ausnahmen mit Begruendung: ${ALLOWED.size}.`);
-console.log(`theme-color gegen --case: ${caseTones.join(' / ')}.`);
+console.log(`theme-color gegen --ground: ${caseTones.join(' / ')}.`);
 
 if (findings.length > 0) {
   console.error('\nBefunde:');
