@@ -1,9 +1,13 @@
 # F-Droid-Vorbereitung
 
-Stand 09.08.2026. **Es ist nichts eingereicht** — dieses Dokument hält die
-Prüfung gegen die Aufnahmeregeln fest, beschreibt die vorbereiteten Bausteine
-(fastlane-Metadaten, Build-Härtung) und enthält die Schritt-für-Schritt-
-Anleitung samt fertigem Metadaten-Vorschlag für `fdroiddata`.
+Stand 09.08.2026, abends: **eingereicht.** Der Merge-Request
+[fdroid/fdroiddata!45284](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/45284)
+ist offen, seine Pipeline ist grün (alle neun Jobs, einschließlich
+`fdroid build` und `check apk`) — es wartet auf das menschliche Review des
+F-Droid-Teams. Dieses Dokument hält die Prüfung gegen die Aufnahmeregeln
+fest, beschreibt die Bausteine (fastlane-Metadaten, Build-Härtung), enthält
+die eingereichte Metadaten-Fassung und die Anleitung, die zum MR geführt
+hat — samt der zwei Lehren aus den roten Pipelines.
 
 ## 1. Prüfung gegen die Inclusion Policy
 
@@ -98,12 +102,11 @@ Builds"-Verifikation mit Entwicklersignatur will, muss JDK- und
 SDK-Versionen exakt an den Buildserver angleichen — das ist ein eigenes
 Vorhaben und hier nicht behauptet.
 
-## 4. Fertiger Metadaten-Vorschlag für fdroiddata
+## 4. Die eingereichte Metadaten-Datei
 
-Datei `metadata/io.github.keco216.clockwork.yml` (COMMIT beim Einreichen
-eintragen — der referenzierte Stand muss `android/` und `fastlane/`
-enthalten; das Tag `v1.4.0` enthält beides NICHT, es ist älter als der
-Wrap):
+`metadata/io.github.keco216.clockwork.yml`, **kanonische Fassung** — exakt
+der Stand, mit dem die MR-Pipeline grün wurde (Quelle: das
+`fdroid rewritemeta`-Job-Artefakt, byte-genau übernommen):
 
 ```yaml
 Categories:
@@ -123,19 +126,22 @@ Repo: https://github.com/keco216/clockwork.git
 Builds:
   - versionName: 1.4.0
     versionCode: 10400
-    commit: COMMIT_EINTRAGEN
+    commit: 7c55e41123c355c334a4ca9c77d4c90e325990b9
     subdir: android/app
     sudo:
       - apt-get update
-      - apt-get install -y --no-install-recommends nodejs npm
-    init:
-      - cd ../.. && npm ci
-    prebuild:
-      - cd ../.. && npm run android
-    scanignore:
-      - node_modules
+      - apt-get install -y --no-install-recommends ca-certificates wget xz-utils
+      - wget --no-verbose https://nodejs.org/dist/v22.23.2/node-v22.23.2-linux-x64.tar.xz
+      - echo "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307  node-v22.23.2-linux-x64.tar.xz"
+        | sha256sum -c -
+      - tar -xJf node-v22.23.2-linux-x64.tar.xz -C /usr/local --strip-components=1
+      - rm node-v22.23.2-linux-x64.tar.xz
+    init: cd ../.. && npm ci
     gradle:
       - yes
+    prebuild: cd ../.. && npm run android
+    scanignore:
+      - node_modules
 
 AutoUpdateMode: None
 UpdateCheckMode: Static
@@ -143,25 +149,41 @@ CurrentVersion: 1.4.0
 CurrentVersionCode: 10400
 ```
 
-Zwei bewusste Entscheidungen darin:
+Die Entscheidungen darin — und die zwei Lehren aus den roten Pipelines:
 
+- **Node 22 als gepinntes Tarball statt apt-Paket.** Die Vorhersage „apt-Node
+  zu alt für Vite 8" traf halb: Vite lief mit Debians Node durch, gestorben
+  ist erst **Capacitors CLI** beim `cap sync` — sie verlangt hart
+  Node ≥ 22. Das offizielle Tarball mit SHA-256-Prüfung (aus
+  `SHASUMS256.txt` von nodejs.org) ist das reviewerfreundliche, gepinnte
+  Muster; npm kommt darin mit.
+- **`fdroid rewritemeta` verlangt SEINE Schreibweise, nicht nur gültiges
+  YAML:** `init`/`prebuild` mit einem Eintrag als Strings statt Listen,
+  `gradle:` VOR `prebuild` (kanonische Feldreihenfolge im Builds-Eintrag),
+  Zeilenumbruch am Dateiende — und lange Skalare bricht der Dumper selbst
+  um (die `echo`-Zeile oben ist EINE Zeichenkette über zwei Zeilen). Wer
+  daneben liegt, findet die gültige Fassung als Artefakt des
+  rewritemeta-Jobs unter `tmp/<appid>.yml` — byte-genau übernehmen statt
+  von Hand nachbauen.
 - **`UpdateCheckMode: Static` statt `Tags`**, weil das jüngste Tag
   (`v1.4.0`) den Android-Ordner noch nicht enthält — ein Tag-Checker liefe
   ins Leere. **Ab dem nächsten echten Release** (Tag auf einem Stand mit
   `android/`) auf `AutoUpdateMode: Version` + `UpdateCheckMode: Tags
-^v[0-9.]+$` umstellen, dann zieht F-Droid neue Versionen selbst.
+^v[0-9.]+$` umstellen und einen Builds-Eintrag fürs neue Tag ergänzen,
+  dann zieht F-Droid neue Versionen selbst. Ohne die Umstellung bliebe die
+  F-Droid-Fassung für immer auf 1.4.0 stehen — der Punkt steht deshalb als
+  Pflichtpunkt in der lokalen Release-Notiz.
 - **`scanignore: node_modules`**, weil der Gradle-Bau Capacitors
   Android-Bibliothek aus `node_modules/@capacitor/android` mitkompiliert —
   löschen (scandelete) würde den Bau brechen; der Scanner soll den Ordner
   nur nicht durchsuchen.
 
-Wahrscheinlichster CI-Stolperstein: Die Debian-Node-Version des
-Buildservers. Reicht sie nicht für Vite 8, sind die beiden `sudo`-Zeilen
-gegen eine Node-22-Installation zu tauschen (z. B. über
-`n`/Nodesource-Skript) — die Reviewer kennen das Muster, in `fdroiddata`
-gibt es Vorbilder (nach `sudo:.*nodejs` suchen).
-
 ## 5. Schritt für Schritt: Was auf gitlab.com zu tun ist
+
+_Erledigt am 09.08.2026 — Ergebnis ist MR !45284 mit grüner Pipeline. Die
+Schritte bleiben als Anleitung stehen, denn dieselbe Mechanik gilt für
+jede künftige Änderung an den Metadaten (z. B. die Tags-Umstellung beim
+nächsten Release)._
 
 Empfohlen ist der **direkte Merge-Request an `fdroiddata`** — der
 RFP-Weg (<https://gitlab.com/fdroid/rfp>) ist nur sinnvoll, wenn jemand
