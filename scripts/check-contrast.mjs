@@ -821,6 +821,46 @@ for (const scheme of ['light', 'dark']) {
     document.getElementById('token-matrix')?.remove();
   });
 
+  /* ── 9. Mobil: die Bauteile, die es nur unter 64 rem gibt ────────────────
+     Seit V10 hat der Einspalter eigene Bauteile — die Zusammenfassungszeile
+     der Eingabe und den Testschlüssel in voller Breite. Ihre Token-Paare
+     stehen zwar alle in der Matrix (Abschnitt 8), aber Abschnitt 1 misst,
+     was die App WIRKLICH zeigt, und das gilt für den Einspalter genauso:
+     Ein Bauteil, das nur unter 64 rem gezeichnet wird, ist bei 1280 px
+     schlicht nicht messbar.
+
+     Die beiden Spans der Zusammenfassung werden EINZELN gemessen, nicht der
+     Knopf als Ganzes: Er enthält zwei Textfarben, und die jeweils andere
+     bliebe beim Ausblenden der ersten sichtbar — sie stünde dann als
+     Fremdpixel in der Hintergrund-Mittelung. */
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  });
+  await page.waitForTimeout(300);
+
+  await measure(page, {
+    scheme,
+    label: 'Mobil: Zusammenfassungszeile',
+    selector: '#input-fold > span[data-i18n]',
+  });
+  await measure(page, {
+    scheme,
+    label: 'Mobil: Zaehler der Zusammenfassung',
+    selector: '#input-fold-count',
+  });
+
+  // Für die Primärtaste in voller Breite muss der Leerzustand her — sie ist
+  // die eine Stelle, an der Schrift auf dem Signal-Ton steht, und mobil ist
+  // sie die größte Fläche davon.
+  await page.fill('#secrets', '');
+  await page.waitForTimeout(400);
+  await measure(page, {
+    scheme,
+    label: 'Mobil: Testschluessel auf Signal',
+    selector: '#key-demo',
+  });
+
   await context.close();
 }
 

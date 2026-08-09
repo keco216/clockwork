@@ -41,7 +41,12 @@ export default tseslint.config(
     // `page.evaluate()` in den Browser — dort gibt es `document` und `window`.
     // Nur die, die das wirklich tun: `shoot-compare.mjs` fotografiert bloß und
     // braucht die Browser-Globals nicht, also soll es sie auch nicht bekommen.
-    files: ['scripts/shoot.mjs', 'scripts/check-contrast.mjs', 'scripts/shoot-grid.mjs'],
+    files: [
+      'scripts/shoot.mjs',
+      'scripts/check-contrast.mjs',
+      'scripts/shoot-grid.mjs',
+      'scripts/shoot-mobile.mjs',
+    ],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },
 
