@@ -32,6 +32,10 @@ export default {
   'zone.codes': 'Kody',
 
   'input.legend': 'Jeden wpis w wierszu',
+  'input.placeholder':
+    'np. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} albo {uri} — pomieszane. {hash} zaczyna notatkę.',
   'input.help.images': 'Obrazy z kodem QR można też tu przeciągnąć albo wkleić przez {paste}.',
   'input.help.migration':

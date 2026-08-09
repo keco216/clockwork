@@ -30,6 +30,10 @@ export default {
   'zone.codes': 'Κωδικοί',
 
   'input.legend': 'Μία καταχώριση ανά γραμμή',
+  'input.placeholder':
+    'π.χ. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} ή {uri} — ανάμεικτα. Το {hash} ξεκινά σημείωση.',
   'input.help.images':
     'Οι εικόνες με κωδικό QR μπορούν επίσης να συρθούν εδώ ή να επικολληθούν με {paste}.',

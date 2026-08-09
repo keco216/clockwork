@@ -29,6 +29,10 @@ export default {
   'zone.codes': '验证码',
 
   'input.legend': '每行一个条目',
+  'input.placeholder':
+    '例如：JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32、{nameSecret} 或 {uri} —— 可以混排。{hash} 开始一条备注。',
   'input.help.images': '二维码图片也可以拖到这里，或者用 {paste} 粘贴。',
   'input.help.migration': 'Google 身份验证器的导出（{migration}）会自动转换。',

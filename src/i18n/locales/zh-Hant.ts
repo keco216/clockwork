@@ -30,6 +30,10 @@ export default {
   'zone.codes': '驗證碼',
 
   'input.legend': '每行一個項目',
+  'input.placeholder':
+    '例如：JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32、{nameSecret} 或 {uri} —— 可以混排。{hash} 開始一則註記。',
   'input.help.images': 'QR 碼圖片也可以拖到這裡，或者用 {paste} 貼上。',
   'input.help.migration': 'Google 驗證器的匯出（{migration}）會自動轉換。',

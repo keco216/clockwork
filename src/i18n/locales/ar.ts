@@ -33,6 +33,11 @@ export default {
   'zone.codes': 'الرموز',
 
   'input.legend': 'مُدخَل واحد في كل سطر',
+  'input.placeholder':
+    'مثال:\n' +
+    'JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32 أو {nameSecret} أو {uri} — مختلطة. و{hash} تبدأ ملاحظة.',
   'input.help.images': 'يمكن أيضًا سحب صور رمز QR إلى هنا أو لصقها بـ {paste}.',
   'input.help.migration': 'تُحوَّل صادرات Google Authenticator ({migration}) تلقائيًا.',

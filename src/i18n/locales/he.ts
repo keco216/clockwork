@@ -31,6 +31,11 @@ export default {
   'zone.codes': 'קודים',
 
   'input.legend': 'רשומה אחת בכל שורה',
+  'input.placeholder':
+    'לדוגמה:\n' +
+    'JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, ‏{nameSecret} או {uri} — מעורבבים. {hash} פותח הערה.',
   'input.help.images': 'אפשר גם לגרור לכאן תמונות של קוד QR או להדביק עם {paste}.',
   'input.help.migration': 'ייצוא מ‑Google Authenticator ‏({migration}) מומר מאליו.',

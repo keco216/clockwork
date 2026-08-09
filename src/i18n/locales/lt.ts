@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'Kodai',
 
   'input.legend': 'Vienas įrašas eilutėje',
+  'input.placeholder':
+    'pvz. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} arba {uri} — sumaišyti. {hash} pradeda pastabą.',
   'input.help.images': 'QR paveikslus taip pat galima atitempti čia arba įklijuoti su {paste}.',
   'input.help.migration': '„Google Authenticator“ eksportai ({migration}) pertvarkomi savaime.',

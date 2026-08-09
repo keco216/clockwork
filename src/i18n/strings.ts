@@ -61,6 +61,19 @@ export interface Strings {
   /* ── Eingabe ─────────────────────────────────────────────────────────── */
 
   'input.legend': string;
+  /**
+   * Der Beispieltext im leeren Feld (V10).
+   *
+   * Er beginnt mit dem „z. B."-Kürzel der jeweiligen Sprache: Drei plausible
+   * Zeilen ohne Markierung sahen aus wie echte Einträge — ein Platzhalter darf
+   * nie so aussehen, als stünde schon etwas im Feld. Die Beispiele selbst
+   * bleiben in jeder Sprache gleich; es sind Secrets und URIs, keine Prosa.
+   *
+   * Rechtsläufige Sprachen (ar, he) stellen ihr Kürzel auf eine eigene erste
+   * Zeile: Das Feld ist per `dir="ltr"` festgenagelt, und in einer gemischten
+   * Zeile schöbe die Bidi-Regel das Kürzel ans Zeilenende.
+   */
+  'input.placeholder': string;
   /** `{nameSecret}`, `{uri}`, `{hash}` sind Code-Auszeichnungen. */
   'input.help.formats': string;
   /** `{paste}` ist die Tastenkombination. */

@@ -31,6 +31,10 @@ export default {
   'zone.codes': '코드',
 
   'input.legend': '한 줄에 한 항목',
+  'input.placeholder':
+    '예: JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} 또는 {uri} — 섞어도 된다. {hash} 는 메모를 시작한다.',
   'input.help.images': 'QR 이미지는 여기로 끌어 놓거나 {paste} 로 붙여 넣어도 된다.',
   'input.help.migration': 'Google Authenticator 내보내기 ({migration}) 는 저절로 변환된다.',

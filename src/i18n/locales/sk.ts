@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'Kódy',
 
   'input.legend': 'Jedna položka na riadok',
+  'input.placeholder':
+    'napr. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} alebo {uri} — pomiešané. {hash} začína poznámku.',
   'input.help.images': 'Obrázky s QR kódom sa dajú sem aj pretiahnuť alebo vložiť cez {paste}.',
   'input.help.migration':

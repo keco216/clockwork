@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'Kodi',
 
   'input.legend': 'Viens ieraksts rindā',
+  'input.placeholder':
+    'piem. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} vai {uri} — jaukti. {hash} sāk piezīmi.',
   'input.help.images': 'QR attēlus var arī ievilkt šeit vai ielīmēt ar {paste}.',
   'input.help.migration':

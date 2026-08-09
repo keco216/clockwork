@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'รหัส',
 
   'input.legend': 'หนึ่งรายการต่อหนึ่งบรรทัด',
+  'input.placeholder':
+    'เช่น JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} หรือ {uri} — ปนกันได้ {hash} เริ่มต้นบันทึกย่อ',
   'input.help.images': 'ภาพรหัส QR ลากมาวางที่นี่ก็ได้ หรือวางด้วย {paste}',
   'input.help.migration': 'ไฟล์ส่งออกจาก Google Authenticator ({migration}) จะถูกแปลงให้เอง',
