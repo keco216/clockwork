@@ -522,15 +522,26 @@ await session('06-tresor', {
     await page.waitForFunction(() => document.querySelector('#vault')?.dataset.state === 'open', {
       timeout: 15000,
     });
-    // Seit V10 fällt der Aufklapper mit dem Aufsperren zu — die Statuszeile
-    // sagt „Offen", und das ist der Normalfall. Geprüft wird beides: dass er
-    // zu ist, und dass er sich für die Tasten dahinter wieder öffnen lässt —
-    // derselbe Griff, den auch ein Nutzer macht.
-    if (await page.evaluate(() => document.querySelector('#vault-disclosure')?.open)) {
-      problems.push(`[${name}] Aufklapper steht nach dem Aufsperren noch offen`);
-    }
+    /* Seit V10 fällt der Aufklapper mit dem Aufsperren zu — die Statuszeile
+       sagt „Offen", und das ist der Normalfall. Geprüft wird beides: dass er
+       zu ist, und dass er sich für die Tasten dahinter wieder öffnen lässt —
+       derselbe Griff, den auch ein Nutzer macht.
+
+       Seit V11 fährt er dabei (ui/disclosure.ts), und während der Fahrt bleibt
+       `open` absichtlich stehen: Der Browser nähme den Inhalt sonst sofort aus
+       dem Layout und es gäbe nichts mehr zu bewegen. Gewartet wird deshalb auf
+       das ERGEBNIS und nicht auf eine Zahl — genau diese Prüfung ist beim
+       Umbau einmal rot geworden und hat gezeigt, dass sie wirklich hinsieht. */
+    await page
+      .waitForFunction(() => document.querySelector('#vault-disclosure')?.open === false, {
+        timeout: 3000,
+      })
+      .catch(() => {
+        problems.push(`[${name}] Aufklapper steht nach dem Aufsperren noch offen`);
+      });
     await page.click('#vault-disclosure > summary');
-    await page.waitForTimeout(200);
+    // Lange genug für die Klappfahrt: Was danach gemessen wird, soll stehen.
+    await page.waitForTimeout(500);
     // Und im offenen Zustand noch einmal: Jetzt sind alle drei Tasten da, die
     // Fehlerzeile ist leer, und das Formular ist weg.
     await checkNoDeadGaps(page, name);
