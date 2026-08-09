@@ -168,8 +168,65 @@ for (const file of files) {
   });
 }
 
+/* ── Die Browserleiste ──────────────────────────────────────────────────────
+   Zwei Farbwerte stehen zwangsläufig ausserhalb der Token-Datei: Ein
+   <meta name="theme-color"> ist HTML und kann kein var() lesen. Damit sind sie
+   die einzige Stelle im Projekt, an der eine Palettenfarbe abgeschrieben werden
+   MUSS — und abgeschriebene Werte wandern nicht mit.
+
+   Genau das ist passiert: Die Werte wurden in V5 gesetzt, V8 hat die
+   Flaechenleiter umgebaut, und drei Versionen lang zeigte die Leiste auf dem
+   Handy einen Ton, den es auf der Seite nicht mehr gab. Aufgefallen ist es
+   niemandem, weil man die Leiste nur auf einem echten Geraet sieht und dort
+   nichts danebenliegt, womit man sie vergleichen koennte.
+
+   Verglichen wird gegen --case und nicht gegen --ground: Sichtbar ist die
+   Leiste auf dem Handy, und unter 64 rem traegt `body` den Gehaeuseton. */
+const html = readFileSync('index.html', 'utf8');
+const tokens = readFileSync('src/styles/tokens.css', 'utf8');
+
+const caseTones = [...tokens.matchAll(/^\s*--case:\s*(#[0-9a-fA-F]{3,8})\s*;/gm)].map((m) => m[1]);
+const metaTones = new Map(
+  [
+    ...html.matchAll(
+      /<meta\s+name="theme-color"\s+content="(#[0-9a-fA-F]{3,8})"\s+media="\(prefers-color-scheme:\s*(light|dark)\)"/g,
+    ),
+  ].map((m) => [m[2], m[1]]),
+);
+
+/* Ohne diese beiden Zeilen wuerde eine umbenannte Variable oder ein
+   umgeschriebenes Meta-Tag als „bestanden" durchlaufen — die Suche faende dann
+   einfach nichts. Ein `?.`, das einen Tippfehler verschluckt, ist in einem
+   Pruefskript schlimmer als gar keine Pruefung. */
+if (caseTones.length !== 2) {
+  findings.push(
+    `tokens.css  --case nicht zweimal gefunden (hell/dunkel), sondern ${caseTones.length}x`,
+  );
+}
+if (metaTones.size !== 2) {
+  findings.push(
+    `index.html  theme-color nicht zweimal gefunden (hell/dunkel), sondern ${metaTones.size}x`,
+  );
+}
+
+if (caseTones.length === 2 && metaTones.size === 2) {
+  const pairs = [
+    ['light', caseTones[0]],
+    ['dark', caseTones[1]],
+  ];
+  for (const [scheme, tone] of pairs) {
+    const meta = metaTones.get(scheme);
+    if (meta.toLowerCase() !== tone.toLowerCase()) {
+      findings.push(
+        `index.html  theme-color (${scheme}) ist ${meta}, --case ist ${tone} — die Browserleiste passt nicht zum Gehaeuse`,
+      );
+    }
+  }
+}
+
 console.log(`Geprueft: ${checked} Deklarationen in ${files.length} Stylesheets.`);
 console.log(`Ausnahmen mit Begruendung: ${ALLOWED.size}.`);
+console.log(`theme-color gegen --case: ${caseTones.join(' / ')}.`);
 
 if (findings.length > 0) {
   console.error('\nBefunde:');

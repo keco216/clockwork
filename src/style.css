@@ -300,7 +300,13 @@ kbd {
 .masthead {
   background: var(--case);
   position: sticky;
-  inset-block-start: 0;
+  /* Nicht 0, sondern der obere Sicherheitsabstand: Als installierte App (das
+     Manifest sagt `standalone`) gibt es keine Browserleiste mehr, und mit
+     `viewport-fit=cover` im Viewport-Tag beginnt die Seite an der PHYSISCHEN
+     Oberkante — also unter Statusleiste und Aussparung. Ein Riegel, der bei 0
+     parkt, parkt dort darunter. Im Browser ist der Wert 0, dort ändert sich
+     nichts. */
+  inset-block-start: env(safe-area-inset-top);
   z-index: 5;
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -1424,10 +1430,20 @@ body::before {
 /* Jede Ziffer ist ein eigenes Element, weil beim Codewechsel nur die Ziffern
    umspringen sollen, die sich tatsächlich ändern — genau wie an einer
    Fallblattanzeige. Siehe ui/dial.ts. */
+/* Kein `will-change: transform`, und das ist eine Entscheidung, keine Lücke.
+   Der Hinweis hat hier bis V8 gestanden und eine Ebene je Ziffer erzwungen —
+   dauerhaft, für eine Bewegung, die 190 ms alle 30 Sekunden läuft. Gemessen
+   über CDP (LayerTree) bei acht Konten, also 48 Ziffern: 66 Ebenen mit dem
+   Hinweis, 18 ohne. Die 48 Ebenen stehen 99,4 % der Zeit ungenutzt herum, und
+   sie wachsen mit jedem Konto weiter.
+
+   Nötig ist er auch nicht: `element.animate()` sagt dem Browser, dass eine
+   Transformation läuft, und der befördert das Element für die Dauer der
+   Animation von sich aus. `will-change` nimmt ihm nur die Möglichkeit, sie
+   danach wieder aufzugeben. */
 .dial__digit {
   display: inline-block;
   transform-origin: 50% 50%;
-  will-change: transform;
 }
 
 /* Die Lücke in „123 456". Ein echtes Leerzeichen wäre zu schmal und würde je
@@ -1725,7 +1741,14 @@ body::before {
   .device {
     max-width: var(--measure);
     margin-block: 0;
-    padding-block: var(--sp-5) calc(var(--sp-8) + env(safe-area-inset-bottom));
+    /* Oben derselbe Griff wie unten, und aus demselben Grund: Hier füllt das
+       Gerät den Schirm, es gibt also keinen Rand, der die Aussparung von sich
+       aus freihält. `calc` und nicht `max` — der Sicherheitsabstand ist Fläche,
+       die nicht benutzbar ist, und die 24 px Luft gehören DARUNTER, nicht
+       hinein. Beim Rand links und rechts ist es umgekehrt (siehe .device oben):
+       dort deckt der vorhandene Innenabstand den Fall meist schon ab. */
+    padding-block: calc(var(--sp-5) + env(safe-area-inset-top))
+      calc(var(--sp-8) + env(safe-area-inset-bottom));
     background: none;
     border: 0;
     border-radius: 0;
@@ -1817,6 +1840,25 @@ body::before {
    Bewegung reduzieren
    ========================================================================== */
 
+/* Der übliche Rundumschlag — hier ausnahmsweise ungefährlich, und das ist der
+   Grund, warum er stehen bleiben darf.
+
+   Ein globales Abschalten ist normalerweise die schlechte Lösung: Es tötet
+   nicht nur Zierbewegung, sondern auch Rückmeldung, und genau die braucht, wer
+   weniger visuelle Reize bekommt, am nötigsten. In diesem Projekt trifft es
+   nichts davon, weil jede Rückmeldung als ZUSTAND gebaut ist und nicht als
+   Bewegung: Die Kopier-Quittung ist eine Füllfarbe (styles/mark.css), der
+   Kanalzug unter dem Zeiger eine Fläche, der gesperrte Knopf eine Deckkraft.
+   Alle bleiben stehen — nur der weiche Weg dorthin entfällt.
+
+   Was Bewegung MITTEILT, hängt ohnehin nicht hier dran: Das Fallblatt und die
+   einfahrende Bühne laufen über `element.animate()` und fragen
+   `prefersReducedMotion()` selbst ab (ui/dial.ts, ui/app.ts). Der Zeiger
+   bekommt seinen Winkel pro Frame von der Uhr und hat gar keinen Übergang.
+
+   Die beiden `animation-*`-Zeilen greifen derzeit ins Leere — im ganzen
+   Projekt gibt es kein einziges `@keyframes`. Sie bleiben trotzdem: Sie kosten
+   zwei Zeilen und fangen die erste CSS-Animation ab, die jemand hinzufügt. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

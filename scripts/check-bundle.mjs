@@ -29,8 +29,8 @@ const FORBIDDEN = ['fetch(', 'XMLHttpRequest', 'WebSocket', 'sendBeacon', 'Event
  */
 const MARKERS = { de: 'Tresor', en: 'Vault', fr: 'Coffre', ja: '金庫', ru: 'Сейф', nl: 'Kluis' };
 
-/** Obergrenze fuer einen Teil-Bau. Der volle Bau wiegt rund 600 kB. */
-const SUBSET_LIMIT_KB = 400;
+/** Obergrenze fuer einen Teil-Bau, in KiB. Der volle Bau wiegt rund 643 KiB. */
+const SUBSET_LIMIT_KIB = 400;
 
 const problems = [];
 
@@ -65,14 +65,25 @@ if (subset !== null) {
       );
     }
   }
-  if (size > SUBSET_LIMIT_KB * 1024) {
+  if (size > SUBSET_LIMIT_KIB * 1024) {
     problems.push(
-      `Teil-Bau ist ${Math.round(size / 1024)} kB gross — die abgewaehlten Kataloge wurden nicht entfernt`,
+      `Teil-Bau ist ${Math.round(size / 1024)} KiB gross — die abgewaehlten Kataloge wurden nicht entfernt`,
     );
   }
 }
 
-console.log(`  ${'Groesse'.padEnd(16)} ${Math.round(size / 1024)} kB`);
+/* Beide Zaehlweisen, beide beschriftet — und die dezimale zuerst, weil die Doku
+   in ihr rechnet.
+
+   Bis V8 stand hier `${Math.round(size / 1024)} kB`: geteilt durch 1024, also
+   KiB, beschriftet als kB. Genau dieser Zettel ist zweimal abgeschrieben worden
+   und einmal in die Release-Notiz gewandert — V8 galt als „642 kB dezimal",
+   obwohl 642 die KiB-Zahl war und der dezimale Wert bei 659 lag. Ein Skript,
+   das seine eigene Einheit falsch beschriftet, ist eine Fehlerquelle und keine
+   Messung. */
+const kB = Math.round(size / 1000);
+const kiB = Math.round(size / 1024);
+console.log(`  ${'Groesse'.padEnd(16)} ${kB} kB (dezimal) = ${kiB} KiB`);
 
 if (problems.length > 0) {
   console.error('\nBefunde:');

@@ -16,12 +16,22 @@
       content="Clockwork — TOTP authenticator. Generates two-factor codes entirely in the browser, without any network requests."
     />
     <!--
-      Die Farbe der Browserleiste folgt dem Untergrund, auf dem das Gerät liegt
-      (--ground), nicht der Gehäusefläche darauf. Seit V5 sind das zwei
-      verschiedene Töne, und die Leiste grenzt an den Untergrund.
+      Die Farbe der Browserleiste ist der GEHÄUSETON (--case), nicht der der
+      Werkbank.
+
+      Bis V7 stand hier --ground, mit der Begründung, die Leiste grenze an den
+      Untergrund. Das stimmt am Schreibtisch — nur zeigt keine Browserleiste
+      dort etwas an. Sichtbar wird sie auf dem Handy, und unter 64 rem gibt es
+      gar keine Werkbank mehr: Das Gerät füllt den Schirm, `body` trägt dann
+      --case (siehe style.css, die Abfrage bei 63.9375rem). Die Leiste grenzt
+      also an das Gehäuse.
+
+      Zweiter Grund, es überhaupt anzufassen: V8 hat die Flächenleiter
+      umgebaut, und die Werte hier sind seit V5 nicht mitgewandert. Sie waren
+      das alte --ground und passten zu nichts mehr auf der Seite.
     -->
-    <meta name="theme-color" content="#eae7e0" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#070706" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ded9cf" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#131210" media="(prefers-color-scheme: dark)" />
 
     <!--
       Angaben für geteilte Links. Sie bleiben englisch, auch wenn die Oberfläche
