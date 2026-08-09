@@ -24,10 +24,19 @@ const subset = process.argv[2] ? process.argv[2].split(',').map((s) => s.trim())
 const FORBIDDEN = ['fetch(', 'XMLHttpRequest', 'WebSocket', 'sendBeacon', 'EventSource'];
 
 /**
- * Ein Wort je Sprache, das nur in dieser Sprache vorkommt (zone.vault).
- * Damit laesst sich am fertigen Buendel ablesen, welche Kataloge drinstecken.
+ * Ein Wort je Sprache, das NUR im Katalog dieser Sprache vorkommt. Damit
+ * laesst sich am fertigen Buendel ablesen, welche Kataloge drinstecken.
+ *
+ * Der deutsche Marker ist „Zusperren" (vault.action.lock) und ausdruecklich
+ * NICHT „Tresor": Das Wort steht auch in den deutschen Original-Saetzen von
+ * src/i18n/lib-text.ts — die sind die Erkennungsmuster fuer die eingefrorenen
+ * lib-Fehlermeldungen und liegen in JEDEM Buendel. Ein Marker, der immer da
+ * ist, misst nichts; aufgefallen ist das beim ersten en-only-Lauf (V10),
+ * vorher lief die Pruefung nur mit de im Teil-Bau. Dazu kommt: Die deutschen
+ * HTML-Kommentare aus index.html wandern mit in die Einzeldatei — auch ein
+ * Wort aus ihnen taugt nicht als Katalog-Marker.
  */
-const MARKERS = { de: 'Tresor', en: 'Vault', fr: 'Coffre', ja: '金庫', ru: 'Сейф', nl: 'Kluis' };
+const MARKERS = { de: 'Zusperren', en: 'Vault', fr: 'Coffre', ja: '金庫', ru: 'Сейф', nl: 'Kluis' };
 
 /** Obergrenze fuer einen Teil-Bau, in KiB. Der volle Bau wiegt rund 763 KiB.
  *

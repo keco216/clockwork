@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'Coduri',
 
   'input.legend': 'O intrare pe rând',
+  'input.placeholder':
+    'de ex. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} sau {uri} — amestecate. {hash} începe o notă.',
   'input.help.images': 'Imaginile cu cod QR pot fi trase aici sau lipite cu {paste}.',
   'input.help.migration':

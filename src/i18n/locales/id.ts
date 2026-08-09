@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'Kode',
 
   'input.legend': 'Satu entri per baris',
+  'input.placeholder':
+    'mis. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} atau {uri} — bercampur. {hash} memulai catatan.',
   'input.help.images': 'Gambar QR juga bisa diseret ke sini atau ditempel dengan {paste}.',
   'input.help.migration':

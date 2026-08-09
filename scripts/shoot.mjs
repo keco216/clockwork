@@ -257,6 +257,12 @@ async function checkNoDeadGaps(page, name) {
         if (child.classList.contains('keys__gap')) continue;
         const childStyle = getComputedStyle(child);
         if (childStyle.display === 'none' || childStyle.position === 'absolute') continue;
+        // Eine `display: contents`-Hülle ist KEIN Flexkind: Sie selbst belegt
+        // keinen Platz im Kasten und bekommt auch keine Fuge — teilnehmen tun
+        // ihre Kinder direkt. Ihr Kastenmaß ist trotzdem 0×0, und genau damit
+        // sähe sie hier aus wie ein leerer Kasten. Seit V10 stehen zwei solche
+        // Hüllen im Eingabe-Panel (zone__drawer, zone__editor).
+        if (childStyle.display === 'contents') continue;
         const rect = child.getBoundingClientRect();
         if (rect.height > 0.5) continue;
         // Ein Element, das Platz reserviert, hat eine Mindesthöhe. Eines, das
@@ -306,7 +312,7 @@ async function checkControlHeights(page, name) {
     (ladder) =>
       [
         ...document.querySelectorAll(
-          '.key, .chip, .pick, .vault__state, .reveal__summary, input.field',
+          '.key, .chip, .pick, .vault__state, .reveal__summary, .zone__fold, input.field',
         ),
       ]
         .filter((element) => {
@@ -516,6 +522,15 @@ await session('06-tresor', {
     await page.waitForFunction(() => document.querySelector('#vault')?.dataset.state === 'open', {
       timeout: 15000,
     });
+    // Seit V10 fällt der Aufklapper mit dem Aufsperren zu — die Statuszeile
+    // sagt „Offen", und das ist der Normalfall. Geprüft wird beides: dass er
+    // zu ist, und dass er sich für die Tasten dahinter wieder öffnen lässt —
+    // derselbe Griff, den auch ein Nutzer macht.
+    if (await page.evaluate(() => document.querySelector('#vault-disclosure')?.open)) {
+      problems.push(`[${name}] Aufklapper steht nach dem Aufsperren noch offen`);
+    }
+    await page.click('#vault-disclosure > summary');
+    await page.waitForTimeout(200);
     // Und im offenen Zustand noch einmal: Jetzt sind alle drei Tasten da, die
     // Fehlerzeile ist leer, und das Formular ist weg.
     await checkNoDeadGaps(page, name);
@@ -543,7 +558,9 @@ await session('06-tresor', {
       problems.push('[tresor] Aufsperren hat die Secrets nicht wiederhergestellt');
     }
 
-    // Aufräumen, damit der nächste Lauf sauber startet.
+    // Aufräumen, damit der nächste Lauf sauber startet. Erst aufklappen —
+    // seit V10 ist der Tresor nach dem Aufsperren zu.
+    await page.click('#vault-disclosure > summary');
     await page.click('#vault-wipe');
     await page.click('#vault-wipe');
   },

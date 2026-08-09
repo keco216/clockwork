@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'Kódy',
 
   'input.legend': 'Jedna položka na řádek',
+  'input.placeholder':
+    'např. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} nebo {uri} — promíchané. {hash} začíná poznámku.',
   'input.help.images': 'Obrázky s QR kódem lze také přetáhnout sem nebo vložit pomocí {paste}.',
   'input.help.migration': 'Exporty z Google Authenticatoru ({migration}) se převádějí automaticky.',

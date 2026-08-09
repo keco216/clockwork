@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'Koodit',
 
   'input.legend': 'Yksi rivi kutakin kohdetta kohden',
+  'input.placeholder':
+    'esim. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} tai {uri} — sekaisin. {hash} aloittaa muistiinpanon.',
   'input.help.images': 'QR-kuvia voi myös raahata tähän tai liittää näppäimillä {paste}.',
   'input.help.migration': 'Google Authenticatorin viennit ({migration}) muunnetaan itsestään.',

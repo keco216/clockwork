@@ -241,15 +241,15 @@ In PowerShell:
 $env:CLOCKWORK_LANGS = 'de,en,fr'; npm run build
 ```
 
-Gemessen an der einen Datei (Stand v1.3.0, alle Zahlen frisch nachgemessen):
+Gemessen an der einen Datei (Stand v1.4.0, alle Zahlen frisch nachgemessen):
 
 | Bau                       | `dist/clockwork.html` | gzip   |
 | ------------------------- | --------------------- | ------ |
-| ohne Angabe (37 Sprachen) | 781 kB                | 325 kB |
-| `de,en,fr`                | 474 kB                | 248 kB |
-| nur `en`                  | 457 kB                | 243 kB |
+| ohne Angabe (37 Sprachen) | 793 kB                | 328 kB |
+| `de,en,fr`                | 482 kB                | 250 kB |
+| nur `en`                  | 465 kB                | 245 kB |
 
-Drei Sprachen kosten also 307 kB weniger als alle 37. Die übrigen 457 kB sind
+Drei Sprachen kosten also 311 kB weniger als alle 37. Die übrigen 465 kB sind
 Schriften, jsQR und die App selbst — daran ändert die Auswahl nichts.
 
 Gegenüber v1.2.0 ist der volle Bau um **122 kB gewachsen** (659 → 781), und
@@ -257,6 +257,8 @@ diese Zahl hat genau eine Ursache: Inter. Die Oberflächenschrift der
 HeroUI-Optik wiegt als data-URI mehr als Instrument Sans — latin 48 statt
 30 kB, latin-ext 85 statt 11, jeweils mal 4/3 für Base64. Nichts davon ist
 Bibliothek: Die Zahl der Laufzeit-Abhängigkeiten steht unverändert bei eins.
+v1.4.0 legt 12 kB darauf: der übersetzte Platzhalter in 37 Sprachen, das
+Klappzeilen-Gerüst des Einspalters und die Kommentare dazu.
 
 **Zur Einheit:** Das sind dezimale Kilobyte (1 kB = 1000 Byte), so wie ein
 Dateimanager sie anzeigt. `node scripts/check-bundle.mjs` rechnet zusätzlich in
@@ -694,10 +696,12 @@ einen versehentlich durchsichtigen Kopf und einen, den das Skript gar nicht
 sieht. Der zweite Fall ist nicht erfunden: Bis V7 maß das Skript wegen einer
 scrollenden Elementaufnahme den Kopf überhaupt nicht mit.
 
-Insgesamt misst das Skript **88 Paare** (44 je Modus), und alle erfüllen ihr
+Insgesamt misst das Skript **94 Paare** (47 je Modus), und alle erfüllen ihr
 Maß. Der größte Block ist die Matrix **jede Textstufe auf jeder Fläche der
 Leiter** — seit v1.3.0 auf den vier Flächen Werkbank, Panel, Füllung und
-berührt. Sie hat in v1.3.0 wieder gearbeitet: HeroUIs helles `--muted`
+berührt. Seit v1.4.0 stellt ein Mobil-Durchgang das Fenster auf 375 px und
+misst die drei Bauteile, die es nur dort gibt: die Zusammenfassungszeile der
+Eingabe, ihren Zähler und den Testschlüssel-Knopf auf der Signal-Fläche. Sie hat in v1.3.0 wieder gearbeitet: HeroUIs helles `--muted`
 (`#71717a`) hält auf der Füllfläche nur 4,06:1 und wurde deshalb eine Nuance
 tiefer gesetzt (`#676770`, gemessen 4,70) — im dunklen Modus passt der
 Referenzwert unverändert.
@@ -853,6 +857,72 @@ die vollständige Referenzlage steht in
   dass jede Behauptung gemessen wird. Der Code als größtes Element der Karte
   stand im Probelauf gegen einen InputOTP-Zellenstil zur Wahl; die große
   Mono-Zahl hat gewonnen, denn Clockwork ZEIGT Codes.
+
+### v1.4.0: Erst ablesen, dann einstellen (Mobil-Struktur)
+
+Auf dem Schreibtisch trennt seit V7 die Shell: links wird eingestellt, rechts
+abgelesen. Der Einspalter darunter hatte diese Trennung nie — er zeigte die
+Bedienung ZUERST, und wer nur seinen Code wollte (der häufigste Fall
+überhaupt), scrollte jedes Mal an Eingabefeld und Tresor vorbei. Gemessen bei
+375 × 812 mit einem Konto: Der erste Code begann bei y = 821, also unter der
+Falz; die Kopiertaste lag ganz außerhalb des Bildes.
+
+v1.4.0 stellt die Reihenfolge um und faltet die Bedienung zusammen:
+
+- **Die Codes-Zone steht im Dokument vor der Bedienseite.** Unter 64 rem ist
+  das die sichtbare Reihenfolge — und dieselbe gilt für Tastatur und
+  Screenreader: Was zuerst im Bild ist, ist auch zuerst im Fokuslauf. Die
+  Desktop-Shell platziert Rail und Bühne über explizite Rasterspalten und ist
+  **nachgemessen pixelgleich** (Geometrie-Sonde über 2560/1440/1280/1024 und
+  den Leerzustand: identische Rechtecke).
+- **Die Eingabe ist eine Zusammenfassungszeile:** „Eingabe · 1 Konto", mit
+  demselben Zähler wie der Chip unter dem Feld — eine Zahl, eine Quelle.
+  Tippen öffnet den Editor über eine CSS-Schublade: `grid-template-rows`
+  0fr → 1fr ist der einzige Weg, eine Auto-Höhe rein in CSS zu animieren;
+  die Feder kommt aus dem Token, `prefers-reduced-motion` schaltet ab, und
+  die Fuge zur Zeile fährt als Innenabstand der Schublade mit zu.
+- **Offen bleibt der Editor nur, wenn der Fokus beim Bühnenwechsel darin
+  liegt.** Wer das erste Secret tippt oder gerade gescannt hat, dem klappt
+  nichts unter den Fingern zu; wer den Tresor aufsperrt, bekommt die Codes
+  obenan und die Eingabe zu — „Standard geschlossen" gilt für genau den Weg,
+  auf dem man seine Codes wiederbekommt. Beim Zuklappen wird zuerst eine
+  laufende Kamera über ihren eigenen Knopf beendet und der Fokus auf die
+  Zeile zurückgegeben — ein Element, das den Fokus hält und verschwindet,
+  gibt ihn nicht weiter.
+- **Der Tresor fällt nach dem Auf- und Zusperren zu.** „Offen — Secrets
+  liegen im Textfeld" sagt die Statuszeile; wer die Sperrzeit ändern will,
+  tippt sie an. Ein GESPERRTER Tresor öffnet sich weiter von selbst: Beim
+  Laden ist das Feld leer, weil alles in ihm liegt — sein Passphrasenfeld ist
+  dann das Wichtigste auf der Seite.
+- **„Leeren" wohnt mobil in der Legendenzeile**, rechts oberhalb des Feldes;
+  „QR aus Bild" und „Kamera" stehen als Zweiergitter gleicher Breite, der
+  Testschlüssel im Leerzustand in voller Breite darüber. Ein einzeln
+  umbrechender Knopf ist in einem Raster unmöglich — die alte Flex-Zeile
+  brach je nach Übersetzungslänge an zufälliger Stelle.
+- **Unter 420 px trägt die Karte ein Kompaktraster:** Zifferblatt 44 px neben
+  dem Namen, Chip in eigener Zeile darunter, Code in voller Kartenbreite
+  (14cqi statt 10), Kopiertaste in voller Breite am Kartenende — 44 px hoch,
+  die Daumenzone. Die folgt-Zeile bleibt.
+- **Sektionsbeschriftungen entfallen im Einspalter-Arbeitszustand** — die
+  Codes sprechen für sich, die beiden Zeilen benennen sich selbst. Die
+  Überschriften bleiben als sr-only im Baum, damit die Sprungliste der
+  Screenreader vollständig bleibt.
+- **Der Platzhalter beginnt mit „z. B."** — in jeder der 37 Sprachen mit
+  ihrem eigenen Kürzel (`p. ex.`, `např.`, `例如：` …). Drei plausible
+  Beispielzeilen ohne Markierung sahen aus wie echte Einträge. Arabisch und
+  Hebräisch setzen das Kürzel auf eine eigene erste Zeile: Das Feld ist per
+  `dir="ltr"` festgenagelt, und in einer gemischten Zeile schöbe die
+  Bidi-Regel das Kürzel ans Zeilenende. Mehr als die Kürzel-Markierung ist
+  absichtlich nicht passiert: Der Platzhalter steht bereits auf der leisesten
+  Textstufe, die AA auf der Feldfläche hält (gemessen 4,70:1) — noch stärker
+  dimmen hieße die 4,5 reißen.
+
+Nachgemessen ist der Gewinn in [`v10-vergleich/`](v10-vergleich/README.md):
+Erster Code von y = 821 auf 206, Kopiertaste von außerhalb des Bildes auf
+y = 293 in Kartenbreite, und mit einem Konto passt die ganze App auf einen
+Schirm (Seitenhöhe 812 = Fensterhöhe). Der Beweis über alle Breiten, Themen
+und Leserichtungen entsteht mit `node scripts/shoot-mobile.mjs <zielordner>`:
+27 Aufnahmen samt Struktur-, Überlauf- und Höhenprüfung.
 
 ### Markensystem
 

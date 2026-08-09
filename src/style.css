@@ -455,6 +455,28 @@ kbd {
   box-shadow: var(--elev-1);
 }
 
+/* ── Die Eingabe-Zusammenfassung und ihre Schublade (V10) ──────────────────
+   Drei Bauteile, die es nur fürs Handy gibt und die auf dem Schreibtisch
+   NICHTS verändern dürfen:
+
+     .zone__fold    die Zeile „Eingabe · 1 Konto" — Grundzustand: gar nicht da
+     .zone__drawer  die Schublade, die mobil auf- und zufährt
+     .zone__editor  der Editorinhalt darin
+
+   `display: contents` nimmt die beiden Hüllen aus dem Layout heraus: Die
+   Kinder stehen im Flexkasten des Panels, als gäbe es die Hüllen nicht — die
+   Geometrie-Sonde hat den Schreibtisch vor und nach dem Umbau verglichen,
+   alle Rechtecke identisch. Erst die Mobil-Abfrage unten macht aus den Hüllen
+   echte Kästen. */
+.zone__fold {
+  display: none;
+}
+
+.zone__drawer,
+.zone__editor {
+  display: contents;
+}
+
 .device {
   position: relative;
 }
@@ -1468,6 +1490,24 @@ kbd {
     align-items: start;
   }
 
+  /* Seit V10 steht die Codes-Zone im Dokument VOR der Rail (fürs Handy, siehe
+     index.html). Die Shell platziert deshalb ausdrücklich: Rail in Spalte 1,
+     Bühne in Spalte 2 — dieselbe Anordnung wie vor dem Umbau, jetzt nur nicht
+     mehr aus der Dokumentreihenfolge geerbt, sondern gesetzt. Beide in Zeile 1,
+     sonst legte die automatische Platzierung die zweite in eine zweite Zeile.
+
+     In RTL ist Spalte 1 der Inline-Anfang, also rechts — exakt das Verhalten,
+     das die Flussreihenfolge vorher auch hatte. */
+  .device[data-stage='working'] .rail {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .device[data-stage='working'] #zone-codes {
+    grid-row: 1;
+    grid-column: 2;
+  }
+
   /* In der Rail bekommt „Leeren" eine eigene Zeile.
 
      Die drei Tasten brauchen zusammen rund 330 px, die Rail bietet 320 px
@@ -1642,6 +1682,218 @@ kbd {
     padding-block: calc(var(--sp-5) + env(safe-area-inset-top))
       calc(var(--sp-8) + env(safe-area-inset-bottom));
   }
+
+  /* ══ Mobil-Struktur (V10): erst ablesen, dann einstellen ═════════════════
+     Unter 64 rem gilt die Dokumentreihenfolge, und die stellt seit V10 die
+     Codes nach oben. Die Bedienung dahinter schrumpft im Arbeitszustand auf
+     zwei Zeilen — „Eingabe · n Konten" und die Tresor-Statuszeile, beide zu,
+     bis man sie antippt. App öffnen heißt damit: Code ohne Scrollen sichtbar,
+     Kopieren in Daumenreichweite. */
+
+  /* Die Stapelfuge zwischen den Karten. Bis V9 stand hier NICHTS — zwischen
+     Bedienseite und Codes-Zone lagen 0 px, und nur die Zonen-Beschriftung
+     dazwischen hat das verdeckt (nachgemessen am v1.3.0-Stand: Codes-Ende und
+     Rail-Anfang auf demselben y). Mit den Beschriftungen unten fiele es auf. */
+  .device[data-stage='working'] main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-group);
+  }
+
+  /* Keine Sektionsbeschriftungen im Einspalter-Arbeitszustand: Die Codes
+     stehen direkt unter dem Kopf (der Auftrag sagt es wörtlich), die
+     Eingabezeile trägt ihren Namen selbst, und die Tresor-Statuszeile ist
+     ihre eigene Auskunft.
+
+     Der sr-only-Griff statt `display: none`, und das ist ein Unterschied für
+     genau eine Gruppe: Wer sich mit dem Screenreader von Überschrift zu
+     Überschrift bewegt, behält die drei Sprungziele — eine entfernte h2 wäre
+     auch aus dieser Liste verschwunden. Der Leerzustand nimmt seine Labels
+     weiter ganz heraus (dort IST die Bühne der eine Abschnitt); hier gibt es
+     drei Abschnitte, sie sind nur selbsterklärend beschriftet. */
+  .device[data-stage='working'] .zone__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    /* Ohne den −1-px-Trick von .sr-only: `clip-path` versteckt vollständig,
+       und ein Betrag neben der Abstands-Skala braucht hier keine Ausnahme. */
+    margin: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* ── Die Zusammenfassungszeile ────────────────────────────────────────────
+     Gebaut wie die Tresor-Statuszeile: Ghost-Zeile mit Trefferhöhe 44
+     (AAA-Zielgröße — sie läuft über die ganze Panelbreite, Höhe kostet dort
+     nichts), Winkel am Ende, Hover als Fläche. */
+  .device[data-stage='working'] .zone__fold {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-pair);
+    min-height: var(--touch-min);
+    margin: calc(var(--sp-2) * -1);
+    padding: var(--sp-2);
+    font-size: var(--t-small);
+    font-weight: 550;
+    color: var(--ink);
+    text-align: start;
+    background: none;
+    border: 0;
+    border-radius: var(--radius-item);
+    cursor: pointer;
+    transition: background-color var(--dur-flash) var(--ease-snap);
+  }
+
+  /* Mit Wache: Die Zeile lebt auf Berührbildschirmen, und ein Hover ohne
+     `(hover: hover)` bliebe dort nach dem Tippen als graue Fläche stehen. */
+  @media (hover: hover) {
+    .device[data-stage='working'] .zone__fold:hover {
+      background: var(--fill-soft);
+    }
+  }
+
+  .zone__foldCount {
+    color: var(--ink-2);
+    font-weight: 400;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Der Trennpunkt ist gesetzt, nicht getippt — derselbe wie im Fuß und in
+     der Metazeile der Karte, mit denselben 8 px auf beiden Seiten. */
+  .zone__foldCount::before {
+    content: '·';
+    margin-inline-end: var(--gap-pair);
+    color: var(--ink-3);
+  }
+
+  /* Der Winkel: derselbe Zwei-Strich-Winkel wie an jedem Aufklapper des
+     Geräts, am Ende der Zeile, dreht beim Öffnen um 180°. */
+  .device[data-stage='working'] .zone__fold::after {
+    content: '';
+    width: 0.42em;
+    height: 0.42em;
+    flex: none;
+    margin-inline-start: auto;
+    border-right: 1.5px solid var(--ink-3);
+    border-bottom: 1.5px solid var(--ink-3);
+    border-bottom-right-radius: 1px;
+    transform: translateY(-25%) rotate(45deg);
+    transition: transform var(--dur-calm) var(--ease-spring);
+  }
+
+  .device[data-stage='working'] #zone-input[data-expanded] .zone__fold::after {
+    transform: translateY(10%) rotate(225deg);
+  }
+
+  /* ── Die Schublade ────────────────────────────────────────────────────────
+     `grid-template-rows: 0fr → 1fr` ist der einzige Weg, eine Auto-Höhe rein
+     in CSS zu animieren. Die Feder kommt aus dem Token, und die
+     reduced-motion-Regel am Dateiende schaltet den Übergang mit ab — kein
+     eigener Sonderfall nötig.
+
+     Die Fuge zur Zusammenfassungszeile liegt als padding IN der Schublade und
+     fährt mit ihr zu. Läge sie als gap am Panel, stünde sie im zugeklappten
+     Zustand weiter da — und checkNoDeadGaps hätte recht damit, das einen
+     leeren Kasten zu nennen, der eine Fuge frisst. */
+  .device[data-stage='working'] #zone-input .zone__body {
+    row-gap: 0;
+  }
+
+  .device[data-stage='working'] #zone-input .zone__drawer {
+    display: grid;
+    grid-template-rows: 1fr;
+    padding-block-start: var(--gap-stack);
+    transition:
+      grid-template-rows var(--dur-calm) var(--ease-spring),
+      padding-block-start var(--dur-calm) var(--ease-spring);
+  }
+
+  .device[data-stage='working'] #zone-input:not([data-expanded]) .zone__drawer {
+    grid-template-rows: 0fr;
+    padding-block-start: 0;
+  }
+
+  .device[data-stage='working'] #zone-input .zone__editor {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-stack);
+    min-height: 0;
+    /* clip statt hidden, mit Rand: Der Fokus-Ring sitzt an Feldern direkt auf
+       der Kante und ragt an Tasten 4 px darüber hinaus (2 px Ring, 2 px
+       Versatz) — ein Beschnitt genau auf dieser Linie fräße ihn an. 8 px
+       lassen ihm Luft; während der Fahrt ist der Editor ohnehin das Einzige,
+       was sich unter der Schublade bewegt. */
+    overflow: clip;
+    overflow-clip-margin: var(--sp-2);
+  }
+
+  .device[data-stage='working'] #zone-input:not([data-expanded]) .zone__editor {
+    /* Sichtbarkeit springt nicht, sie schaltet — die Verzögerung legt den
+       Schaltpunkt ans Ende der Fahrt. `visibility: hidden` nimmt die Kinder
+       zugleich aus Fokuslauf und Zugänglichkeitsbaum: Ein zugeklappter
+       Editor ist nicht bloß klein, er ist WEG. */
+    visibility: hidden;
+    transition: visibility 0s var(--dur-calm);
+  }
+
+  /* ── „Leeren" in der Legendenzeile ────────────────────────────────────────
+     Rechts oberhalb des Feldes, aus der Tastenzeile heraus — dort stünde die
+     eine zerstörerische Taste neben den beiden, die etwas hereinholen.
+
+     Absolut, weil das DOM die Desktop-Ordnung behalten muss (dort bleibt die
+     Taste in der Tastenzeile, und der Schreibtisch ist pixelgleich). Der
+     Anker ist der Editor, dessen Oberkante die Legendenzeile ist; die
+     Legende reserviert mit ihrem Innenabstand den Platz. Im Fokuslauf steht
+     die Taste weiter hinter dem Feld — eine seltene, zerstörerische Handlung
+     darf dort stehen. */
+  .device[data-stage='working'] #zone-input .slot__legend {
+    display: flex;
+    align-items: center;
+    min-height: var(--control-h-sm);
+    padding-inline-end: var(--sp-8);
+  }
+
+  .device[data-stage='working'] #zone-input .key.key--flat {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    min-height: var(--control-h-sm);
+  }
+
+  /* ── Die Aktionszeile als Zweiergitter ────────────────────────────────────
+     „QR aus Bild" und „Kamera" immer gleich breit — nie wieder ein einzeln
+     umbrechender Knopf, in beiden Bühnen. Der Testschlüssel (nur im
+     Leerzustand erreichbar) spannt über beide Spalten: volle Breite. Der
+     Umbruch-Platzhalter der Flex-Fassung hat in einem Raster keine Aufgabe,
+     und „Leeren" steht absolut (oben) und belegt keine Zelle. */
+  #zone-input .keys {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gap-pair);
+  }
+
+  #zone-input .keys__gap {
+    display: none;
+  }
+
+  #key-demo {
+    grid-column: 1 / -1;
+  }
+
+  /* Die Chip-Hülle unter dem Feld reserviert Platz für den Zähler — aber im
+     Leerzustand KANN der nie erscheinen: Sobald ein Eintrag existiert,
+     wechselt die Bühne. Zwischen Feld und Testschlüssel-Taste stünden sonst
+     48 px Leere (Hülle plus zwei Fugen) für ein Bauteil, das dieser Zustand
+     nicht kennt. Nur mobil: Der Schreibtisch bleibt pixelgleich. */
+  .device[data-stage='vacant'] .slot__meter {
+    display: none;
+  }
 }
 
 /* Unter 46 rem hat der Kopf keine drei Spalten mehr. */
@@ -1709,6 +1961,59 @@ kbd {
 
   .key--copy {
     justify-self: start;
+  }
+}
+
+/* ── Die Kompakt-Karte unter 420 px (V10) ───────────────────────────────────
+   Auf einem schmalen Handy ist das 80-px-Blatt neben dem Code kein Verhältnis
+   mehr, sondern ein Platzproblem — und die Kopiertaste klebt als kleine Pille
+   am linken Rand, weit weg vom Daumen. Die Karte sortiert sich um:
+
+     Blatt (44 px) neben dem Namen · Code in voller Breite und größer ·
+     folgt-Zeile · Kopieren als Taste über die ganze Kartenbreite am Ende.
+
+   26.1875 rem = 419 px: „unter 420" heißt unter — die Schwelle selbst gehört
+   der 34-rem-Fassung, damit nicht zwei Abfragen auf derselben Breite gelten
+   (die 64-rem-Falle in klein).
+
+   `--dial-size` steht am KANAL und nicht an :root: Das Emblem des
+   Leerzustands rechnet mit demselben Token und bliebe sonst bei 1,6 × 44 px
+   stehen — ein Zeichen in Briefmarkengröße. */
+@media (max-width: 26.1875rem) {
+  .strip {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'gauge head'
+      'code  code'
+      'meta  meta'
+      'copy  copy';
+    --dial-size: 2.75rem;
+  }
+
+  /* Ohne das Blatt daneben hat der Code die volle Kartenbreite — 14cqi statt
+     10, mit denselben Grenzen: Die Ziffer wächst mit der Karte, nicht mit dem
+     Fenster. */
+  .strip .dial {
+    font-size: clamp(var(--t-dial-min), 14cqi, var(--t-dial-max));
+  }
+
+  /* Kopfzeile als Block statt Flex: Name oben, Chip in eigener Zeile
+     darunter — bei dieser Breite ist „daneben" keine Option mehr, und ein
+     Block braucht keine Grundlinien-Ausrichtung zwischen 18- und 12-px-
+     Schrift. */
+  .strip__head {
+    display: block;
+  }
+
+  .strip__spec {
+    margin-block-start: var(--sp-1);
+  }
+
+  /* Kopieren in der Daumenzone: volle Breite am Kartenende, 44 hoch —
+     Kopieren ist DIE Handlung dieser Karte, also die lg-Sprosse. */
+  .strip .key--copy {
+    justify-self: stretch;
+    min-height: var(--control-h-lg);
   }
 }
 

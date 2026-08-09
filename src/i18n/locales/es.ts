@@ -32,6 +32,10 @@ export default {
   'zone.codes': 'Códigos',
 
   'input.legend': 'Una entrada por línea',
+  'input.placeholder':
+    'p. ej. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} o {uri} — mezclados. {hash} inicia una nota.',
   'input.help.images':
     'Las imágenes con código QR también se pueden arrastrar aquí o pegar con {paste}.',

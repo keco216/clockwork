@@ -33,6 +33,10 @@ export default {
   'zone.codes': 'Mã',
 
   'input.legend': 'Mỗi dòng một mục',
+  'input.placeholder':
+    'ví dụ: JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} hoặc {uri} — trộn lẫn. {hash} mở đầu một ghi chú.',
   'input.help.images': 'Ảnh mã QR cũng có thể kéo vào đây hoặc dán bằng {paste}.',
   'input.help.migration': 'Bản xuất từ Google Authenticator ({migration}) được chuyển đổi tự động.',

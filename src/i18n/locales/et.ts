@@ -30,6 +30,10 @@ export default {
   'zone.codes': 'Koodid',
 
   'input.legend': 'Üks kirje rea kohta',
+  'input.placeholder':
+    'nt JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} või {uri} — segamini. {hash} alustab märkust.',
   'input.help.images': 'QR-pilte saab ka siia lohistada või kleepida klahvidega {paste}.',
   'input.help.migration': 'Google Authenticatori eksportfailid ({migration}) teisendatakse ise.',

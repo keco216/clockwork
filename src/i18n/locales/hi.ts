@@ -30,6 +30,10 @@ export default {
   'zone.codes': 'कोड',
 
   'input.legend': 'हर पंक्ति में एक प्रविष्टि',
+  'input.placeholder':
+    'जैसे: JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} या {uri} — मिलाजुला. {hash} से टिप्पणी शुरू होती है.',
   'input.help.images': 'QR चित्र यहाँ खींचकर भी लाए जा सकते हैं या {paste} से चिपकाए जा सकते हैं.',
   'input.help.migration': 'Google Authenticator के निर्यात ({migration}) अपने आप बदल दिए जाते हैं.',

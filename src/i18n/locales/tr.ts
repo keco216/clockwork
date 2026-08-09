@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'Kodlar',
 
   'input.legend': 'Her satıra bir girdi',
+  'input.placeholder':
+    'örn. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} ya da {uri} — karışık. {hash} bir not başlatır.',
   'input.help.images': 'QR görselleri buraya sürüklenebilir ya da {paste} ile yapıştırılabilir.',
   'input.help.migration':

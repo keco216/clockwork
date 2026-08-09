@@ -29,6 +29,10 @@ export default {
   'zone.codes': 'Koder',
 
   'input.legend': 'Én post pr. linje',
+  'input.placeholder':
+    'f.eks. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} eller {uri} — blandet. {hash} starter en note.',
   'input.help.images': 'QR-billeder kan også trækkes herhen eller sættes ind med {paste}.',
   'input.help.migration': 'Eksporter fra Google Authenticator ({migration}) omdannes automatisk.',

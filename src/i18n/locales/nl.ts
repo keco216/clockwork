@@ -29,6 +29,10 @@ export default {
   'zone.codes': 'Codes',
 
   'input.legend': 'Eén invoer per regel',
+  'input.placeholder':
+    'bijv. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} of {uri} — door elkaar. {hash} begint een notitie.',
   'input.help.images':
     'QR-afbeeldingen kunnen ook hierheen worden gesleept of met {paste} worden geplakt.',

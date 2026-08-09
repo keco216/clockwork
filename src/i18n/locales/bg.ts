@@ -30,6 +30,10 @@ export default {
   'zone.codes': 'Кодове',
 
   'input.legend': 'По един запис на ред',
+  'input.placeholder':
+    'напр. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} или {uri} — смесено. {hash} започва бележка.',
   'input.help.images': 'Изображения с QR код може да се влачат тук или да се поставят с {paste}.',
   'input.help.migration':

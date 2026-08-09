@@ -30,6 +30,10 @@ export default {
   'zone.codes': 'Codes',
 
   'input.legend': 'One entry per line',
+  'input.placeholder':
+    'e.g. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} or {uri} — mixed. {hash} starts a note.',
   'input.help.images': 'QR images can also be dragged here or pasted with {paste}.',
   'input.help.migration': 'Google Authenticator exports ({migration}) are converted automatically.',

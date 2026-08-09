@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'Kode',
 
   'input.legend': 'En vnos na vrstico',
+  'input.placeholder':
+    'npr. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} ali {uri} — pomešano. {hash} začne opombo.',
   'input.help.images': 'Slike s kodo QR lahko povlečete sem ali prilepite s {paste}.',
   'input.help.migration': 'Izvozi iz Google Authenticatorja ({migration}) se pretvorijo samodejno.',

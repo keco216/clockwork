@@ -66,6 +66,12 @@ export function startApp(): void {
   const meter = requireElement(document, '#entry-count');
   const liveRegion = requireElement(document, '#live-region');
   const importNote = requireElement(document, '#import-note');
+  const inputZone = requireElement(document, '#zone-input');
+  const fold = requireElement<HTMLButtonElement>(document, '#input-fold');
+  const foldCount = requireElement(document, '#input-fold-count');
+  const editor = requireElement(document, '#input-editor');
+  const viewfinder = requireElement(document, '#viewfinder');
+  const cameraStop = requireElement<HTMLButtonElement>(document, '#key-camera-stop');
 
   const context: StripContext = {
     announce(message: string): void {
@@ -167,9 +173,33 @@ export function startApp(): void {
     }
 
     applyFilter();
-    meter.textContent = summarise(entries);
+    // Eine Zahl, eine Quelle: Der Chip unter dem Feld und die mobile
+    // Zusammenfassungszeile tragen denselben Text.
+    const summary = summarise(entries);
+    meter.textContent = summary;
+    foldCount.textContent = summary;
     paintKeys();
     paintVaultZone();
+
+    /* ── Der Editor-Zustand am Bühnenwechsel (nur mobil sichtbar) ──────────
+       „Standard geschlossen" gilt für den Weg, auf dem man seine Codes
+       WIEDERBEKOMMT: Nach dem Aufsperren des Tresors springt die Bühne auf
+       working, der Fokus liegt im Tresor — der Editor bleibt zu, die Codes
+       stehen obenan.
+
+       Die Ausnahme ist kein Komfort, sondern eine Fokus-Regel: Wer gerade in
+       das Feld TIPPT (oder im Editor einen Scan-Knopf gedrückt hat), dem darf
+       der Kasten nicht unter den Fingern zuklappen — ein Element, das den
+       Fokus hält und verschwindet, gibt ihn nicht weiter (die Falle aus dem
+       v1.3.0-Schlusspass). Also: offen genau dann, wenn der Fokus beim
+       Wechsel in der Eingabezone liegt.
+
+       Beim Wechsel zurück in den Leerzustand wird der Zustand abgeräumt —
+       dort ist das Feld selbst die Bühne, und der nächste Arbeitszustand
+       entscheidet neu. */
+    if (changed) {
+      setFold(wanted === 'working' && inputZone.contains(document.activeElement));
+    }
 
     // Sofort ein Tick, damit frische Kanalzüge nicht bis zum nächsten Frame
     // leer dastehen.
@@ -179,6 +209,36 @@ export function startApp(): void {
       revealStage(stage);
     }
   }
+
+  /* ── Die Zusammenfassungszeile (V10, nur unter 64 rem sichtbar) ──────────
+     Der Zustand lebt als `data-expanded` am Zonen-Element und wirkt nur in
+     der Mobil-Abfrage von style.css — der Schreibtisch ignoriert ihn samt
+     Knopf. `aria-expanded` läuft immer mit: Für die Zugänglichkeit gibt es
+     keinen „gilt nur mobil"-Schalter, und ein Knopf, der nicht gezeichnet
+     wird, stört dort nicht. */
+  function setFold(expanded: boolean): void {
+    inputZone.toggleAttribute('data-expanded', expanded);
+    fold.setAttribute('aria-expanded', String(expanded));
+  }
+
+  fold.addEventListener('click', () => {
+    const expanded = inputZone.hasAttribute('data-expanded');
+    if (expanded) {
+      // Läuft im zuklappenden Editor noch die Kamera, wird sie über ihren
+      // eigenen Knopf beendet — derselbe Weg, den ein Nutzer ginge, samt
+      // dessen Fokus-Rückgabe. Eine Kamera, deren Sucher niemand sieht, hat
+      // nichts aufzunehmen.
+      if (!viewfinder.hidden) {
+        cameraStop.click();
+      }
+      // Wer per Tastatur im Editor steht, bekommt den Fokus zurück auf die
+      // Zeile, die er gleich wieder öffnen kann — nicht ins Leere.
+      if (editor.contains(document.activeElement)) {
+        fold.focus();
+      }
+    }
+    setFold(!expanded);
+  });
 
   /* ── Der Filter ──────────────────────────────────────────────────────────
      Er versteckt Kanalzüge, er baut sie nicht neu. Der Unterschied ist mehr als

@@ -29,6 +29,10 @@ export default {
   'zone.codes': 'Koder',
 
   'input.legend': 'Én oppføring per linje',
+  'input.placeholder':
+    'f.eks. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} eller {uri} — blandet. {hash} starter et notat.',
   'input.help.images': 'QR-bilder kan også dras hit eller limes inn med {paste}.',
   'input.help.migration':

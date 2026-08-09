@@ -29,6 +29,10 @@ export default {
   'zone.codes': 'Kodovi',
 
   'input.legend': 'Jedan unos po retku',
+  'input.placeholder':
+    'npr. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} ili {uri} — izmiješano. {hash} započinje bilješku.',
   'input.help.images': 'Slike s QR kodom mogu se dovući ovamo ili zalijepiti pomoću {paste}.',
   'input.help.migration': 'Izvozi iz Google Authenticatora ({migration}) pretvaraju se automatski.',

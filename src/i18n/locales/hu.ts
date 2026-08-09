@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'Kódok',
 
   'input.legend': 'Soronként egy bejegyzés',
+  'input.placeholder':
+    'pl. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} vagy {uri} — vegyesen. A {hash} jegyzetet kezd.',
   'input.help.images': 'A QR-képek ide is húzhatók, vagy beilleszthetők a {paste} kombinációval.',
   'input.help.migration':

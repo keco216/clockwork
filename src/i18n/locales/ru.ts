@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'Коды',
 
   'input.legend': 'По одной записи в строке',
+  'input.placeholder':
+    'напр. JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32, {nameSecret} или {uri} — вперемешку. {hash} начинает заметку.',
   'input.help.images':
     'Изображения с QR-кодом можно перетащить сюда или вставить сочетанием {paste}.',

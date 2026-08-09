@@ -31,6 +31,10 @@ export default {
   'zone.codes': 'コード',
 
   'input.legend': '1 行に 1 項目',
+  'input.placeholder':
+    '例: JBSWY3DPEHPK3PXP\n' +
+    'GitHub: jbsw y3dp ehpk 3pxp\n' +
+    'otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP',
   'input.help.formats': 'Base32、{nameSecret}、{uri} — 混在可。{hash} で注記が始まる。',
   'input.help.images': 'QR 画像はここへドラッグするか、{paste} で貼り付けてもよい。',
   'input.help.migration': 'Google Authenticator のエクスポート ({migration}) は自動で変換される。',

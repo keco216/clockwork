@@ -163,10 +163,11 @@ node scripts/check-tokens.mjs      # no component sets its own values
 
 `check-contrast.mjs` reads the pixels the browser actually painted — including
 opacity and colour-mix tints — rather than computing from tokens, because
-overlapping surfaces only exist once something is drawn. It measures **88 pairs**
+overlapping surfaces only exist once something is drawn. It measures **94 pairs**
 across both colour schemes, including the full matrix of every text step on
-every surface of the ladder. Run it after any change to colours or opacity. It
-needs a server on port 5180.
+every surface of the ladder and a mobile pass for the parts that only exist
+below 1024 px. Run it after any change to colours or opacity. It needs a
+server on port 5180.
 
 It also checks its own setup. If the "self-test" line fails, the measurement is
 broken rather than the colour — the two self-tests require that the masthead
