@@ -83,11 +83,11 @@ Dieselben vier Aufnahmen, dieselbe Auflösung, dieselben Bildinhalte:
 
 | Aufnahme        | V7      | V8      | Ersparnis |
 | --------------- | ------- | ------- | --------- |
-| 2560 px, dunkel | 1031 kB | 617 kB  | 40 %      |
-| 1440 px, hell   | 588 kB  | 198 kB  | 66 %      |
+| 2560 px, dunkel | 1031 kB | 621 kB  | 40 %      |
+| 1440 px, hell   | 588 kB  | 196 kB  | 67 %      |
 | Leerzustand     | 291 kB  | 121 kB  | 58 %      |
-| 375 px, mobil   | 696 kB  | 207 kB  | 70 %      |
-| **gesamt**      | 2606 kB | 1143 kB | **56 %**  |
+| 375 px, mobil   | 696 kB  | 208 kB  | 70 %      |
+| **gesamt**      | 2606 kB | 1146 kB | **56 %**  |
 
 Das ist keine Zusage an Nutzer — diese PNGs werden nicht ausgeliefert. Es ist
 ein Messwert für etwas, das sich sonst schlecht beziffern lässt: **Korn ist

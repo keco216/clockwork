@@ -613,6 +613,16 @@ body::before {
   justify-content: space-between;
   gap: var(--gap-pair) var(--gap-group);
   margin-inline: calc(var(--device-pad) * -1);
+  /* Der Abstand zum letzten Panel darüber — dieselbe Fuge wie zwischen zwei
+     Panels, denn hier stößt genau das aufeinander.
+
+     Bis zum Schlusspass stand er NUR in der Mobil-Abfrage (dort als --sp-5,
+     derselbe Wert). Auf dem Schreibtisch waren es 0: Die Unterkante des
+     letzten Panels lag direkt auf der Oberkante der Bodenplatte, also zwei
+     sichtbare Linien ohne Luft dazwischen. Oben fällt dasselbe Maß nicht auf,
+     weil die Kopfkante in Ruhe durchsichtig ist und der Inhalt dort mit einer
+     Gravurzeile beginnt und nicht mit einem gerahmten Kasten. */
+  margin-block-start: var(--gap-group);
   padding: var(--sp-4) var(--device-pad);
   border-block-start: 1px solid var(--rule);
   border-radius: 0 0 var(--radius-panel) var(--radius-panel);
@@ -1762,9 +1772,11 @@ body::before {
     border-block-end-color: transparent;
   }
 
+  /* Nur die Rundung fällt hier weg — der Abstand nach oben steht in der
+     Grundregel und gilt in beiden Layouts. Er stand bis zum Schlusspass nur
+     hier, und deshalb hatte ihn der Schreibtisch nicht. */
   .colophon {
     border-radius: 0;
-    margin-block-start: var(--sp-5);
   }
 }
 
