@@ -54,6 +54,7 @@ export default tseslint.config(
     files: [
       'scripts/shoot.mjs',
       'scripts/check-contrast.mjs',
+      'scripts/check-motion.mjs',
       'scripts/shoot-grid.mjs',
       'scripts/shoot-mobile.mjs',
     ],
