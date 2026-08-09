@@ -700,10 +700,30 @@
   initial-value: 0px;
 }
 
-.scroll-edge {
-  /* Der Fühler liegt absolut IN dieser Fläche — ohne diese Zeile bezöge er
-     sich auf das nächste positionierte Elternteil und meldete Unsinn. */
+/* ── Die Kaskadenfalle, zum vierten Mal — und diesmal in derselben Datei ───
+   Hier stand `position: relative`, damit der obere Fühler sich auf seine
+   Scrollfläche bezieht. Das war als Absicherung gedacht und war ein Fehler:
+   `.scroll-edge` steht in dieser Datei WEITER UNTEN als `.listbox`, beide
+   haben dieselbe Spezifität — also gewann `relative` gegen das `absolute` des
+   Popovers. Die Folge war auf einem Bildschirmfoto sofort zu sehen und in
+   keinem Testlauf: Das Sprach-Popover fiel in den Fluss, verlor seine Breite
+   (die Sprachnamen waren abgeschnitten) und klappte nach unten statt nach oben.
+
+   Es ist derselbe Fehler wie in V6, als
+   `.zone, .colophon, .masthead { position: relative }` den klebenden Kopf von
+   `sticky` zurücksetzte — eine Sammelregel, die eine Einzelregel weiter oben
+   tötet.
+
+   `:where()` hat die Spezifität 0 und kann damit nichts überschreiben. Es ist
+   genau das, was hier gemeint war: ein RÜCKFALL für eine Scrollfläche, die
+   noch keine Position hat. Beide heutigen tragen längst eine — die Rail
+   `sticky`, das Popover `absolute` —, und beide sind damit von sich aus der
+   Bezugsrahmen ihres Fühlers. */
+:where(.scroll-edge) {
   position: relative;
+}
+
+.scroll-edge {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;
   transition:
