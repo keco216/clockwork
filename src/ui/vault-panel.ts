@@ -26,7 +26,9 @@ import {
   VaultError,
   type VaultEnvelope,
 } from '../lib/vault';
+import { enhanceDisclosure } from './disclosure';
 import { requireElement } from './dom';
+import { setMessage } from './message';
 
 const STORAGE_KEY = '2fa-live.vault.v1';
 const SETTINGS_KEY = '2fa-live.lock-settings.v1';
@@ -60,6 +62,11 @@ export interface VaultPanelHandlers {
 export function startVaultPanel(handlers: VaultPanelHandlers): void {
   const panel = requireElement(document, '#vault');
   const disclosure = requireElement<HTMLDetailsElement>(document, '#vault-disclosure');
+  // Seit V11 fährt der Aufklapper, statt zu poppen. Der Griff ist nötig, weil
+  // dieses Modul ihn auch OHNE Klick umlegt (gesperrt öffnet von selbst, nach
+  // dem Auf- oder Zusperren fällt er zu) — ein direktes `open = …` ginge an der
+  // Fahrt vorbei.
+  const disclosureMotion = enhanceDisclosure(disclosure);
   const stateText = requireElement(document, '#vault-state-text');
   // Erklärung samt Aufklapper in einer Hülle: Beide gelten nur, solange der
   // Tresor aus ist. Ein Zustand, der an zwei Stellen geschaltet wird, läuft
@@ -126,7 +133,10 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
     const entered = state !== paintedState;
     paintedState = state;
     panel.dataset['state'] = state;
-    errorText.textContent = message;
+    // Fährt ein und aus, statt zu erscheinen (V11). `setMessage` erkennt selbst,
+    // dass hier bei jedem Anstrich derselbe (meist leere) Text ankommt, und
+    // tut dann nichts.
+    setMessage(errorText, message);
     handlers.reportState(state);
 
     const hasEnvelope = state !== 'off';
@@ -159,7 +169,7 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
         // Laden der Seite ist das Textfeld leer, weil der Inhalt hier drin
         // liegt. Läge das Passphrasenfeld dann hinter einem Klick, müsste man
         // erst suchen, wo die eigenen Codes geblieben sind.
-        disclosure.open = true;
+        disclosureMotion.set(true);
         break;
       case 'open':
         stateText.textContent = t('vault.state.open');
@@ -183,7 +193,7 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
           if (disclosure.contains(document.activeElement)) {
             requireElement<HTMLElement>(disclosure, 'summary').focus();
           }
-          disclosure.open = false;
+          disclosureMotion.set(false);
         }
         break;
     }

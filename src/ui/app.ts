@@ -19,11 +19,13 @@ import { parseEntries, type ParsedEntry } from '../lib/accounts';
 import { isMigrationUri, MigrationError, parseMigrationUri } from '../lib/google-auth';
 import { createStrip, type Strip, type StripContext } from './strip';
 import { startClock } from './clock';
+import { enhanceReveals } from './disclosure';
 import { prefersReducedMotion, requireElement } from './dom';
 import { describeForSearch, matchesFilter } from './filter';
 import { buildGauge } from './gauge';
 import { startLanguageSwitch } from './lang-switch';
 import { startMasthead } from './masthead';
+import { setMessage } from './message';
 import { startScanner } from './scan';
 import { easingToken, motionToken } from './tokens';
 import { startVaultPanel } from './vault-panel';
@@ -90,10 +92,10 @@ export function startApp(): void {
    */
   function setNote(message: string): void {
     window.clearTimeout(noteTimer);
-    importNote.textContent = message;
+    setMessage(importNote, message);
     if (message !== '') {
       noteTimer = window.setTimeout(() => {
-        importNote.textContent = '';
+        setMessage(importNote, '');
       }, 12_000);
     }
   }
@@ -495,6 +497,10 @@ export function startApp(): void {
 
   startLanguageSwitch();
   startMasthead(requireElement(document, '.masthead'));
+  // Die Hinweis-Aufklapper fahren, statt zu poppen. Der Tresor-Aufklapper
+  // gehört vault-panel.ts — es schaltet ihn auch programmatisch und braucht
+  // dafür den Griff, den `enhanceDisclosure` zurückgibt.
+  enhanceReveals();
 
   // Der Leerzustand trägt das Emblem — dieselbe Teilung, die gleich die Codes
   // begleitet. Es steht still: Es gibt noch nichts zu messen.
