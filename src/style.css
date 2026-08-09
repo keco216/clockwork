@@ -1426,6 +1426,19 @@ kbd {
   justify-self: end;
 }
 
+/* Die Beschriftung fährt beim Quittieren herein (ui/strip.ts). Der Ursprung
+   gehört hierher und nicht in die Keyframes: Er ist eine Eigenschaft des
+   Bauteils, keine der Bewegung — und `bottom center` ist der Wert der Referenz
+   (`slot-value-in` am OTP-Wert), damit der Wortwechsel aus der Grundlinie
+   heraufkommt statt aus der Mitte.
+
+   `inline-block` steht nicht dabei: Die Taste ist ein Flexkasten, ihre Kinder
+   sind damit ohnehin blockartig — ein reiner Inline-Kasten könnte gar keine
+   Transformation tragen. */
+[data-copy-label] {
+  transform-origin: bottom center;
+}
+
 /* Die Quittung wechselt die TÖNUNG, nicht nur die Schrift — eine gefüllte
    Taste hat keine Kante mehr, die sie färben könnte. Dasselbe Soft-Muster wie
    bei den Chips: Signal-Tönung für „kopiert", Fehler-Tönung für „fehlgeschlagen". */
