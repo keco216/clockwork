@@ -39,6 +39,32 @@ import { easingToken, motionToken } from './tokens';
 /** Wie lange eine Tippsuche zusammenhängt, bevor sie neu beginnt. */
 const TYPEAHEAD_MS = 700;
 
+/**
+ * Der Abgang des Popovers — das Gegenstück zu `listbox-in` in panels.css.
+ *
+ * ── Warum der EINTRITT in CSS steht und der ABGANG hier ────────────────────
+ * Ein Eintritt braucht kein JavaScript: Das Element wechselt von `display:
+ * none` auf sichtbar, und genau daran hängt eine CSS-Animation von selbst.
+ * Ein Abgang kann das nicht — wer `hidden` setzt, nimmt das Element aus dem
+ * Layout, bevor irgendetwas laufen könnte. Also läuft er über die Web
+ * Animations API, und `hidden` kommt erst danach.
+ *
+ * Die Werte sind die der Referenz (`select.css`, `[data-exiting="true"]`:
+ * `animate-out duration-100 zoom-out-95 fade-out`) — 100 ms sind
+ * `--dur-flash`, dessen Kommentar in tokens.css schon „Popover zu" nennt.
+ * Die Kurve ist die Hausfeder wie beim Eintritt: Ein Popover, das anders
+ * herausfährt als hinein, wirkt wie zwei Bauteile.
+ *
+ * KEIN Weg zurück: `zoom-out-95` ist die Umkehrung von `zoom-in-95`, aber
+ * OHNE den 4-px-Versatz. Die Referenz macht das genauso — beim Eintritt zeigt
+ * die Bewegung, woher das Panel kommt; beim Abgang gibt es nichts mehr zu
+ * zeigen, es verschwindet an Ort und Stelle.
+ */
+const LEAVE: Keyframe[] = [
+  { opacity: 1, transform: 'none' },
+  { opacity: 0, transform: 'scale(0.95)' },
+];
+
 export interface ListboxOptions {
   /** Das native Feld, das die Wahrheit hält. */
   select: HTMLSelectElement;
@@ -108,6 +134,8 @@ export function enhanceSelect({ select, label }: ListboxOptions): void {
   let active = Math.max(0, select.selectedIndex);
   let typed = '';
   let typedAt = 0;
+  /** Der laufende Abgang — solange er läuft, ist das Panel noch sichtbar. */
+  let leaving: Animation | null = null;
 
   function paint(): void {
     const current = select.selectedIndex;
@@ -137,27 +165,59 @@ export function enhanceSelect({ select, label }: ListboxOptions): void {
     }
     open = next;
     button.setAttribute('aria-expanded', String(open));
-    list.hidden = !open;
+
+    // Ein laufender Abgang wird immer zuerst abgeräumt. Beim Wiederöffnen,
+    // weil sein `finished` sonst gleich das frisch geöffnete Panel versteckte;
+    // beim Schließen, weil zwei Abgänge übereinander dasselbe wären wie die
+    // zwei Eintritte, die dieser Pass gerade aufgelöst hat.
+    leaving?.cancel();
+    leaving = null;
+    delete list.dataset['exiting'];
 
     if (open) {
+      list.hidden = false;
       active = Math.max(0, select.selectedIndex);
       paint();
       list.focus();
-      if (!prefersReducedMotion()) {
-        list.animate(
-          [
-            { opacity: 0, transform: 'translateY(-4px) scale(0.99)' },
-            { opacity: 1, transform: 'none' },
-          ],
-          {
-            duration: motionToken('--dur-calm', 250),
-            easing: easingToken('--ease-spring', 'cubic-bezier(0.32, 0.72, 0, 1)'),
-          },
-        );
-      }
-    } else {
-      paint();
+      return;
     }
+
+    // Der Fokus wandert sofort zurück (das erledigen die Aufrufer) — nur das
+    // BILD bleibt noch 100 ms stehen. Deshalb `data-exiting`: Ein Panel, das
+    // man nicht mehr treffen soll, darf den Klick dahinter nicht schlucken.
+    paint();
+
+    if (prefersReducedMotion()) {
+      list.hidden = true;
+      return;
+    }
+
+    list.dataset['exiting'] = '';
+    const animation = list.animate(LEAVE, {
+      duration: motionToken('--dur-flash', 100),
+      easing: easingToken('--ease-spring', 'cubic-bezier(0.32, 0.72, 0, 1)'),
+      // Sonst blitzte das Panel zwischen dem letzten Bild der Animation und
+      // dem Setzen von `hidden` für einen Frame wieder voll auf.
+      fill: 'forwards',
+    });
+    leaving = animation;
+
+    animation.finished
+      .then(() => {
+        if (leaving !== animation) {
+          return;
+        }
+        list.hidden = true;
+        delete list.dataset['exiting'];
+        // Den Fill zurücknehmen, solange es niemand sieht: Bliebe er stehen,
+        // wäre das Panel beim nächsten Öffnen unsichtbar.
+        animation.cancel();
+        leaving = null;
+      })
+      .catch(() => {
+        // `finished` lehnt ab, wenn abgebrochen wurde — also wenn jemand das
+        // Panel wieder geöffnet hat. Dann ist oben schon alles aufgeräumt.
+      });
   }
 
   function commit(index: number): void {

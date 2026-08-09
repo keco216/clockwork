@@ -399,7 +399,20 @@
    steckt in --elev-2, tokens.css). Kein Rahmen. Beim Öffnen fährt es in
    150 ms ein (Fade + zoom-in-95 + 4 px aus seiner Richtung), wie das
    Select-Popover der Referenz; die globale reduced-motion-Regel in style.css
-   schaltet die Animation mit ab. */
+   schaltet die Animation mit ab.
+
+   ── Der Eintritt steht HIER, der Abgang in ui/listbox.ts ──────────────────
+   Und zwar genau einmal, seit V11. Bis dahin liefen zwei Eintritte
+   übereinander: diese CSS-Animation und ein zweites `list.animate()` im
+   Skript, 250 ms und mit `translateY(-4px)` — also von OBEN, obwohl das Panel
+   nach oben aufklappt und folglich von unten kommen muss. Nachgewiesen am
+   laufenden Gerät über `getAnimations()` (zwei Einträge, CSSAnimation 150 ms
+   und WAAPI 250 ms), nicht im Quelltext vermutet. Die JS-Fassung ist weg; das
+   CSS ist die eine Quelle.
+
+   Der Abgang kann nicht hier stehen: Wer `hidden` setzt, nimmt das Element aus
+   dem Layout, bevor eine CSS-Animation laufen könnte. Er läuft deshalb über
+   die Web Animations API, und `hidden` kommt erst nach `finished`. */
 .listbox {
   position: absolute;
   inset-inline: 0;
@@ -429,6 +442,17 @@
 
 .listbox[hidden] {
   display: none;
+}
+
+/* Während des Abgangs steht das Panel noch 100 ms im Bild, ist aber nicht mehr
+   gemeint. Ohne diese Zeile schluckte es genau in dieser Zeitspanne den Klick,
+   mit dem jemand daneben etwas anderes treffen wollte — und der Klick nach
+   außen ist der häufigste Weg, ein Popover zu schließen.
+
+   Der Attributname ist der der Referenz (`[data-exiting="true"]`); gesetzt
+   wird er in ui/listbox.ts. */
+.listbox[data-exiting] {
+  pointer-events: none;
 }
 
 .listbox__option {
