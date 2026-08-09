@@ -8,7 +8,9 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.13.0'
-        classpath 'com.google.gms:google-services:4.4.4'
+        // Das google-services-Plugin aus der Capacitor-Vorlage ist entfernt:
+        // Clockwork hat keine Push-Nachrichten und keine Google-Dienste, und
+        // fuer F-Droid darf kein GMS-Werkzeug im Build haengen.
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

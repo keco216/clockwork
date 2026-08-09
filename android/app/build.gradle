@@ -57,6 +57,14 @@ android {
             }
         }
     }
+    /* Kein Google-Metadatenblock im APK: AGP haengt sonst eine verschluesselte
+       Abhaengigkeitsliste in den Signaturblock, die nur Google lesen kann.
+       F-Droid lehnt genau das ab, und ein nicht pruefbarer Block passt auch
+       sonst nicht zu diesem Projekt. */
+    dependenciesInfo {
+        includeInApk false
+        includeInBundle false
+    }
 }
 
 repositories {
@@ -78,12 +86,3 @@ dependencies {
 }
 
 apply from: 'capacitor.build.gradle'
-
-try {
-    def servicesJSON = file('google-services.json')
-    if (servicesJSON.text) {
-        apply plugin: 'com.google.gms.google-services'
-    }
-} catch(Exception e) {
-    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
-}
