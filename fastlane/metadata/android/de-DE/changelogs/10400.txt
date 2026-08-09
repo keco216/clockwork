@@ -1,0 +1,1 @@
+Erstes Android-Release. Der Wrap trägt den Einzeldatei-Bau des Projekts in einem System-WebView: keine INTERNET-Berechtigung, Kamera nur für den QR-Sucher und freiwillig, Auto-Backup aus. Gleicher Funktionsumfang wie die Web-App: TOTP (RFC 6238) von Hand implementiert, optionaler verschlüsselter Tresor, 37 gebündelte Sprachen.

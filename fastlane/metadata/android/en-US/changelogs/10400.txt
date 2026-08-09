@@ -1,0 +1,1 @@
+First Android release. Wraps the project's single-file web build in a system WebView: no INTERNET permission, camera only for the QR scanner and optional, auto-backup off. Same features as the web app: TOTP (RFC 6238) implemented from scratch, optional encrypted vault, 37 bundled languages.

@@ -1,0 +1,17 @@
+Clockwork erzeugt Zwei-Faktor-Codes (TOTP, RFC 6238) vollständig auf dem Gerät. Die Android-App deklariert keine INTERNET-Berechtigung — sie kann nicht ins Netz, und diese Zusage steht für jeden nachlesbar im Manifest.
+
+Die App ist der Einzeldatei-Bau des Projekts, getragen von einem System-WebView: dieselbe clockwork.html, die man am Release herunterladen und auf jedem Rechner öffnen kann.
+
+Was sie kann:
+
+* TOTP-Codes erzeugen — SHA-1, SHA-256 oder SHA-512, 6 bis 8 Stellen, beliebige Periode. Der Countdown ist eine 30er-Teilung mit drehendem Zeiger, kein Fortschrittsring.
+* Eingaben in jeder üblichen Form: rohes Base32, otpauth://-URIs, ein kompletter Google-Authenticator-Export oder ein QR-Code aus Kamera oder Bild.
+* Kaputte Zeilen werden erklärt statt still verschluckt.
+* Auf Wunsch liegen die Secrets hinter einer Passphrase — strikt opt-in, AES-256-GCM über PBKDF2-SHA-256 mit 600.000 Iterationen, mit automatischer Sperre. Ohne Tresor wird nichts gespeichert.
+* 37 Sprachen, alle mitgebündelt, auch rechtsläufige Layouts.
+
+Die Kamera-Berechtigung dient allein dem QR-Sucher und ist als freiwillige Hardware deklariert; QR aus Bild funktioniert ohne Kamera. Auto-Backup ist abgeschaltet — der verschlüsselte Tresor verlässt das Gerät nicht.
+
+Die OTP-Algorithmen sind von Hand nach den RFC-Testvektoren implementiert — keine OTP-Bibliothek. Die einzige geliehene Krypto-Primitive ist die Web Crypto API.
+
+Wichtig, unabhängig von dieser App: Richte bei jedem Anbieter Backup-Codes ein, bevor du dich auf einen Authenticator verlässt. Sie sind das Einzige, was dich wieder hineinlässt, wenn das Secret weg ist.
