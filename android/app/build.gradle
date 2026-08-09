@@ -1,5 +1,19 @@
 apply plugin: 'com.android.application'
 
+/* Signierung: Der Release-Schluessel liegt AUSSERHALB des Repos (Ordner
+   clockwork-keys im Benutzerprofil, Anleitung in der dortigen SICHERUNG.md).
+   Die Umgebungsvariable CLOCKWORK_KEYSTORE zeigt auf eine properties-Datei
+   mit storeFile/storePassword/keyAlias/keyPassword. Ohne die Variable
+   entsteht ein UNSIGNIERTES Release — so geraten weder Pfade noch
+   Geheimnisse ins Repo oder in die CI, und wer das Repo klont, baut ohne
+   Umbau Debug-APKs. */
+def keystoreProps = null
+def keystorePropsPath = System.getenv('CLOCKWORK_KEYSTORE')
+if (keystorePropsPath != null && new File(keystorePropsPath).exists()) {
+    keystoreProps = new Properties()
+    new File(keystorePropsPath).withInputStream { keystoreProps.load(it) }
+}
+
 android {
     namespace = "io.github.keco216.clockwork"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -19,10 +33,28 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        if (keystoreProps != null) {
+            release {
+                storeFile new File(keystoreProps.getProperty('storeFile'))
+                storePassword keystoreProps.getProperty('storePassword')
+                keyAlias keystoreProps.getProperty('keyAlias')
+                keyPassword keystoreProps.getProperty('keyPassword')
+            }
+        }
+    }
     buildTypes {
         release {
-            minifyEnabled false
+            /* R8 verkleinert nur die Java-Huelle; der Web-Inhalt liegt als
+               Asset und bleibt byte-identisch. Capacitors Keep-Regeln kommen
+               als consumer rules aus dem Paket mit — nachgemessen am
+               Emulator, nicht nur angenommen. */
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (keystoreProps != null) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
