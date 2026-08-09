@@ -5,11 +5,11 @@ Bilder sind der teuerste Teil dieses Repos: Acht Aufnahmen wiegen je nach Stand
 2,5 bis 4 MB, und sie werden einmal angesehen. Deshalb liegen im Repo nur die
 Bilder zur **aktuellen** Version; ältere sind ausgelagert, aber nicht verloren.
 
-| Vergleich       | Was er zeigt                | Wo er liegt                                                                            |
-| --------------- | --------------------------- | -------------------------------------------------------------------------------------- |
-| V4 → V5         | „Instrument trifft Apple"   | Als `clockwork-v5-vergleich.zip` am [Release v1.2.0](https://github.com/keco216/clockwork/releases/tag/v1.2.0) |
-| v1.1.0 → V7     | Struktur: Gehäuse und Bühne | Im Branch `v7-struktur`, unter `docs/v7-vergleich/`                                     |
-| V7 → V8         | Klarheit: Flächen und Teile | [`v8-vergleich/`](v8-vergleich/README.md) — im Repo                                     |
+| Vergleich   | Was er zeigt                | Wo er liegt                                                                                                    |
+| ----------- | --------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| V4 → V5     | „Instrument trifft Apple"   | Als `clockwork-v5-vergleich.zip` am [Release v1.2.0](https://github.com/keco216/clockwork/releases/tag/v1.2.0) |
+| v1.1.0 → V7 | Struktur: Gehäuse und Bühne | Im Branch `v7-struktur`, unter `docs/v7-vergleich/`                                                            |
+| V7 → V8     | Klarheit: Flächen und Teile | [`v8-vergleich/`](v8-vergleich/README.md) — im Repo                                                            |
 
 ## Warum V7 nicht als Asset dabei ist
 
