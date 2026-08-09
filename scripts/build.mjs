@@ -118,6 +118,11 @@ await rm(distSingle, { recursive: true, force: true });
 const { size } = await stat(target);
 console.log('\n✓ Fertig.');
 console.log('  dist/                  — installierbare PWA (Service Worker + Manifest)');
+// Beide Zählweisen, beschriftet — wie in check-bundle.mjs seit v1.2.0. Hier
+// stand `size / 1024` mit „kB" daran: dieselbe Einheiten-Falle, die dort schon
+// zweimal abgeschriebene falsche Zahlen erzeugt hat. Gefunden bei V10, als der
+// Bau „774 kB" meldete und die Messung 793.
 console.log(
-  `  dist/${singleFileName}   — eine Datei, komplett offline, ${(size / 1024).toFixed(0)} kB`,
+  `  dist/${singleFileName}   — eine Datei, komplett offline, ` +
+    `${(size / 1000).toFixed(0)} kB (dezimal) = ${(size / 1024).toFixed(0)} KiB`,
 );
