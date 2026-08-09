@@ -249,8 +249,19 @@ The app declares **no INTERNET permission** — the OS-level counterpart of the
 single file's `connect-src 'none'`; check it yourself with
 `aapt2 dump badging`. Camera permission exists solely for the QR scanner and
 is declared optional hardware, and `allowBackup` is off so the encrypted vault
-never rides along in a cloud backup. There is no signed release APK yet —
-build it from source. Details, including the toolchain notes, are in the
+never rides along in a cloud backup.
+
+A signed, minified release APK (`clockwork.apk`) is attached to the
+[latest release](https://github.com/keco216/clockwork/releases/latest)
+together with its SHA-256 checksum — verify the download before installing.
+
+**Update rule:** Android accepts an update only when it is signed with the
+same key as the installed app. An APK signed with any other key — including
+your own build from source — requires uninstalling first, and uninstalling
+deletes the app's data, **including a vault stored on that device**. If you
+switch between the released APK and a self-built one, unlock the vault and
+copy your entries out of the input field first. Details, including the
+toolchain notes, are in the
 [German documentation](docs/README.de.md#die-android-app-capacitor).
 
 ## Contributing

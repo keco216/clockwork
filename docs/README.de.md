@@ -1490,12 +1490,31 @@ Fassung, die beides kann: auf Java 25 laufen (ab 9.1) und AGP 8.x tragen (ab
 Ausweg). Beide Grenzen sind gemessen, nicht gelesen: einmal „Unsupported class
 file major version 69", einmal der AGP-Abbruch unter 9.7.
 
+### Signierung und die Update-Regel
+
+Am GitHub-Release v1.4.0 hängt ein **signiertes, minifiziertes Release-APK**
+(`clockwork.apk`) samt SHA-256-Prüfsumme. Der Signierschlüssel liegt
+**außerhalb des Repos**: `android/app/build.gradle` liest die
+Umgebungsvariable `CLOCKWORK_KEYSTORE` (Pfad zu einer properties-Datei mit
+Keystore-Pfad, Alias und Passwörtern); ohne die Variable entsteht ein
+unsigniertes Release. Genau so soll es sein — weder Pfade noch Geheimnisse
+gehören ins Repo, in die CI oder in ein Release, und wer das Repo klont,
+baut ohne Umbau Debug-APKs.
+
+**Die Update-Regel:** Android nimmt ein Update nur an, wenn es mit
+**demselben Schlüssel** signiert ist wie die installierte App. Ein anders
+signiertes APK — auch der eigene Bau aus dem Quelltext — verlangt vorher
+die Deinstallation, und die löscht die App-Daten **mitsamt einem auf diesem
+Gerät gespeicherten Tresor**. Wer zwischen Release-APK und Eigenbau
+wechselt: vorher den Tresor aufsperren und die Einträge aus dem Textfeld
+herauskopieren. Für den Herausgeber heißt dieselbe Regel: Der Schlüssel ist
+das einzige Unwiederbeschaffbare am Projekt — geht er verloren, nimmt keine
+bestehende Installation je wieder ein Update an.
+
 ### Was offen ist — und was absichtlich nur Ausblick bleibt
 
-Es gibt **kein signiertes Release-APK**. Verteilung (Play Store, F-Droid,
-GitHub-Release) und damit die Schlüsselfrage der Signierung sind bewusst
-offen — ein Debug-APK genügt, um die App auf dem eigenen Gerät zu benutzen,
-und mehr behauptet diese Doku nicht.
+Offen ist der **Vertrieb über einen Katalog** (Play Store, F-Droid) — das
+Release-APK am GitHub-Release deckt den Eigengebrauch ab.
 
 **iOS** wäre mit demselben Wrap möglich (`@capacitor/ios`), braucht aber
 macOS und Xcode; das Gerüst ist absichtlich nicht angelegt — ein
