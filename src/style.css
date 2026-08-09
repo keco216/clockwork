@@ -1804,6 +1804,32 @@ main {
       calc(var(--sp-8) + env(safe-area-inset-bottom));
   }
 
+  /* ── Der Kopf weicht beim Runterscrollen (V11) ──────────────────────────
+     Unter 46 rem ist der Kopf dreizeilig (Wortmarke, Untertitel, Zustand) —
+     auf einem 812 px hohen Schirm ein Zehntel der Höhe, dauerhaft belegt von
+     etwas, das man einmal liest. Also das Muster der Browserleiste: runter
+     heißt lesen, hoch heißt suchen.
+
+     Bewegt wird ausschließlich `transform`. Keine Höhe, kein Layout, kein
+     `will-change` — eine Transformation, die gerade steht, befördert nichts
+     auf eine eigene Compositor-Ebene, und die V8-Zusage (18 im Ruhezustand)
+     bleibt unberührt.
+
+     Der Sicherheitsabstand fährt mit: Der Kopf parkt bei
+     `env(safe-area-inset-top)`, und wer nur um die eigene Höhe nach oben
+     fährt, ließe genau diesen Streifen stehen.
+
+     Geschaltet wird in ui/masthead.ts, wo schon die Ebenen-Logik lebt.
+     Ohne Skript passiert nichts — dann klebt der Kopf wie bisher, und das
+     ist der richtige Rückfall. */
+  .masthead {
+    transition: transform var(--dur-calm) var(--ease-spring);
+  }
+
+  .masthead--stowed {
+    transform: translateY(calc(-100% - env(safe-area-inset-top)));
+  }
+
   /* ══ Mobil-Struktur (V10): erst ablesen, dann einstellen ═════════════════
      Unter 64 rem gilt die Dokumentreihenfolge, und die stellt seit V10 die
      Codes nach oben. Die Bedienung dahinter schrumpft im Arbeitszustand auf
