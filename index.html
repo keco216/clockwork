@@ -143,52 +143,143 @@
           </p>
         </div>
 
+        <!-- ══ Zone: Codes — die Bühne ═════════════════════════════════
+             Seit V10 steht sie VOR der Bedienseite im Dokument. Der Grund ist
+             das Handy: Unter 64 rem gilt die Flussreihenfolge, und dort soll
+             beim Öffnen der Code ohne Scrollen dastehen — ablesen ist der
+             häufige Fall, einstellen der seltene. Dieselbe Reihenfolge gilt
+             damit auch für Tastatur und Screenreader: Was zuerst im Bild ist,
+             ist auch zuerst im Fokuslauf.
+
+             Auf dem Schreibtisch ändert sich NICHTS: Die Shell setzt Rail und
+             Bühne über explizite Rasterspalten an ihre Plätze (style.css),
+             und ein Raster ist von der Dokumentreihenfolge unabhängig. -->
+        <section class="zone" id="zone-codes" aria-labelledby="zone-codes-label">
+          <h2 class="zone__label" id="zone-codes-label" data-i18n="zone.codes">Codes</h2>
+          <div class="zone__body">
+            <!--
+              Die Filterzeile. Sie erscheint erst ab acht Konten (ui/app.ts) —
+              darunter ist sie ein Bedienelement für ein Problem, das es nicht
+              gibt, und nimmt der Bühne eine Zeile weg.
+
+              `type="search"` und nicht `text`: Der Browser gibt dem Feld damit
+              seine Löschtaste und meldet es dem Screenreader als Suchfeld.
+
+              Als EINZIGES darf diese Zeile kleben — die Bühne selbst nicht. Wer
+              in einer langen Liste sucht, braucht das Feld im Blick; wer eine
+              Liste liest, will sie nicht unter einem Riegel hervorholen.
+            -->
+            <div class="stage__filter" id="stage-filter" hidden>
+              <label class="sr-only" for="strip-filter" data-i18n="filter.label"
+                >Filter accounts</label
+              >
+              <input
+                type="search"
+                id="strip-filter"
+                class="field stage__field"
+                autocomplete="off"
+                spellcheck="false"
+                data-i18n-attr="placeholder=filter.placeholder"
+                placeholder="Filter by name"
+              />
+            </div>
+
+            <div class="strips" id="strips"></div>
+
+            <!-- Kein Treffer im Filter. Ein eigener Absatz und nicht der
+                 Leerzustand: „nichts eingegeben" und „nichts gefunden" sind
+                 zwei verschiedene Auskünfte. -->
+            <p class="stage__void" id="filter-void" role="status" aria-live="polite" hidden></p>
+          </div>
+        </section>
+
         <!--
           Die Bedienseite als EIN Bereich. Bis V6 standen Eingabe und Tresor
           als zwei Geschwister direkt im Raster, und genau daran ist der
           Zweispalter gescheitert: Zwei getrennte Rasterelemente lassen sich
           nicht gemeinsam scrollen und nicht gemeinsam verschieben. Was
           zusammen bedient wird, muss auch zusammen ein Kasten sein.
-
-          Die Reihenfolge im Dokument bleibt unverändert — die Zustände
-          verschieben die Hülle, nicht ihren Inhalt.
         -->
         <div class="rail">
           <!-- ══ Zone: Eingabe ═══════════════════════════════════════════ -->
           <section class="zone" id="zone-input" aria-labelledby="zone-input-label">
             <h2 class="zone__label" id="zone-input-label" data-i18n="zone.input">Input</h2>
             <div class="zone__body">
-              <div class="slot">
-                <label class="slot__legend" for="secrets" data-i18n="input.legend"
-                  >One entry per line</label
-                >
-                <!--
+              <!--
+                Die Zusammenfassungszeile fürs Handy (V10): „Eingabe · 1 Konto".
+                Nur unter 64 rem und nur im Arbeitszustand sichtbar — auf dem
+                Schreibtisch bleibt das Panel offen, und im Leerzustand IST das
+                Feld die Bühne.
+
+                Ein <button> mit aria-expanded und kein <details>: Ob der Editor
+                offen ist, entscheidet beim Zustandswechsel ui/app.ts (er bleibt
+                offen, solange der Fokus darin liegt — wer gerade tippt, dem
+                klappt nichts unter den Fingern zu). Ein details, dessen
+                open-Attribut das Skript ständig übersteuert, wäre eine zweite
+                Wahrheit über denselben Zustand.
+
+                Der Zähler trägt denselben Text wie der Chip unter dem Feld
+                (summarise in ui/app.ts) — eine Zahl, eine Quelle. Der
+                Trennpunkt dazwischen ist gesetzt, nicht getippt (style.css),
+                wie im Fuß und in der Metazeile.
+              -->
+              <button
+                type="button"
+                class="zone__fold"
+                id="input-fold"
+                aria-expanded="false"
+                aria-controls="input-editor"
+              >
+                <span data-i18n="zone.input">Input</span>
+                <span class="zone__foldCount" id="input-fold-count"></span>
+              </button>
+              <!--
+                Zwei Hüllen um den Editor, beide auf dem Schreibtisch
+                durchsichtig (display: contents): Die äußere ist die Schublade,
+                die mobil über grid-template-rows 0fr/1fr auf- und zufährt —
+                der einzige Weg, eine Höhe „auto" rein in CSS zu animieren —,
+                die innere trägt Beschnitt und Sichtbarkeit. Siehe style.css,
+                Abschnitt „Mobil-Struktur".
+              -->
+              <div class="zone__drawer">
+                <div class="zone__editor" id="input-editor">
+                  <div class="slot">
+                    <label class="slot__legend" for="secrets" data-i18n="input.legend"
+                      >One entry per line</label
+                    >
+                    <!--
                 dir="ltr" ist hier keine Kosmetik: Base32-Secrets und
                 otpauth-URIs sind lateinische Zeichenketten. In einer
                 RTL-Oberfläche würde die Bidi-Regel sie sonst am rechten Rand
                 ausrichten und Satzzeichen umsortieren — man tippt dann etwas
                 anderes ein, als man sieht.
               -->
-                <textarea
-                  id="secrets"
-                  class="field slot__field"
-                  translate="no"
-                  dir="ltr"
-                  rows="4"
-                  spellcheck="false"
-                  autocomplete="off"
-                  autocapitalize="off"
-                  autocorrect="off"
-                  placeholder="JBSWY3DPEHPK3PXP&#10;GitHub: jbsw y3dp ehpk 3pxp&#10;otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP"
-                ></textarea>
-                <!-- Die Bilanzzeile ist seit V8 ein Chip: „8 Konten" ist eine
+                    <!-- Der Platzhalter beginnt seit V10 mit dem „z. B."-Kürzel und
+                     ist damit übersetzbar geworden (data-i18n-attr): Drei
+                     plausible Zeilen ohne Markierung sahen aus wie echte
+                     Einträge. Der Text hier ist die englische Fassung für den
+                     ersten Anstrich. -->
+                    <textarea
+                      id="secrets"
+                      class="field slot__field"
+                      translate="no"
+                      dir="ltr"
+                      rows="4"
+                      spellcheck="false"
+                      autocomplete="off"
+                      autocapitalize="off"
+                      autocorrect="off"
+                      data-i18n-attr="placeholder=input.placeholder"
+                      placeholder="e.g. JBSWY3DPEHPK3PXP&#10;GitHub: jbsw y3dp ehpk 3pxp&#10;otpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP"
+                    ></textarea>
+                    <!-- Die Bilanzzeile ist seit V8 ein Chip: „8 Konten" ist eine
                      Angabe zum Feld darüber, kein Fließtext. Die Hülle
                      reserviert die Höhe, damit die Tastenzeile beim ersten
                      Eintrag nicht nach unten rutscht. -->
-                <p class="slot__meter"><span class="chip" id="entry-count"></span></p>
-              </div>
+                    <p class="slot__meter"><span class="chip" id="entry-count"></span></p>
+                  </div>
 
-              <!--
+                  <!--
                 Die Tastenzeile hat seit V7 eine Rangordnung, keine Reihe.
 
                 Links, abgesetzt und als leiser Textknopf: „Leeren". Es ist die
@@ -203,21 +294,21 @@
                 der Bühne — eine Zeile, die nur einen Kommentar enthält, ergibt
                 keinen Eintrag, ist aber sehr wohl etwas zum Leeren.
               -->
-              <div class="keys">
-                <!-- `hidden` von Anfang an: Beim Laden ist das Feld leer, es
+                  <div class="keys">
+                    <!-- `hidden` von Anfang an: Beim Laden ist das Feld leer, es
                      gibt also nichts zu leeren. Ab hier führt ui/app.ts beide
                      Tasten. -->
-                <button
-                  type="button"
-                  class="key key--flat"
-                  id="key-clear"
-                  hidden
-                  data-i18n="key.clear"
-                >
-                  Clear
-                </button>
-                <span class="keys__gap" aria-hidden="true"></span>
-                <!--
+                    <button
+                      type="button"
+                      class="key key--flat"
+                      id="key-clear"
+                      hidden
+                      data-i18n="key.clear"
+                    >
+                      Clear
+                    </button>
+                    <span class="keys__gap" aria-hidden="true"></span>
+                    <!--
                   Der Testschlüssel stand bis V6 im Leerzustands-Block. Er steht
                   jetzt hier — an der Stelle, an der die anderen beiden Wege ins
                   Feld auch stehen —, und `hidden` hält ihn vom Arbeitszustand
@@ -226,13 +317,18 @@
                   überschreiben könnte. Der Handler prüft zusätzlich auf ein
                   leeres Feld.
                 -->
-                <button type="button" class="key key--primary key--lg" id="key-demo">
-                  <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                    <path d="M8 3.25v9.5M3.25 8h9.5" />
-                  </svg>
-                  <span data-i18n="vacant.demo">Insert test key</span>
-                </button>
-                <!--
+                    <button type="button" class="key key--primary key--lg" id="key-demo">
+                      <svg
+                        class="key__icon"
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <path d="M8 3.25v9.5M3.25 8h9.5" />
+                      </svg>
+                      <span data-i18n="vacant.demo">Insert test key</span>
+                    </button>
+                    <!--
                 Die Bedien-Icons sind seit V5 in der Handschrift von SF Symbols
                 gezeichnet: runde Ecken, weiche Verbindungen, 1,5 px Strich
                 (styles/style.css, .key__icon). Das gilt ausdrücklich NUR für
@@ -243,69 +339,84 @@
                 keinen Ordner, er nimmt ein Bild entgegen; ein Ordnersymbol
                 versprach die falsche Handlung.
               -->
-                <button type="button" class="key key--default" id="key-file">
-                  <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                    <rect x="2" y="3" width="12" height="10" rx="2.75" />
-                    <circle cx="5.6" cy="6.4" r="1" />
-                    <path d="M2.6 11.4 6 8.4l2.3 2 2.3-2.4 2.8 3" />
-                  </svg>
-                  <!-- Eigener span: data-i18n setzt textContent, das würde sonst
+                    <button type="button" class="key key--default" id="key-file">
+                      <svg
+                        class="key__icon"
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <rect x="2" y="3" width="12" height="10" rx="2.75" />
+                        <circle cx="5.6" cy="6.4" r="1" />
+                        <path d="M2.6 11.4 6 8.4l2.3 2 2.3-2.4 2.8 3" />
+                      </svg>
+                      <!-- Eigener span: data-i18n setzt textContent, das würde sonst
                      das Icon mit wegwischen. -->
-                  <span data-i18n="key.qrImage">QR from image</span>
-                </button>
-                <button type="button" class="key key--default" id="key-camera">
-                  <svg class="key__icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                    <rect x="1.75" y="4.4" width="12.5" height="9.1" rx="2.75" />
-                    <path d="M5.5 4.4 6.4 2.5h3.2l.9 1.9" />
-                    <circle cx="8" cy="8.95" r="2.35" />
-                  </svg>
-                  <span data-i18n="key.camera">Camera</span>
-                </button>
-                <input
-                  type="file"
-                  id="file-input"
-                  accept="image/*"
-                  class="sr-only"
-                  tabindex="-1"
-                  aria-hidden="true"
-                />
-              </div>
+                      <span data-i18n="key.qrImage">QR from image</span>
+                    </button>
+                    <button type="button" class="key key--default" id="key-camera">
+                      <svg
+                        class="key__icon"
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <rect x="1.75" y="4.4" width="12.5" height="9.1" rx="2.75" />
+                        <path d="M5.5 4.4 6.4 2.5h3.2l.9 1.9" />
+                        <circle cx="8" cy="8.95" r="2.35" />
+                      </svg>
+                      <span data-i18n="key.camera">Camera</span>
+                    </button>
+                    <input
+                      type="file"
+                      id="file-input"
+                      accept="image/*"
+                      class="sr-only"
+                      tabindex="-1"
+                      aria-hidden="true"
+                    />
+                  </div>
 
-              <!-- Kamerasucher. Die vier Eckwinkel sind kein Zierrat: Sie zeigen,
+                  <!-- Kamerasucher. Die vier Eckwinkel sind kein Zierrat: Sie zeigen,
                  wohin der QR-Code gehalten werden muss. -->
-              <div class="viewfinder" id="viewfinder" hidden>
-                <div class="viewfinder__frame">
-                  <video id="viewfinder-video" class="viewfinder__video" playsinline muted></video>
-                  <span class="viewfinder__mark" data-corner="tl" aria-hidden="true"></span>
-                  <span class="viewfinder__mark" data-corner="tr" aria-hidden="true"></span>
-                  <span class="viewfinder__mark" data-corner="bl" aria-hidden="true"></span>
-                  <span class="viewfinder__mark" data-corner="br" aria-hidden="true"></span>
-                </div>
-                <div class="viewfinder__bar">
-                  <p class="viewfinder__hint" id="viewfinder-hint" data-i18n="viewfinder.hint">
-                    Hold the QR code inside the frame
-                  </p>
-                  <button
-                    type="button"
-                    class="key key--default"
-                    id="key-camera-stop"
-                    data-i18n="key.cameraStop"
-                  >
-                    Camera off
-                  </button>
-                </div>
-              </div>
+                  <div class="viewfinder" id="viewfinder" hidden>
+                    <div class="viewfinder__frame">
+                      <video
+                        id="viewfinder-video"
+                        class="viewfinder__video"
+                        playsinline
+                        muted
+                      ></video>
+                      <span class="viewfinder__mark" data-corner="tl" aria-hidden="true"></span>
+                      <span class="viewfinder__mark" data-corner="tr" aria-hidden="true"></span>
+                      <span class="viewfinder__mark" data-corner="bl" aria-hidden="true"></span>
+                      <span class="viewfinder__mark" data-corner="br" aria-hidden="true"></span>
+                    </div>
+                    <div class="viewfinder__bar">
+                      <p class="viewfinder__hint" id="viewfinder-hint" data-i18n="viewfinder.hint">
+                        Hold the QR code inside the frame
+                      </p>
+                      <button
+                        type="button"
+                        class="key key--default"
+                        id="key-camera-stop"
+                        data-i18n="key.cameraStop"
+                      >
+                        Camera off
+                      </button>
+                    </div>
+                  </div>
 
-              <p class="note" id="import-note" role="status" aria-live="polite"></p>
+                  <p class="note" id="import-note" role="status" aria-live="polite"></p>
 
-              <!--
+                  <!--
               Reichtexte: Der Satz ist EINE Übersetzung mit Platzhaltern, die
               ausgezeichneten Stücke liegen als [data-slot] daneben. Beim
               Anwenden werden sie an die Stelle ihres Platzhalters geschoben —
               wohin, bestimmt die Übersetzung. Damit ist die Wortstellung frei.
               Siehe src/i18n/apply.ts.
             -->
-              <!--
+                  <!--
                 Bis V6 standen hier drei gleichrangige Hinweisabsätze. In einer
                 Rail von 368 px wurden daraus zwölf Zeilen Kleingedrucktes über
                 dem, worum es geht — und der erste Satz, der einzige, den man
@@ -318,28 +429,32 @@
                 Screenreader-Ansage mit, und es funktioniert ohne eine Zeile
                 JavaScript.
               -->
-              <p class="note note--lede" data-rich="input.help.formats">
-                <code data-slot="nameSecret" translate="no" dir="ltr">Name: SECRET</code>
-                <code data-slot="uri" translate="no" dir="ltr">otpauth://…</code>
-                <code data-slot="hash" translate="no" dir="ltr">#</code>
-              </p>
-              <details class="reveal">
-                <summary class="reveal__summary" data-i18n="input.help.more">
-                  All input formats
-                </summary>
-                <div class="reveal__body">
-                  <p class="note" data-rich="input.help.images">
-                    <span data-slot="paste" dir="ltr"
-                      ><kbd data-i18n="shortcut.modifier">Ctrl</kbd>+<kbd translate="no"
-                        >V</kbd
-                      ></span
-                    >
+                  <p class="note note--lede" data-rich="input.help.formats">
+                    <code data-slot="nameSecret" translate="no" dir="ltr">Name: SECRET</code>
+                    <code data-slot="uri" translate="no" dir="ltr">otpauth://…</code>
+                    <code data-slot="hash" translate="no" dir="ltr">#</code>
                   </p>
-                  <p class="note" data-rich="input.help.migration">
-                    <code data-slot="migration" translate="no" dir="ltr">otpauth-migration://</code>
-                  </p>
+                  <details class="reveal">
+                    <summary class="reveal__summary" data-i18n="input.help.more">
+                      All input formats
+                    </summary>
+                    <div class="reveal__body">
+                      <p class="note" data-rich="input.help.images">
+                        <span data-slot="paste" dir="ltr"
+                          ><kbd data-i18n="shortcut.modifier">Ctrl</kbd>+<kbd translate="no"
+                            >V</kbd
+                          ></span
+                        >
+                      </p>
+                      <p class="note" data-rich="input.help.migration">
+                        <code data-slot="migration" translate="no" dir="ltr"
+                          >otpauth-migration://</code
+                        >
+                      </p>
+                    </div>
+                  </details>
                 </div>
-              </details>
+              </div>
             </div>
           </section>
 
@@ -505,46 +620,6 @@
             </div>
           </section>
         </div>
-
-        <!-- ══ Zone: Codes — die Bühne ═════════════════════════════════ -->
-        <section class="zone" id="zone-codes" aria-labelledby="zone-codes-label">
-          <h2 class="zone__label" id="zone-codes-label" data-i18n="zone.codes">Codes</h2>
-          <div class="zone__body">
-            <!--
-              Die Filterzeile. Sie erscheint erst ab acht Konten (ui/app.ts) —
-              darunter ist sie ein Bedienelement für ein Problem, das es nicht
-              gibt, und nimmt der Bühne eine Zeile weg.
-
-              `type="search"` und nicht `text`: Der Browser gibt dem Feld damit
-              seine Löschtaste und meldet es dem Screenreader als Suchfeld.
-
-              Als EINZIGES darf diese Zeile kleben — die Bühne selbst nicht. Wer
-              in einer langen Liste sucht, braucht das Feld im Blick; wer eine
-              Liste liest, will sie nicht unter einem Riegel hervorholen.
-            -->
-            <div class="stage__filter" id="stage-filter" hidden>
-              <label class="sr-only" for="strip-filter" data-i18n="filter.label"
-                >Filter accounts</label
-              >
-              <input
-                type="search"
-                id="strip-filter"
-                class="field stage__field"
-                autocomplete="off"
-                spellcheck="false"
-                data-i18n-attr="placeholder=filter.placeholder"
-                placeholder="Filter by name"
-              />
-            </div>
-
-            <div class="strips" id="strips"></div>
-
-            <!-- Kein Treffer im Filter. Ein eigener Absatz und nicht der
-                 Leerzustand: „nichts eingegeben" und „nichts gefunden" sind
-                 zwei verschiedene Auskünfte. -->
-            <p class="stage__void" id="filter-void" role="status" aria-live="polite" hidden></p>
-          </div>
-        </section>
       </main>
 
       <!-- ══ Fuß ═══════════════════════════════════════════════════════ -->

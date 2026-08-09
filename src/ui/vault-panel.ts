@@ -83,6 +83,8 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
   let sessionPassphrase: string | null = null;
   let settings = loadSettings();
   let idleTimer = 0;
+  /** Der zuletzt gemalte Zustand — für die Frage, ob paint() einen WECHSEL malt. */
+  let paintedState: VaultState | null = null;
 
   timeoutSelect.value = String(settings.timeoutMs);
   hideLockBox.checked = settings.lockOnHide;
@@ -117,6 +119,12 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
 
   function paint(message = ''): void {
     const state = currentState();
+    // Ob dieser Aufruf einen ZUSTANDSWECHSEL malt oder denselben Zustand neu
+    // beschriftet (Sprachwechsel, Fehlermeldung), entscheidet unten, ob der
+    // Aufklapper angefasst wird: „Neu speichern" im offenen Panel darf das
+    // Panel nicht zuschlagen.
+    const entered = state !== paintedState;
+    paintedState = state;
     panel.dataset['state'] = state;
     errorText.textContent = message;
     handlers.reportState(state);
@@ -156,6 +164,27 @@ export function startVaultPanel(handlers: VaultPanelHandlers): void {
       case 'open':
         stateText.textContent = t('vault.state.open');
         intro.hidden = true;
+        /* Nach dem Auf- oder Zusperren fällt der Aufklapper zu (V10): „Offen"
+           heißt, die Codes stehen längst im Feld — der Tresor ist erledigt,
+           und seine Statuszeile sagt alles Nötige. Auf dem Handy macht das
+           die Tresor-Zeile zur versprochenen EINEN Zeile; am Schreibtisch
+           gewinnt die Rail dieselbe Höhe zurück.
+
+           Nur beim WECHSEL in den Zustand, nicht bei jedem Anstrich: Wer im
+           offenen Panel „Neu speichern" drückt, dem darf es nicht unter der
+           Hand zuklappen.
+
+           Der Fokus zuerst: `form.hidden` (oben) hat das Passphrasenfeld
+           samt Speichern-Knopf gerade versteckt — läge der Fokus noch darin,
+           bliebe er auf einem unsichtbaren Element stehen und es gäbe auf
+           der ganzen Seite keinen sichtbaren Fokus mehr. Die Statuszeile ist
+           die Stelle, an der es weitergeht. */
+        if (entered) {
+          if (disclosure.contains(document.activeElement)) {
+            requireElement<HTMLElement>(disclosure, 'summary').focus();
+          }
+          disclosure.open = false;
+        }
         break;
     }
   }
