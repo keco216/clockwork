@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Clockwork</string>
+    <string name="title_activity_main">Clockwork</string>
+    <string name="package_name">io.github.keco216.clockwork</string>
+    <string name="custom_url_scheme">io.github.keco216.clockwork</string>
+</resources>

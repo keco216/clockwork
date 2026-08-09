@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Nacht aus dem Markenhandbuch (branding/README-BRANDING.md) — dieselbe
+         Grundentscheidung wie beim PWA-Icon: Auf Signal-Orange verschwaende
+         das Lager, der einzige Signalpunkt der Marke, im Grund. -->
+    <color name="ic_launcher_background">#131210</color>
+</resources>
