@@ -1,6 +1,6 @@
 # F-Droid-Vorbereitung
 
-Stand 10.08.2026: **eingereicht, eine Review-Runde eingearbeitet.** Der
+Stand 10.08.2026: **eingereicht, zwei Review-Runden eingearbeitet.** Der
 Merge-Request
 [fdroid/fdroiddata!45284](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/45284)
 ist offen. Dieses Dokument hält die Prüfung gegen die Aufnahmeregeln fest,
@@ -59,9 +59,11 @@ erzeugt, in gewöhnlichem JavaScript — byte-identisch, im gebauten APK
 nachgeprüft. Damit fällt die Node-22-Bedingung aus dem Bau, und die
 Rezeptur wird kürzer statt länger. Einzelheiten in
 [`README.de.md`](README.de.md#der-bau-kommt-ohne-den-capacitor-cli-aus-seit-v152).
-Das erforderte einen Commit und damit einen Tag: **v1.5.2**. Der MR baut
-seitdem aus einem Tag statt aus einem losen Hash — und kann deshalb
-gleich auf `AutoUpdateMode: Version` + `UpdateCheckMode: Tags` gehen.
+Das erforderte einen Commit und damit ein Tag: **v1.5.2**. Damit gibt es
+zum ersten Mal ein Tag auf einem Stand mit `android/`, und erst das macht
+`AutoUpdateMode: Version` + `UpdateCheckMode: Tags` möglich. Im
+`commit:`-Feld steht trotzdem der volle Hash und nicht das Tag — siehe
+zweite Runde oben.
 
 ## 1. Prüfung gegen die Inclusion Policy
 
