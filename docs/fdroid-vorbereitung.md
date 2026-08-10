@@ -1,9 +1,18 @@
 # F-Droid-Vorbereitung
 
-Stand 10.08.2026: **eingereicht, drei Review-Runden eingearbeitet.** Der
+Stand 10.08.2026: **inhaltlich durch, wartet auf den Test.** Der
 Merge-Request
 [fdroid/fdroiddata!45284](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/45284)
-ist offen. Dieses Dokument hält die Prüfung gegen die Aufnahmeregeln fest,
+ist offen; drei Review-Runden sind eingearbeitet, und der Reviewer schreibt:
+„This MR is mostly ready. We'll test it later. If everything works well
+we'll merge it." Es liegt nur noch an einem Rückstau ungetesteter MRs.
+
+**Die eine Auflage bis dahin:** „If you release a new version please update
+this MR." `AutoUpdateMode: Version` greift erst NACH dem Merge — wer vorher
+ein Tag setzt, zieht den Builds-Eintrag im Fork von Hand nach (Abschnitt 5),
+mit vollem Commit-Hash statt Tag.
+
+Dieses Dokument hält die Prüfung gegen die Aufnahmeregeln fest,
 beschreibt die Bausteine (fastlane-Metadaten, Build-Härtung), enthält die
 eingereichte Metadaten-Fassung und die Anleitung, die zum MR geführt hat —
 samt der Lehren aus den roten Pipelines und aus dem Review.
