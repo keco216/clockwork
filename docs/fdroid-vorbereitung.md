@@ -34,8 +34,8 @@ Behoben wurde es deshalb **im Projekt, nicht in den Metadaten**:
 erzeugt, in gewöhnlichem JavaScript — byte-identisch, im gebauten APK
 nachgeprüft. Damit fällt die Node-22-Bedingung aus dem Bau, und die
 Rezeptur wird kürzer statt länger. Einzelheiten in
-[`README.de.md`](README.de.md#der-bau-kommt-ohne-den-capacitor-cli-aus-seit-v151).
-Das erforderte einen Commit und damit einen Tag: **v1.5.1**. Der MR baut
+[`README.de.md`](README.de.md#der-bau-kommt-ohne-den-capacitor-cli-aus-seit-v152).
+Das erforderte einen Commit und damit einen Tag: **v1.5.2**. Der MR baut
 seitdem aus einem Tag statt aus einem losen Hash — und kann deshalb
 gleich auf `AutoUpdateMode: Version` + `UpdateCheckMode: Tags` gehen.
 
@@ -77,7 +77,7 @@ fastlane/metadata/android/
 │   ├── full_description.txt
 │   ├── changelogs/10400.txt         291 Zeichen (Grenze: 500)
 │   ├── changelogs/10500.txt         393 Zeichen
-│   ├── changelogs/10501.txt         je Version eine Datei, Name = versionCode
+│   ├── changelogs/10502.txt         je Version eine Datei, Name = versionCode
 │   └── images/
 │       ├── icon.png                 512 × 512, aus public/icon-512.png
 │       └── phoneScreenshots/
@@ -86,7 +86,7 @@ fastlane/metadata/android/
 │           └── 3.png                Arbeitszustand, dunkel
 └── de-DE/
     ├── title.txt · short_description.txt · full_description.txt
-    └── changelogs/10400.txt · 10500.txt · 10501.txt
+    └── changelogs/10400.txt · 10500.txt · 10502.txt
 ```
 
 Die Screenshots sind echte Aufnahmen des Release-APKs im Emulator
@@ -104,12 +104,12 @@ bestimmt:
 | Parameter         | Wert                                                                                                                                                                  |
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Web-Bau           | `npm ci` (package-lock.json) → `npm run android` (Vite-Bau, Einzeldatei, Icons, Sync)                                                                                 |
-| Node              | entwickelt mit 26.x; **es genügt Debians `nodejs` 20.19.2** — Vite 8 braucht `^20.19.0 \|\| >=22.12.0`, und seit v1.5.1 ist der Capacitor-CLI (Node ≥ 22) aus dem Bau |
+| Node              | entwickelt mit 26.x; **es genügt Debians `nodejs` 20.19.2** — Vite 8 braucht `^20.19.0 \|\| >=22.12.0`, und seit v1.5.2 ist der Capacitor-CLI (Node ≥ 22) aus dem Bau |
 | Gradle            | 9.5.1 über den Wrapper, Distribution per **SHA-256 verankert** (`distributionSha256Sum`)                                                                              |
 | AGP               | 8.13.0 · compileSdk/targetSdk 36 · minSdk 24 · build-tools 36.0.0                                                                                                     |
 | JDK (lokal)       | OpenJDK 25 (JBR von Android Studio)                                                                                                                                   |
 | Release-Build     | `gradlew assembleRelease`; **ohne** `CLOCKWORK_KEYSTORE` unsigniert — der F-Droid-Pfad                                                                                |
-| versionName/-Code | 1.5.1 / 10501 (`Major·10000 + Minor·100 + Patch`), fest in `android/app/build.gradle`                                                                                 |
+| versionName/-Code | 1.5.2 / 10502 (`Major·10000 + Minor·100 + Patch`), fest in `android/app/build.gradle`                                                                                 |
 
 Determinismus-Maßnahmen, jede nachprüfbar:
 
@@ -156,9 +156,9 @@ RepoType: git
 Repo: https://github.com/keco216/clockwork.git
 
 Builds:
-  - versionName: 1.5.1
-    versionCode: 10501
-    commit: v1.5.1
+  - versionName: 1.5.2
+    versionCode: 10502
+    commit: v1.5.2
     subdir: android/app
     sudo:
       - apt-get update
@@ -174,10 +174,10 @@ Builds:
     scanignore:
       - node_modules
 
-AutoUpdateMode: Version v%v
+AutoUpdateMode: Version
 UpdateCheckMode: Tags ^v[0-9.]+$
-CurrentVersion: 1.5.1
-CurrentVersionCode: 10501
+CurrentVersion: 1.5.2
+CurrentVersionCode: 10502
 ```
 
 Die Entscheidungen darin — und die Lehren aus den roten Pipelines und dem
@@ -188,8 +188,9 @@ Review:
   verlangt und Debian trixie nur 20.19.2 hat. Der Reviewer hat das zu Recht
   abgelehnt — ein vorgebautes Binärpaket im Bau ist genau das, was F-Droid
   vermeidet. Aufgelöst wurde es im Projekt statt in der Rezeptur: Seit
-  v1.5.1 braucht `npm run android` den CLI nicht mehr (Abschnitt 0). Die
-  `sudo`-Liste schrumpft dadurch von sechs Zeilen auf zwei.
+  v1.5.2 braucht `npm run android` den CLI nicht mehr (Abschnitt 0). Die
+  `sudo`-Liste schrumpft dadurch von sechs Zeilen auf zwei — Debian liefert
+  `nodejs` 20.19.2 und `npm` 9.2.0, beides genügt.
 - **`init` und `prebuild` sind Listen, keine `&&`-Ketten.** fdroidserver
   verkettet die Einträge selbst mit `; ` und führt sie unter
   `bash -e -u -o pipefail -x` aus — `-e` bricht bei jedem Fehler ab, `-x`
@@ -202,14 +203,20 @@ Review:
   Dateiende — und lange Skalare bricht der Dumper selbst um. Wer daneben
   liegt, findet die gültige Fassung als Artefakt des rewritemeta-Jobs unter
   `tmp/<appid>.yml` — byte-genau übernehmen statt von Hand nachbauen.
-- **`UpdateCheckMode: Tags` ab v1.5.1.** Die erste Einreichung stand auf
+- **`UpdateCheckMode: Tags` ab v1.5.2.** Die erste Einreichung stand auf
   `Static` mit einem losen Commit-Hash, weil das damals jüngste Tag
   (`v1.4.0`) den Android-Ordner noch nicht enthielt — ein Tag-Checker liefe
-  ins Leere. Seit v1.5.1 gibt es ein Tag auf einem Stand mit `android/`,
-  also zieht F-Droid neue Versionen selbst. `AutoUpdateMode: Version v%v`
-  statt nur `Version`, weil die Tags ein `v` tragen und der Versionsname
-  nicht (`v1.5.1` gegen `1.5.1`); ohne das Muster suchte F-Droid ein Tag
-  namens `1.5.1`.
+  ins Leere. Seit v1.5.2 gibt es ein Tag auf einem Stand mit `android/`,
+  also zieht F-Droid neue Versionen selbst.
+
+  **`AutoUpdateMode` nimmt kein Tag-Muster.** Der naheliegende Versuch
+  `Version v%v` (weil die Tags ein `v` tragen, der Versionsname aber nicht)
+  fällt in der Schema-Prüfung durch: `schemas/metadata.json` erlaubt nur
+  `^(None|Version( \+.+)?)$` — nach `Version` darf ausschließlich ein
+  Suffix stehen, das mit `+` beginnt. Das `v` findet stattdessen
+  `UpdateCheckMode: Tags ^v[0-9.]+$`, und `AutoUpdateMode: Version`
+  übernimmt schlicht das Tag, das dabei herauskam.
+
 - **`scanignore: node_modules`**, weil der Gradle-Bau Capacitors
   Android-Bibliothek aus `node_modules/@capacitor/android` mitkompiliert —
   löschen (scandelete) würde den Bau brechen; der Scanner soll den Ordner

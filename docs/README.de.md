@@ -1595,7 +1595,7 @@ App-Icon auf Nacht (`windowSplashScreenBackground`), davor eine einfarbige
 Nacht-Fläche. Version im APK: `versionName` folgt der Web-Version,
 `versionCode` ist dieselbe Zahl als `Major·10000 + Minor·100 + Patch`.
 
-### Der Bau kommt ohne den Capacitor-CLI aus (seit v1.5.1)
+### Der Bau kommt ohne den Capacitor-CLI aus (seit v1.5.2)
 
 Bis v1.5.0 endete `npm run android` mit `cap sync android`. Der CLI hat in
 `bin/capacitor` ein hartes Gate auf **Node ≥ 22** — kein Umweg, `process.exit(1)`.
@@ -1626,7 +1626,22 @@ das Format von fs-extras `writeJSON({ spaces: '\t' })`) und den beiden
 eingerückten Leerzeilen in `config.xml`, die aus Capacitors Vorlage stammen. Im
 gebauten APK stehen dieselben Prüfsummen.
 
-Zwei Dinge hängen mit daran:
+Drei Dinge hängen mit daran:
+
+- **Das leere Cordova-Brückenmodul ist jetzt Quelltext.**
+  `android/capacitor-cordova-android-plugins/` entstand bisher beim Lauf des
+  CLI und stand deshalb in Capacitors `.gitignore`. `settings.gradle` bindet es
+  aber ein — läuft der CLI nicht mehr, fehlt in einem frischen Klon ein Modul,
+  das der Bau braucht, und Gradle bricht mit „Configuring project
+  ':capacitor-cordova-android-plugins' without an existing directory" ab. Fünf
+  Dateien, keine davon binär; sein `build/` bleibt ignoriert.
+
+  **Gefunden hat das die F-Droid-Pipeline, nicht der lokale Bau** — und der
+  Grund ist lehrreich: Lokal lag der Ordner noch von einem früheren `cap sync`
+  herum, der Bau lief also grün gegen einen Zustand, den ein Klonender nicht
+  hat. Wer etwas aus einem Bau entfernt, muss gegen einen **frischen Klon**
+  prüfen, nicht gegen das eigene Arbeitsverzeichnis; alles andere misst die
+  eigene Vorgeschichte mit.
 
 - **Die Konfiguration liegt jetzt als `capacitor.config.json` statt als
   `capacitor.config.ts`.** Node 20 kann kein TypeScript lesen, und zwei

@@ -89,8 +89,12 @@ lint/tmp/
 # Android Profiling
 *.hprof
 
-# Cordova plugins for Capacitor
-capacitor-cordova-android-plugins
+# Das Cordova-Bruecken-Modul ist seit v1.5.2 QUELLTEXT, nicht Bauergebnis:
+# Es entstand frueher bei `cap sync`, und der laeuft im Bau nicht mehr (siehe
+# scripts/android-sync.mjs). settings.gradle bindet es ein, also muss es da
+# sein - ein frischer Klon scheiterte sonst an "Configuring project
+# ':capacitor-cordova-android-plugins' without an existing directory".
+# Sein build/ bleibt ueber die allgemeine build/-Zeile weiter draussen.
 
 # Copied web assets
 app/src/main/assets/public
