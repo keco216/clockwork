@@ -1,6 +1,6 @@
 # F-Droid-Vorbereitung
 
-Stand 10.08.2026: **eingereicht, zwei Review-Runden eingearbeitet.** Der
+Stand 10.08.2026: **eingereicht, drei Review-Runden eingearbeitet.** Der
 Merge-Request
 [fdroid/fdroiddata!45284](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/45284)
 ist offen. Dieses Dokument hält die Prüfung gegen die Aufnahmeregeln fest,
@@ -9,6 +9,20 @@ eingereichte Metadaten-Fassung und die Anleitung, die zum MR geführt hat —
 samt der Lehren aus den roten Pipelines und aus dem Review.
 
 ## 0. Was das Review verlangt hat (10.08.2026)
+
+### Dritte Runde
+
+`linsui`, knapp: **„Change the category."** Zu Recht — `Security` ist der
+alte Sammeltopf. F-Droid führt seit der Kategorien-Überarbeitung eine
+feingliedrige Liste (`config/categories.yml` in fdroiddata, gut 100
+Einträge), und darin steht **`Password & 2FA`**. Das benutzen auch die
+bestehenden Authenticator-Apps: Aegis trägt `Password & 2FA` + `Security`,
+FreeOTP `Password & 2FA` + `System`; nur das unpflegte andOTP steht noch
+allein unter `Security`.
+
+Eingetragen ist **`Password & 2FA`** allein — „change" heißt ersetzen, nicht
+ergänzen. Im MR angeboten, `Security` wie bei Aegis wieder danebenzustellen,
+falls der Reviewer das Paar bevorzugt. Pipeline danach grün: **2747186427**.
 
 ### Zweite Runde
 
@@ -168,7 +182,7 @@ der Stand, mit dem die MR-Pipeline grün wurde (Quelle: das
 
 ```yaml
 Categories:
-  - Security
+  - Password & 2FA
 License: MIT
 AuthorName: Kevin
 WebSite: https://clockwork-sage.vercel.app
