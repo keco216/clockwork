@@ -1,0 +1,8 @@
+{
+  "appId": "io.github.keco216.clockwork",
+  "appName": "Clockwork",
+  "webDir": "dist-android",
+  "android": {
+    "minWebViewVersion": 111
+  }
+}

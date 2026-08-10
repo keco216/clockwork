@@ -8,7 +8,7 @@
  * `interpolate-size: allow-keywords` und `::details-content` — beides ist in
  * V11 gebaut, gemessen und wieder ausgebaut worden. Der Grund steht in
  * `docs/README.de.md` beim Bewegungs-Abschnitt und in einem Satz hier: Die App
- * garantiert WebView 111 (capacitor.config.ts), und zwischen 111 und 130 poppt
+ * garantiert WebView 111 (capacitor.config.json), und zwischen 111 und 130 poppt
  * die CSS-Fassung ersatzlos — auf genau den Geräten, für die die Untergrenze
  * überhaupt dasteht.
  *

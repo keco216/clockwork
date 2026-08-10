@@ -37,5 +37,5 @@
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["src", "scripts", "vite.config.ts", "capacitor.config.ts"]
+  "include": ["src", "scripts", "vite.config.ts"]
 }

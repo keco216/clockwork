@@ -1,13 +1,43 @@
 # F-Droid-Vorbereitung
 
-Stand 09.08.2026, abends: **eingereicht.** Der Merge-Request
+Stand 10.08.2026: **eingereicht, eine Review-Runde eingearbeitet.** Der
+Merge-Request
 [fdroid/fdroiddata!45284](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/45284)
-ist offen, seine Pipeline ist grün (alle neun Jobs, einschließlich
-`fdroid build` und `check apk`) — es wartet auf das menschliche Review des
-F-Droid-Teams. Dieses Dokument hält die Prüfung gegen die Aufnahmeregeln
-fest, beschreibt die Bausteine (fastlane-Metadaten, Build-Härtung), enthält
-die eingereichte Metadaten-Fassung und die Anleitung, die zum MR geführt
-hat — samt der zwei Lehren aus den roten Pipelines.
+ist offen. Dieses Dokument hält die Prüfung gegen die Aufnahmeregeln fest,
+beschreibt die Bausteine (fastlane-Metadaten, Build-Härtung), enthält die
+eingereichte Metadaten-Fassung und die Anleitung, die zum MR geführt hat —
+samt der Lehren aus den roten Pipelines und aus dem Review.
+
+## 0. Was das Review verlangt hat (10.08.2026)
+
+`linsui` hat zwei Punkte angemerkt, beide zur Build-Rezeptur:
+
+1. **„Install node from debian."** Die erste Fassung zog ein per SHA-256
+   geprüftes Node-22-Tarball von nodejs.org. Ein vorgebautes Binärpaket im
+   Bau ist genau das, was F-Droid nicht will — die Bitte ist prinzipiell und
+   nicht geschmacklich, und sie ist berechtigt.
+2. **„Don't connect the commands with ; or &&. Use a list of strings
+   instead."** `init` und `prebuild` standen als eine Zeichenkette mit `&&`
+   da. fdroidserver verkettet Listen ohnehin selbst mit `; ` und führt sie
+   unter `bash -e -u -o pipefail -x` aus — als Liste steht jeder Schritt
+   einzeln im Bauprotokoll.
+
+Punkt 2 ist eine Formsache. Punkt 1 ließ sich **nicht** in den Metadaten
+lösen, und der Grund ist gemessen: Der Buildserver ist Debian trixie, und
+Debian hat dort nur `nodejs` **20.19.2** (kein Backport; Node 22 gibt es
+erst in sid). Capacitors CLI verlangt in `bin/capacitor` hart Node ≥ 22.
+Vite selbst läuft auf Node 20 (`^20.19.0 || >=22.12.0`) — gestorben war
+also nur der Sync-Schritt.
+
+Behoben wurde es deshalb **im Projekt, nicht in den Metadaten**:
+`scripts/android-sync.mjs` schreibt die sechs Dateien, die `cap sync`
+erzeugt, in gewöhnlichem JavaScript — byte-identisch, im gebauten APK
+nachgeprüft. Damit fällt die Node-22-Bedingung aus dem Bau, und die
+Rezeptur wird kürzer statt länger. Einzelheiten in
+[`README.de.md`](README.de.md#der-bau-kommt-ohne-den-capacitor-cli-aus-seit-v151).
+Das erforderte einen Commit und damit einen Tag: **v1.5.1**. Der MR baut
+seitdem aus einem Tag statt aus einem losen Hash — und kann deshalb
+gleich auf `AutoUpdateMode: Version` + `UpdateCheckMode: Tags` gehen.
 
 ## 1. Prüfung gegen die Inclusion Policy
 
@@ -46,6 +76,8 @@ fastlane/metadata/android/
 │   ├── short_description.txt        75 Zeichen (Grenze: 80)
 │   ├── full_description.txt
 │   ├── changelogs/10400.txt         291 Zeichen (Grenze: 500)
+│   ├── changelogs/10500.txt         393 Zeichen
+│   ├── changelogs/10501.txt         je Version eine Datei, Name = versionCode
 │   └── images/
 │       ├── icon.png                 512 × 512, aus public/icon-512.png
 │       └── phoneScreenshots/
@@ -54,7 +86,7 @@ fastlane/metadata/android/
 │           └── 3.png                Arbeitszustand, dunkel
 └── de-DE/
     ├── title.txt · short_description.txt · full_description.txt
-    └── changelogs/10400.txt         328 Zeichen
+    └── changelogs/10400.txt · 10500.txt · 10501.txt
 ```
 
 Die Screenshots sind echte Aufnahmen des Release-APKs im Emulator
@@ -69,15 +101,15 @@ Fuß um und wiederholt die drei Aufnahmen).
 Der Bau ist zweistufig; beide Stufen sind aus versionierten Eingaben
 bestimmt:
 
-| Parameter         | Wert                                                                                      |
-| ----------------- | ----------------------------------------------------------------------------------------- |
-| Web-Bau           | `npm ci` (package-lock.json) → `npm run android` (Vite-Bau, Einzeldatei, Icons, cap sync) |
-| Node              | entwickelt mit 26.x; Vite 8 braucht ≥ 20.19                                               |
-| Gradle            | 9.5.1 über den Wrapper, Distribution per **SHA-256 verankert** (`distributionSha256Sum`)  |
-| AGP               | 8.13.0 · compileSdk/targetSdk 36 · minSdk 24 · build-tools 36.0.0                         |
-| JDK (lokal)       | OpenJDK 25 (JBR von Android Studio)                                                       |
-| Release-Build     | `gradlew assembleRelease`; **ohne** `CLOCKWORK_KEYSTORE` unsigniert — der F-Droid-Pfad    |
-| versionName/-Code | 1.4.0 / 10400 (`Major·10000 + Minor·100 + Patch`), fest in `android/app/build.gradle`     |
+| Parameter         | Wert                                                                                                                                                                  |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web-Bau           | `npm ci` (package-lock.json) → `npm run android` (Vite-Bau, Einzeldatei, Icons, Sync)                                                                                 |
+| Node              | entwickelt mit 26.x; **es genügt Debians `nodejs` 20.19.2** — Vite 8 braucht `^20.19.0 \|\| >=22.12.0`, und seit v1.5.1 ist der Capacitor-CLI (Node ≥ 22) aus dem Bau |
+| Gradle            | 9.5.1 über den Wrapper, Distribution per **SHA-256 verankert** (`distributionSha256Sum`)                                                                              |
+| AGP               | 8.13.0 · compileSdk/targetSdk 36 · minSdk 24 · build-tools 36.0.0                                                                                                     |
+| JDK (lokal)       | OpenJDK 25 (JBR von Android Studio)                                                                                                                                   |
+| Release-Build     | `gradlew assembleRelease`; **ohne** `CLOCKWORK_KEYSTORE` unsigniert — der F-Droid-Pfad                                                                                |
+| versionName/-Code | 1.5.1 / 10501 (`Major·10000 + Minor·100 + Patch`), fest in `android/app/build.gradle`                                                                                 |
 
 Determinismus-Maßnahmen, jede nachprüfbar:
 
@@ -124,55 +156,60 @@ RepoType: git
 Repo: https://github.com/keco216/clockwork.git
 
 Builds:
-  - versionName: 1.4.0
-    versionCode: 10400
-    commit: 7c55e41123c355c334a4ca9c77d4c90e325990b9
+  - versionName: 1.5.1
+    versionCode: 10501
+    commit: v1.5.1
     subdir: android/app
     sudo:
       - apt-get update
-      - apt-get install -y --no-install-recommends ca-certificates wget xz-utils
-      - wget --no-verbose https://nodejs.org/dist/v22.23.2/node-v22.23.2-linux-x64.tar.xz
-      - echo "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307  node-v22.23.2-linux-x64.tar.xz"
-        | sha256sum -c -
-      - tar -xJf node-v22.23.2-linux-x64.tar.xz -C /usr/local --strip-components=1
-      - rm node-v22.23.2-linux-x64.tar.xz
-    init: cd ../.. && npm ci
+      - apt-get install -y --no-install-recommends nodejs npm
+    init:
+      - cd ../..
+      - npm ci
     gradle:
       - yes
-    prebuild: cd ../.. && npm run android
+    prebuild:
+      - cd ../..
+      - npm run android
     scanignore:
       - node_modules
 
-AutoUpdateMode: None
-UpdateCheckMode: Static
-CurrentVersion: 1.4.0
-CurrentVersionCode: 10400
+AutoUpdateMode: Version v%v
+UpdateCheckMode: Tags ^v[0-9.]+$
+CurrentVersion: 1.5.1
+CurrentVersionCode: 10501
 ```
 
-Die Entscheidungen darin — und die zwei Lehren aus den roten Pipelines:
+Die Entscheidungen darin — und die Lehren aus den roten Pipelines und dem
+Review:
 
-- **Node 22 als gepinntes Tarball statt apt-Paket.** Die Vorhersage „apt-Node
-  zu alt für Vite 8" traf halb: Vite lief mit Debians Node durch, gestorben
-  ist erst **Capacitors CLI** beim `cap sync` — sie verlangt hart
-  Node ≥ 22. Das offizielle Tarball mit SHA-256-Prüfung (aus
-  `SHASUMS256.txt` von nodejs.org) ist das reviewerfreundliche, gepinnte
-  Muster; npm kommt darin mit.
+- **Node kommt aus Debian.** Die erste Fassung zog ein per SHA-256 geprüftes
+  Node-22-Tarball von nodejs.org, weil Capacitors CLI hart Node ≥ 22
+  verlangt und Debian trixie nur 20.19.2 hat. Der Reviewer hat das zu Recht
+  abgelehnt — ein vorgebautes Binärpaket im Bau ist genau das, was F-Droid
+  vermeidet. Aufgelöst wurde es im Projekt statt in der Rezeptur: Seit
+  v1.5.1 braucht `npm run android` den CLI nicht mehr (Abschnitt 0). Die
+  `sudo`-Liste schrumpft dadurch von sechs Zeilen auf zwei.
+- **`init` und `prebuild` sind Listen, keine `&&`-Ketten.** fdroidserver
+  verkettet die Einträge selbst mit `; ` und führt sie unter
+  `bash -e -u -o pipefail -x` aus — `-e` bricht bei jedem Fehler ab, `-x`
+  schreibt jeden Schritt einzeln ins Bauprotokoll. Eine `&&`-Kette ist eine
+  Zeile im Log und nimmt genau das weg. `cd ../..` wirkt trotzdem über den
+  Zeilenwechsel hinaus, weil alle Einträge in EINER Bash laufen.
 - **`fdroid rewritemeta` verlangt SEINE Schreibweise, nicht nur gültiges
-  YAML:** `init`/`prebuild` mit einem Eintrag als Strings statt Listen,
-  `gradle:` VOR `prebuild` (kanonische Feldreihenfolge im Builds-Eintrag),
-  Zeilenumbruch am Dateiende — und lange Skalare bricht der Dumper selbst
-  um (die `echo`-Zeile oben ist EINE Zeichenkette über zwei Zeilen). Wer
-  daneben liegt, findet die gültige Fassung als Artefakt des
-  rewritemeta-Jobs unter `tmp/<appid>.yml` — byte-genau übernehmen statt
-  von Hand nachbauen.
-- **`UpdateCheckMode: Static` statt `Tags`**, weil das jüngste Tag
-  (`v1.4.0`) den Android-Ordner noch nicht enthält — ein Tag-Checker liefe
-  ins Leere. **Ab dem nächsten echten Release** (Tag auf einem Stand mit
-  `android/`) auf `AutoUpdateMode: Version` + `UpdateCheckMode: Tags
-^v[0-9.]+$` umstellen und einen Builds-Eintrag fürs neue Tag ergänzen,
-  dann zieht F-Droid neue Versionen selbst. Ohne die Umstellung bliebe die
-  F-Droid-Fassung für immer auf 1.4.0 stehen — der Punkt steht deshalb als
-  Pflichtpunkt in der lokalen Release-Notiz.
+  YAML:** `gradle:` VOR `prebuild` (kanonische Feldreihenfolge im
+  Builds-Eintrag), einelementige Listen als Strings, Zeilenumbruch am
+  Dateiende — und lange Skalare bricht der Dumper selbst um. Wer daneben
+  liegt, findet die gültige Fassung als Artefakt des rewritemeta-Jobs unter
+  `tmp/<appid>.yml` — byte-genau übernehmen statt von Hand nachbauen.
+- **`UpdateCheckMode: Tags` ab v1.5.1.** Die erste Einreichung stand auf
+  `Static` mit einem losen Commit-Hash, weil das damals jüngste Tag
+  (`v1.4.0`) den Android-Ordner noch nicht enthielt — ein Tag-Checker liefe
+  ins Leere. Seit v1.5.1 gibt es ein Tag auf einem Stand mit `android/`,
+  also zieht F-Droid neue Versionen selbst. `AutoUpdateMode: Version v%v`
+  statt nur `Version`, weil die Tags ein `v` tragen und der Versionsname
+  nicht (`v1.5.1` gegen `1.5.1`); ohne das Muster suchte F-Droid ein Tag
+  namens `1.5.1`.
 - **`scanignore: node_modules`**, weil der Gradle-Bau Capacitors
   Android-Bibliothek aus `node_modules/@capacitor/android` mitkompiliert —
   löschen (scandelete) würde den Bau brechen; der Scanner soll den Ordner
@@ -180,10 +217,16 @@ Die Entscheidungen darin — und die zwei Lehren aus den roten Pipelines:
 
 ## 5. Schritt für Schritt: Was auf gitlab.com zu tun ist
 
-_Erledigt am 09.08.2026 — Ergebnis ist MR !45284 mit grüner Pipeline. Die
-Schritte bleiben als Anleitung stehen, denn dieselbe Mechanik gilt für
-jede künftige Änderung an den Metadaten (z. B. die Tags-Umstellung beim
-nächsten Release)._
+_Erledigt am 09.08.2026 — Ergebnis ist MR !45284 mit grüner Pipeline; am
+10.08. um die Review-Punkte aus Abschnitt 0 nachgebessert. Die Schritte
+bleiben als Anleitung stehen, denn dieselbe Mechanik gilt für jede künftige
+Änderung an den Metadaten._
+
+**Gearbeitet wird über die GitLab-API, nicht über einen Klon** — fdroiddata
+ist groß, und für eine einzelne Datei lohnt es nicht: Commits in den Fork
+per Files-API (PUT, base64), die MR-Beschreibung per PUT auf
+`projects/fdroid%2Ffdroiddata/merge_requests/45284`, Kommentare per POST
+auf `/notes`.
 
 Empfohlen ist der **direkte Merge-Request an `fdroiddata`** — der
 RFP-Weg (<https://gitlab.com/fdroid/rfp>) ist nur sinnvoll, wenn jemand

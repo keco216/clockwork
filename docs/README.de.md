@@ -25,7 +25,7 @@ mitgebündelt und ohne eine einzige Netzwerkanfrage — auch die
 ```bash
 npm install      # einmalig
 npm run dev      # Dev-Server, danach http://localhost:5173 öffnen
-npm test         # 514 Tests
+npm test         # 517 Tests
 npm run build    # dist/ (PWA) + dist/clockwork.html (eine Datei)
 ```
 
@@ -1101,7 +1101,7 @@ gebaut und am `<details>` selbst gemessen (Höhe in px, alle 50 ms, Chrome 151):
 | CSS ohne `interpolate-size` | **44→173 sofort**  | **44 sofort**    |
 
 Die dritte Zeile entscheidet. `::details-content` braucht Chrome 131,
-`interpolate-size` braucht 129 — `capacitor.config.ts` garantiert **WebView
+`interpolate-size` braucht 129 — `capacitor.config.json` garantiert **WebView
 111**. Zwischen 111 und 130 poppt die CSS-Fassung ersatzlos, und zwar auf
 genau den Geräten, für die die Untergrenze überhaupt dasteht. Der Emulator
 (WebView 133) trägt beide; das entscheidet nichts, weil er nicht die
@@ -1340,7 +1340,7 @@ berechnet wird und der dadurch von selbst auf die Sekundengrenze einrastet.
 npm test
 ```
 
-514 Tests. Die wichtigsten stammen unverändert aus den Standards:
+517 Tests. Die wichtigsten stammen unverändert aus den Standards:
 
 | Datei                    | Tests | Inhalt                                                                              |
 | ------------------------ | ----- | ----------------------------------------------------------------------------------- |
@@ -1595,6 +1595,51 @@ App-Icon auf Nacht (`windowSplashScreenBackground`), davor eine einfarbige
 Nacht-Fläche. Version im APK: `versionName` folgt der Web-Version,
 `versionCode` ist dieselbe Zahl als `Major·10000 + Minor·100 + Patch`.
 
+### Der Bau kommt ohne den Capacitor-CLI aus (seit v1.5.1)
+
+Bis v1.5.0 endete `npm run android` mit `cap sync android`. Der CLI hat in
+`bin/capacitor` ein hartes Gate auf **Node ≥ 22** — kein Umweg, `process.exit(1)`.
+Das ist eine Bedingung, die der Bau nicht braucht und die ihn dort ausschließt,
+wo sie nicht erfüllbar ist: Der F-Droid-Buildserver läuft auf Debian trixie, und
+Debian liefert dort **nur `nodejs` 20.19.2** — Node 22 gibt es erst in sid, ein
+Backport existiert nicht. Übrig blieben zwei Wege: ein vorgebautes Node-Tarball
+von nodejs.org in den Bau ziehen (genau das, was F-Droid nicht will) oder den
+CLI aus dem Bau nehmen.
+
+Was `cap sync` für dieses Projekt tut, sind **sechs Dateien** — alle sechs liest
+Capacitor zur Laufzeit, alle sechs sind bewusst nicht eingecheckt:
+
+| Datei                              | Wer sie liest                                 |
+| ---------------------------------- | --------------------------------------------- |
+| `assets/public/**`                 | `WebViewLocalServer.java`                     |
+| `assets/public/cordova.js`         | `JSExport.java` — leer, es gibt keine         |
+| `assets/public/cordova_plugins.js` | `JSExport.java` — Cordova-Plugins             |
+| `assets/capacitor.config.json`     | `CapConfig.java`                              |
+| `assets/capacitor.plugins.json`    | `PluginManager.java`                          |
+| `res/xml/config.xml`               | `Bridge.java` über Cordovas `ConfigXmlParser` |
+
+`scripts/android-sync.mjs` schreibt genau diese sechs, in gewöhnlichem
+JavaScript ohne Abhängigkeit. Der Beweis ist eine Prüfsummenfrage und keine
+Ansichtssache: **Alle sechs Dateien sind byte-identisch zu dem, was der CLI
+erzeugt hat** — bis hin zu den Tabulatoren in `capacitor.config.json` (das ist
+das Format von fs-extras `writeJSON({ spaces: '\t' })`) und den beiden
+eingerückten Leerzeilen in `config.xml`, die aus Capacitors Vorlage stammen. Im
+gebauten APK stehen dieselben Prüfsummen.
+
+Zwei Dinge hängen mit daran:
+
+- **Die Konfiguration liegt jetzt als `capacitor.config.json` statt als
+  `capacitor.config.ts`.** Node 20 kann kein TypeScript lesen, und zwei
+  Fassungen derselben Werte wären eine Fehlerquelle mehr. JSON ist Capacitors
+  eigene dritte Config-Form, `npx cap sync android` bleibt damit als Gegenprobe
+  benutzbar. Die Begründungen zu den drei Werten stehen am Kopf von
+  `android-sync.mjs` — JSON kann keine Kommentare tragen.
+- **Ein Plugin würde den Bau anhalten, nicht stillschweigend fehlen.** Das
+  Skript sucht Plugins so, wie der CLI es tut (`plugin.js`/`resolvePlugin`: am
+  `capacitor`-Feld der package.json, Cordova-Plugins an `plugin.xml`) und bricht
+  ab, sobald es eines findet. Eine leere Liste zu schreiben wäre der schlimmste
+  Ausgang: Das APK entstünde, und das Plugin fehlte darin wortlos.
+
 ### Eine Werkzeugketten-Notiz
 
 Capacitor 8.5 liefert Gradle 8.14.3 aus; dessen Groovy scheitert an
@@ -1607,8 +1652,11 @@ file major version 69", einmal der AGP-Abbruch unter 9.7.
 
 ### Signierung und die Update-Regel
 
-Am GitHub-Release v1.4.0 hängt ein **signiertes, minifiziertes Release-APK**
-(`clockwork.apk`) samt SHA-256-Prüfsumme. Der Signierschlüssel liegt
+Am jeweils jüngsten GitHub-Release hängt ein **signiertes, minifiziertes
+Release-APK** (`clockwork.apk`) samt SHA-256-Prüfsumme — die Versionsnummer
+hier nicht zu nennen, ist Absicht: Sie war drei Fassungen lang veraltet, weil
+sie an einer Stelle stand, die niemand beim Release anfasst. Der
+Signierschlüssel liegt
 **außerhalb des Repos**: `android/app/build.gradle` liest die
 Umgebungsvariable `CLOCKWORK_KEYSTORE` (Pfad zu einer properties-Datei mit
 Keystore-Pfad, Alias und Passwörtern); ohne die Variable entsteht ein

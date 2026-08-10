@@ -249,6 +249,11 @@ npm run android                     # web build + stage the single file + sync
 cd android && ./gradlew assembleDebug
 ```
 
+The sync step is ours (`scripts/android-sync.mjs`), not the Capacitor CLI —
+the CLI hard-requires Node 22, which locks out distributions that ship an
+older one. The script writes the six files the wrapper needs, byte for byte
+identical to the CLI's output; the checksums are in the German docs.
+
 The app declares **no INTERNET permission** — the OS-level counterpart of the
 single file's `connect-src 'none'`; check it yourself with
 `aapt2 dump badging`. Camera permission exists solely for the QR scanner and

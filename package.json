@@ -1,6 +1,6 @@
 {
   "name": "clockwork",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "private": true,
   "type": "module",
   "description": "Clockwork — TOTP Authenticator. RFC 4226 / RFC 6238 selbst implementiert, vollstaendig clientseitig.",
@@ -16,7 +16,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "shots": "node scripts/shoot.mjs",
-    "android": "npm run build && node scripts/android-web.mjs && node scripts/android-icons.mjs && cap sync android"
+    "android": "npm run build && node scripts/android-web.mjs && node scripts/android-icons.mjs && node scripts/android-sync.mjs"
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.0",
