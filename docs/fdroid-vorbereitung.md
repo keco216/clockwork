@@ -10,6 +10,30 @@ samt der Lehren aus den roten Pipelines und aus dem Review.
 
 ## 0. Was das Review verlangt hat (10.08.2026)
 
+### Zweite Runde
+
+`linsui`, kurz nach der ersten Antwort:
+
+3. **„Please don't use tag or branch in commit. Use the full commit hash
+   instead."** Aus `commit: v1.5.2` wurde
+   `commit: 36c7ef406fdacc7dd23a0c246b3910e054957604`.
+4. **„Please follow the template at templates/build-react-native.yml."**
+   Übernommen sind die drei Stellen, die auf dieses Projekt passen:
+   `apt-get install -y npm` (das Debian-Paket `npm` zieht `nodejs` mit),
+   `scandelete` statt `scanignore` und der volle Hash. Der Rest der Vorlage
+   ist React-Native-Sache — expo, firebase-stub, Hermes-Binärdateien, ein
+   `npx expo prebuild`, das den Android-Ordner erst erzeugt. Clockwork hat
+   kein Plugin und trägt `android/` im Repo.
+
+   **Eine bewusste Abweichung:** Die Vorlage schreibt `npm install`, wir
+   lassen `npm ci` stehen — sonst löste der Bau die Versionsbereiche zur
+   Bauzeit neu auf, statt das Lock-File zu nehmen. Im MR gefragt, ob das so
+   bleiben darf.
+
+Pipeline danach grün: **2746774024**.
+
+### Erste Runde
+
 `linsui` hat zwei Punkte angemerkt, beide zur Build-Rezeptur:
 
 1. **„Install node from debian."** Die erste Fassung zog ein per SHA-256
@@ -158,11 +182,11 @@ Repo: https://github.com/keco216/clockwork.git
 Builds:
   - versionName: 1.5.2
     versionCode: 10502
-    commit: v1.5.2
+    commit: 36c7ef406fdacc7dd23a0c246b3910e054957604
     subdir: android/app
     sudo:
       - apt-get update
-      - apt-get install -y --no-install-recommends nodejs npm
+      - apt-get install -y npm
     init:
       - cd ../..
       - npm ci
@@ -171,7 +195,7 @@ Builds:
     prebuild:
       - cd ../..
       - npm run android
-    scanignore:
+    scandelete:
       - node_modules
 
 AutoUpdateMode: Version
@@ -217,10 +241,33 @@ Review:
   `UpdateCheckMode: Tags ^v[0-9.]+$`, und `AutoUpdateMode: Version`
   übernimmt schlicht das Tag, das dabei herauskam.
 
-- **`scanignore: node_modules`**, weil der Gradle-Bau Capacitors
-  Android-Bibliothek aus `node_modules/@capacitor/android` mitkompiliert —
-  löschen (scandelete) würde den Bau brechen; der Scanner soll den Ordner
-  nur nicht durchsuchen.
+- **`scandelete: node_modules`, nicht `scanignore`.** Die erste Fassung
+  benutzte `scanignore` in der Annahme, `scandelete` lösche den ganzen
+  Ordner — und der wird gebraucht, weil der Gradle-Bau Capacitors
+  Android-Bibliothek aus `node_modules/@capacitor/android` mitkompiliert.
+  Die Annahme war falsch: `scandelete` löscht **nur die einzelnen
+  beanstandeten Dateien** (`os.remove(filepath)` in `scanner.py`), nicht den
+  Pfad. Damit ist es die strengere und richtige Wahl — `scanignore` heißt
+  „hinsehen verboten", `scandelete` heißt „weg damit". Beanstandet werden
+  hier sieben Dateien: `source-map/lib/mappings.wasm`,
+  `playwright-core/lib/webp_codec.wasm` und fünf `.tar.gz` unter
+  `@capacitor/cli/assets`. Keine davon rührt der Bau an — den CLI ruft er
+  seit v1.5.2 nicht mehr auf. **Gemessen statt vermutet:** Ein Bau aus
+  frischem Klon mit genau diesen sieben Dateien gelöscht liefert ein APK
+  derselben Größe (1.231.711 Byte).
+
+  Nebenbei: Ein `scandelete`, das nichts trifft, ist selbst ein Fehler
+  („Unused scandelete path"). Beide Listen dürfen also nicht ins Blaue
+  hinein stehen.
+
+- **`commit:` trägt den vollen Hash, kein Tag.** Reviewer-Bitte vom 10.08.:
+  „Please don't use tag or branch in commit. Use the full commit hash
+  instead." Ein Tag lässt sich verschieben, ein Hash nicht. **Achtung, das
+  gilt nur für die Handarbeit:** `checkupdates.py` setzt bei
+  `AutoUpdateMode: Version` + `UpdateCheckMode: Tags` selbst
+  `b.commit = tag`, schreibt in automatisch erzeugte Einträge also den
+  Tag-Namen. Die Frage, ob F-Droid das hier so will oder lieber
+  `AutoUpdateMode: None` mit einem MR je Release, liegt beim Reviewer.
 
 ## 5. Schritt für Schritt: Was auf gitlab.com zu tun ist
 
