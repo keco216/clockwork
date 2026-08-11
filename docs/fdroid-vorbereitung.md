@@ -165,7 +165,7 @@ bestimmt:
 | AGP               | 8.13.0 · compileSdk/targetSdk 36 · minSdk 24 · build-tools 36.0.0                                                                                                     |
 | JDK (lokal)       | OpenJDK 25 (JBR von Android Studio)                                                                                                                                   |
 | Release-Build     | `gradlew assembleRelease`; **ohne** `CLOCKWORK_KEYSTORE` unsigniert — der F-Droid-Pfad                                                                                |
-| versionName/-Code | 1.5.3 / 10503 (`Major·10000 + Minor·100 + Patch`), fest in `android/app/build.gradle`                                                                                 |
+| versionName/-Code | 1.5.2 / 10502 (gemergt); neuere Tags zieht AutoUpdateMode selbst (`Major·10000 + Minor·100 + Patch`), fest in `android/app/build.gradle`                              |
 
 Determinismus-Maßnahmen, jede nachprüfbar:
 
@@ -181,37 +181,54 @@ false }` — der Block wäre eine verschlüsselte, nur für Google lesbare
   Einzeldatei wandert unverändert als Asset ins APK, AGP nullt die
   Zip-Zeitstempel.
 
-**Byte-identisch — seit v1.5.3 gemessen, nicht behauptet.** Bis dahin stand
-hier die ehrliche Einschränkung, die Reproduktion über Maschinen hinweg sei
-unbewiesen, und als wahrscheinlichster Störer wurde R8 vermutet, dessen
-Ausgabe von der JDK-Version abhängen kann. **Die Vermutung war falsch.**
+**Byte-identisch ist der Bau NICHT** — und der Versuch, das Gegenteil zu
+belegen, ist der lehrreichste Fehlschlag dieses Projekts.
 
-Gemessen wurde es an v1.5.2: F-Droids eigenes Bau-Ergebnis aus dem
-Pipeline-Artefakt (Debian trixie, deren JDK) gegen denselben Commit auf einer
-Windows-Maschine mit OpenJDK 25. Von **409 Einträgen unterschieden sich
-zwei** — `classes.dex` war _nicht_ darunter:
+Der Anlauf lief so: F-Droid kann statt des eigenen APKs das
+entwicklersignierte ausliefern, wenn der Bau reproduzierbar ist
+(`Binaries` + `AllowedAPKSigningKeys`). Dann trägt die App-ID eine einzige
+Signatur, und GitHub-Download wie Katalog-Fassung aktualisieren einander.
+Dafür wurde v1.5.3 gebaut, ein MR eröffnet ([!45463]) — und die Pipeline hat
+ihn mit `CHUNKED_SHA512 digest mismatch` zerlegt.
 
-| Eintrag                       | F-Droid | hier   | Ursache                                             |
-| ----------------------------- | ------- | ------ | --------------------------------------------------- |
-| `assets/dexopt/baseline.prof` | 1761 B  | 1759 B | AGP erzeugt ART-Profile nicht deterministisch       |
-| `res/zR.png`                  | 608 B   | 613 B  | AAPT2 komprimiert PNGs je nach Werkzeugkette anders |
+**Die Vormessung war schuld.** Sie verglich die Einträge beider APKs über
+Name und Länge; das Prüfsummenfeld der benutzten Zip-Schnittstelle war leer
+und blieb unbemerkt. Damit wurden **nur Dateilängen** verglichen, und alles,
+was bei gleicher Länge anderen Inhalt trug, galt als gleich. Gemeldet wurden
+zwei Abweichungen, `classes.dex` sei bereits identisch. Über Inhalts-Hashes
+nachgemessen sind es **14**:
 
-Beide sind seit v1.5.3 in `android/app/build.gradle` abgestellt
-(ArtProfile-Aufgaben aus, `crunchPngs false`). Preis: **+53 kB APK**
-(1.231.711 → 1.284.620 Byte), überwiegend die elf einfarbigen Splash-Flächen.
-Einzelheiten und der verworfene Umweg über PNG-Zeilenfilter stehen in
-[`README.de.md`](README.de.md#reproduzierbar--damit-eine-signatur-genügt-seit-v153).
+| Was                        | Anzahl | Ursache                                               |
+| -------------------------- | -----: | ----------------------------------------------------- |
+| `classes.dex`              |      1 | R8 läuft dort unter einem anderen JDK                 |
+| `assets/public/index.html` |      1 | Vite/esbuild unter anderer Node-Fassung und Plattform |
+| PNGs unter `res/`          |     12 | `android-icons.mjs` schreibt sie mit Nodes zlib       |
 
-Damit ist die Voraussetzung für `Binaries` + `AllowedAPKSigningKeys` erfüllt:
-F-Droid baut selbst, vergleicht mit dem APK am GitHub-Release und liefert
-**unser signiertes** aus. Eine Signatur für die App-ID, beide Bezugswege
-gegenseitig updatefähig.
+Alle drei sind **Werkzeugketten-Unterschiede**: Debians Node 20.19.2 und das
+JDK des Buildservers gegen Node 26 und OpenJDK 25 unter Windows.
 
-**Was das dauerhaft verlangt:** Jedes Release braucht ein mit dem
-Projektschlüssel signiertes `clockwork.apk` am GitHub-Release unter genau dem
-Muster aus `Binaries`. Reproduziert ein Bau einmal nicht, veröffentlicht
-F-Droid diese Version gar nicht — dann steht die Katalog-Fassung still, bis
-die Ursache behoben ist.
+Zwei Lehren, die es wert sind, hier zu stehen:
+
+1. **Eine Prüfung, deren Vergleichsfeld leer bleibt, meldet Gleichheit.**
+   Sie fällt nicht auf — sie bestätigt. Wer zwei Artefakte vergleicht, muss
+   erst zeigen, dass der Vergleich einen Unterschied überhaupt sehen KANN.
+2. **`crunchPngs false` hat es verschlimmert, nicht verbessert.** AAPT2s
+   Cruncher hatte die Node-Abweichung unserer eigenen PNGs bis dahin
+   eingeebnet; ihn abzuschalten legte sie erst frei — aus einer abweichenden
+   Datei wurden zwölf, dazu 53 kB mehr APK. Zurückgenommen in v1.5.4.
+
+Geblieben ist das Abschalten der ART-Baseline-Profile (v1.5.3): eine echte
+Quelle von Nichtdeterminismus weniger, praktisch kostenlos.
+
+**Was fehlt, ist keine Rezeptur, sondern eine Umgebung.** Ein
+entwicklersigniertes APK müsste dort gebaut werden, wo auch F-Droid baut —
+Debian mit deren Node und deren JDK, etwa in ihrem Buildserver-Image. Bis das
+gemessen ist, signiert F-Droid weiter selbst, und die Update-Regel aus
+[`README.de.md`](README.de.md#signierung-und-die-update-regel) gilt
+unverändert: Wer die Bezugsquelle wechselt, muss deinstallieren und verliert
+dabei einen auf dem Gerät gespeicherten Tresor.
+
+[!45463]: https://gitlab.com/fdroid/fdroiddata/-/merge_requests/45463
 
 ## 4. Die eingereichte Metadaten-Datei
 
@@ -233,12 +250,11 @@ AutoName: Clockwork
 
 RepoType: git
 Repo: https://github.com/keco216/clockwork.git
-Binaries: https://github.com/keco216/clockwork/releases/download/v%v/clockwork.apk
 
 Builds:
-  - versionName: 1.5.3
-    versionCode: 10503
-    commit: <voller Hash von v1.5.3>
+  - versionName: 1.5.2
+    versionCode: 10502
+    commit: 36c7ef406fdacc7dd23a0c246b3910e054957604
     subdir: android/app
     sudo:
       - apt-get update
@@ -254,12 +270,10 @@ Builds:
     scandelete:
       - node_modules
 
-AllowedAPKSigningKeys: 1685316f041b6eed44a8475df76267f2719b81b9bd42443b414db5fbca04aa53
-
 AutoUpdateMode: Version
 UpdateCheckMode: Tags ^v[0-9.]+$
-CurrentVersion: 1.5.3
-CurrentVersionCode: 10503
+CurrentVersion: 1.5.2
+CurrentVersionCode: 10502
 ```
 
 Die Entscheidungen darin — und die Lehren aus den roten Pipelines und dem

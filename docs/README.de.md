@@ -1689,7 +1689,7 @@ herauskopieren. Für den Herausgeber heißt dieselbe Regel: Der Schlüssel ist
 das einzige Unwiederbeschaffbare am Projekt — geht er verloren, nimmt keine
 bestehende Installation je wieder ein Update an.
 
-### Reproduzierbar — damit eine Signatur genügt (seit v1.5.3)
+### Eine Signatur für beide Wege — der Stand (v1.5.4)
 
 Ein Android-Update wird nur angenommen, wenn es mit **demselben Schlüssel**
 signiert ist wie die installierte App. Solange F-Droid mit seinem Schlüssel
@@ -1704,37 +1704,51 @@ genau eine Signatur, und Download wie Katalog-Fassung aktualisieren einander.
 Zwei Felder in der F-Droid-Rezeptur steuern das — `Binaries` (wo das APK
 liegt) und `AllowedAPKSigningKeys` (welcher Schlüssel gelten darf).
 
-**Wie weit der Bau davon entfernt war, ist gemessen worden**, nicht geschätzt:
-F-Droids eigenes Bau-Ergebnis für v1.5.2 aus dem Pipeline-Artefakt gegen
-denselben Commit auf einer Windows-Maschine gestellt. Von **409 Einträgen
-unterschieden sich zwei**:
+**Erreicht ist das noch nicht** — und der Weg dorthin hat vor allem eine Lehre
+über das Messen selbst hinterlassen.
 
-| Eintrag                       | F-Droid | hier   | Ursache                                             |
-| ----------------------------- | ------- | ------ | --------------------------------------------------- |
-| `assets/dexopt/baseline.prof` | 1761 B  | 1759 B | AGP erzeugt ART-Profile nicht deterministisch       |
-| `res/zR.png`                  | 608 B   | 613 B  | AAPT2 komprimiert PNGs je nach Werkzeugkette anders |
+Der erste Anlauf (v1.5.3) verglich F-Droids Bau-Ergebnis mit dem eigenen und
+meldete: von 409 Einträgen wichen zwei ab, `classes.dex` sei bereits identisch.
+**Das war falsch.** Der Vergleich las je Eintrag Name und Länge, aber die
+Prüfsumme blieb leer, weil die benutzte Zip-Schnittstelle sie gar nicht
+anbietet. Verglichen wurden also **nur Dateilängen** — was bei gleicher Länge
+anderen Inhalt hatte, fiel durch. Aufgeflogen ist es an F-Droids Pipeline, die
+die Signatur-Übernahme versuchte und mit `CHUNKED_SHA512 digest mismatch`
+abbrach.
 
-Alles andere — `classes.dex`, sämtliche Ressourcen, die 801-kB-Einzeldatei —
-war bereits byte-identisch. Der schwierige Teil (R8/Dex) reproduziert also
-zwischen Debian-Buildserver und Windows von selbst.
+Über Inhalts-Hashes nachgemessen sind es **14 Abweichungen**:
 
-Beide Reste sind in `android/app/build.gradle` abgestellt: Die
-ArtProfile-Aufgaben sind deaktiviert (F-Droids eigener Vorschlag für diesen
-bekannten Fehler), und `crunchPngs false` reicht die PNGs unverändert durch —
-`scripts/android-icons.mjs` schreibt sie ohnehin ohne Zeitstempel und ohne
-Zufall.
+| Was                        | Anzahl | Ursache                                               |
+| -------------------------- | -----: | ----------------------------------------------------- |
+| `classes.dex`              |      1 | R8 läuft dort unter einem anderen JDK                 |
+| `assets/public/index.html` |      1 | Vite/esbuild unter anderer Node-Fassung und Plattform |
+| PNGs unter `res/`          |     12 | `android-icons.mjs` schreibt sie mit Nodes zlib       |
 
-**Der Preis steht hier, weil er real ist: Das APK wächst um 53 kB**
-(1.231.711 → 1.284.620 Byte), fast alles davon die elf einfarbigen
-Splash-Flächen, die AAPT2 vorher auf ein Fünftel gedrückt hat.
+Alle drei sind **Werkzeugketten-Unterschiede**, keine Fehler in der
+Bau-Rezeptur: Der Buildserver fährt Debians Node 20.19.2 und sein eigenes JDK,
+hier läuft Node 26 mit OpenJDK 25 unter Windows.
 
-Ein naheliegender Ausweg wurde probiert und **verworfen**: PNG-Zeilenfilter
-statt Filter 0. Gemessen an einer einfarbigen Fläche von 1440 × 2560 ist
-Filter 0 der beste — 18.249 Byte gegen rund 20.000 für Sub, Up, Average und
-Paeth. Der Grund ist einleuchtend, sobald man ihn sieht: Bei unveränderten
-Zeilen findet zlib über die identischen Zeilen längere Rückverweise, als die
-Nullen eines Up-Filters einbringen. Wer die 53 kB zurückholen will, muss an
-die Farbtiefe (Palette statt RGBA), nicht an die Filter.
+Besonders lehrreich ist die dritte Zeile. v1.5.3 setzte `crunchPngs false`, um
+AAPT2s Neukomprimierung aus dem Weg zu räumen — in der Annahme, die selbst
+geschriebenen PNGs seien deterministisch. Sie sind es nur bei gleicher
+Node-Fassung. Der Cruncher hatte die Abweichung bis dahin eingeebnet; ihn
+abzuschalten legte sie erst frei, aus **einer** abweichenden PNG-Datei wurden
+**zwölf** — und es kostete 53 kB APK. In v1.5.4 ist es zurückgenommen.
+
+Geblieben ist das Abschalten der ART-Baseline-Profile: Das beseitigt eine echte
+Quelle von Nichtdeterminismus und kostet hier praktisch nichts.
+
+**Was fehlt, ist keine Rezeptur, sondern eine Umgebung.** Ein
+entwicklersigniertes APK müsste dort gebaut werden, wo auch F-Droid baut —
+Debian mit deren Node und deren JDK. Das ist ein eigenes Vorhaben und steht
+hier erst, wenn es gemessen ist.
+
+Am Rande, damit die nächste Runde nicht dieselbe Sackgasse nimmt:
+PNG-Zeilenfilter statt Filter 0 sind **kein** Ausweg. Gemessen an einer
+einfarbigen Fläche von 1440 × 2560 ist Filter 0 der beste — 18.249 Byte gegen
+rund 20.000 für Sub, Up, Average und Paeth. Bei unveränderten Zeilen findet
+zlib über die identischen Zeilen längere Rückverweise, als die Nullen eines
+Up-Filters einbringen.
 
 ### Was offen ist — und was absichtlich nur Ausblick bleibt
 

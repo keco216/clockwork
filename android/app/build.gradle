@@ -24,8 +24,8 @@ android {
         // versionName folgt dem Web-Stand (package.json), versionCode ist
         // dieselbe Zahl als Major*10000 + Minor*100 + Patch — monoton, und
         // aus dem Code liest man die Version zurueck.
-        versionCode 10503
-        versionName "1.5.3"
+        versionCode 10504
+        versionName "1.5.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -55,15 +55,16 @@ android {
             if (keystoreProps != null) {
                 signingConfig signingConfigs.release
             }
-            /* PNGs gehen unveraendert ins APK. AAPT2 komprimiert sie sonst neu,
-               und dabei faellt je nach Werkzeugkette ein anderer Deflate-Strom
-               heraus — gemessen: dasselbe 48x48-Launcher-Icon kam auf dem
-               F-Droid-Buildserver mit 608 Byte heraus und hier mit 613, bei
-               gleichem Bild. Das kostet die Byte-Gleichheit, auf der die
-               Signatur-Uebernahme beruht (siehe Reproduzierbarkeit unten).
-               Zu gewinnen ist dabei ohnehin nichts: scripts/android-icons.mjs
-               schreibt die PNGs selbst, ohne Zeitstempel und ohne Zufall. */
-            crunchPngs false
+            /* AAPT2s PNG-Cruncher bleibt AN — in v1.5.3 stand hier einmal
+               `crunchPngs false`, in der Annahme, das Durchreichen unserer
+               eigenen PNGs sei der deterministischere Weg. Das Gegenteil war
+               der Fall: android-icons.mjs schreibt die PNGs mit Nodes zlib,
+               und dessen Deflate-Strom haengt an der Node-Version. Der
+               Cruncher hatte diese Abweichung bis dahin eingeebnet; ihn
+               abzuschalten legte sie erst frei — statt einer wich danach ein
+               Dutzend PNG-Dateien ab (gemessen gegen den F-Droid-Buildserver,
+               Debian-Node 20.19.2 gegen Node 26 hier). Dazu kostete es 53 kB
+               APK. Rueckgaengig gemacht in v1.5.4. */
         }
     }
     /* Kein Google-Metadatenblock im APK: AGP haengt sonst eine verschluesselte
@@ -94,21 +95,21 @@ dependencies {
     implementation project(':capacitor-cordova-android-plugins')
 }
 
-/* Reproduzierbarkeit: keine ART-Baseline-Profile.
-   `assets/dexopt/baseline.prof` faellt bei AGP nicht deterministisch aus —
-   ein bekannter Fehler, den F-Droid unter „Reproducible Builds" samt diesem
-   Ausweg auffuehrt. Gemessen an v1.5.2: F-Droids Bau 1761 Byte, derselbe
-   Commit hier 1759, bei sonst identischem APK.
+/* Keine ART-Baseline-Profile. `assets/dexopt/baseline.prof` faellt bei AGP
+   nicht deterministisch aus — ein bekannter Fehler, den F-Droid unter
+   „Reproducible Builds" samt diesem Ausweg auffuehrt. Gemessen an v1.5.2:
+   F-Droids Bau 1761 Byte, derselbe Commit hier 1759.
 
    Der Verzicht kostet fast nichts. Ein Baseline-Profil beschleunigt den
    Kaltstart von JAVA-Code; hier ist die Java-Seite eine duenne
    Capacitor-Bruecke, und die Oberflaeche ist eine HTML-Datei im WebView,
    die das Profil ohnehin nicht erreicht.
 
-   Der Gewinn dagegen ist die Voraussetzung fuer alles Weitere: Nur wenn
-   F-Droids Bau byte-gleich zu dem hier ist, darf F-Droid das mit UNSEREM
-   Schluessel signierte APK ausliefern — und nur dann sind der Download von
-   GitHub und die Fassung aus F-Droid gegenseitig updatefaehig. */
+   Es beseitigt eine von mehreren Quellen der Nichtreproduzierbarkeit, aber
+   NICHT alle: classes.dex (R8 unter anderem JDK), die Einzeldatei (Vite
+   unter anderem Node) und die generierten PNGs (Nodes zlib) weichen
+   weiterhin ab. Der Stand ist in docs/fdroid-vorbereitung.md gemessen
+   festgehalten. */
 tasks.whenTaskAdded { task ->
     if (task.name.contains('ArtProfile')) {
         task.enabled = false
