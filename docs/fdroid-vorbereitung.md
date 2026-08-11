@@ -1,16 +1,23 @@
 # F-Droid-Vorbereitung
 
-Stand 10.08.2026: **inhaltlich durch, wartet auf den Test.** Der
-Merge-Request
+**Stand 11.08.2026: AUFGENOMMEN.** Der Merge-Request
 [fdroid/fdroiddata!45284](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/45284)
-ist offen; drei Review-Runden sind eingearbeitet, und der Reviewer schreibt:
-„This MR is mostly ready. We'll test it later. If everything works well
-we'll merge it." Es liegt nur noch an einem Rückstau ungetesteter MRs.
+ist am 11.08. um 07:53 **gemergt** worden — unverändert, Zeichen für Zeichen
+die eingereichte Fassung aus Abschnitt 4. Drei Review-Runden gingen voraus
+(Abschnitt 0), dazu ein Testbericht von `diligentowldroid`: Start, Funktion,
+eigenes Icon, Policy, Kategorie, Berechtigungen, Englisch und VirusTotal
+grün — und der ganze Netzwerkblock leer, also **keine beobachtete
+Verbindung, kein Update-Check, kein Tracker**. Die zentrale Zusage dieses
+Projekts ist damit von dritter Seite nachgemessen worden und nicht nur von
+uns behauptet.
 
-**Die eine Auflage bis dahin:** „If you release a new version please update
-this MR." `AutoUpdateMode: Version` greift erst NACH dem Merge — wer vorher
-ein Tag setzt, zieht den Builds-Eintrag im Fork von Hand nach (Abschnitt 5),
-mit vollem Commit-Hash statt Tag.
+**Was ab jetzt gilt:** F-Droid baut und signiert selbst; die App erscheint
+mit dem nächsten Build- und Signierzyklus. `AutoUpdateMode: Version` +
+`UpdateCheckMode: Tags ^v[0-9.]+$` sind aktiv — **ein neues Tag `^v[0-9.]+$`
+zieht F-Droid von selbst**, ein MR ist dafür nicht mehr nötig. Im Repo
+gebraucht werden nur `versionCode`/`versionName` in
+`android/app/build.gradle` und ein `fastlane/.../changelogs/<code>.txt` in
+beiden Sprachen.
 
 Dieses Dokument hält die Prüfung gegen die Aufnahmeregeln fest,
 beschreibt die Bausteine (fastlane-Metadaten, Build-Härtung), enthält die
