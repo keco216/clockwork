@@ -269,9 +269,16 @@ same key as the installed app. An APK signed with any other key — including
 your own build from source — requires uninstalling first, and uninstalling
 deletes the app's data, **including a vault stored on that device**. If you
 switch between the released APK and a self-built one, unlock the vault and
-copy your entries out of the input field first. Details, including the
-toolchain notes, are in the
-[German documentation](docs/README.de.md#die-android-app-capacitor).
+copy your entries out of the input field first.
+
+Since 1.5.3 the release build is **reproducible**, so that rule does not bite
+between the two places you can get Clockwork: F-Droid rebuilds from source,
+checks the result against the APK published here, and ships that one. Both
+therefore carry the same signature and update each other. Getting there cost
+two things — no ART baseline profile and no PNG recompression, neither of
+which AGP produces deterministically — and 53 kB of APK size. The
+measurements are in the
+[German documentation](docs/README.de.md#reproduzierbar--damit-eine-signatur-genügt-seit-v153).
 
 ## Contributing
 

@@ -1689,6 +1689,53 @@ herauskopieren. Für den Herausgeber heißt dieselbe Regel: Der Schlüssel ist
 das einzige Unwiederbeschaffbare am Projekt — geht er verloren, nimmt keine
 bestehende Installation je wieder ein Update an.
 
+### Reproduzierbar — damit eine Signatur genügt (seit v1.5.3)
+
+Ein Android-Update wird nur angenommen, wenn es mit **demselben Schlüssel**
+signiert ist wie die installierte App. Solange F-Droid mit seinem Schlüssel
+signiert und das GitHub-Release mit unserem, sind beide Fassungen derselben
+App gegenseitig **nicht** updatefähig — ein Quellwechsel verlangt
+Deinstallation und löscht dabei einen auf dem Gerät gespeicherten Tresor.
+
+F-Droid kann das auflösen: Bei einem **reproduzierbaren** Bau vergleicht es
+sein eigenes Ergebnis mit dem hier veröffentlichten APK und liefert bei
+Byte-Gleichheit **unser signiertes** aus. Dann existiert für diese App-ID
+genau eine Signatur, und Download wie Katalog-Fassung aktualisieren einander.
+Zwei Felder in der F-Droid-Rezeptur steuern das — `Binaries` (wo das APK
+liegt) und `AllowedAPKSigningKeys` (welcher Schlüssel gelten darf).
+
+**Wie weit der Bau davon entfernt war, ist gemessen worden**, nicht geschätzt:
+F-Droids eigenes Bau-Ergebnis für v1.5.2 aus dem Pipeline-Artefakt gegen
+denselben Commit auf einer Windows-Maschine gestellt. Von **409 Einträgen
+unterschieden sich zwei**:
+
+| Eintrag                       | F-Droid | hier   | Ursache                                             |
+| ----------------------------- | ------- | ------ | --------------------------------------------------- |
+| `assets/dexopt/baseline.prof` | 1761 B  | 1759 B | AGP erzeugt ART-Profile nicht deterministisch       |
+| `res/zR.png`                  | 608 B   | 613 B  | AAPT2 komprimiert PNGs je nach Werkzeugkette anders |
+
+Alles andere — `classes.dex`, sämtliche Ressourcen, die 801-kB-Einzeldatei —
+war bereits byte-identisch. Der schwierige Teil (R8/Dex) reproduziert also
+zwischen Debian-Buildserver und Windows von selbst.
+
+Beide Reste sind in `android/app/build.gradle` abgestellt: Die
+ArtProfile-Aufgaben sind deaktiviert (F-Droids eigener Vorschlag für diesen
+bekannten Fehler), und `crunchPngs false` reicht die PNGs unverändert durch —
+`scripts/android-icons.mjs` schreibt sie ohnehin ohne Zeitstempel und ohne
+Zufall.
+
+**Der Preis steht hier, weil er real ist: Das APK wächst um 53 kB**
+(1.231.711 → 1.284.620 Byte), fast alles davon die elf einfarbigen
+Splash-Flächen, die AAPT2 vorher auf ein Fünftel gedrückt hat.
+
+Ein naheliegender Ausweg wurde probiert und **verworfen**: PNG-Zeilenfilter
+statt Filter 0. Gemessen an einer einfarbigen Fläche von 1440 × 2560 ist
+Filter 0 der beste — 18.249 Byte gegen rund 20.000 für Sub, Up, Average und
+Paeth. Der Grund ist einleuchtend, sobald man ihn sieht: Bei unveränderten
+Zeilen findet zlib über die identischen Zeilen längere Rückverweise, als die
+Nullen eines Up-Filters einbringen. Wer die 53 kB zurückholen will, muss an
+die Farbtiefe (Palette statt RGBA), nicht an die Filter.
+
 ### Was offen ist — und was absichtlich nur Ausblick bleibt
 
 Offen ist der **Vertrieb über einen Katalog** (Play Store, F-Droid) — das

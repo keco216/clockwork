@@ -24,8 +24,8 @@ android {
         // versionName folgt dem Web-Stand (package.json), versionCode ist
         // dieselbe Zahl als Major*10000 + Minor*100 + Patch — monoton, und
         // aus dem Code liest man die Version zurueck.
-        versionCode 10502
-        versionName "1.5.2"
+        versionCode 10503
+        versionName "1.5.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -55,6 +55,15 @@ android {
             if (keystoreProps != null) {
                 signingConfig signingConfigs.release
             }
+            /* PNGs gehen unveraendert ins APK. AAPT2 komprimiert sie sonst neu,
+               und dabei faellt je nach Werkzeugkette ein anderer Deflate-Strom
+               heraus — gemessen: dasselbe 48x48-Launcher-Icon kam auf dem
+               F-Droid-Buildserver mit 608 Byte heraus und hier mit 613, bei
+               gleichem Bild. Das kostet die Byte-Gleichheit, auf der die
+               Signatur-Uebernahme beruht (siehe Reproduzierbarkeit unten).
+               Zu gewinnen ist dabei ohnehin nichts: scripts/android-icons.mjs
+               schreibt die PNGs selbst, ohne Zeitstempel und ohne Zufall. */
+            crunchPngs false
         }
     }
     /* Kein Google-Metadatenblock im APK: AGP haengt sonst eine verschluesselte
@@ -83,6 +92,27 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-cordova-android-plugins')
+}
+
+/* Reproduzierbarkeit: keine ART-Baseline-Profile.
+   `assets/dexopt/baseline.prof` faellt bei AGP nicht deterministisch aus —
+   ein bekannter Fehler, den F-Droid unter „Reproducible Builds" samt diesem
+   Ausweg auffuehrt. Gemessen an v1.5.2: F-Droids Bau 1761 Byte, derselbe
+   Commit hier 1759, bei sonst identischem APK.
+
+   Der Verzicht kostet fast nichts. Ein Baseline-Profil beschleunigt den
+   Kaltstart von JAVA-Code; hier ist die Java-Seite eine duenne
+   Capacitor-Bruecke, und die Oberflaeche ist eine HTML-Datei im WebView,
+   die das Profil ohnehin nicht erreicht.
+
+   Der Gewinn dagegen ist die Voraussetzung fuer alles Weitere: Nur wenn
+   F-Droids Bau byte-gleich zu dem hier ist, darf F-Droid das mit UNSEREM
+   Schluessel signierte APK ausliefern — und nur dann sind der Download von
+   GitHub und die Fassung aus F-Droid gegenseitig updatefaehig. */
+tasks.whenTaskAdded { task ->
+    if (task.name.contains('ArtProfile')) {
+        task.enabled = false
+    }
 }
 
 apply from: 'capacitor.build.gradle'

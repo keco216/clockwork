@@ -165,7 +165,7 @@ bestimmt:
 | AGP               | 8.13.0 · compileSdk/targetSdk 36 · minSdk 24 · build-tools 36.0.0                                                                                                     |
 | JDK (lokal)       | OpenJDK 25 (JBR von Android Studio)                                                                                                                                   |
 | Release-Build     | `gradlew assembleRelease`; **ohne** `CLOCKWORK_KEYSTORE` unsigniert — der F-Droid-Pfad                                                                                |
-| versionName/-Code | 1.5.2 / 10502 (`Major·10000 + Minor·100 + Patch`), fest in `android/app/build.gradle`                                                                                 |
+| versionName/-Code | 1.5.3 / 10503 (`Major·10000 + Minor·100 + Patch`), fest in `android/app/build.gradle`                                                                                 |
 
 Determinismus-Maßnahmen, jede nachprüfbar:
 
@@ -181,14 +181,37 @@ false }` — der Block wäre eine verschlüsselte, nur für Google lesbare
   Einzeldatei wandert unverändert als Asset ins APK, AGP nullt die
   Zip-Zeitstempel.
 
-**Ehrliche Grenze:** Byte-identische Reproduktion über Maschinen hinweg ist
-damit nicht bewiesen. Die bekannte Restquelle ist R8, dessen Ausgabe von der
-JDK-Version abhängen kann — lokal lief OpenJDK 25, der F-Droid-Buildserver
-nutzt seins. Für die Aufnahme ist das unerheblich (F-Droid baut selbst und
-signiert mit eigenem Schlüssel); wer später die „Reproducible
-Builds"-Verifikation mit Entwicklersignatur will, muss JDK- und
-SDK-Versionen exakt an den Buildserver angleichen — das ist ein eigenes
-Vorhaben und hier nicht behauptet.
+**Byte-identisch — seit v1.5.3 gemessen, nicht behauptet.** Bis dahin stand
+hier die ehrliche Einschränkung, die Reproduktion über Maschinen hinweg sei
+unbewiesen, und als wahrscheinlichster Störer wurde R8 vermutet, dessen
+Ausgabe von der JDK-Version abhängen kann. **Die Vermutung war falsch.**
+
+Gemessen wurde es an v1.5.2: F-Droids eigenes Bau-Ergebnis aus dem
+Pipeline-Artefakt (Debian trixie, deren JDK) gegen denselben Commit auf einer
+Windows-Maschine mit OpenJDK 25. Von **409 Einträgen unterschieden sich
+zwei** — `classes.dex` war _nicht_ darunter:
+
+| Eintrag                       | F-Droid | hier   | Ursache                                             |
+| ----------------------------- | ------- | ------ | --------------------------------------------------- |
+| `assets/dexopt/baseline.prof` | 1761 B  | 1759 B | AGP erzeugt ART-Profile nicht deterministisch       |
+| `res/zR.png`                  | 608 B   | 613 B  | AAPT2 komprimiert PNGs je nach Werkzeugkette anders |
+
+Beide sind seit v1.5.3 in `android/app/build.gradle` abgestellt
+(ArtProfile-Aufgaben aus, `crunchPngs false`). Preis: **+53 kB APK**
+(1.231.711 → 1.284.620 Byte), überwiegend die elf einfarbigen Splash-Flächen.
+Einzelheiten und der verworfene Umweg über PNG-Zeilenfilter stehen in
+[`README.de.md`](README.de.md#reproduzierbar--damit-eine-signatur-genügt-seit-v153).
+
+Damit ist die Voraussetzung für `Binaries` + `AllowedAPKSigningKeys` erfüllt:
+F-Droid baut selbst, vergleicht mit dem APK am GitHub-Release und liefert
+**unser signiertes** aus. Eine Signatur für die App-ID, beide Bezugswege
+gegenseitig updatefähig.
+
+**Was das dauerhaft verlangt:** Jedes Release braucht ein mit dem
+Projektschlüssel signiertes `clockwork.apk` am GitHub-Release unter genau dem
+Muster aus `Binaries`. Reproduziert ein Bau einmal nicht, veröffentlicht
+F-Droid diese Version gar nicht — dann steht die Katalog-Fassung still, bis
+die Ursache behoben ist.
 
 ## 4. Die eingereichte Metadaten-Datei
 
@@ -210,11 +233,12 @@ AutoName: Clockwork
 
 RepoType: git
 Repo: https://github.com/keco216/clockwork.git
+Binaries: https://github.com/keco216/clockwork/releases/download/v%v/clockwork.apk
 
 Builds:
-  - versionName: 1.5.2
-    versionCode: 10502
-    commit: 36c7ef406fdacc7dd23a0c246b3910e054957604
+  - versionName: 1.5.3
+    versionCode: 10503
+    commit: <voller Hash von v1.5.3>
     subdir: android/app
     sudo:
       - apt-get update
@@ -230,10 +254,12 @@ Builds:
     scandelete:
       - node_modules
 
+AllowedAPKSigningKeys: 1685316f041b6eed44a8475df76267f2719b81b9bd42443b414db5fbca04aa53
+
 AutoUpdateMode: Version
 UpdateCheckMode: Tags ^v[0-9.]+$
-CurrentVersion: 1.5.2
-CurrentVersionCode: 10502
+CurrentVersion: 1.5.3
+CurrentVersionCode: 10503
 ```
 
 Die Entscheidungen darin — und die Lehren aus den roten Pipelines und dem
