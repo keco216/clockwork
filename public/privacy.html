@@ -1,0 +1,338 @@
+<!doctype html>
+<!--
+  Die Datenschutzerklärung. Sie liegt in public/ und wandert unverändert nach
+  dist/ — erreichbar wird sie damit unter /privacy.html.
+
+  Warum es sie überhaupt gibt: Google Play verlangt für jeden Store-Eintrag
+  eine öffentlich erreichbare Datenschutz-URL, auch wenn eine App gar nichts
+  erhebt. „Nichts" muss man also aufschreiben, sonst gilt es als ungeklärt.
+
+  Bewusst eigenständig statt Teil der App, aus demselben Grund wie bei
+  404.html: kein Skript, keine Schriftdatei, kein Verweis nach außen — nur
+  das, was die CSP dieser Seite ohnehin erlaubt (`style-src 'self'
+  'unsafe-inline'`). Eine Datenschutzseite, die zum Anzeigen fremde Ressourcen
+  nachlädt, widerlegt sich beim Aufrufen selbst.
+
+  KEIN `noindex` (anders als bei 404.html): Play prüft die Adresse, und eine
+  Datenschutzerklärung, die niemand finden darf, ist keine.
+
+  Zweisprachig auf EINER Seite, weil Play genau eine URL entgegennimmt und
+  die Store-Metadaten ohnehin nur en-US und de-DE führen. Englisch steht
+  oben — es ist die Basissprache des Projekts.
+-->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Privacy — Clockwork</title>
+    <style>
+      :root {
+        --ink: #171614;
+        --ink-2: #5c5852;
+        --paper: #f5f3ef;
+        --signal: #c4400f;
+        --rule: rgb(23 22 20 / 0.14);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ink: #f5f3ef;
+          --ink-2: #9a948b;
+          --paper: #131210;
+          --signal: #f05a28;
+          --rule: rgb(245 243 239 / 0.16);
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0 auto;
+        max-width: 38rem;
+        padding: 3rem 1.5rem 4rem;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+        line-height: 1.6;
+      }
+      /* Die Gravur-Beschriftung des Geräts: kleine gesperrte Versalien. */
+      p.label {
+        margin: 0 0 0.5rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+      }
+      h1 {
+        margin: 0 0 0.25rem;
+        font-size: 1.5rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+      h2 {
+        margin: 2rem 0 0.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+      p {
+        margin: 0 0 0.75rem;
+      }
+      ul {
+        margin: 0 0 0.75rem;
+        padding-inline-start: 1.25rem;
+      }
+      li {
+        margin-bottom: 0.35rem;
+      }
+      a {
+        color: var(--signal);
+        text-underline-offset: 0.25em;
+      }
+      .date {
+        color: var(--ink-2);
+        font-size: 0.875rem;
+      }
+      svg {
+        display: block;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 1.5rem;
+      }
+      /* Der Sprachwechsel ist eine echte Trennung, keine Zwischenüberschrift. */
+      hr {
+        margin: 3.5rem 0 2.5rem;
+        border: 0;
+        border-top: 1px solid var(--rule);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Das Emblem, dieselbe Teilung wie in der App: 30 Marken, Signal auf 12 Uhr. -->
+    <svg viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+      <g stroke="currentColor" stroke-width="4.8" transform="translate(100 100)">
+        <!-- Signalmarke auf 12 Uhr: laenger (0,30·R) und staerker als die uebrigen. -->
+        <line y1="-70" y2="-100" stroke="var(--signal)" stroke-width="7.3" />
+        <g>
+          <line y1="-80" y2="-100" transform="rotate(12)" />
+          <line y1="-80" y2="-100" transform="rotate(24)" />
+          <line y1="-80" y2="-100" transform="rotate(36)" />
+          <line y1="-80" y2="-100" transform="rotate(48)" />
+          <line y1="-80" y2="-100" transform="rotate(60)" />
+          <line y1="-80" y2="-100" transform="rotate(72)" />
+          <line y1="-80" y2="-100" transform="rotate(84)" />
+          <line y1="-80" y2="-100" transform="rotate(96)" />
+          <line y1="-80" y2="-100" transform="rotate(108)" />
+          <line y1="-80" y2="-100" transform="rotate(120)" />
+          <line y1="-80" y2="-100" transform="rotate(132)" />
+          <line y1="-80" y2="-100" transform="rotate(144)" />
+          <line y1="-80" y2="-100" transform="rotate(156)" />
+          <line y1="-80" y2="-100" transform="rotate(168)" />
+          <line y1="-80" y2="-100" transform="rotate(180)" />
+          <line y1="-80" y2="-100" transform="rotate(192)" />
+          <line y1="-80" y2="-100" transform="rotate(204)" />
+          <line y1="-80" y2="-100" transform="rotate(216)" />
+          <line y1="-80" y2="-100" transform="rotate(228)" />
+          <line y1="-80" y2="-100" transform="rotate(240)" />
+          <line y1="-80" y2="-100" transform="rotate(252)" />
+          <line y1="-80" y2="-100" transform="rotate(264)" />
+          <line y1="-80" y2="-100" transform="rotate(276)" />
+          <line y1="-80" y2="-100" transform="rotate(288)" />
+          <line y1="-80" y2="-100" transform="rotate(300)" />
+          <line y1="-80" y2="-100" transform="rotate(312)" />
+          <line y1="-80" y2="-100" transform="rotate(324)" />
+          <line y1="-80" y2="-100" transform="rotate(336)" />
+          <line y1="-80" y2="-100" transform="rotate(348)" />
+        </g>
+        <circle r="5.2" fill="currentColor" stroke="none" />
+      </g>
+    </svg>
+
+    <p class="label">Privacy</p>
+    <h1>Clockwork collects nothing.</h1>
+    <p class="date">Last updated 12 August 2026. Applies to the web app, the Android app and the single-file build.</p>
+
+    <p>
+      Clockwork is a TOTP authenticator that computes two-factor codes on your
+      device. There is no account, no server, and no part of this project that
+      receives data from you. The sections below say that in the detail a
+      privacy policy needs, because "we collect nothing" is only worth
+      something if it is spelled out.
+    </p>
+
+    <h2>Data we collect: none</h2>
+    <p>
+      No personal data, no usage data, no diagnostics, no crash reports, no
+      advertising identifiers. Nothing is collected, so nothing is stored on
+      our side, shared, sold, or handed to third parties. There is no database
+      that could hold your data and no account you could ask us to delete.
+    </p>
+
+    <h2>What stays on your device</h2>
+    <ul>
+      <li>
+        <strong>The secrets you enter</strong> exist in the page's memory only.
+        Close the tab or the app and they are gone.
+      </li>
+      <li>
+        <strong>The optional vault</strong> is the one exception, and it is
+        strictly opt-in. If you switch it on, your entries are encrypted with
+        AES-256-GCM under a key derived from your passphrase (PBKDF2-SHA-256,
+        600,000 iterations) and the encrypted envelope is written to local
+        storage on your own device. The passphrase and the derived key are
+        never stored, and the envelope never leaves the device.
+      </li>
+      <li>
+        <strong>Two vault settings</strong> — the auto-lock delay and whether
+        to lock when you leave the tab. They hold no secret.
+      </li>
+      <li>
+        <strong>Your language choice</strong> lives in the URL fragment
+        (<code>#lang=fr</code>), not in storage. A fragment is never sent to a
+        server.
+      </li>
+    </ul>
+
+    <h2>Permissions</h2>
+    <p>
+      The Android app declares exactly one system permission:
+      <strong>camera</strong>, and only so the QR scanner can read a setup
+      code. Frames are decoded on the device and never leave it; the
+      permission is optional and the app works without it. The app declares
+      <strong>no internet permission</strong>, so it cannot transmit anything
+      even in principle. Android backup is switched off
+      (<code>allowBackup="false"</code>), so an encrypted vault does not ride
+      along into a cloud backup.
+    </p>
+
+    <h2>The hosted web version, honestly</h2>
+    <p>
+      If you use the app at
+      <a href="https://clockwork-sage.vercel.app">clockwork-sage.vercel.app</a>,
+      the page itself is delivered by our host, Vercel. Like any web host, it
+      sees the HTTP requests that fetch the page — IP address, user agent,
+      timestamp — as part of serving it. Clockwork adds nothing to that: after
+      the page has loaded it makes no requests of any kind, and the
+      single-file build enforces this with
+      <code>Content-Security-Policy: connect-src 'none'</code>. There are no
+      analytics, no telemetry, no update pings and no external fonts. If you
+      would rather not involve a host at all, download
+      <code>clockwork.html</code> from the releases and open it locally, or
+      install the Android app.
+    </p>
+
+    <h2>Children</h2>
+    <p>
+      The app is not directed at children and collects no data from anyone,
+      regardless of age.
+    </p>
+
+    <h2>Changes and contact</h2>
+    <p>
+      If this policy ever changes, the date above changes with it and the
+      previous wording stays visible in the project's public git history.
+      Questions about privacy or security:
+      <a href="mailto:kevincolic@outlook.com">kevincolic@outlook.com</a>. The
+      full source code is at
+      <a href="https://github.com/keco216/clockwork">github.com/keco216/clockwork</a>
+      — every claim on this page can be checked there.
+    </p>
+
+    <hr />
+
+    <section lang="de">
+      <p class="label">Datenschutz</p>
+      <h1>Clockwork erhebt nichts.</h1>
+      <p class="date">Stand 12. August 2026. Gilt für die Web-App, die Android-App und die Einzeldatei.</p>
+
+      <p>
+        Clockwork ist ein TOTP-Authenticator, der Zwei-Faktor-Codes auf deinem
+        Gerät berechnet. Es gibt kein Konto, keinen Server und keine Stelle in
+        diesem Projekt, die Daten von dir entgegennimmt. Die Abschnitte unten
+        sagen das in der Ausführlichkeit, die eine Datenschutzerklärung
+        braucht — denn „wir erheben nichts" ist nur etwas wert, wenn es
+        ausbuchstabiert dasteht.
+      </p>
+
+      <h2>Erhobene Daten: keine</h2>
+      <p>
+        Keine personenbezogenen Daten, keine Nutzungsdaten, keine Diagnose,
+        keine Absturzberichte, keine Werbe-Kennungen. Es wird nichts erhoben,
+        also gibt es auf unserer Seite nichts zu speichern, weiterzugeben oder
+        zu verkaufen. Es existiert keine Datenbank, die deine Daten enthalten
+        könnte, und kein Konto, dessen Löschung du verlangen müsstest.
+      </p>
+
+      <h2>Was auf deinem Gerät bleibt</h2>
+      <ul>
+        <li>
+          <strong>Die eingegebenen Secrets</strong> liegen ausschließlich im
+          Arbeitsspeicher der Seite. Tab oder App zu, Secrets weg.
+        </li>
+        <li>
+          <strong>Der optionale Tresor</strong> ist die einzige Ausnahme, und
+          er ist strikt freiwillig. Wird er eingeschaltet, werden die Einträge
+          mit AES-256-GCM verschlüsselt — der Schlüssel stammt aus deiner
+          Passphrase (PBKDF2-SHA-256, 600 000 Iterationen) —, und der
+          verschlüsselte Umschlag landet im lokalen Speicher deines eigenen
+          Geräts. Passphrase und abgeleiteter Schlüssel werden nie
+          gespeichert, der Umschlag verlässt das Gerät nie.
+        </li>
+        <li>
+          <strong>Zwei Tresor-Einstellungen</strong> — die Sperrzeit und ob
+          beim Verlassen des Tabs gesperrt wird. Sie enthalten kein Geheimnis.
+        </li>
+        <li>
+          <strong>Die Sprachwahl</strong> steht im URL-Fragment
+          (<code>#lang=de</code>), nicht im Speicher. Ein Fragment wird nie an
+          einen Server geschickt.
+        </li>
+      </ul>
+
+      <h2>Berechtigungen</h2>
+      <p>
+        Die Android-App deklariert genau eine System-Berechtigung:
+        <strong>Kamera</strong>, und zwar allein, damit der QR-Sucher einen
+        Einrichtungscode lesen kann. Die Bilder werden auf dem Gerät
+        ausgewertet und verlassen es nie; die Berechtigung ist freiwillig, die
+        App funktioniert auch ohne sie. Eine
+        <strong>INTERNET-Berechtigung deklariert die App nicht</strong> — sie
+        kann also grundsätzlich nichts übertragen. Die Android-Sicherung ist
+        abgeschaltet (<code>allowBackup="false"</code>), damit ein
+        verschlüsselter Tresor nicht in einem Cloud-Backup mitfährt.
+      </p>
+
+      <h2>Die gehostete Web-Fassung, ehrlich</h2>
+      <p>
+        Wer die App unter
+        <a href="https://clockwork-sage.vercel.app">clockwork-sage.vercel.app</a>
+        benutzt, bekommt die Seite von unserem Hoster Vercel ausgeliefert. Wie
+        jeder Webhoster sieht er dabei die HTTP-Anfragen, mit denen die Seite
+        geholt wird — IP-Adresse, User-Agent, Zeitstempel. Clockwork legt
+        nichts dazu: Nach dem Laden stellt die App keine Anfrage mehr, und die
+        Einzeldatei erzwingt das per
+        <code>Content-Security-Policy: connect-src 'none'</code>. Es gibt kein
+        Analytics, keine Telemetrie, keine Update-Abfragen und keine externen
+        Schriften. Wer gar keinen Hoster beteiligen will, lädt
+        <code>clockwork.html</code> aus den Releases und öffnet sie lokal —
+        oder nimmt die Android-App.
+      </p>
+
+      <h2>Kinder</h2>
+      <p>
+        Die App richtet sich nicht an Kinder und erhebt von niemandem Daten,
+        unabhängig vom Alter.
+      </p>
+
+      <h2>Änderungen und Kontakt</h2>
+      <p>
+        Ändert sich diese Erklärung, ändert sich das Datum oben mit ihr, und
+        der vorherige Wortlaut bleibt in der öffentlichen Git-Historie des
+        Projekts sichtbar. Fragen zu Datenschutz oder Sicherheit:
+        <a href="mailto:kevincolic@outlook.com">kevincolic@outlook.com</a>. Der
+        vollständige Quelltext liegt unter
+        <a href="https://github.com/keco216/clockwork">github.com/keco216/clockwork</a>
+        — jede Behauptung auf dieser Seite lässt sich dort nachprüfen.
+      </p>
+    </section>
+  </body>
+</html>
