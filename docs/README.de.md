@@ -1481,6 +1481,31 @@ Functions, kein Edge-Code, keine Datenbank. Die Einzeldatei `clockwork.html`
 bleibt das Download-Artefakt am Release und liegt nebenbei unter
 `/clockwork.html` auf derselben Adresse.
 
+### Die Datenschutzseite
+
+Unter `/privacy.html` liegt seit der Play-Vorbereitung eine
+Datenschutzerklärung (`public/privacy.html`, englisch und deutsch auf einer
+Seite). Sie existiert, weil Google Play für jeden Store-Eintrag eine
+öffentlich erreichbare Datenschutz-URL verlangt — auch von einer App, die
+nichts erhebt. „Nichts" muss man aufschreiben, sonst gilt es als ungeklärt.
+
+Gebaut ist sie wie `404.html`: eigenständig, ohne Skript, ohne Schriftdatei,
+ohne einen einzigen Verweis, der beim Anzeigen etwas nachlädt. Eine
+Datenschutzseite, die zum Anzeigen fremde Ressourcen holt, widerlegt sich beim
+Aufrufen selbst — und zwar vor genau dem Publikum, das nachsieht.
+`scripts/privacy-page.test.ts` hält das fest: kein `<script>`, kein `<link>`,
+kein ladendes Attribut, kein `@import`, kein `url()`; externe Adressen nur als
+`<a href>`. Dazu prüft er zwei unvermeidbare Handabschriften — die Adresse
+gegen `scripts/site.ts` und die Kontaktadresse gegen `SECURITY.md`.
+
+Inhaltlich sagt sie das, was die Messskripte ohnehin belegen: keine Erhebung,
+keine Netzwerkverbindung, Kamera nur lokal, Tresor nur verschlüsselt auf dem
+Gerät. Ein Punkt steht darin, den man leicht unterschlüge — **der Hoster sieht
+die HTTP-Anfragen**, mit denen die Seite geholt wird (IP, User-Agent,
+Zeitstempel), so wie jeder Webhoster. Clockwork legt nichts dazu; wer auch das
+nicht will, nimmt die Einzeldatei oder die Android-App, die gar keine
+Netzwerkberechtigung hat.
+
 ### Die CSP steht zweimal da — und wird deshalb geprüft
 
 Im gebauten HTML hängt sie als `<meta>`, beim Hosting kommt sie als echter
@@ -1688,6 +1713,33 @@ wechselt: vorher den Tresor aufsperren und die Einträge aus dem Textfeld
 herauskopieren. Für den Herausgeber heißt dieselbe Regel: Der Schlüssel ist
 das einzige Unwiederbeschaffbare am Projekt — geht er verloren, nimmt keine
 bestehende Installation je wieder ein Update an.
+
+#### Drei Kanäle, drei Signaturen
+
+Die Regel hat mit jedem Vertriebsweg eine Kante mehr bekommen. Wer signiert,
+hängt davon ab, woher die App kommt:
+
+| Bezugsquelle                                      | Wer signiert                                   |
+| ------------------------------------------------- | ---------------------------------------------- |
+| GitHub-Release                                    | wir selbst, Zertifikat-SHA-256 `1685316f…aa53` |
+| F-Droid                                           | F-Droid mit seinem eigenen Katalog-Schlüssel   |
+| Google Play — _vorbereitet, nicht veröffentlicht_ | **Google** über Play App Signing               |
+
+**Keine zwei davon sind gegenseitig updatefähig.** Wer die Quelle wechselt,
+muss deinstallieren, und das löscht einen auf dem Gerät gespeicherten Tresor
+mit.
+
+Bei Play ist das keine Nachlässigkeit, sondern die Bedingung: Für neue Apps
+ist Play App Signing nicht abwählbar. Hochgeladen wird mit einem _Upload-Key_,
+signiert wird von Google. Der Unterschied zwischen den beiden Schlüsseln ist
+wichtiger, als er klingt — ein verlorener Upload-Key lässt sich über den
+Google-Support zurücksetzen, **der eigene Release-Key nicht**. Er signiert die
+APKs am GitHub-Release, und dort gibt es niemanden, der etwas zurücksetzen
+könnte. Er bleibt damit der kritische Schlüssel des Projekts, unabhängig
+davon, was Play tut.
+
+Die vollständige Play-Vorbereitung samt Policy-Prüfung, Data-Safety-Antworten
+und Bau-Parametern steht in [`play-store.md`](play-store.md).
 
 ### Eine Signatur für beide Wege — der Stand (v1.5.4)
 

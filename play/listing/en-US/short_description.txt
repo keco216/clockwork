@@ -1,0 +1,1 @@
+TOTP codes without a network permission. Offline by design, nothing stored.

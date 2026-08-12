@@ -70,7 +70,16 @@ android {
     /* Kein Google-Metadatenblock im APK: AGP haengt sonst eine verschluesselte
        Abhaengigkeitsliste in den Signaturblock, die nur Google lesen kann.
        F-Droid lehnt genau das ab, und ein nicht pruefbarer Block passt auch
-       sonst nicht zu diesem Projekt. */
+       sonst nicht zu diesem Projekt.
+
+       `includeInBundle false` gilt damit auch fuer den Play-Weg, und das ist
+       eine bewusste Wahl gegen Googles Empfehlung: Der Block speist in der
+       Play Console die Schwachstellen-Anzeige. Play lehnt ein AAB ohne ihn
+       nicht ab, es fehlt nur diese Anzeige — und die haette hier wenig zu
+       zeigen, denn die Web-App hat genau EINE Laufzeit-Abhaengigkeit (jsQR).
+       Die Alternative waere eine zweite Baukonfiguration je Kanal; ein
+       Artefakt, zwei Rezepte ist teurer als der Verzicht. Ausfuehrlich in
+       docs/play-store.md. */
     dependenciesInfo {
         includeInApk false
         includeInBundle false

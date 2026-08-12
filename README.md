@@ -271,15 +271,29 @@ deletes the app's data, **including a vault stored on that device**. If you
 switch between the released APK and a self-built one, unlock the vault and
 copy your entries out of the input field first.
 
-**That rule does bite between the two places you can get Clockwork**, because
-F-Droid builds and signs with its own key. It could ship the APK published
-here instead — F-Droid does that for reproducible builds — but this build is
-not reproducible yet: measured against F-Droid's own build of the same commit,
-14 entries differ, and all of them come from toolchain versions rather than
-from the build recipe (R8 under a different JDK, Vite under a different Node,
-and the icon generator's zlib output). Closing that gap means building the
-release where F-Droid builds. The measurements are in the
-[German documentation](docs/README.de.md#eine-signatur-für-beide-wege--der-stand-v154).
+**That rule bites between the places you can get Clockwork**, because each one
+signs with a different key:
+
+| Source                                      | Who signs the app                                     |
+| ------------------------------------------- | ----------------------------------------------------- |
+| GitHub release                              | this project (certificate SHA-256 `1685316f…aa53`)    |
+| F-Droid                                     | F-Droid, with its own key                             |
+| Google Play — _prepared, not published yet_ | Google, via Play App Signing (mandatory for new apps) |
+
+**No two of them can update each other.** Pick one source and stay with it. If
+you do switch, unlock the vault and copy your entries out of the input field
+before uninstalling.
+
+F-Droid could ship the APK published here instead — it does that for
+reproducible builds — but this build is not reproducible yet: measured against
+F-Droid's own build of the same commit, 14 entries differ, and all of them come
+from toolchain versions rather than from the build recipe (R8 under a different
+JDK, Vite under a different Node, and the icon generator's zlib output). Closing
+that gap means building the release where F-Droid builds. For Google Play it
+would not help either way, since Google signs there regardless. The measurements
+are in the
+[German documentation](docs/README.de.md#eine-signatur-für-beide-wege--der-stand-v154),
+and the Play groundwork is in [docs/play-store.md](docs/play-store.md).
 
 ## Contributing
 

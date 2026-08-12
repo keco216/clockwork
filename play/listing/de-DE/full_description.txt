@@ -1,0 +1,19 @@
+Clockwork erzeugt Zwei-Faktor-Codes (TOTP, RFC 6238) vollständig auf dem Gerät. Die App deklariert keine INTERNET-Berechtigung — sie kann nicht ins Netz, und diese Zusage steht für jeden nachlesbar im Manifest.
+
+Unter der Haube ist sie der Einzeldatei-Bau des Projekts, getragen von einem System-WebView: dieselbe Seite, die unter clockwork-sage.vercel.app läuft, als App verpackt. Zur Laufzeit wird nichts nachgeladen, weil es nichts nachzuladen gibt.
+
+Was sie kann:
+
+• TOTP-Codes erzeugen — SHA-1, SHA-256 oder SHA-512, 6 bis 8 Stellen, beliebige Periode. Der Countdown ist eine 30er-Teilung mit drehendem Zeiger, kein Fortschrittsring: Ein Zeiger auf einer Skala zeigt eine ablesbare Position.
+• Eingaben in jeder üblichen Form: rohes Base32, otpauth://-URIs, ein kompletter Google-Authenticator-Export oder ein QR-Code aus Kamera oder Bild.
+• Kaputte Zeilen werden erklärt statt still verschluckt.
+• Auf Wunsch liegen die Secrets hinter einer Passphrase — strikt opt-in, AES-256-GCM über PBKDF2-SHA-256 mit 600.000 Iterationen, mit automatischer Sperre. Ohne Tresor wird nichts gespeichert.
+• 37 Sprachen, alle mitgebündelt, auch rechtsläufige Layouts.
+
+Datenschutz in einem Satz: Es wird nichts erhoben, weil es nirgendwo hingehen könnte. Kein Analytics, keine Telemetrie, keine Update-Abfragen, keine Werbe-Kennungen, keine Konten.
+
+Die Kamera-Berechtigung dient allein dem QR-Sucher und ist als freiwillige Hardware deklariert; QR aus Bild funktioniert ohne Kamera. Auto-Backup ist abgeschaltet — der verschlüsselte Tresor verlässt das Gerät nicht.
+
+Open Source unter der MIT-Lizenz. Die OTP-Algorithmen sind von Hand nach den RFC-Testvektoren implementiert — keine OTP-Bibliothek; die einzige geliehene Krypto-Primitive ist die Web Crypto API. Quelltext, Testlauf und Messskripte liegen öffentlich unter github.com/keco216/clockwork, damit man die Zusagen oben nachprüfen kann, statt sie zu glauben.
+
+Wichtig, unabhängig von dieser App: Richte bei jedem Anbieter Backup-Codes ein, bevor du dich auf einen Authenticator verlässt. Sie sind das Einzige, was dich wieder hineinlässt, wenn das Secret weg ist.
