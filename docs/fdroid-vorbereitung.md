@@ -334,12 +334,14 @@ Review:
 
 - **`commit:` trägt den vollen Hash, kein Tag.** Reviewer-Bitte vom 10.08.:
   „Please don't use tag or branch in commit. Use the full commit hash
-  instead." Ein Tag lässt sich verschieben, ein Hash nicht. **Achtung, das
-  gilt nur für die Handarbeit:** `checkupdates.py` setzt bei
-  `AutoUpdateMode: Version` + `UpdateCheckMode: Tags` selbst
-  `b.commit = tag`, schreibt in automatisch erzeugte Einträge also den
-  Tag-Namen. Die Frage, ob F-Droid das hier so will oder lieber
-  `AutoUpdateMode: None` mit einem MR je Release, liegt beim Reviewer.
+  instead." Ein Tag lässt sich verschieben, ein Hash nicht.
+
+  **Die Sorge, dass die Automatik das wieder kaputt macht, hat sich erledigt.**
+  Hier stand, `checkupdates.py` setze `b.commit = tag` und schreibe damit den
+  Tag-Namen in automatisch erzeugte Einträge. Nachgesehen am 13.08.2026 in der
+  gemergten Datei: Der von der Automatik angelegte Eintrag für 1.5.3 trägt
+  `commit: c96e063e27996d416f7de161fe8bc2d5178e0afe` — den **vollen Hash**,
+  genau wie von Hand. Die Frage an den Reviewer ist damit gegenstandslos.
 
 ## 5. Schritt für Schritt: Was auf gitlab.com zu tun ist
 
