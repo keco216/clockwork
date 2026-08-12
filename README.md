@@ -81,7 +81,7 @@ From source:
 ```bash
 npm ci
 npm run dev        # http://localhost:5173
-npm test           # 540 tests
+npm test           # 548 tests
 npm run build      # dist/ (PWA) + dist/clockwork.html (single file)
 ```
 

@@ -25,7 +25,7 @@ mitgebündelt und ohne eine einzige Netzwerkanfrage — auch die
 ```bash
 npm install      # einmalig
 npm run dev      # Dev-Server, danach http://localhost:5173 öffnen
-npm test         # 540 Tests
+npm test         # 548 Tests
 npm run build    # dist/ (PWA) + dist/clockwork.html (eine Datei)
 ```
 
@@ -1340,27 +1340,28 @@ berechnet wird und der dadurch von selbst auf die Sekundengrenze einrastet.
 npm test
 ```
 
-540 Tests. Die wichtigsten stammen unverändert aus den Standards:
+548 Tests. Die wichtigsten stammen unverändert aus den Standards:
 
-| Datei                    | Tests | Inhalt                                                                                |
-| ------------------------ | ----- | ------------------------------------------------------------------------------------- |
-| `catalogue.test.ts`      | 187   | Jede der 37 Sprachen: Schlüssel, Platzhalter, Mehrzahl-Kategorien                     |
-| `hotp.test.ts`           | 42    | Alle 10 Vektoren aus RFC 4226 Anhang D, geprüft auf drei Ebenen                       |
-| `lib-text.test.ts`       | 36    | Jeder erreichbare Fehlerpfad aus `src/lib`, wirklich ausgelöst                        |
-| `totp.test.ts`           | 30    | Alle 18 Vektoren aus RFC 6238 Anhang B (SHA-1/256/512)                                |
-| `google-auth.test.ts`    | 30    | Dokumentierter Beispiel-Export, selbst gebaute Exporte, Protobuf-Leser                |
-| `base32.test.ts`         | 29    | RFC 4648 Abschnitt 10, Round-trip 1–40, Toleranz, Laufzeit-Regression                 |
-| `vault.test.ts`          | 24    | Roundtrip, falsche Passphrase, manipuliertes Chiffrat, heruntergesetzte Iterationen   |
-| `otpauth-uri.test.ts`    | 22    | URIs von GitHub, Google, Microsoft, AWS; Parameter; Fehlerfälle                       |
-| `registry.test.ts`       | 19    | Sprach-Matching: `de-AT`→`de`, `zh-TW`→`zh-Hant`, `xx`→`en`; Teil-Bündel              |
-| `locale-subset.test.ts`  | 17    | Sprachauswahl zur Bauzeit — inklusive eines echten Subset-Builds                      |
-| `privacy-page.test.ts`   | 13    | Die Datenschutzseite lädt beim Anzeigen nichts nach; Adresse und Kontakt gegengeprüft |
-| `vercel-headers.test.ts` | 10    | Die Hosting-Header gegen die CSP aus dem Code                                         |
-| `play-listing.test.ts`   | 10    | Store-Texte gegen die Zeichengrenzen der Play Console (30/80/4000)                    |
-| `runtime.test.ts`        | 14    | Einsetzen, Zahlen, Mehrzahl bei 0/1/2/5/21 in pl, ru, cs und ar                       |
-| `ui-literals.test.ts`    | 14    | Steht in `src/ui` noch Text, der nicht durch `t()` läuft?                             |
-| `accounts.test.ts`       | 14    | Gemischte mehrzeilige Eingaben, Kommentare, kaputte Zeilen                            |
-| `format.test.ts`         | 12    | Ziffern-Gruppierung, Kartentitel, Kürzung                                             |
+| Datei                      | Tests | Inhalt                                                                                |
+| -------------------------- | ----- | ------------------------------------------------------------------------------------- |
+| `catalogue.test.ts`        | 187   | Jede der 37 Sprachen: Schlüssel, Platzhalter, Mehrzahl-Kategorien                     |
+| `hotp.test.ts`             | 42    | Alle 10 Vektoren aus RFC 4226 Anhang D, geprüft auf drei Ebenen                       |
+| `lib-text.test.ts`         | 36    | Jeder erreichbare Fehlerpfad aus `src/lib`, wirklich ausgelöst                        |
+| `totp.test.ts`             | 30    | Alle 18 Vektoren aus RFC 6238 Anhang B (SHA-1/256/512)                                |
+| `google-auth.test.ts`      | 30    | Dokumentierter Beispiel-Export, selbst gebaute Exporte, Protobuf-Leser                |
+| `base32.test.ts`           | 29    | RFC 4648 Abschnitt 10, Round-trip 1–40, Toleranz, Laufzeit-Regression                 |
+| `vault.test.ts`            | 24    | Roundtrip, falsche Passphrase, manipuliertes Chiffrat, heruntergesetzte Iterationen   |
+| `otpauth-uri.test.ts`      | 22    | URIs von GitHub, Google, Microsoft, AWS; Parameter; Fehlerfälle                       |
+| `registry.test.ts`         | 19    | Sprach-Matching: `de-AT`→`de`, `zh-TW`→`zh-Hant`, `xx`→`en`; Teil-Bündel              |
+| `locale-subset.test.ts`    | 17    | Sprachauswahl zur Bauzeit — inklusive eines echten Subset-Builds                      |
+| `privacy-page.test.ts`     | 13    | Die Datenschutzseite lädt beim Anzeigen nichts nach; Adresse und Kontakt gegengeprüft |
+| `release-metadata.test.ts` | 8     | package.json, versionCode und die Changelogs beider Sprachen gegeneinander            |
+| `vercel-headers.test.ts`   | 10    | Die Hosting-Header gegen die CSP aus dem Code                                         |
+| `play-listing.test.ts`     | 10    | Store-Texte gegen die Zeichengrenzen der Play Console (30/80/4000)                    |
+| `runtime.test.ts`          | 14    | Einsetzen, Zahlen, Mehrzahl bei 0/1/2/5/21 in pl, ru, cs und ar                       |
+| `ui-literals.test.ts`      | 14    | Steht in `src/ui` noch Text, der nicht durch `t()` läuft?                             |
+| `accounts.test.ts`         | 14    | Gemischte mehrzeilige Eingaben, Kommentare, kaputte Zeilen                            |
+| `format.test.ts`           | 12    | Ziffern-Gruppierung, Kartentitel, Kürzung                                             |
 
 Die HOTP-Vektoren werden auf drei Ebenen geprüft — HMAC, Truncation und Endcode.
 Geht etwas kaputt, sagt der Test sofort, _welcher_ Schritt schuld ist.
