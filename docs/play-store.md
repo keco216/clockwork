@@ -1,11 +1,11 @@
 # Play-Store-Vorbereitung
 
-**Stand 12.08.2026: vorbereitet, nicht eingereicht.** Im Repo liegt alles, was
-sich ohne Google-Konto herstellen lässt — Datenschutzseite, Listing-Texte in
-zwei Sprachen, Funktionsgrafik, vier Screenshots in Play-Maßen und die
-Bau-Entscheidungen. Was fehlt, fehlt aus einem Grund, der nicht in der
-Rezeptur steht: **Auf der Arbeitsmaschine gibt es derzeit weder Android SDK
-noch JDK noch den Release-Keystore** (Abschnitt 6).
+**Stand 13.08.2026: fertig vorbereitet, nicht eingereicht.** Im Repo liegt
+alles, was sich ohne Google-Konto herstellen lässt — Datenschutzseite,
+Listing-Texte in zwei Sprachen, Funktionsgrafik, vier Screenshots in
+Play-Maßen und die Bau-Entscheidungen. **Das signierte AAB ist gebaut und
+geprüft** (Abschnitt 6). Was noch fehlt, ist allein der Upload: Er braucht
+Kevins Entwicklerkonto.
 
 Dieses Dokument ist das Gegenstück zu
 [`fdroid-vorbereitung.md`](fdroid-vorbereitung.md) und hält dieselben Dinge
@@ -102,13 +102,18 @@ ein Handy mit 1080 Punkten Breite rechnet. Das Fenster liegt damit unter
 | `3.png` | Tresor, hell      | Verschlüsselung und der Fuß „no network, no storage" |
 | `4.png` | Leerzustand, hell | wie man anfängt                                      |
 
-**Aufgenommen wird über Playwright, nicht im Emulator** — der Grund steht in
-Abschnitt 6: Die Android-Werkzeugkette ist auf dieser Maschine nicht
-vorhanden. Inhaltlich ist der Unterschied klein, denn die App IST dieselbe
-Einzeldatei in einem System-WebView; es fehlt allein die Android-Statusleiste,
-die die F-Droid-Bilder im Demo-Modus tragen. Play verlangt keine
-Geräteaufnahme, sondern eine Abbildung der App. Wer die Kette wieder hat,
-nimmt dieselben vier Motive im Emulator neu auf.
+**Aufgenommen wird über Playwright, nicht im Emulator.** Entstanden ist das
+aus der Not — am 12.08. gab es auf der Maschine weder SDK noch AVD —, aber es
+ist als Dauerlösung tragfähig: Die App IST dieselbe Einzeldatei in einem
+System-WebView, das Bild also dasselbe bis auf die Android-Statusleiste, die
+die F-Droid-Aufnahmen im Demo-Modus tragen. Play verlangt keine
+Geräteaufnahme, sondern eine Abbildung der App.
+
+Der Nebeneffekt ist der eigentliche Gewinn: Die vier Bilder entstehen in einer
+Minute reproduzierbar neu, ohne Emulator-Start, und das Skript misst jede
+Aufnahme selbst nach. Wer sie doch mit Statusleiste will, braucht ein AVD im
+**16:9-Format** — das vorhandene `clockwork-test` (1080 × 2400) taugt dafür
+nicht, sein Verhältnis 2,222 lässt Play nicht zu.
 
 Das Skript misst jede Aufnahme nach, statt sich auf den `deviceScaleFactor` zu
 verlassen: Kantenlängen, Seitenverhältnis und waagerechter Überlauf. Ein
@@ -211,31 +216,39 @@ Unterschieden, nachzulesen in
 hilft es ohnehin nicht: Dort signiert Google, unabhängig von jeder
 Reproduzierbarkeit.
 
-## 6. Was noch fehlt — und warum
+## 6. Der Stand — das AAB liegt fertig da
 
-**Der Stand der Arbeitsmaschine am 12.08.2026:** Weder Android SDK noch JDK
-noch Android Studio sind installiert, und es liegt **kein Keystore** auf den
-Laufwerken (gesucht nach `*.jks`, `*.keystore` und `key.properties` auf C:
-und E: bis Tiefe 4 — kein Treffer). Damit ist blockiert:
+Am 12.08.2026 war hier noch alles Android-nahe blockiert: Die Maschine war
+frisch aufgesetzt, es gab weder SDK noch JDK noch den Keystore. Beides ist
+seither erledigt — Android Studio ist wieder installiert (JBR = OpenJDK 25,
+SDK mit build-tools 36.0.0), und der Release-Schlüssel ist **neu erzeugt**,
+weil der alte nicht wiederherstellbar war. Einzelheiten zum Wechsel stehen in
+[`README.de.md`](README.de.md#der-signaturschlüssel-hat-am-12082026-gewechselt).
 
-| Was                            | Warum es blockiert ist                          |
-| ------------------------------ | ----------------------------------------------- |
-| Das AAB tatsächlich bauen      | braucht Gradle, ein JDK und das Android SDK     |
-| Screenshots aus dem Emulator   | braucht SDK und ein AVD                         |
-| Ein signiertes Release v1.5.4  | braucht den Release-Keystore                    |
-| Der Upload in die Play Console | braucht zusätzlich das Entwicklerkonto (Teil 1) |
+**Gebaut und geprüft am 13.08.2026:**
 
-Vorbereitet ist alles andere — die Bau-Rezeptur steht, die Store-Bausteine
-liegen im Repo, und die Screenshots gibt es in Play-Maßen.
+| Artefakt          | Größe          | Prüfung                                                                         |
+| ----------------- | -------------- | ------------------------------------------------------------------------------- |
+| `app-release.aab` | 1.604.575 Byte | signiert, Zertifikat `d31e10a4…cf3f`, aus `keytool -printcert -jarfile` gelesen |
+| `clockwork.apk`   | 1.235.807 Byte | `apksigner`: „Verifies", v2-Schema, **kein INTERNET** im Manifest               |
 
-**Die Reihenfolge, wenn die Kette wieder steht:**
+Beide tragen versionCode **10504** / versionName **1.5.4** — kanalübergreifend
+dieselbe Zahl.
 
-1. JDK und Android SDK einrichten (Pfade und Fassungen stehen in CLAUDE.md
-   unter „Umgebung").
-2. Keystore wiederherstellen oder — falls er endgültig verloren ist — die
-   Folgen abwägen: Ein neuer Schlüssel bedeutet, dass **keine bestehende
-   Installation aus dem GitHub-Release je wieder ein Update annimmt**. Für
-   Play wäre ein neuer Upload-Key dagegen unproblematisch.
-3. `npm run android`, dann `./gradlew bundleRelease`.
-4. Teil 1 abarbeiten: Entwicklerkonto, Eintrag anlegen, Data Safety (die
-   Antworten stehen in Abschnitt 3), Inhaltsbewertung, AAB hochladen.
+**Das AAB liegt bewusst nicht im Repo.** Es entsteht in
+`android/app/build/outputs/bundle/release/` und wird bei jedem Release neu
+gebaut; eine 1,6-MB-Binärdatei einzuchecken, die aus dem Quelltext folgt,
+widerspräche der Linie des Projekts. Neu bauen:
+
+```powershell
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+$env:JAVA_HOME = 'C:\Program Files\Android\Android Studio\jbr'
+$env:CLOCKWORK_KEYSTORE = 'C:\Users\Kevin\clockwork-keys\key.properties'
+npm run android
+cd android; .\gradlew.bat bundleRelease
+```
+
+**Was jetzt noch fehlt, ist ausschließlich Kevins Teil 1:** Entwicklerkonto
+anlegen, Store-Eintrag füllen (Texte und Grafiken liegen unter
+`play/listing/`), Data Safety nach Abschnitt 3 beantworten, Inhaltsbewertung
+ausfüllen, das AAB hochladen. Von hier aus ist nichts mehr vorzubereiten.
