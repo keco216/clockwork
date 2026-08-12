@@ -78,7 +78,7 @@ against them:
 Every promise above is meant to be checkable, not believed:
 
 ```bash
-npm ci && npm test        # RFC 4226 / 6238 / 4648 test vectors, 517 tests
+npm ci && npm test        # RFC 4226 / 6238 / 4648 test vectors, 540 tests
 npm run build             # produces dist/ and dist/clockwork.html
 
 # No network API survives into the bundle — expect 0 for every pattern

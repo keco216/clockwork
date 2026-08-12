@@ -87,7 +87,7 @@ Run it from source:
 ```bash
 npm ci
 npm run dev        # http://localhost:5173
-npm test           # 517 tests
+npm test           # 540 tests
 npm run build      # dist/ (PWA) + dist/clockwork.html (single file)
 ```
 
@@ -276,13 +276,40 @@ signs with a different key:
 
 | Source                                      | Who signs the app                                     |
 | ------------------------------------------- | ----------------------------------------------------- |
-| GitHub release                              | this project (certificate SHA-256 `1685316f…aa53`)    |
+| GitHub release                              | this project (certificate SHA-256 `d31e10a4…cf3f`)    |
 | F-Droid                                     | F-Droid, with its own key                             |
 | Google Play — _prepared, not published yet_ | Google, via Play App Signing (mandatory for new apps) |
 
 **No two of them can update each other.** Pick one source and stay with it. If
 you do switch, unlock the vault and copy your entries out of the input field
 before uninstalling.
+
+### The signing key changed on 12 August 2026
+
+**If you installed `clockwork.apk` from release v1.5.3 or earlier, the update
+to v1.5.4 will be refused.** The release APK is signed with a new key:
+
+|              | Certificate SHA-256 |
+| ------------ | ------------------- |
+| up to v1.5.3 | `1685316f…aa53`     |
+| from v1.5.4  | `d31e10a4…cf3f`     |
+
+This is not a compromise and not a transfer to anyone else — the previous key
+was lost in a machine change and could not be recovered. It is stated here
+rather than quietly swapped, because a signing key that changes without
+explanation is exactly what an attack would look like.
+
+What you have to do, if you use the APK from this repository:
+
+1. **Unlock the vault and copy your entries out of the input field as plain
+   text**, somewhere safe. Uninstalling deletes them.
+2. Uninstall the old app.
+3. Install the new `clockwork.apk`.
+4. Paste your entries back, and switch the vault on again if you want it.
+
+**Not affected:** F-Droid (it signs with its own key and keeps updating
+normally) and Google Play (Google signs there). Only the APK published on this
+repository's releases is involved.
 
 F-Droid could ship the APK published here instead — it does that for
 reproducible builds — but this build is not reproducible yet: measured against

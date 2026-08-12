@@ -191,11 +191,11 @@ nicht dramatisieren muss:
 
 Daraus folgt die **Kanal-Regel**, die es bisher nur für zwei Quellen gab:
 
-| Bezugsquelle   | Wer signiert                         | Zertifikat              |
-| -------------- | ------------------------------------ | ----------------------- |
-| GitHub-Release | wir selbst (`clockwork-release.jks`) | SHA-256 `1685316f…aa53` |
-| F-Droid        | F-Droid mit eigenem Schlüssel        | deren Katalog-Schlüssel |
-| Google Play    | **Google** (Play App Signing)        | von Google erzeugt      |
+| Bezugsquelle   | Wer signiert                         | Zertifikat                                                              |
+| -------------- | ------------------------------------ | ----------------------------------------------------------------------- |
+| GitHub-Release | wir selbst (`clockwork-release.jks`) | SHA-256 `d31e10a4…cf3f` (neuer Schlüssel seit 12.08.2026, siehe README) |
+| F-Droid        | F-Droid mit eigenem Schlüssel        | deren Katalog-Schlüssel                                                 |
+| Google Play    | **Google** (Play App Signing)        | von Google erzeugt                                                      |
 
 **Keine zwei davon sind gegenseitig updatefähig.** Android nimmt ein Update
 nur an, wenn es dieselbe Signatur trägt wie die installierte App. Ein Wechsel
