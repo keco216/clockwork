@@ -1,0 +1,19 @@
+Clockwork generates two-factor codes (TOTP, RFC 6238) entirely on your device. The app declares no INTERNET permission — it cannot go online, and you can check that claim yourself in the manifest.
+
+Under the hood it is the project's single-file web build carried by a system WebView: the same page that runs at clockwork-sage.vercel.app, packaged as an app. Nothing is fetched at runtime, because there is nothing to fetch.
+
+What it does:
+
+• Generates TOTP codes — SHA-1, SHA-256 or SHA-512, 6 to 8 digits, any period. The countdown is a 30-mark dial with a rotating hand, not a progress ring, because a hand on a scale gives you a readable position.
+• Takes input in every shape you are likely to have it: raw Base32, otpauth:// URIs, a whole Google Authenticator export, or a QR code from the camera or an image.
+• Explains broken lines instead of failing silently.
+• Optionally remembers your secrets behind a passphrase — strictly opt-in, AES-256-GCM over PBKDF2-SHA-256 with 600,000 iterations, with an auto-lock. Without the vault, nothing is stored at all.
+• Speaks 37 languages, all bundled, including right-to-left layouts.
+
+Privacy, in one line: nothing is collected, because there is nowhere for it to go. No analytics, no telemetry, no update pings, no advertising identifiers, no accounts.
+
+The camera permission exists solely for the QR scanner and is declared optional hardware; importing a QR code from an image works without it. Auto-backup is disabled, so the encrypted vault never leaves the device.
+
+Open source under the MIT licence. The OTP algorithms are implemented from scratch against the RFC test vectors — no OTP library; the only borrowed crypto primitive is the Web Crypto API. The full source, the test suite and the measurement scripts are public at github.com/keco216/clockwork, so every claim above can be checked rather than believed.
+
+Important, independent of this app: set up backup codes with every provider before relying on any authenticator. They are the only thing that gets you back in when the secret is gone.

@@ -57,6 +57,7 @@ export default tseslint.config(
       'scripts/check-motion.mjs',
       'scripts/shoot-grid.mjs',
       'scripts/shoot-mobile.mjs',
+      'scripts/shoot-play.mjs',
     ],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },

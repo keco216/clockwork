@@ -16,7 +16,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "shots": "node scripts/shoot.mjs",
-    "android": "npm run build && node scripts/android-web.mjs && node scripts/android-icons.mjs && node scripts/android-sync.mjs"
+    "android": "npm run build && node scripts/android-web.mjs && node scripts/android-icons.mjs && node scripts/android-sync.mjs",
+    "play:graphics": "node scripts/play-graphics.mjs"
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.0",
