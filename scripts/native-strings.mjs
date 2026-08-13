@@ -314,6 +314,71 @@ const localeConfig = [
 await mkdir(join(RES_DIR, 'xml'), { recursive: true });
 await writeFile(join(RES_DIR, 'xml', 'locales_config.xml'), localeConfig, 'utf8');
 
+/**
+ * Die Bruecke vom i18n-SCHLUESSEL zur Ressourcen-Id.
+ *
+ * Der Kern (`core/`) wirft Fehler mit Schluesseln wie `err.base32.badChar` —
+ * er kennt keine Ressourcen und soll auch keine kennen. Die Oberflaeche muss
+ * den Schluessel zur Laufzeit nachschlagen koennen.
+ *
+ * `Resources.getIdentifier` waere der bequeme Weg und der falsche: Er sucht
+ * ueber Reflexion, R8 sieht die Verwendung nicht und entfernt die Ressource
+ * beim Verkleinern — der Fehler faellt dann erst im Release-Build auf, und
+ * zwar als leerer Text. Ein generiertes `when` ist stattdessen fuer den
+ * Compiler sichtbar, kostet nichts und kann nicht veralten.
+ */
+const kotlinLines = [
+  'package io.github.keco216.clockwork.ui',
+  '',
+  'import io.github.keco216.clockwork.R',
+  '',
+  '/**',
+  ' * ERZEUGT von scripts/native-strings.mjs. Nicht von Hand aendern.',
+  ' *',
+  ' * Bildet die i18n-Schluessel des Web-Katalogs auf Ressourcen-Ids ab. Der',
+  ' * Kern wirft Schluessel (siehe core/Errors.kt), die Oberflaeche schlaegt',
+  ' * sie hier nach.',
+  ' */',
+  'object StringKeys {',
+  '    /** `null`, wenn der Schluessel unbekannt ist — der Aufrufer nimmt dann',
+  '     *  die neutrale Auffangmeldung, genau wie `translateLibMessage` im Web. */',
+  '    fun resourceFor(key: String): Int? = when (key) {',
+  ...baseKeys
+    .filter((key) => typeof base[key] === 'string')
+    .map((key) => `        "${key}" -> R.string.${key.replace(/[.-]/g, '_')}`),
+  '        else -> null',
+  '    }',
+  '',
+  '    /** Dasselbe fuer die Mehrzahl-Eintraege. */',
+  '    fun pluralFor(key: String): Int? = when (key) {',
+  ...baseKeys
+    .filter((key) => typeof base[key] !== 'string')
+    .map((key) => `        "${key}" -> R.plurals.${key.replace(/[.-]/g, '_')}`),
+  '        else -> null',
+  '    }',
+  '',
+  '    /** Die Platzhalter je Schluessel, in der Reihenfolge der Basissprache. */',
+  '    fun placeholdersFor(key: String): List<String> = when (key) {',
+  ...baseKeys
+    .filter((key) => order.get(key).length > 0)
+    .map(
+      (key) =>
+        `        "${key}" -> listOf(${order
+          .get(key)
+          .map((name) => `"${name}"`)
+          .join(', ')})`,
+    ),
+  '        else -> emptyList()',
+  '    }',
+  '}',
+  '',
+].join('\n');
+
+const kotlinTarget =
+  'android-native/app/src/main/kotlin/io/github/keco216/clockwork/ui/StringKeys.kt';
+await mkdir(dirname(kotlinTarget), { recursive: true });
+await writeFile(kotlinTarget, kotlinLines, 'utf8');
+
 // Die umgewandelten Zwischendateien werden nicht gebraucht.
 await rm(TEMP_DIR, { recursive: true, force: true });
 
