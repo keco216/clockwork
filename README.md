@@ -49,7 +49,7 @@ accounts. Every claim here is meant to be checked, not believed:
 - **Verified against the standards, not against itself.** The suite runs all 10
   HOTP vectors from RFC 4226 appendix D and all 18 TOTP vectors from RFC 6238
   appendix B, on three levels — HMAC, truncation, final code. Base32 is checked
-  against RFC 4648 section 10. Run `npm test` yourself: 540 tests.
+  against RFC 4648 section 10. Run `npm test` yourself: 548 tests.
 - **Offline by design, not by configuration.** After load the app makes no
   requests at all; the single-file build ships
   `Content-Security-Policy: connect-src 'none'`. The Android app declares **no
