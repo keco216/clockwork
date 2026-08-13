@@ -21,6 +21,7 @@ import { build } from 'vite';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 
 import { CATALOGUE } from '../src/i18n/catalogue';
+import { LOCALES } from '../src/i18n/registry';
 import de from '../src/i18n/locales/de';
 import en from '../src/i18n/locales/en';
 import fr from '../src/i18n/locales/fr';
@@ -230,6 +231,43 @@ describe('stripNativeKeys()', () => {
 
     expect(result.removed).toEqual([]);
     expect(result.code).toBe(source);
+  });
+
+  it('haelt die generierte LocaleRegistry.kt gegen die Registry', async () => {
+    // Die Ausgabe ist EINGECHECKT und entsteht auf Zuruf, nicht im Bau. Damit
+    // kann sie veralten, ohne dass es jemandem auffiele — wer einen
+    // Eigennamen in registry.ts aendert und den Generator nicht laufen laesst,
+    // hat zwei Wahrheiten. Genau das faengt dieser Test.
+    const file = path.join(
+      root,
+      'android-native/app/src/main/kotlin/io/github/keco216/clockwork/ui/LocaleRegistry.kt',
+    );
+    const kotlin = await readFile(file, 'utf8');
+
+    const emitted = [
+      ...kotlin.matchAll(/LocaleMeta\("([^"]+)", "([^"]+)", (true|false), "([^"]+)"\)/g),
+    ].map((m) => ({ code: m[1], name: m[2], rtl: m[3] === 'true', script: m[4] }));
+
+    // Dieselbe Sortierung wie `lang-switch.ts` — nach Eigennamen mit festem
+    // en-Collator. Sie steht in der Datei und wird hier nachgerechnet, nicht
+    // geglaubt.
+    const collator = new Intl.Collator('en', { sensitivity: 'base' });
+    const expected = [...LOCALES]
+      .sort((a, b) => collator.compare(a.name, b.name))
+      .map((l) => ({ code: l.code, name: l.name, rtl: l.dir === 'rtl', script: l.script }));
+
+    expect(emitted).toEqual(expected);
+    expect(emitted).toHaveLength(37);
+
+    // Die Stichprobe, die den ganzen Beschluss traegt: Der Eigenname kommt aus
+    // dem Katalog. Androids Plattformdaten sagen hier „中文 (简体)".
+    expect(emitted.find((l) => l.code === 'zh-Hans')?.name).toBe('简体中文');
+    expect(
+      emitted
+        .filter((l) => l.rtl)
+        .map((l) => l.code)
+        .sort(),
+    ).toEqual(['ar', 'he']);
   });
 
   it('meldet sich, wenn das Bauteil gar keine Sprachdatei gesehen hat', () => {

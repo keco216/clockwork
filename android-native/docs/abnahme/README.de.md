@@ -112,3 +112,40 @@ Die Meldungszeile bleibt **immer** in der Komposition und fährt nur auf Höhe 0
 zusammen. Eine Live-Region, die erst mit ihrem Text entsteht, meldet ihn nicht
 zuverlässig — das ist im Web die `:empty`-Regel, die den Fluss verlässt und
 nicht den Baum.
+
+## P5 — Listbox-Popover und Launcher-Icon (P5 damit fertig)
+
+| Datei                    | Was es zeigt                                                                                   |
+| ------------------------ | ---------------------------------------------------------------------------------------------- |
+| `p5-fuss-englisch.png`   | Der Fuß: „No network · no storage · HMAC via javax.crypto" und der Umschalter                  |
+| `p5-listbox-offen.png`   | Das Popover, nach Eigennamen sortiert, orangenes Häkchen an der Auswahl                        |
+| `p5-fuss-deutsch.png`    | Nach der Wahl: alles deutsch, Fuß auf „Kein Netzwerk · kein Speicher · HMAC über javax.crypto" |
+| `p5-launcher-hell.png`   | Das Launcher-Icon zwischen den Systemsymbolen                                                  |
+| `p5-launcher-dunkel.png` | Dasselbe im Dunkelmodus                                                                        |
+
+**Die Eigennamen kommen aus dem Katalog, nicht von der Plattform.** Die
+Reihenfolge im Bild ist die des Web-Umschalters — Bahasa Indonesia, Čeština,
+Dansk, Deutsch, Eesti, English, Español, Français, Hrvatski —, also nach
+Eigennamen mit festem `en`-Collator sortiert. Der Beschluss hängt an einer
+gemessenen Abweichung: Für `zh-Hans` liefert Android „中文 (简体)", der
+Katalog sagt „简体中文".
+
+**Der Sprachwechsel ist am System nachgemessen**, nicht nur am Bild:
+`cmd locale get-app-locales io.github.keco216.clockwork.dev` meldet danach
+`[de]`. Die Activity wird dabei nicht neu erstellt — `locale` steht in
+`configChanges`.
+
+**Das Icon ist erzeugt, nicht gemalt.** `scripts/native-icons.mjs` schreibt
+drei Vektor-Ebenen aus derselben Markengeometrie wie `android-icons.mjs`
+(21 Hemmungszähne im 12°-Schritt, Werkbrücke r = 62 mit 84°-Maul, Lager
+r = 8,5). Zwei Läufe hintereinander liefern byte-identische Dateien
+(SHA-256 `296a8ce6…`). Im APK nachgewiesen: `drawable/ic_launcher_background`,
+`…_foreground`, `…_monochrome` und `mipmap-anydpi-v26/ic_launcher.xml` als
+Manifest-Icon.
+
+**Was NICHT visuell geprüft ist:** die Themed-Icon-Darstellung. Der Schalter
+dafür ist eine Einstellung des Launchers (Pixel: „Themed icons"), keine
+System-Einstellung — er lässt sich über `adb` nicht zuverlässig setzen. Die
+Monochrom-Ebene liegt gemessen im APK und ist formgleich zur
+Vordergrund-Ebene; ihre Darstellung im Launcher bleibt ungeprüft und ist
+hiermit benannt statt behauptet.

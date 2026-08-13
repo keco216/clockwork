@@ -6,6 +6,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
 import android.os.PersistableBundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.core.os.LocaleListCompat
 import androidx.compose.foundation.shape.RoundedCornerShape
 import io.github.keco216.clockwork.core.ParsedEntry
 import io.github.keco216.clockwork.core.describeForSearch
@@ -114,25 +116,73 @@ fun ClockworkApp() {
             .padding(Dimens.gapGroup),
         verticalArrangement = Arrangement.spacedBy(Dimens.gapGroup),
     ) {
-        if (vacant) {
-            VacantStage(
-                field = field,
-                onFieldChange = { field = it },
-                onFocusChange = { fieldFocused = it },
-                onTestKey = { field = TextFieldValue(TEST_KEY) },
-            )
-        } else {
-            WorkingStage(
-                field = field,
-                onFieldChange = { field = it },
-                onFocusChange = { fieldFocused = it },
-                entries = entries,
-                unixSeconds = unixSeconds,
-                inputOpen = inputOpen,
-                onToggleInput = { inputOpen = !inputOpen },
-                onCopy = { code -> context.copySensitive(code) },
-            )
+        Box(modifier = Modifier.weight(1f)) {
+            if (vacant) {
+                VacantStage(
+                    field = field,
+                    onFieldChange = { field = it },
+                    onFocusChange = { fieldFocused = it },
+                    onTestKey = { field = TextFieldValue(TEST_KEY) },
+                )
+            } else {
+                WorkingStage(
+                    field = field,
+                    onFieldChange = { field = it },
+                    onFocusChange = { fieldFocused = it },
+                    entries = entries,
+                    unixSeconds = unixSeconds,
+                    inputOpen = inputOpen,
+                    onToggleInput = { inputOpen = !inputOpen },
+                    onCopy = { code -> context.copySensitive(code) },
+                )
+            }
         }
+
+        Colophon()
+    }
+}
+
+/**
+ * Der Fuss — die Zusage des Geraets und der Sprachumschalter.
+ *
+ * Der Satz kommt aus `native.colophon.note` und nicht aus `colophon.note`:
+ * Die Web-Fassung endet auf „HMAC ueber die Web Crypto API", und nativ
+ * rechnet `javax.crypto`. Ausgerechnet der Satz, der die Zusagen der App
+ * zusammenfasst, darf nicht die falsche nennen.
+ */
+@Composable
+private fun Colophon() {
+    val colors = LocalColors.current
+    val context = LocalContext.current
+
+    // Woher die aktuelle Sprache kommt: erst die per-App-Wahl, sonst das, was
+    // die Konfiguration gerade traegt. Beides kann Regionalvarianten
+    // enthalten, deshalb laeuft es durch denselben Aufloeser wie im Web.
+    val applied = AppCompatDelegate.getApplicationLocales()
+    val tags = buildList {
+        for (index in 0 until applied.size()) applied[index]?.toLanguageTag()?.let(::add)
+        val configured = context.resources.configuration.locales
+        for (index in 0 until configured.size()) add(configured[index].toLanguageTag())
+    }
+    val current = resolveLocaleCode(tags)
+
+    Column(verticalArrangement = Arrangement.spacedBy(Dimens.gapPair)) {
+        BasicText(
+            text = text("native.colophon.note"),
+            style = TextStyles.micro.copy(color = colors.ink3),
+        )
+        LanguagePicker(
+            current = current,
+            onPick = { code ->
+                // Die per-App-Sprachwahl macht das System: ab API 33 der
+                // LocaleManager, darunter AppCompat. Die Web-Logik
+                // `resolveLocale` samt Sonderfaellen entfaellt damit — genau
+                // deshalb steht AppCompat ueberhaupt im Klassenpfad.
+                AppCompatDelegate.setApplicationLocales(
+                    LocaleListCompat.forLanguageTags(code),
+                )
+            },
+        )
     }
 }
 

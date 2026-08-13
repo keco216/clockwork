@@ -150,22 +150,23 @@ function resourceDir(code) {
  * Rolldowns oxc-Transformer liegt ueber Vite ohnehin im Baum — der Umweg
  * kostet also keine neue Abhaengigkeit, nur eine Umwandlung je Datei.
  */
-async function loadLocale(code) {
-  const file = join(LOCALES_DIR, `${code}.ts`);
+async function loadModule(file, name) {
   const source = await readFile(file, 'utf8');
-  const result = transformSync(`${code}.ts`, source, { lang: 'ts' });
+  const result = transformSync(`${name}.ts`, source, { lang: 'ts' });
 
   if (result.errors.length > 0) {
     throw new Error(`${file}: ${result.errors.map((e) => e.message ?? e).join('; ')}`);
   }
-  const js = result.code;
 
-  const target = join(TEMP_DIR, `${code}.mjs`);
+  const target = join(TEMP_DIR, `${name}.mjs`);
   await mkdir(dirname(target), { recursive: true });
-  await writeFile(target, js, 'utf8');
+  await writeFile(target, result.code, 'utf8');
 
-  const module = await import(pathToFileURL(resolve(target)).href);
-  return module.default;
+  return import(pathToFileURL(resolve(target)).href);
+}
+
+async function loadLocale(code) {
+  return (await loadModule(join(LOCALES_DIR, `${code}.ts`), code)).default;
 }
 
 /* ── Platzhalter ────────────────────────────────────────────────────────── */
@@ -486,6 +487,72 @@ const kotlinTarget =
   'android-native/app/src/main/kotlin/io/github/keco216/clockwork/ui/StringKeys.kt';
 await mkdir(dirname(kotlinTarget), { recursive: true });
 await writeFile(kotlinTarget, kotlinLines, 'utf8');
+
+/* ── Zweitausgabe: die Sprachliste ──────────────────────────────────────── */
+
+/**
+ * Die Eigennamen der 37 Sprachen kommen aus `registry.ts` — NICHT aus
+ * `Locale.getDisplayLanguage`.
+ *
+ * Die Begruendung steht seit jeher am Kopf von registry.ts und gilt nativ
+ * wortgleich: Eine App, die offline und ueberall gleich aussehen soll, darf
+ * ihre eigene Sprachliste nicht von der Laune der Umgebung abhaengen lassen.
+ * Plattform-CLDR ist genau dieselbe Laune, nur eine Schicht tiefer — gemessen
+ * liefert Android fuer `zh-Hans` „中文 (简体)", der Katalog sagt „简体中文".
+ * Sichtbare Abweichung von der Web-Fassung waere ein Fehler.
+ *
+ * SORTIERT wird schon hier, mit demselben Collator wie `lang-switch.ts`
+ * (`en`, sensitivity base). Damit steht die Reihenfolge byte-fest in der
+ * eingecheckten Datei und kann zur Laufzeit gar nicht erst abweichen — Javas
+ * Collator muesste sonst zeichengenau dasselbe tun wie Nodes, und das waere
+ * eine Annahme statt einer Messung.
+ */
+const registry = await loadModule('src/i18n/registry.ts', 'registry');
+const collator = new Intl.Collator('en', { sensitivity: 'base' });
+const locales = [...registry.LOCALES].sort((a, b) => collator.compare(a.name, b.name));
+
+if (locales.length !== codes.length) {
+  throw new Error(`Registry nennt ${locales.length} Sprachen, locales/ hat ${codes.length}`);
+}
+for (const locale of locales) {
+  if (!codes.includes(locale.code)) {
+    throw new Error(`Registry nennt "${locale.code}", aber locales/${locale.code}.ts fehlt`);
+  }
+}
+
+const registryLines = [
+  'package io.github.keco216.clockwork.ui',
+  '',
+  '/**',
+  ' * ERZEUGT von scripts/native-strings.mjs aus src/i18n/registry.ts.',
+  ' * Nicht von Hand aendern.',
+  ' *',
+  ' * Die Eigennamen stehen im Katalog und nicht in den Plattformdaten — sonst',
+  ' * hiesse dieselbe Sprache je nach Geraet anders (gemessen: zh-Hans ist bei',
+  ' * Android „中文 (简体)", im Katalog „简体中文").',
+  ' *',
+  ' * Die Reihenfolge ist die des Web-Umschalters: nach Eigennamen, mit einem',
+  ' * festen en-Collator sortiert. Wer seine Sprache sucht, sucht nach ihrem',
+  ' * Namen — nicht nach dem englischen und nicht nach dem Code.',
+  ' */',
+  'data class LocaleMeta(',
+  '    val code: String,',
+  '    val name: String,',
+  '    val rtl: Boolean,',
+  '    val script: String,',
+  ')',
+  '',
+  'val LOCALES: List<LocaleMeta> = listOf(',
+  ...locales.map(
+    (l) => `    LocaleMeta("${l.code}", "${l.name}", ${l.dir === 'rtl'}, "${l.script}"),`,
+  ),
+  ')',
+  '',
+].join('\n');
+
+const registryTarget =
+  'android-native/app/src/main/kotlin/io/github/keco216/clockwork/ui/LocaleRegistry.kt';
+await writeFile(registryTarget, registryLines, 'utf8');
 
 // Die umgewandelten Zwischendateien werden nicht gebraucht.
 await rm(TEMP_DIR, { recursive: true, force: true });
