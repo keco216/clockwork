@@ -96,3 +96,19 @@ die Messung eine laufende Fahrt überhaupt sehen KANN. Ohne sie hieße „bei
 Skala 0 ist alles fertig" nur, dass zu spät aufgenommen wurde.
 
 Ergebnis: **Keine Fahrt läuft, der Zustand stimmt trotzdem.**
+
+## P5 — Meldungszeile und das breite Raster (N6)
+
+| Datei                       | Was es zeigt                                                                                                                                          |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `n6-raster-breit-540dp.png` | Das echte Raster: Kopfzeile, Code und folgt-Zeile beginnen an derselben Stelle, Chip rechts in der Code-Spalte, Blatt und Taste nur in der Code-Zeile |
+| `p5-meldungszeile.png`      | Die Live-Region: „Nothing matches …" fährt unter der Filterzeile ein                                                                                  |
+
+Der Code im breiten Raster ist nachgerechnet: Gerätezeit 1786656220, Zähler
+59555207, App `964 441 · folgt 767 305 · 20 s`, Node `964441 / 767305`.
+Treffer.
+
+Die Meldungszeile bleibt **immer** in der Komposition und fährt nur auf Höhe 0
+zusammen. Eine Live-Region, die erst mit ihrem Text entsteht, meldet ihn nicht
+zuverlässig — das ist im Web die `:empty`-Regel, die den Fluss verlässt und
+nicht den Baum.

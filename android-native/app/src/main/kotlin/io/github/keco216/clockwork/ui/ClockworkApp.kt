@@ -254,11 +254,19 @@ private fun WorkingStage(
                     FilterField(value = filter, onValueChange = { filter = it })
                 }
 
-                if (shown.isEmpty()) {
-                    // Ein leeres Ergebnis ist eine Auskunft, kein leerer Kasten.
-                    BasicText(
-                        text = text("filter.empty", mapOf("query" to filter.trim())),
-                        style = TextStyles.body.copy(color = colors.ink2),
+                // Ein leeres Ergebnis ist eine Auskunft, kein leerer Kasten —
+                // und eine, die ein Screenreader ansagen soll. Die Zeile bleibt
+                // deshalb IMMER in der Komposition und faehrt nur auf Hoehe 0
+                // zusammen: Eine Live-Region, die erst mit ihrem Text entsteht,
+                // meldet ihn nicht zuverlaessig.
+                if (showFilter) {
+                    MessageRow(
+                        text = if (shown.isEmpty()) {
+                            text("filter.empty", mapOf("query" to filter.trim()))
+                        } else {
+                            ""
+                        },
+                        tone = MessageTone.Status,
                     )
                 }
 

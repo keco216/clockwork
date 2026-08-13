@@ -21,7 +21,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +37,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
@@ -410,6 +414,88 @@ fun Drawer(open: Boolean, modifier: Modifier = Modifier, content: @Composable ()
             // Oben verankert und unten beschnitten — die Schublade faehrt
             // heraus, der Inhalt wandert nicht.
             placeables.forEach { it.place(0, 0) }
+        }
+    }
+}
+
+/* ── Meldungszeilen ─────────────────────────────────────────────────────── */
+
+/** Wie dringend eine Meldung ist — bestimmt Farbe UND Ansage-Verhalten. */
+enum class MessageTone { Status, Fault }
+
+/**
+ * Eine Meldungszeile, die einfaehrt statt aufzuploppen.
+ *
+ * ── Die Regel, die hier ueber allem steht ─────────────────────────────────
+ * Eine Live-Region muss IM BAUM sein, bevor Text hineinkommt. Wird sie im
+ * selben Moment eingeblendet und gefuellt, meldet ein Screenreader die
+ * Aenderung nicht zuverlaessig — und genau das Melden ist ihr einziger Zweck.
+ * Die Zeile verschwindet deshalb nie aus der Komposition; sie faehrt nur auf
+ * Hoehe 0 zusammen. Im Web ist das die `:empty`-Regel, die den FLUSS
+ * verlaesst und nicht den BAUM.
+ *
+ * ── Warum der letzte Text stehen bleibt ───────────────────────────────────
+ * Beim Ausfahren wird der Text leer, bevor die Fahrt zu Ende ist. Stuende
+ * dann schon nichts mehr da, faellt die Zeile in sich zusammen statt
+ * auszufahren — man saehe ein Verschwinden und keine Bewegung. Sie behaelt
+ * deshalb den letzten nicht-leeren Text bis zum Schluss.
+ *
+ * ── Zwei Spuren, zwei Zeiten ──────────────────────────────────────────────
+ * Deckkraft 150 ms, Hoehe 250 ms — das Muster der Referenz (`field-error`
+ * faehrt dort 150/350). Die Hoehe nimmt die Hausdauer, damit die Zeile im
+ * selben Takt faehrt wie die Aufklapper daneben.
+ *
+ * Beide haengen wie alles hier an der Animator-Skala des Systems: Steht sie
+ * auf 0, ist die Zeile sofort da — und die Ansage geht trotzdem raus.
+ */
+@Composable
+fun MessageRow(text: String, tone: MessageTone, modifier: Modifier = Modifier) {
+    val colors = LocalColors.current
+
+    var last by remember { mutableStateOf(text) }
+    if (text.isNotEmpty()) last = text
+
+    val open = text.isNotEmpty()
+    val extent by animateFloatAsState(
+        targetValue = if (open) 1f else 0f,
+        animationSpec = tween(Motion.calm, easing = Motion.spring),
+        label = "message-height",
+    )
+    val fade by animateFloatAsState(
+        targetValue = if (open) 1f else 0f,
+        animationSpec = tween(Motion.quick, easing = Motion.spring),
+        label = "message-fade",
+    )
+
+    Layout(
+        modifier = modifier
+            .clipToBounds()
+            .semantics {
+                liveRegion = when (tone) {
+                    // Ein Fehler unterbricht, eine Rueckmeldung wartet. Das ist
+                    // dieselbe Trennung wie `role="alert"` gegen
+                    // `role="status"` im Web.
+                    MessageTone.Fault -> LiveRegionMode.Assertive
+                    MessageTone.Status -> LiveRegionMode.Polite
+                }
+            },
+        content = {
+            BasicText(
+                text = last,
+                style = TextStyles.micro.copy(
+                    color = if (tone == MessageTone.Fault) colors.fault else colors.ink2,
+                ),
+                modifier = Modifier.alpha(fade),
+            )
+        },
+    ) { measurables, constraints ->
+        val placeable = measurables[0].measure(constraints)
+        val shown = (placeable.height * extent).roundToInt()
+
+        layout(placeable.width, shown) {
+            // Oben verankert: Die Zeile waechst nach unten heraus, der Text
+            // wandert nicht.
+            placeable.place(0, 0)
         }
     }
 }
