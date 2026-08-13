@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,8 +20,10 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.Canvas
+import io.github.keco216.clockwork.ui.theme.ClockworkTheme
+import io.github.keco216.clockwork.ui.theme.Dial
+import io.github.keco216.clockwork.ui.theme.Dimens
+import io.github.keco216.clockwork.ui.theme.LocalColors
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -47,48 +49,48 @@ class MainActivity : AppCompatActivity() {
            Statusleiste. */
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        setContent { ClockworkApp() }
-    }
-}
-
-@Composable
-private fun ClockworkApp() {
-    /* Kein Hell/Dunkel-Umschalter, wie im Web: Die App folgt der
-       Systemeinstellung. `isSystemInDarkTheme()` ist das Gegenstueck zu
-       `prefers-color-scheme`.
-
-       Die beiden Werte hier sind `--ground` aus src/styles/tokens.css. In P3
-       loest ein Token-Objekt sie ab, samt Dauerpruefung gegen die CSS-Datei —
-       bis dahin stehen sie genau zweimal im Projekt (hier und im XML-Theme),
-       und das ist eine Stelle zu viel. Deshalb ist P3 der naechste Posten. */
-    val dark = isSystemInDarkTheme()
-    val ground = if (dark) Color(0xFF060607) else Color(0xFFF5F5F5)
-    val ink = if (dark) Color(0xFFFCFCFC) else Color(0xFF18181B)
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(ground)
-            .systemBarsPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        EmblemPlaceholder(tint = ink, modifier = Modifier.size(96.dp))
+        setContent {
+            ClockworkTheme { VacantStage() }
+        }
     }
 }
 
 /**
- * Platzhalter fuer das Emblem (Zeichen A — die 30er-Skala).
+ * Die Leer-Buehne, vorerst nur mit dem Emblem.
  *
- * Bewusst noch NICHT das echte Zifferblatt: Dessen Proportionen stehen als
- * `--dial-*`-Token in tokens.css und wandern in P3 nach Tokens.kt, gezeichnet
- * wird es in P5 zusammen mit dem Kanalzug. Was hier steht, ist die Geometrie
- * in ihrer einfachsten Form — 30 Marken im 12-Grad-Schritt, stumpfe
- * Strichenden. Stumpf ist keine Kleinigkeit: Ein abgerundeter Strich auf einer
- * Teilung ist eine ungenaue Angabe.
+ * Der volle Zustand — Emblem in 2,2-facher Groesse, ein Satz, das Feld, drei
+ * Tasten — kommt in P5, wenn die Bauteile stehen und die 37 Sprachen (P4) die
+ * Texte liefern. Was hier schon gilt: Jede Farbe kommt aus [LocalColors], kein
+ * Wert steht im Bauteil.
  */
 @Composable
-private fun EmblemPlaceholder(tint: Color, modifier: Modifier = Modifier) {
+private fun VacantStage() {
+    val colors = LocalColors.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colors.ground)
+            .systemBarsPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Emblem(tint = colors.ink, modifier = Modifier.size(Dimens.dialSize))
+    }
+}
+
+/**
+ * Zeichen A — die 30er-Skala.
+ *
+ * Dieselbe Geometrie wie das Emblem im Markenhandbuch und wie das Zifferblatt
+ * neben jedem Code: 30 Marken im 12-Grad-Schritt, die Verhaeltnisse aus den
+ * `dial-*`-Token. Stumpfe Strichenden sind dabei keine Kleinigkeit — ein
+ * abgerundeter Strich auf einer Teilung ist eine ungenaue Angabe.
+ *
+ * Der drehende Zeiger kommt in P5 dazu; hier steht das ruhende Zeichen.
+ */
+@Composable
+fun Emblem(tint: Color, modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) { drawScale(tint) }
 }
 
@@ -96,31 +98,30 @@ private fun DrawScope.drawScale(tint: Color) {
     val radius = size.minDimension / 2f
     val center = Offset(size.width / 2f, size.height / 2f)
 
-    // Verhaeltnisse aus dem Markenhandbuch: Marke 0,20*R lang, 0,048*R stark.
-    val markLength = radius * 0.20f
-    val markWidth = radius * 0.048f
+    val markLength = radius * Dial.TICK_LENGTH
+    val markWidth = radius * Dial.TICK_WIDTH
 
-    repeat(30) { index ->
-        // 12 Grad je Marke, 0 Uhr oben. Bogenmass, weil sin/cos damit rechnen.
-        val angle = Math.toRadians(index * 12.0 - 90.0)
-        val outer = radius
+    repeat(Dial.TICK_COUNT) { index ->
+        // 360 / 30 = 12 Grad je Marke, 0 Uhr oben. Bogenmass, weil sin und cos
+        // damit rechnen.
+        val angle = Math.toRadians(index * (360.0 / Dial.TICK_COUNT) - 90.0)
         val inner = radius - markLength
         drawLine(
             color = tint,
             start = center + Offset((cos(angle) * inner).toFloat(), (sin(angle) * inner).toFloat()),
-            end = center + Offset((cos(angle) * outer).toFloat(), (sin(angle) * outer).toFloat()),
+            end = center + Offset((cos(angle) * radius).toFloat(), (sin(angle) * radius).toFloat()),
             strokeWidth = markWidth,
             cap = StrokeCap.Butt,
         )
     }
 
-    // Die Nabe — 0,052*R. Das Zeichen braucht einen Mittelpunkt, sonst zerfaellt
-    // die Teilung optisch in einen Kreis aus Strichen.
-    drawCircle(color = tint, radius = radius * 0.052f, center = center, style = Stroke(markWidth))
+    // Die Nabe. Das Zeichen braucht einen Mittelpunkt, sonst zerfaellt die
+    // Teilung optisch in einen Kreis aus Strichen.
+    drawCircle(color = tint, radius = radius * Dial.HUB, center = center, style = Stroke(markWidth))
 }
 
 @Preview
 @Composable
-private fun ClockworkAppPreview() {
-    ClockworkApp()
+private fun VacantStagePreview() {
+    ClockworkTheme { VacantStage() }
 }
