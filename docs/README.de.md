@@ -1847,8 +1847,15 @@ Up-Filters einbringen.
 
 ### Was offen ist — und was absichtlich nur Ausblick bleibt
 
-Offen ist der **Vertrieb über einen Katalog** (Play Store, F-Droid) — das
-Release-APK am GitHub-Release deckt den Eigengebrauch ab.
+**F-Droid ist erledigt.** Die App steht seit dem 12.08.2026 im Katalog;
+F-Droid baut und signiert selbst, und `AutoUpdateMode: Version` zieht jedes
+neue Tag `^v[0-9.]+$` ohne weiteres Zutun — Einzelheiten in
+[`fdroid-vorbereitung.md`](fdroid-vorbereitung.md).
+
+Offen ist damit nur noch **Google Play**: Listing-Texte, Grafiken,
+Data-Safety-Antworten und das signierte AAB liegen fertig da, eingereicht ist
+nichts — der Upload braucht ein Entwicklerkonto
+([`play-store.md`](play-store.md)).
 
 **iOS** wäre mit demselben Wrap möglich (`@capacitor/ios`), braucht aber
 macOS und Xcode; das Gerüst ist absichtlich nicht angelegt — ein
