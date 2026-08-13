@@ -98,8 +98,6 @@
     <string name="scan_noQr">Στην εικόνα δεν αναγνωρίστηκε κανένας κωδικός QR.</string>
     <string name="scan_unreadable">Η εικόνα δεν μπόρεσε να διαβαστεί — είναι όντως εικόνα;</string>
     <string name="scan_done">Ο κωδικός QR διαβάστηκε και εισήχθη.</string>
-    <string name="scan_camera_unavailable">Αυτό το περιβάλλον δεν παραχωρεί κάμερα. Όταν το αρχείο ανοίγει απευθείας (file://), τα περισσότερα προγράμματα περιήγησης την μπλοκάρουν — το «QR από εικόνα» δουλεύει πάντα.</string>
-    <string name="scan_camera_denied">Η κάμερα απορρίφθηκε. Επαναφέρετε την άδεια στο πρόγραμμα περιήγησης — ή χρησιμοποιήστε το «QR από εικόνα».</string>
     <string name="scan_camera_notFound">Δεν υπάρχει συνδεδεμένη κάμερα. Το «QR από εικόνα» δουλεύει έτσι κι αλλιώς.</string>
     <string name="scan_camera_busy">Η κάμερα χρησιμοποιείται αυτή τη στιγμή από άλλο πρόγραμμα.</string>
     <string name="scan_camera_failed">Η κάμερα δεν μπόρεσε να ξεκινήσει. Το «QR από εικόνα» δουλεύει πάντα.</string>
@@ -146,4 +144,6 @@
     <string name="err_migration_noAccounts">Σε αυτή την εξαγωγή δεν υπάρχουν λογαριασμοί.</string>
     <string name="vacant_text">Μυστικό, σύνδεσμος otpauth ή εικόνα QR — τίποτα από αυτά δεν φεύγει από αυτή τη συσκευή.</string>
     <string name="colophon_note">Χωρίς δίκτυο · χωρίς αποθήκευση · HMAC μέσω javax.crypto</string>
+    <string name="scan_camera_unavailable">Αυτή η συσκευή δεν παραχωρεί κάμερα — το «QR από εικόνα» δουλεύει πάντα.</string>
+    <string name="scan_camera_denied">Η κάμερα απορρίφθηκε. Δώστε την άδεια στις ρυθμίσεις εφαρμογών του συστήματος — ή χρησιμοποιήστε το «QR από εικόνα».</string>
 </resources>

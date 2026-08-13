@@ -202,4 +202,9 @@ export default {
     'Secret, link otpauth sau imagine QR — nimic din toate acestea nu părăsește acest dispozitiv.',
 
   'native.colophon.note': 'Fără rețea · fără stocare · HMAC prin javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Acest dispozitiv nu pune la dispoziție nicio cameră — „QR din imagine” funcționează întotdeauna.',
+  'native.scan.camera.denied':
+    'Camera a fost refuzată. Acordați permisiunea în setările aplicației din sistem — sau folosiți „QR din imagine”.',
 } satisfies Strings;

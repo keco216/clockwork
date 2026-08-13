@@ -103,8 +103,6 @@
     <string name="scan_noQr">În imagine nu s-a putut recunoaște niciun cod QR.</string>
     <string name="scan_unreadable">Imaginea nu a putut fi citită — chiar este o imagine?</string>
     <string name="scan_done">Cod QR citit și inserat.</string>
-    <string name="scan_camera_unavailable">Acest mediu nu pune la dispoziție nicio cameră. La deschiderea ca fișier (file://) majoritatea navigatoarelor o blochează — „QR din imagine” funcționează întotdeauna.</string>
-    <string name="scan_camera_denied">Camera a fost refuzată. Resetați permisiunea în navigator — sau folosiți „QR din imagine”.</string>
     <string name="scan_camera_notFound">Nu este conectată nicio cameră. „QR din imagine” funcționează oricum.</string>
     <string name="scan_camera_busy">Camera este folosită chiar acum de alt program.</string>
     <string name="scan_camera_failed">Camera nu a putut fi pornită. „QR din imagine” funcționează întotdeauna.</string>
@@ -152,4 +150,6 @@
     <string name="err_migration_noAccounts">În acest export nu există niciun cont.</string>
     <string name="vacant_text">Secret, link otpauth sau imagine QR — nimic din toate acestea nu părăsește acest dispozitiv.</string>
     <string name="colophon_note">Fără rețea · fără stocare · HMAC prin javax.crypto</string>
+    <string name="scan_camera_unavailable">Acest dispozitiv nu pune la dispoziție nicio cameră — „QR din imagine” funcționează întotdeauna.</string>
+    <string name="scan_camera_denied">Camera a fost refuzată. Acordați permisiunea în setările aplicației din sistem — sau folosiți „QR din imagine”.</string>
 </resources>

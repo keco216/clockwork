@@ -189,4 +189,8 @@ export default {
   'native.vacant.text': 'シークレット、otpauth リンク、QR 画像 — どれもこの端末から出ない。',
 
   'native.colophon.note': 'ネットワークなし · 保存なし · HMAC は javax.crypto 経由',
+
+  'native.scan.camera.unavailable': 'この端末ではカメラを使えない — 「画像から QR」なら必ず動く。',
+  'native.scan.camera.denied':
+    'カメラが拒否された。システムのアプリ設定で許可するか、「画像から QR」を使ってほしい。',
 } satisfies Strings;

@@ -93,8 +93,6 @@
     <string name="scan_noQr">ในภาพไม่พบรหัส QR ใดเลย</string>
     <string name="scan_unreadable">อ่านภาพไม่ได้ — นี่เป็นภาพจริงหรือ?</string>
     <string name="scan_done">อ่านรหัส QR และใส่ให้แล้ว</string>
-    <string name="scan_camera_unavailable">สภาพแวดล้อมนี้ไม่เปิดให้ใช้กล้อง เมื่อเปิดเป็นไฟล์ (file://) เบราว์เซอร์ส่วนใหญ่จะปิดกั้นไว้ — “QR จากภาพ” ใช้ได้เสมอ</string>
-    <string name="scan_camera_denied">กล้องถูกปฏิเสธ ตั้งค่าสิทธิ์ในเบราว์เซอร์ใหม่ — หรือใช้ “QR จากภาพ”</string>
     <string name="scan_camera_notFound">ไม่มีกล้องเชื่อมต่ออยู่ “QR จากภาพ” ยังใช้ได้</string>
     <string name="scan_camera_busy">ขณะนี้โปรแกรมอื่นกำลังใช้กล้องอยู่</string>
     <string name="scan_camera_failed">เริ่มกล้องไม่ได้ “QR จากภาพ” ใช้ได้เสมอ</string>
@@ -140,4 +138,6 @@
     <string name="err_migration_noAccounts">ในไฟล์ส่งออกนี้ไม่มีบัญชีใดเลย</string>
     <string name="vacant_text">ซีเคร็ต ลิงก์ otpauth หรือรูป QR — ไม่มีสิ่งใดออกจากอุปกรณ์นี้</string>
     <string name="colophon_note">ไม่มีเครือข่าย · ไม่มีที่เก็บ · HMAC ผ่าน javax.crypto</string>
+    <string name="scan_camera_unavailable">อุปกรณ์นี้ไม่เปิดให้ใช้กล้อง — “QR จากภาพ” ใช้ได้เสมอ</string>
+    <string name="scan_camera_denied">กล้องถูกปฏิเสธ ให้สิทธิ์ในการตั้งค่าแอปของระบบ — หรือใช้ “QR จากภาพ”</string>
 </resources>

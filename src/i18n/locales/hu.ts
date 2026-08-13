@@ -196,4 +196,8 @@ export default {
     'Secret, otpauth-hivatkozás vagy QR-kép — semmi sem hagyja el ezt az eszközt.',
 
   'native.colophon.note': 'Nincs hálózat · nincs tárolás · HMAC a javax.crypto-n keresztül',
+
+  'native.scan.camera.unavailable': 'Ez az eszköz nem ad kamerát — a „QR képből” mindig működik.',
+  'native.scan.camera.denied':
+    'A kamera elutasítva. Engedélyezze a rendszer alkalmazásbeállításaiban — vagy használja a „QR képből” gombot.',
 } satisfies Strings;

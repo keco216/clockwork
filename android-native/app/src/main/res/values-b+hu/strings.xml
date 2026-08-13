@@ -98,8 +98,6 @@
     <string name="scan_noQr">A képen nem volt felismerhető QR-kód.</string>
     <string name="scan_unreadable">A képet nem sikerült beolvasni — tényleg kép ez?</string>
     <string name="scan_done">QR-kód beolvasva és beillesztve.</string>
-    <string name="scan_camera_unavailable">Ez a környezet nem ad kamerát. Fájlként megnyitva (file://) a legtöbb böngésző letiltja — a „QR képből” mindig működik.</string>
-    <string name="scan_camera_denied">A kamera elutasítva. Állítsa vissza az engedélyt a böngészőben — vagy használja a „QR képből” gombot.</string>
     <string name="scan_camera_notFound">Nincs csatlakoztatott kamera. A „QR képből” így is működik.</string>
     <string name="scan_camera_busy">A kamerát éppen egy másik program használja.</string>
     <string name="scan_camera_failed">A kamerát nem sikerült elindítani. A „QR képből” mindig működik.</string>
@@ -146,4 +144,6 @@
     <string name="err_migration_noAccounts">Ebben az exportban nincsenek fiókok.</string>
     <string name="vacant_text">Secret, otpauth-hivatkozás vagy QR-kép — semmi sem hagyja el ezt az eszközt.</string>
     <string name="colophon_note">Nincs hálózat · nincs tárolás · HMAC a javax.crypto-n keresztül</string>
+    <string name="scan_camera_unavailable">Ez az eszköz nem ad kamerát — a „QR képből” mindig működik.</string>
+    <string name="scan_camera_denied">A kamera elutasítva. Engedélyezze a rendszer alkalmazásbeállításaiban — vagy használja a „QR képből” gombot.</string>
 </resources>

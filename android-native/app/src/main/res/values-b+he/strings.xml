@@ -108,8 +108,6 @@
     <string name="scan_noQr">בתמונה לא זוהה שום קוד QR.</string>
     <string name="scan_unreadable">לא הצלחנו לקרוא את התמונה — זו באמת תמונה?</string>
     <string name="scan_done">קוד ה‑QR נקרא והוכנס.</string>
-    <string name="scan_camera_unavailable">הסביבה הזאת אינה מוסרת מצלמה. בפתיחה כקובץ ‏(file://)‎ רוב הדפדפנים חוסמים אותה — „QR מתמונה” עובד תמיד.</string>
-    <string name="scan_camera_denied">המצלמה נדחתה. אפסו את ההרשאה בדפדפן — או השתמשו ב„QR מתמונה”.</string>
     <string name="scan_camera_notFound">אין מצלמה מחוברת. „QR מתמונה” עובד בכל זאת.</string>
     <string name="scan_camera_busy">המצלמה תפוסה כרגע בידי תוכנה אחרת.</string>
     <string name="scan_camera_failed">לא הצלחנו להפעיל את המצלמה. „QR מתמונה” עובד תמיד.</string>
@@ -158,4 +156,6 @@
     <string name="err_migration_noAccounts">בייצוא הזה אין שום חשבון.</string>
     <string name="vacant_text">סוד, קישור otpauth או תמונת QR — דבר מאלה אינו עוזב את המכשיר הזה.</string>
     <string name="colophon_note">בלי רשת · בלי אחסון · HMAC דרך javax.crypto</string>
+    <string name="scan_camera_unavailable">המכשיר הזה אינו מוסר מצלמה — „QR מתמונה” עובד תמיד.</string>
+    <string name="scan_camera_denied">המצלמה נדחתה. אפשרו את ההרשאה בהגדרות האפליקציה של המערכת — או השתמשו ב„QR מתמונה”.</string>
 </resources>

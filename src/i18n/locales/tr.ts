@@ -195,4 +195,8 @@ export default {
     'Secret, otpauth bağlantısı veya QR görüntüsü — hiçbiri bu cihazdan çıkmaz.',
 
   'native.colophon.note': 'Ağ yok · depolama yok · HMAC, javax.crypto üzerinden',
+
+  'native.scan.camera.unavailable': 'Bu cihaz kamera vermiyor — “Görselden QR” her zaman çalışır.',
+  'native.scan.camera.denied':
+    'Kameraya izin verilmedi. İzni sistemin uygulama ayarlarından verin — ya da “Görselden QR” kullanın.',
 } satisfies Strings;

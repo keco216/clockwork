@@ -98,8 +98,6 @@
     <string name="scan_noQr">Der var ingen QR-kode at se på billedet.</string>
     <string name="scan_unreadable">Billedet kunne ikke læses — er det virkelig et billede?</string>
     <string name="scan_done">QR-koden læst og indsat.</string>
-    <string name="scan_camera_unavailable">Dette miljø giver ikke adgang til noget kamera. Åbnet som fil (file://) spærrer de fleste browsere for det — »QR fra billede« virker altid.</string>
-    <string name="scan_camera_denied">Kameraet blev afvist. Nulstil tilladelsen i browseren — eller brug »QR fra billede«.</string>
     <string name="scan_camera_notFound">Der er intet kamera tilsluttet. »QR fra billede« virker alligevel.</string>
     <string name="scan_camera_busy">Kameraet bruges lige nu af et andet program.</string>
     <string name="scan_camera_failed">Kameraet kunne ikke startes. »QR fra billede« virker altid.</string>
@@ -146,4 +144,6 @@
     <string name="err_migration_noAccounts">I denne eksport er der ingen konti.</string>
     <string name="vacant_text">Secret, otpauth-link eller QR-billede — intet af det forlader denne enhed.</string>
     <string name="colophon_note">Intet netværk · intet lager · HMAC via javax.crypto</string>
+    <string name="scan_camera_unavailable">Denne enhed giver ikke adgang til noget kamera — »QR fra billede« virker altid.</string>
+    <string name="scan_camera_denied">Kameraet blev afvist. Giv tilladelsen i systemets app-indstillinger — eller brug »QR fra billede«.</string>
 </resources>

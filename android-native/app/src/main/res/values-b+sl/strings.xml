@@ -108,8 +108,6 @@
     <string name="scan_noQr">Na sliki ni bilo mogoče prepoznati nobene kode QR.</string>
     <string name="scan_unreadable">Slike ni bilo mogoče prebrati — je to res slika?</string>
     <string name="scan_done">Koda QR prebrana in vstavljena.</string>
-    <string name="scan_camera_unavailable">To okolje ne da kamere na voljo. Ob odprtju kot datoteka (file://) jo večina brskalnikov zapre — „QR iz slike“ deluje vedno.</string>
-    <string name="scan_camera_denied">Kamera je bila zavrnjena. Ponastavite dovoljenje v brskalniku — ali uporabite „QR iz slike“.</string>
     <string name="scan_camera_notFound">Nobena kamera ni priključena. „QR iz slike“ deluje kljub temu.</string>
     <string name="scan_camera_busy">Kamero trenutno uporablja drug program.</string>
     <string name="scan_camera_failed">Kamere ni bilo mogoče zagnati. „QR iz slike“ deluje vedno.</string>
@@ -158,4 +156,6 @@
     <string name="err_migration_noAccounts">V tem izvozu ni nobenega računa.</string>
     <string name="vacant_text">Skrivnost, povezava otpauth ali slika QR — nič od tega ne zapusti te naprave.</string>
     <string name="colophon_note">Brez omrežja · brez shrambe · HMAC prek javax.crypto</string>
+    <string name="scan_camera_unavailable">Ta naprava ne da kamere na voljo — „QR iz slike“ deluje vedno.</string>
+    <string name="scan_camera_denied">Kamera je bila zavrnjena. Dovolite jo v sistemskih nastavitvah aplikacije — ali uporabite „QR iz slike“.</string>
 </resources>

@@ -108,8 +108,6 @@
     <string name="scan_noQr">На зображенні не вдалося розібрати жодного QR-коду.</string>
     <string name="scan_unreadable">Зображення не вдалося прочитати — це точно зображення?</string>
     <string name="scan_done">QR-код прочитано і вставлено.</string>
-    <string name="scan_camera_unavailable">Це середовище не видає камеру. При відкритті як файла (file://) більшість браузерів її блокують — «QR із зображення» працює завжди.</string>
-    <string name="scan_camera_denied">У камері відмовлено. Скиньте дозвіл у браузері — або візьміть «QR із зображення».</string>
     <string name="scan_camera_notFound">Камеру не під’єднано. «QR із зображення» працює і так.</string>
     <string name="scan_camera_busy">Камеру зараз займає інша програма.</string>
     <string name="scan_camera_failed">Камеру не вдалося запустити. «QR із зображення» працює завжди.</string>
@@ -158,4 +156,6 @@
     <string name="err_migration_noAccounts">У цьому вивантаженні немає жодного облікового запису.</string>
     <string name="vacant_text">Секрет, посилання otpauth або зображення QR — ніщо з цього не залишає пристрій.</string>
     <string name="colophon_note">Жодної мережі · жодного сховища · HMAC через javax.crypto</string>
+    <string name="scan_camera_unavailable">Цей пристрій не видає камеру — «QR із зображення» працює завжди.</string>
+    <string name="scan_camera_denied">У камері відмовлено. Надайте дозвіл у системних налаштуваннях застосунку — або візьміть «QR із зображення».</string>
 </resources>

@@ -6,12 +6,30 @@
     Betriebssystem-Ebene keine Verbindung oeffnen — dieselbe Zusage wie
     `connect-src 'none'` in der Web-Fassung, nur eine Schicht tiefer und fuer
     jeden mit `aapt2 dump badging` nachpruefbar.
-  * Keine Berechtigung ueberhaupt, solange die Kamera nicht da ist. CAMERA
-    kommt in P6 dazu, zusammen mit beiden `uses-feature required="false"` —
-    die Berechtigung allein macht `android.hardware.camera` sonst
-    stillschweigend zur Installationsbedingung (gemessene Falle aus 1.x).
+  * CAMERA ist die EINZIGE Berechtigung (seit P6), ausschliesslich fuer den
+    QR-Sucher — und sie ist zur Laufzeit freiwillig. „QR aus Bild" laeuft
+    ueber den Photo Picker und braucht keine Speicher-Berechtigung.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!--
+      BEIDE Feature-Namen ausdruecklich freigestellt — die gemessene Falle aus
+      1.x: Die CAMERA-Berechtigung allein leitet ein implizites
+      `uses-feature android.hardware.camera required=true` ab, und ein
+      required="false" nur an `camera.any` deckt das NICHT. Ohne diese zwei
+      Zeilen waere die Kamera stillschweigend Installationsbedingung, und die
+      App verschwaende auf Geraeten ohne Kamera aus dem Katalog. Nach jedem
+      Anfassen: `aapt2 dump badging` — dort muss beides als
+      `uses-feature-not-required` stehen.
+    -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
 
     <!--
       Das Launcher-Icon fehlt hier noch mit Absicht — das Markenzeichen kommt

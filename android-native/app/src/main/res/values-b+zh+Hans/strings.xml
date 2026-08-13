@@ -93,8 +93,6 @@
     <string name="scan_noQr">图片里认不出二维码。</string>
     <string name="scan_unreadable">图片读不出来 —— 这真是一张图片吗？</string>
     <string name="scan_done">二维码已读取并填入。</string>
-    <string name="scan_camera_unavailable">这个环境不提供摄像头。以文件方式打开时（file://），多数浏览器会封锁它 ——“从图片读二维码”始终可用。</string>
-    <string name="scan_camera_denied">摄像头被拒绝。请在浏览器里重置权限，或改用“从图片读二维码”。</string>
     <string name="scan_camera_notFound">没有接上摄像头。“从图片读二维码”照样可用。</string>
     <string name="scan_camera_busy">摄像头正被另一个程序占用。</string>
     <string name="scan_camera_failed">摄像头启动不了。“从图片读二维码”始终可用。</string>
@@ -140,4 +138,6 @@
     <string name="err_migration_noAccounts">这份导出里没有任何账户。</string>
     <string name="vacant_text">密钥、otpauth 链接或二维码图片——都不会离开这个设备。</string>
     <string name="colophon_note">无网络 · 无存储 · HMAC 经由 javax.crypto</string>
+    <string name="scan_camera_unavailable">这个设备不提供摄像头 ——“从图片读二维码”始终可用。</string>
+    <string name="scan_camera_denied">摄像头被拒绝。请在系统的应用设置里授予权限，或改用“从图片读二维码”。</string>
 </resources>

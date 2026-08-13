@@ -118,8 +118,6 @@
     <string name="scan_noQr">لم يُميَّز أي رمز QR في الصورة.</string>
     <string name="scan_unreadable">تعذّرت قراءة الصورة — أهي صورة حقًا؟</string>
     <string name="scan_done">قُرئ رمز QR وأُدرج.</string>
-    <string name="scan_camera_unavailable">هذه البيئة لا تتيح كاميرا. وعند فتح الملف مباشرة (file://) تحجبها أغلب المتصفحات — أما «QR من صورة» فيعمل دائمًا.</string>
-    <string name="scan_camera_denied">رُفضت الكاميرا. أعِد ضبط الإذن في المتصفح — أو استعمل «QR من صورة».</string>
     <string name="scan_camera_notFound">لا كاميرا موصولة. و«QR من صورة» يعمل على أي حال.</string>
     <string name="scan_camera_busy">الكاميرا مشغولة الآن ببرنامج آخر.</string>
     <string name="scan_camera_failed">تعذّر تشغيل الكاميرا. و«QR من صورة» يعمل دائمًا.</string>
@@ -170,4 +168,6 @@
     <string name="err_migration_noAccounts">لا حسابات في هذه الصادرات.</string>
     <string name="vacant_text">سر أو رابط otpauth أو صورة QR — لا شيء من ذلك يغادر هذا الجهاز.</string>
     <string name="colophon_note">لا شبكة · لا تخزين · HMAC عبر javax.crypto</string>
+    <string name="scan_camera_unavailable">هذا الجهاز لا يتيح كاميرا — أما «QR من صورة» فيعمل دائمًا.</string>
+    <string name="scan_camera_denied">رُفضت الكاميرا. امنح الإذن من إعدادات التطبيق في النظام — أو استعمل «QR من صورة».</string>
 </resources>

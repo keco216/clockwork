@@ -93,8 +93,6 @@
     <string name="scan_noQr">Tidak ada kode QR yang terbaca pada gambar.</string>
     <string name="scan_unreadable">Gambar tidak bisa dibaca — apakah itu memang gambar?</string>
     <string name="scan_done">Kode QR terbaca dan disisipkan.</string>
-    <string name="scan_camera_unavailable">Lingkungan ini tidak memberikan kamera. Ketika dibuka sebagai berkas (file://), kebanyakan peramban memblokirnya — “QR dari gambar” selalu berhasil.</string>
-    <string name="scan_camera_denied">Kamera ditolak. Atur ulang izinnya di peramban — atau pakai “QR dari gambar”.</string>
     <string name="scan_camera_notFound">Tidak ada kamera yang tersambung. “QR dari gambar” tetap berhasil.</string>
     <string name="scan_camera_busy">Kamera sedang dipakai program lain.</string>
     <string name="scan_camera_failed">Kamera tidak bisa dijalankan. “QR dari gambar” selalu berhasil.</string>
@@ -140,4 +138,6 @@
     <string name="err_migration_noAccounts">Tidak ada akun di dalam ekspor ini.</string>
     <string name="vacant_text">Secret, tautan otpauth, atau gambar QR — tidak ada yang meninggalkan perangkat ini.</string>
     <string name="colophon_note">Tanpa jaringan · tanpa penyimpanan · HMAC lewat javax.crypto</string>
+    <string name="scan_camera_unavailable">Perangkat ini tidak memberikan kamera — “QR dari gambar” selalu berhasil.</string>
+    <string name="scan_camera_denied">Kamera ditolak. Izinkan di setelan aplikasi pada sistem — atau pakai “QR dari gambar”.</string>
 </resources>

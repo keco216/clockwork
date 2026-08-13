@@ -201,4 +201,9 @@ export default {
   'native.vacant.text': 'Secret, link otpauth ou imagem QR — nada disso sai deste dispositivo.',
 
   'native.colophon.note': 'Sem rede · sem armazenamento · HMAC por javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Este dispositivo não libera nenhuma câmera — “QR a partir de imagem” sempre funciona.',
+  'native.scan.camera.denied':
+    'A câmera foi negada. Conceda a permissão nas configurações do aplicativo no sistema — ou use “QR a partir de imagem”.',
 } satisfies Strings;

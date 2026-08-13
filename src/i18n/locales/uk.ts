@@ -219,4 +219,9 @@ export default {
     'Секрет, посилання otpauth або зображення QR — ніщо з цього не залишає пристрій.',
 
   'native.colophon.note': 'Жодної мережі · жодного сховища · HMAC через javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Цей пристрій не видає камеру — «QR із зображення» працює завжди.',
+  'native.scan.camera.denied':
+    'У камері відмовлено. Надайте дозвіл у системних налаштуваннях застосунку — або візьміть «QR із зображення».',
 } satisfies Strings;

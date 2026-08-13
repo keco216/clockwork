@@ -307,8 +307,11 @@ describe('stripNativeKeys()', () => {
     // Genau EINE Menge — alle 37 Dateien tragen dieselben Schlüssel, das
     // erzwingt der Compiler. Die Liste steht hier ausgeschrieben und nicht
     // als Länge: Ein neuer `native.`-Schlüssel soll diesen Test anfassen
-    // müssen, damit niemand einen dritten einführt, ohne ihn zu bemerken.
-    expect([...sets]).toEqual(['native.colophon.note,native.vacant.text']);
+    // müssen, damit niemand einen weiteren einführt, ohne ihn zu bemerken.
+    expect([...sets]).toEqual([
+      'native.colophon.note,native.scan.camera.denied,' +
+        'native.scan.camera.unavailable,native.vacant.text',
+    ]);
   });
 });
 

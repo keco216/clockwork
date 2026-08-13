@@ -93,8 +93,6 @@
     <string name="scan_noQr">圖片裡認不出 QR 碼。</string>
     <string name="scan_unreadable">圖片讀不出來 —— 這真的是一張圖片嗎？</string>
     <string name="scan_done">QR 碼已讀取並填入。</string>
-    <string name="scan_camera_unavailable">這個環境不提供相機。以檔案方式開啟時（file://），多數瀏覽器會封鎖它 ——「從圖片讀 QR 碼」始終可用。</string>
-    <string name="scan_camera_denied">相機遭到拒絕。請在瀏覽器裡重設權限，或改用「從圖片讀 QR 碼」。</string>
     <string name="scan_camera_notFound">沒有接上相機。「從圖片讀 QR 碼」照樣可用。</string>
     <string name="scan_camera_busy">相機正被另一個程式占用。</string>
     <string name="scan_camera_failed">相機啟動不了。「從圖片讀 QR 碼」始終可用。</string>
@@ -140,4 +138,6 @@
     <string name="err_migration_noAccounts">這份匯出裡沒有任何帳戶。</string>
     <string name="vacant_text">密鑰、otpauth 連結或 QR 圖片——都不會離開這個裝置。</string>
     <string name="colophon_note">無網路 · 無儲存 · HMAC 經由 javax.crypto</string>
+    <string name="scan_camera_unavailable">這個裝置不提供相機 ——「從圖片讀 QR 碼」始終可用。</string>
+    <string name="scan_camera_denied">相機遭到拒絕。請在系統的應用程式設定裡授予權限，或改用「從圖片讀 QR 碼」。</string>
 </resources>

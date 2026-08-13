@@ -103,8 +103,6 @@
     <string name="scan_noQr">Attēlā nebija saskatāms neviens QR kods.</string>
     <string name="scan_unreadable">Attēlu neizdevās nolasīt — vai tas tiešām ir attēls?</string>
     <string name="scan_done">QR kods nolasīts un ievietots.</string>
-    <string name="scan_camera_unavailable">Šī vide neatdod kameru. Atverot kā datni (file://), lielākā daļa pārlūku to bloķē — „QR no attēla“ darbojas vienmēr.</string>
-    <string name="scan_camera_denied">Kamera tika atteikta. Atiestatiet atļauju pārlūkā — vai izmantojiet „QR no attēla“.</string>
     <string name="scan_camera_notFound">Nav pieslēgta neviena kamera. „QR no attēla“ darbojas tik un tā.</string>
     <string name="scan_camera_busy">Kameru pašlaik izmanto cita programma.</string>
     <string name="scan_camera_failed">Kameru neizdevās palaist. „QR no attēla“ darbojas vienmēr.</string>
@@ -152,4 +150,6 @@
     <string name="err_migration_noAccounts">Šajā eksportā nav neviena konta.</string>
     <string name="vacant_text">Noslēpums, otpauth saite vai QR attēls — nekas no tā neatstāj šo ierīci.</string>
     <string name="colophon_note">Bez tīkla · bez krātuves · HMAC caur javax.crypto</string>
+    <string name="scan_camera_unavailable">Šī ierīce kameru neatdod — „QR no attēla“ darbojas vienmēr.</string>
+    <string name="scan_camera_denied">Kamera tika atteikta. Piešķiriet atļauju lietotnes iestatījumos sistēmā — vai izmantojiet „QR no attēla“.</string>
 </resources>

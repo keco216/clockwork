@@ -98,8 +98,6 @@
     <string name="scan_noQr">No QR code could be made out in the image.</string>
     <string name="scan_unreadable">The image could not be read — is it really an image?</string>
     <string name="scan_done">QR code read and inserted.</string>
-    <string name="scan_camera_unavailable">This environment does not hand out a camera. When opened as a file (file://) most browsers block it — “QR from image” always works.</string>
-    <string name="scan_camera_denied">The camera was denied. Reset the permission in the browser — or use “QR from image”.</string>
     <string name="scan_camera_notFound">No camera is connected. “QR from image” works all the same.</string>
     <string name="scan_camera_busy">The camera is currently in use by another program.</string>
     <string name="scan_camera_failed">The camera could not be started. “QR from image” always works.</string>
@@ -146,4 +144,6 @@
     <string name="err_migration_noAccounts">There are no accounts in this export.</string>
     <string name="vacant_text">Secret, otpauth link or QR image — none of it leaves this device.</string>
     <string name="colophon_note">No network · no storage · HMAC via javax.crypto</string>
+    <string name="scan_camera_unavailable">This device does not hand out a camera — “QR from image” always works.</string>
+    <string name="scan_camera_denied">The camera was denied. Allow it in the system’s app settings — or use “QR from image”.</string>
 </resources>

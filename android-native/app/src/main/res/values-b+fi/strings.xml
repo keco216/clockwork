@@ -98,8 +98,6 @@
     <string name="scan_noQr">Kuvasta ei erottunut yhtään QR-koodia.</string>
     <string name="scan_unreadable">Kuvaa ei voitu lukea — onko se todella kuva?</string>
     <string name="scan_done">QR-koodi luettu ja lisätty.</string>
-    <string name="scan_camera_unavailable">Tämä ympäristö ei anna kameraa käyttöön. Tiedostona avattaessa (file://) useimmat selaimet estävät sen — ”QR kuvasta” toimii aina.</string>
-    <string name="scan_camera_denied">Kamerasta kieltäydyttiin. Nollaa lupa selaimessa — tai käytä toimintoa ”QR kuvasta”.</string>
     <string name="scan_camera_notFound">Kameraa ei ole kytketty. ”QR kuvasta” toimii silti.</string>
     <string name="scan_camera_busy">Kamera on juuri nyt toisen ohjelman käytössä.</string>
     <string name="scan_camera_failed">Kameraa ei saatu käyntiin. ”QR kuvasta” toimii aina.</string>
@@ -146,4 +144,6 @@
     <string name="err_migration_noAccounts">Tässä viennissä ei ole yhtään tiliä.</string>
     <string name="vacant_text">Secret, otpauth-linkki tai QR-kuva — mikään niistä ei poistu tästä laitteesta.</string>
     <string name="colophon_note">Ei verkkoa · ei tallennusta · HMAC javax.crypto:n kautta</string>
+    <string name="scan_camera_unavailable">Tämä laite ei anna kameraa käyttöön — ”QR kuvasta” toimii aina.</string>
+    <string name="scan_camera_denied">Kamerasta kieltäydyttiin. Myönnä lupa järjestelmän sovellusasetuksissa — tai käytä toimintoa ”QR kuvasta”.</string>
 </resources>

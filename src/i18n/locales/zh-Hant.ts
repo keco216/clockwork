@@ -182,4 +182,8 @@ export default {
   'native.vacant.text': '密鑰、otpauth 連結或 QR 圖片——都不會離開這個裝置。',
 
   'native.colophon.note': '無網路 · 無儲存 · HMAC 經由 javax.crypto',
+
+  'native.scan.camera.unavailable': '這個裝置不提供相機 ——「從圖片讀 QR 碼」始終可用。',
+  'native.scan.camera.denied':
+    '相機遭到拒絕。請在系統的應用程式設定裡授予權限，或改用「從圖片讀 QR 碼」。',
 } satisfies Strings;

@@ -149,3 +149,71 @@ System-Einstellung — er lässt sich über `adb` nicht zuverlässig setzen. Die
 Monochrom-Ebene liegt gemessen im APK und ist formgleich zur
 Vordergrund-Ebene; ihre Darstellung im Launcher bleibt ungeprüft und ist
 hiermit benannt statt behauptet.
+
+## P6 — Kamera und QR: der echte Scan, zweimal bewiesen
+
+### Der Kamera-Weg, am Emulator mit Virtual Scene
+
+Die Beweisidee aus dem Auftrag: Die Virtual-Scene-Kamera des Emulators zeigt
+ein Posterbild an der Bildwand — tauscht man `emulator/resources/poster.png`
+gegen einen QR-Code, scannt die App ein ECHTES Kamerabild, ohne dass ein
+Gerät auf ein Blatt Papier zielen muss. Den Weg zur Wand fährt das
+mitgelieferte Makro (`adb emu automation play <resources>/macros/Walk_to_image_room`
+— der Name allein wird abgelehnt, es braucht den vollen Pfad); zurück geht es
+mit `Reset_position`. Das AVD steht dafür seit P6 auf
+`hw.camera.back=virtualscene` (das Startflag `-camera-back virtualscene`
+übersteuert die config.ini NICHT — gemessen, es kam weiter das alte
+Testmuster).
+
+| Datei                        | Was es zeigt                                                                                                          |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `p6-leerzustand-tasten.png`  | Leerbühne mit dem V10-Zweiergitter „QR aus Bild" / „Kamera" unter dem Testschlüssel                                   |
+| `p6-berechtigung-dialog.png` | Der System-Berechtigungsdialog nach dem ersten Kamera-Tipp                                                            |
+| `p6-kamera-abgelehnt.png`    | Nach „Don't allow": die Meldungszeile mit dem NATIVEN Satz — Wegweiser auf die App-Einstellungen, kein Browser-Text   |
+| `p6-sucher-virtualscene.png` | Der Sucher: vier Signal-Winkel (18 dp, 2 dp Strich, 16 dp Einzug) über dem echten Kamerabild des Virtual-Scene-Zimmers |
+| `p6-scan-treffer.png`        | Nach dem Makro-Gang zur Posterwand: Scan ausgelöst, Kanalzug „Clockwork / proof", Meldung „QR-Code gelesen und eingesetzt." |
+| `p6-scan-uri-im-feld.png`    | Die Schublade danach: die gescannte otpauth-URI steht WÖRTLICH im Textfeld — kein stilles Konten-Anlegen              |
+
+Der gescannte Code ist unabhängig nachgerechnet (RFC-4226-Testschlüssel im
+Poster-QR, Gerätezeit per `adb shell date +%s`):
+
+| Gerätezeit | Zähler   | App zeigt                      | `node -e` rechnet      |
+| ---------- | -------- | ------------------------------ | ---------------------- |
+| 1786660874 | 59555362 | 862 376 · folgt 403 346 · 16 s | 862376 / 403346 / 16 s |
+
+### Der Bild-Weg: Photo Picker und Migration
+
+| Datei                      | Was es zeigt                                                                                                      |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `p6-photo-picker.png`      | Der System-Picker über der App: „Clockwork will only have access to the photos you select" — keine Speicher-Berechtigung |
+| `p6-import-expandiert.png` | Nach der Wahl des Migrations-QR: Kanalzug „Example / alice@google.com", Meldung „1 Konto aus Google-Authenticator-Export übernommen" |
+
+Das gewählte Bild ist der dokumentierte Google-Authenticator-Beispiel-Export
+als QR (dasselbe PNG liegt als Test-Fixture unter `app/src/test/resources/scan/`,
+erzeugt vom npm-Encoder `qrcode` 1.5.4 — ein Encoder, der mit ZXing keine
+Zeile teilt). Auch hier ist der Code nachgerechnet:
+
+| Gerätezeit | Zähler   | App zeigt                     | `node -e` rechnet     |
+| ---------- | -------- | ----------------------------- | --------------------- |
+| 1786661454 | 59555381 | 854 808 · folgt 653 848 · 6 s | 854808 / 653848 / 6 s |
+
+### Das S24, nebenbei: Dunkelmodus und eine Sprachstichprobe
+
+| Datei                           | Was es zeigt                                                                                                 |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `p6-s24-leerzustand-dunkel.png` | Die Leerbühne auf dem Galaxy S24 Ultra: Dunkelmodus, Deutsch, das Zweiergitter — der echte Prüfstand         |
+| `p6-s24-daenische-ableitung.png`| Die Listbox nach einem Fehltipp auf „Dansk": der abgeleitete dänische Leersatz („… intet af det forlader denne enhed") sitzt |
+
+### Was benannt bleibt statt behauptet
+
+- **Die Fokus-Rückgabe bei „Kamera aus"** ist wörtlich nach der Web-Regel
+  gebaut (nur wenn der Fokus im Sucher lag, kehrt er zum Kamera-Knopf
+  zurück) — ein sauberer Tastatur-Beweis am Emulator ist an der Fragilität
+  des Messaufbaus gescheitert (TAB landet als Zeichen im mehrzeiligen Feld;
+  die Sitzung riss dabei zweimal System-UI auf). Der Weg steht in
+  `ui/Scan.kt` samt Begründung; nachgeholt wird die Sichtprobe, sobald ein
+  Lauf mit Hardware-Tastatur ansteht.
+- **Bewegung reduzieren:** P6 bringt keine einzige neue Eigenbewegung mit —
+  der Sucher erscheint ohne Fahrt (wie im Web, wo er ein `hidden`-Umschalter
+  ist), und die Meldungszeilen benutzen den in P5 mit Gegenprobe gemessenen
+  Live-Region-Mechanismus. Es gibt hier nichts Neues zu messen.

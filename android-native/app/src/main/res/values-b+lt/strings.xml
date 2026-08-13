@@ -108,8 +108,6 @@
     <string name="scan_noQr">Paveiksle nepavyko atpažinti nė vieno QR kodo.</string>
     <string name="scan_unreadable">Paveikslo nepavyko perskaityti — ar tai tikrai paveikslas?</string>
     <string name="scan_done">QR kodas perskaitytas ir įterptas.</string>
-    <string name="scan_camera_unavailable">Ši aplinka kameros neatiduoda. Atvėrus kaip failą (file://) dauguma naršyklių ją užblokuoja — „QR iš paveikslo“ veikia visada.</string>
-    <string name="scan_camera_denied">Kameros neleista. Atstatykite leidimą naršyklėje — arba naudokite „QR iš paveikslo“.</string>
     <string name="scan_camera_notFound">Nėra prijungtos kameros. „QR iš paveikslo“ vis tiek veikia.</string>
     <string name="scan_camera_busy">Kamerą kaip tik naudoja kita programa.</string>
     <string name="scan_camera_failed">Kameros nepavyko paleisti. „QR iš paveikslo“ veikia visada.</string>
@@ -158,4 +156,6 @@
     <string name="err_migration_noAccounts">Šiame eksporte nėra nė vienos paskyros.</string>
     <string name="vacant_text">Slaptas raktas, otpauth nuoroda ar QR paveikslėlis — niekas iš to neišeina iš šio įrenginio.</string>
     <string name="colophon_note">Jokio tinklo · jokios saugyklos · HMAC per javax.crypto</string>
+    <string name="scan_camera_unavailable">Šis įrenginys kameros neatiduoda — „QR iš paveikslo“ veikia visada.</string>
+    <string name="scan_camera_denied">Kameros neleista. Suteikite leidimą programos nustatymuose sistemoje — arba naudokite „QR iš paveikslo“.</string>
 </resources>

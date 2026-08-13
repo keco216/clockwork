@@ -214,4 +214,8 @@ export default {
   'native.vacant.text': 'סוד, קישור otpauth או תמונת QR — דבר מאלה אינו עוזב את המכשיר הזה.',
 
   'native.colophon.note': 'בלי רשת · בלי אחסון · HMAC דרך javax.crypto',
+
+  'native.scan.camera.unavailable': 'המכשיר הזה אינו מוסר מצלמה — „QR מתמונה” עובד תמיד.',
+  'native.scan.camera.denied':
+    'המצלמה נדחתה. אפשרו את ההרשאה בהגדרות האפליקציה של המערכת — או השתמשו ב„QR מתמונה”.',
 } satisfies Strings;

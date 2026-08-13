@@ -181,4 +181,8 @@ export default {
   'native.vacant.text': '密钥、otpauth 链接或二维码图片——都不会离开这个设备。',
 
   'native.colophon.note': '无网络 · 无存储 · HMAC 经由 javax.crypto',
+
+  'native.scan.camera.unavailable': '这个设备不提供摄像头 ——“从图片读二维码”始终可用。',
+  'native.scan.camera.denied':
+    '摄像头被拒绝。请在系统的应用设置里授予权限，或改用“从图片读二维码”。',
 } satisfies Strings;

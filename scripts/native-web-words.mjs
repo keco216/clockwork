@@ -59,20 +59,6 @@ export const WEB_WORDS = [
  */
 export const ALLOWED = new Map([
   [
-    'scan.camera.unavailable',
-    {
-      words: ['browser', 'file://'],
-      reason: 'P6 — native.scan.camera.unavailable; nativ gibt es kein file://',
-    },
-  ],
-  [
-    'scan.camera.denied',
-    {
-      words: ['browser'],
-      reason: 'P6 — native.scan.camera.denied verweist auf die App-Einstellungen',
-    },
-  ],
-  [
     'vault.error.storageBlocked',
     {
       words: ['browser'],

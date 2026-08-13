@@ -108,8 +108,6 @@
     <string name="scan_noQr">Na obrazie nie udało się rozpoznać żadnego kodu QR.</string>
     <string name="scan_unreadable">Nie udało się odczytać obrazu — czy to na pewno obraz?</string>
     <string name="scan_done">Kod QR odczytany i wstawiony.</string>
-    <string name="scan_camera_unavailable">To środowisko nie udostępnia kamery. Przy otwarciu jako plik (file://) większość przeglądarek ją blokuje — „QR z obrazu” działa zawsze.</string>
-    <string name="scan_camera_denied">Odmówiono dostępu do kamery. Zresetuj uprawnienie w przeglądarce — albo użyj „QR z obrazu”.</string>
     <string name="scan_camera_notFound">Nie podłączono żadnej kamery. „QR z obrazu” i tak działa.</string>
     <string name="scan_camera_busy">Kamera jest właśnie używana przez inny program.</string>
     <string name="scan_camera_failed">Nie udało się uruchomić kamery. „QR z obrazu” działa zawsze.</string>
@@ -158,4 +156,6 @@
     <string name="err_migration_noAccounts">W tym eksporcie nie ma żadnych kont.</string>
     <string name="vacant_text">Secret, link otpauth albo obraz QR — nic z tego nie opuszcza tego urządzenia.</string>
     <string name="colophon_note">Bez sieci · bez zapisu · HMAC przez javax.crypto</string>
+    <string name="scan_camera_unavailable">To urządzenie nie udostępnia kamery — „QR z obrazu” działa zawsze.</string>
+    <string name="scan_camera_denied">Odmówiono dostępu do kamery. Przyznaj uprawnienie w ustawieniach aplikacji w systemie — albo użyj „QR z obrazu”.</string>
 </resources>

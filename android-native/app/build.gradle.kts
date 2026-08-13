@@ -151,6 +151,22 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)
 
+    /* Kamera und QR (P6). CameraX ist Plattform-Infrastruktur wie der Rest von
+       androidx: Preview + ImageAnalysis ersetzen getUserMedia + Canvas der
+       Web-Fassung. camera-view liefert die PreviewView — Compose bettet sie
+       ueber AndroidView ein; das offizielle camera-compose-Artefakt ist noch
+       Alpha und faellt damit aus (nur stabile Fassungen, wie ueberall hier).
+
+       ZXing core ist das native Gegenstueck zu jsQR: pures Java, Apache-2.0,
+       keine Play-Services-Bindung — es sieht Pixel und liefert Text, die
+       OTP-Rechnung bleibt vollstaendig die eigene. ML Kit waere bequemer und
+       ist proprietaer; ausgeschlossen. */
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.zxing.core)
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
 }

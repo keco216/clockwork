@@ -93,8 +93,6 @@
     <string name="scan_noQr">Không nhận ra mã QR nào trong ảnh.</string>
     <string name="scan_unreadable">Không đọc được ảnh — đây có thật là ảnh không?</string>
     <string name="scan_done">Đã đọc mã QR và chèn vào.</string>
-    <string name="scan_camera_unavailable">Môi trường này không cấp máy ảnh. Khi mở dưới dạng tệp (file://) phần lớn trình duyệt chặn nó — “QR từ ảnh” thì lúc nào cũng chạy.</string>
-    <string name="scan_camera_denied">Máy ảnh bị từ chối. Hãy đặt lại quyền trong trình duyệt — hoặc dùng “QR từ ảnh”.</string>
     <string name="scan_camera_notFound">Không có máy ảnh nào được nối. “QR từ ảnh” vẫn chạy.</string>
     <string name="scan_camera_busy">Máy ảnh đang được một chương trình khác dùng.</string>
     <string name="scan_camera_failed">Không khởi động được máy ảnh. “QR từ ảnh” lúc nào cũng chạy.</string>
@@ -140,4 +138,6 @@
     <string name="err_migration_noAccounts">Trong bản xuất này không có tài khoản nào.</string>
     <string name="vacant_text">Secret, liên kết otpauth hoặc ảnh QR — không có gì rời khỏi thiết bị này.</string>
     <string name="colophon_note">Không mạng · không lưu trữ · HMAC qua javax.crypto</string>
+    <string name="scan_camera_unavailable">Thiết bị này không cấp máy ảnh — “QR từ ảnh” thì lúc nào cũng chạy.</string>
+    <string name="scan_camera_denied">Máy ảnh bị từ chối. Hãy cấp quyền trong cài đặt ứng dụng của hệ thống — hoặc dùng “QR từ ảnh”.</string>
 </resources>

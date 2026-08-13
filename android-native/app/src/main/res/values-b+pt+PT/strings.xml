@@ -103,8 +103,6 @@
     <string name="scan_noQr">Na imagem não se reconhece nenhum código QR.</string>
     <string name="scan_unreadable">Não foi possível ler a imagem — é mesmo uma imagem?</string>
     <string name="scan_done">Código QR lido e inserido.</string>
-    <string name="scan_camera_unavailable">Este ambiente não disponibiliza nenhuma câmara. Ao abrir o ficheiro diretamente (file://) a maioria dos navegadores bloqueia-a — « QR a partir de imagem » funciona sempre.</string>
-    <string name="scan_camera_denied">A câmara foi recusada. Reponha a permissão no navegador — ou use « QR a partir de imagem ».</string>
     <string name="scan_camera_notFound">Não há nenhuma câmara ligada. « QR a partir de imagem » funciona à mesma.</string>
     <string name="scan_camera_busy">A câmara está a ser usada por outro programa.</string>
     <string name="scan_camera_failed">Não foi possível iniciar a câmara. « QR a partir de imagem » funciona sempre.</string>
@@ -152,4 +150,6 @@
     <string name="err_migration_noAccounts">Nesta exportação não há contas nenhumas.</string>
     <string name="vacant_text">Secret, ligação otpauth ou imagem QR — nada disso sai deste dispositivo.</string>
     <string name="colophon_note">Sem rede · sem armazenamento · HMAC através de javax.crypto</string>
+    <string name="scan_camera_unavailable">Este dispositivo não disponibiliza nenhuma câmara — « QR a partir de imagem » funciona sempre.</string>
+    <string name="scan_camera_denied">A câmara foi recusada. Conceda a permissão nas definições da aplicação no sistema — ou use « QR a partir de imagem ».</string>
 </resources>

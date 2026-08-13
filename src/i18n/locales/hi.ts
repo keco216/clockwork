@@ -193,4 +193,8 @@ export default {
     'सीक्रेट, otpauth लिंक या QR छवि — इनमें से कुछ भी इस डिवाइस से बाहर नहीं जाता।',
 
   'native.colophon.note': 'कोई नेटवर्क नहीं · कोई भंडारण नहीं · HMAC javax.crypto से',
+
+  'native.scan.camera.unavailable': 'यह डिवाइस कैमरा नहीं देता — “चित्र से QR” हमेशा काम करता है.',
+  'native.scan.camera.denied':
+    'कैमरे से मना कर दिया गया. सिस्टम की ऐप सेटिंग में अनुमति दें — या “चित्र से QR” लें.',
 } satisfies Strings;

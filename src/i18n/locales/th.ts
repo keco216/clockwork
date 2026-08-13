@@ -183,4 +183,8 @@ export default {
   'native.vacant.text': 'ซีเคร็ต ลิงก์ otpauth หรือรูป QR — ไม่มีสิ่งใดออกจากอุปกรณ์นี้',
 
   'native.colophon.note': 'ไม่มีเครือข่าย · ไม่มีที่เก็บ · HMAC ผ่าน javax.crypto',
+
+  'native.scan.camera.unavailable': 'อุปกรณ์นี้ไม่เปิดให้ใช้กล้อง — “QR จากภาพ” ใช้ได้เสมอ',
+  'native.scan.camera.denied':
+    'กล้องถูกปฏิเสธ ให้สิทธิ์ในการตั้งค่าแอปของระบบ — หรือใช้ “QR จากภาพ”',
 } satisfies Strings;

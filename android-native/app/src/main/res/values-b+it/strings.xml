@@ -103,8 +103,6 @@
     <string name="scan_noQr">Nell’immagine non si riconosce alcun codice QR.</string>
     <string name="scan_unreadable">Non è stato possibile leggere l’immagine — è davvero un’immagine?</string>
     <string name="scan_done">Codice QR letto e inserito.</string>
-    <string name="scan_camera_unavailable">Questo ambiente non mette a disposizione una fotocamera. Aprendo il file direttamente (file://) la maggior parte dei browser la blocca — « QR da immagine » funziona sempre.</string>
-    <string name="scan_camera_denied">La fotocamera è stata negata. Reimposta l’autorizzazione nel browser — oppure usa « QR da immagine ».</string>
     <string name="scan_camera_notFound">Non è collegata alcuna fotocamera. « QR da immagine » funziona lo stesso.</string>
     <string name="scan_camera_busy">La fotocamera è in uso da un altro programma.</string>
     <string name="scan_camera_failed">Non è stato possibile avviare la fotocamera. « QR da immagine » funziona sempre.</string>
@@ -152,4 +150,6 @@
     <string name="err_migration_noAccounts">In questa esportazione non ci sono account.</string>
     <string name="vacant_text">Secret, link otpauth o immagine QR: niente di tutto ciò lascia questo dispositivo.</string>
     <string name="colophon_note">Nessuna rete · nessun salvataggio · HMAC tramite javax.crypto</string>
+    <string name="scan_camera_unavailable">Questo dispositivo non mette a disposizione una fotocamera — « QR da immagine » funziona sempre.</string>
+    <string name="scan_camera_denied">La fotocamera è stata negata. Concedi l’autorizzazione nelle impostazioni di sistema dell’app — oppure usa « QR da immagine ».</string>
 </resources>

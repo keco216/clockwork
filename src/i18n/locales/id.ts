@@ -192,4 +192,9 @@ export default {
     'Secret, tautan otpauth, atau gambar QR — tidak ada yang meninggalkan perangkat ini.',
 
   'native.colophon.note': 'Tanpa jaringan · tanpa penyimpanan · HMAC lewat javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Perangkat ini tidak memberikan kamera — “QR dari gambar” selalu berhasil.',
+  'native.scan.camera.denied':
+    'Kamera ditolak. Izinkan di setelan aplikasi pada sistem — atau pakai “QR dari gambar”.',
 } satisfies Strings;

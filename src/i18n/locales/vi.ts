@@ -189,4 +189,9 @@ export default {
   'native.vacant.text': 'Secret, liên kết otpauth hoặc ảnh QR — không có gì rời khỏi thiết bị này.',
 
   'native.colophon.note': 'Không mạng · không lưu trữ · HMAC qua javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Thiết bị này không cấp máy ảnh — “QR từ ảnh” thì lúc nào cũng chạy.',
+  'native.scan.camera.denied':
+    'Máy ảnh bị từ chối. Hãy cấp quyền trong cài đặt ứng dụng của hệ thống — hoặc dùng “QR từ ảnh”.',
 } satisfies Strings;

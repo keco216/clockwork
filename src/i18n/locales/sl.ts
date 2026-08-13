@@ -222,4 +222,9 @@ export default {
     'Skrivnost, povezava otpauth ali slika QR — nič od tega ne zapusti te naprave.',
 
   'native.colophon.note': 'Brez omrežja · brez shrambe · HMAC prek javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Ta naprava ne da kamere na voljo — „QR iz slike“ deluje vedno.',
+  'native.scan.camera.denied':
+    'Kamera je bila zavrnjena. Dovolite jo v sistemskih nastavitvah aplikacije — ali uporabite „QR iz slike“.',
 } satisfies Strings;

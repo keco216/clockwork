@@ -195,4 +195,9 @@ export default {
     'Secret, otpauth-linkki tai QR-kuva — mikään niistä ei poistu tästä laitteesta.',
 
   'native.colophon.note': 'Ei verkkoa · ei tallennusta · HMAC javax.crypto:n kautta',
+
+  'native.scan.camera.unavailable':
+    'Tämä laite ei anna kameraa käyttöön — ”QR kuvasta” toimii aina.',
+  'native.scan.camera.denied':
+    'Kamerasta kieltäydyttiin. Myönnä lupa järjestelmän sovellusasetuksissa — tai käytä toimintoa ”QR kuvasta”.',
 } satisfies Strings;

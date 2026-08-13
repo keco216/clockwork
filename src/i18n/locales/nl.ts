@@ -198,4 +198,9 @@ export default {
     'Secret, otpauth-link of QR-afbeelding — niets daarvan verlaat dit apparaat.',
 
   'native.colophon.note': 'Geen netwerk · geen opslag · HMAC via javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Dit apparaat geeft geen camera vrij — ‘QR uit afbeelding’ werkt altijd.',
+  'native.scan.camera.denied':
+    'De camera is geweigerd. Geef de toestemming in de app-instellingen van het systeem — of gebruik ‘QR uit afbeelding’.',
 } satisfies Strings;

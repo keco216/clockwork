@@ -37,16 +37,22 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.os.LocaleListCompat
 import androidx.compose.foundation.shape.RoundedCornerShape
+import io.github.keco216.clockwork.core.ClockworkError
+import io.github.keco216.clockwork.core.MigrationError
 import io.github.keco216.clockwork.core.ParsedEntry
 import io.github.keco216.clockwork.core.describeForSearch
 import io.github.keco216.clockwork.core.generateTotpForCounter
+import io.github.keco216.clockwork.core.isMigrationUri
 import io.github.keco216.clockwork.core.matchesFilter
 import io.github.keco216.clockwork.core.parseEntries
+import io.github.keco216.clockwork.core.parseMigrationUri
 import io.github.keco216.clockwork.core.periodProgress
 import io.github.keco216.clockwork.core.timeCounter
+import kotlinx.coroutines.delay
 import io.github.keco216.clockwork.ui.theme.Dimens
 import io.github.keco216.clockwork.ui.theme.LocalColors
 import io.github.keco216.clockwork.ui.theme.TextStyles
@@ -108,6 +114,44 @@ fun ClockworkApp() {
         if (!vacant) inputOpen = fieldFocused
     }
 
+    // ── Die Rueckmeldung zu Import und Scan ────────────────────────────────
+    // Das Gegenstueck zu `setNote` in app.ts: eine Zeile, `polite`, und nach
+    // 12 Sekunden von selbst wieder leer — eine Quittung, kein Dauerzustand.
+    // Der Zaehler startet die Frist bei JEDER neuen Meldung neu, sonst
+    // schnitte eine alte Frist die naechste Meldung ab.
+    var note by remember { mutableStateOf("") }
+    var noteStamp by remember { mutableStateOf(0) }
+
+    fun setNote(message: String) {
+        note = message
+        noteStamp++
+    }
+
+    LaunchedEffect(noteStamp) {
+        if (note.isNotEmpty()) {
+            delay(12_000)
+            note = ""
+        }
+    }
+
+    /* ── QR-Import ─────────────────────────────────────────────────────────
+       Kamera und Bilddatei enden beide hier. Der Inhalt eines QR-Codes ist
+       Text aus einer fremden Quelle und wird deshalb wie eine getippte Zeile
+       behandelt: angehaengt, expandiert, geparst, SICHTBAR — niemals legt ein
+       Scan still Konten an. Wortgleich der Weg aus `ui/app.ts`. */
+    fun handleScan(scanned: String) {
+        val line = scanned.trim()
+        val existing = field.text.trim()
+        val joined = if (existing.isEmpty()) line else "$existing\n$line"
+
+        val (expandedText, migrationNote) = expandMigrationLines(context, joined)
+        field = TextFieldValue(expandedText, TextRange(expandedText.length))
+
+        // Ein Sammel-Export meldet seine Bilanz (uebernommen/uebersprungen),
+        // eine einzelne URI nur die Quittung.
+        setNote(if (isMigrationUri(line)) migrationNote else context.text("scan.done"))
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -123,6 +167,9 @@ fun ClockworkApp() {
                     onFieldChange = { field = it },
                     onFocusChange = { fieldFocused = it },
                     onTestKey = { field = TextFieldValue(TEST_KEY) },
+                    note = note,
+                    onScan = ::handleScan,
+                    onNote = ::setNote,
                 )
             } else {
                 WorkingStage(
@@ -134,6 +181,9 @@ fun ClockworkApp() {
                     inputOpen = inputOpen,
                     onToggleInput = { inputOpen = !inputOpen },
                     onCopy = { code -> context.copySensitive(code) },
+                    note = note,
+                    onScan = ::handleScan,
+                    onNote = ::setNote,
                 )
             }
         }
@@ -198,11 +248,24 @@ private fun VacantStage(
     onFieldChange: (TextFieldValue) -> Unit,
     onFocusChange: (Boolean) -> Unit,
     onTestKey: () -> Unit,
+    note: String,
+    onScan: (String) -> Unit,
+    onNote: (String) -> Unit,
 ) {
     val colors = LocalColors.current
 
+    /* `verticalScroll` steht hier seit P6, und der Grund ist gemessen: Mit
+       offenem Sucher wird die Buehne hoeher als der Schirm, und eine
+       Column OHNE Scroll beschneidet dann nicht etwa unten — sie STAUCHT
+       ihre spaeteren Kinder auf die Resthoehe (die Tastenzeile war am
+       Emulator 28 statt 40 dp, die „Kamera aus"-Zeile ganz verschluckt).
+       Mit Scroll behaelt jedes Kind sein Mass, und die Zentrierung wirkt
+       weiter, solange der Inhalt kleiner als der Schirm ist — genau das
+       Verhalten der Web-Buehne. */
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -245,6 +308,21 @@ private fun VacantStage(
                 large = true,
             )
         }
+
+        // Die drei Wege hinein (V7): tippen, Bild, Kamera. Der Sucher oeffnet
+        // sich unter den Tasten, wie im Web unter der Tastenzeile.
+        Spacer(Modifier.height(Dimens.gapPair))
+        ScanControls(
+            active = true,
+            onScan = onScan,
+            onNote = onNote,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        MessageRow(
+            text = note,
+            tone = MessageTone.Status,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -265,6 +343,9 @@ private fun WorkingStage(
     inputOpen: Boolean,
     onToggleInput: () -> Unit,
     onCopy: (String) -> Unit,
+    note: String,
+    onScan: (String) -> Unit,
+    onNote: (String) -> Unit,
 ) {
     val colors = LocalColors.current
     val context = LocalContext.current
@@ -392,14 +473,38 @@ private fun WorkingStage(
                     // Die Fuge zur Zeile faehrt als Innenabstand der Schublade
                     // mit zu — stuende sie aussen, bliebe im zugeklappten
                     // Zustand eine Luecke ohne Inhalt stehen.
-                    Box(modifier = Modifier.padding(top = Dimens.gapPair)) {
+                    Column(
+                        modifier = Modifier.padding(top = Dimens.gapPair),
+                        verticalArrangement = Arrangement.spacedBy(Dimens.gapPair),
+                    ) {
                         SecretField(
                             field = field,
                             onFieldChange = onFieldChange,
                             onFocusChange = onFocusChange,
                         )
+                        // `active = inputOpen`: Faehrt die Schublade zu, endet
+                        // eine laufende Kamera mit — die V10-Regel.
+                        ScanControls(
+                            active = inputOpen,
+                            onScan = onScan,
+                            onNote = onNote,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                     }
                 }
+
+                // AUSSERHALB der Schublade, mit Absicht: Die Schublade nimmt
+                // ihren Inhalt bei Hoehe 0 ganz aus der Komposition (tote
+                // Fugen), eine Live-Region muss aber DA sein, bevor Text
+                // hineinkommt. Unter der Fold-Zeile bleibt die Meldung auch
+                // bei zugeklappter Eingabe sichtbar — im Web steckt sie in
+                // der zugefahrenen Schublade und ist nur zu HOEREN; das hier
+                // ist die ehrlichere Stelle, keine Abweichung aus Geschmack.
+                MessageRow(
+                    text = note,
+                    tone = MessageTone.Status,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
         }
     }
@@ -524,3 +629,72 @@ private fun Context.copySensitive(code: String) {
     }
     clipboard.setPrimaryClip(clip)
 }
+
+/**
+ * Ersetzt jede `otpauth-migration://`-Zeile an Ort und Stelle durch ihre
+ * `otpauth://`-Zeilen — der Port von `expandMigrationLines` aus `ui/app.ts`.
+ *
+ * Der Nutzer SIEHT damit, was importiert wurde, und kann es pruefen oder
+ * loeschen; ab da laufen die Zeilen durch denselben Parser wie alles andere.
+ * Eine unlesbare Export-Zeile wird zur `#`-Notiz im Feld UND zur Meldung —
+ * sie verschwindet nicht wortlos.
+ *
+ * @return das expandierte Feld und die Bilanz-Meldung (leer, wenn gar kein
+ *   Export im Feld stand).
+ */
+private fun expandMigrationLines(context: Context, fieldText: String): Pair<String, String> {
+    val lines = fieldText.split(NEWLINE)
+    if (lines.none { isMigrationUri(it) }) return fieldText to ""
+
+    val expanded = mutableListOf<String>()
+    var imported = 0
+    val skipped = mutableListOf<String>()
+    val problems = mutableListOf<String>()
+
+    for (line in lines) {
+        if (!isMigrationUri(line)) {
+            expanded += line
+            continue
+        }
+        try {
+            val result = parseMigrationUri(line)
+            expanded += result.lines
+            imported += result.imported
+            skipped += result.skipped.map { skip ->
+                context.text(
+                    skip.reasonKey,
+                    mapOf("label" to (skip.label ?: context.text("import.unnamed"))),
+                )
+            }
+        } catch (error: MigrationError) {
+            val message = context.text(error.key, error.args)
+            expanded += "# $message"
+            problems += message
+        } catch (error: ClockworkError) {
+            // Kaputte Binaerdaten (Protobuf & Co.): Im Web faellt alles, was
+            // kein MigrationError ist, auf die neutrale Export-Meldung.
+            val message = context.text("import.unreadable")
+            expanded += "# $message"
+            problems += message
+        }
+    }
+
+    val parts = mutableListOf<String>()
+    if (imported > 0) {
+        val locale = context.resources.configuration.locales[0]
+        parts += context.textPlural(
+            "import.done",
+            imported,
+            mapOf("n" to formatNumber(imported.toLong(), locale)),
+        )
+    }
+    if (skipped.isNotEmpty()) {
+        parts += context.text("import.skipped", mapOf("list" to skipped.joinToString(", ")))
+    }
+    parts += problems
+
+    return expanded.joinToString("\n") to parts.joinToString(" · ")
+}
+
+/** Zeilenenden wie im Web (`/\r?\n/`) — eingefuegter Text kann `\r\n` tragen. */
+private val NEWLINE = Regex("\r?\n")

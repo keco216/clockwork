@@ -185,4 +185,9 @@ export default {
   'native.vacant.text': '시크릿, otpauth 링크, QR 이미지 — 어느 것도 이 기기를 벗어나지 않는다.',
 
   'native.colophon.note': '네트워크 없음 · 저장 없음 · HMAC 은 javax.crypto 로',
+
+  'native.scan.camera.unavailable':
+    '이 기기는 카메라를 내주지 않는다 — “이미지에서 QR” 은 언제나 된다.',
+  'native.scan.camera.denied':
+    '카메라가 거부되었다. 시스템의 앱 설정에서 권한을 허용하거나 “이미지에서 QR” 을 쓰기 바란다.',
 } satisfies Strings;

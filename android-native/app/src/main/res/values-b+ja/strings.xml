@@ -93,8 +93,6 @@
     <string name="scan_noQr">画像から QR コードを読み取れなかった。</string>
     <string name="scan_unreadable">画像を読み込めなかった — 本当に画像?</string>
     <string name="scan_done">QR コードを読み取って挿入した。</string>
-    <string name="scan_camera_unavailable">この環境ではカメラを使えない。ファイルとして開いた場合 (file://)、多くのブラウザーがカメラを塞ぐ — 「画像から QR」なら必ず動く。</string>
-    <string name="scan_camera_denied">カメラが拒否された。ブラウザーで許可を設定し直すか、「画像から QR」を使ってほしい。</string>
     <string name="scan_camera_notFound">カメラが接続されていない。「画像から QR」なら動く。</string>
     <string name="scan_camera_busy">カメラは別のプログラムが使用中。</string>
     <string name="scan_camera_failed">カメラを起動できなかった。「画像から QR」なら必ず動く。</string>
@@ -140,4 +138,6 @@
     <string name="err_migration_noAccounts">このエクスポートにはアカウントが入っていない。</string>
     <string name="vacant_text">シークレット、otpauth リンク、QR 画像 — どれもこの端末から出ない。</string>
     <string name="colophon_note">ネットワークなし · 保存なし · HMAC は javax.crypto 経由</string>
+    <string name="scan_camera_unavailable">この端末ではカメラを使えない — 「画像から QR」なら必ず動く。</string>
+    <string name="scan_camera_denied">カメラが拒否された。システムのアプリ設定で許可するか、「画像から QR」を使ってほしい。</string>
 </resources>

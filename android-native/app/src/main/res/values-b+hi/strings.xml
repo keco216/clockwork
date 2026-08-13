@@ -98,8 +98,6 @@
     <string name="scan_noQr">चित्र में कोई QR कोड नहीं पहचाना जा सका.</string>
     <string name="scan_unreadable">चित्र पढ़ा नहीं जा सका — क्या यह सचमुच चित्र है?</string>
     <string name="scan_done">QR कोड पढ़ लिया और डाल दिया गया.</string>
-    <string name="scan_camera_unavailable">यह परिवेश कैमरा नहीं देता. फ़ाइल के रूप में खोलने पर (file://) ज़्यादातर ब्राउज़र उसे रोक देते हैं — “चित्र से QR” हमेशा काम करता है.</string>
-    <string name="scan_camera_denied">कैमरे से मना कर दिया गया. ब्राउज़र में अनुमति फिर से सेट करें — या “चित्र से QR” लें.</string>
     <string name="scan_camera_notFound">कोई कैमरा जुड़ा नहीं है. “चित्र से QR” फिर भी काम करता है.</string>
     <string name="scan_camera_busy">कैमरा इस समय किसी दूसरे प्रोग्राम के पास है.</string>
     <string name="scan_camera_failed">कैमरा चालू नहीं हो सका. “चित्र से QR” हमेशा काम करता है.</string>
@@ -146,4 +144,6 @@
     <string name="err_migration_noAccounts">इस निर्यात में कोई खाता नहीं है.</string>
     <string name="vacant_text">सीक्रेट, otpauth लिंक या QR छवि — इनमें से कुछ भी इस डिवाइस से बाहर नहीं जाता।</string>
     <string name="colophon_note">कोई नेटवर्क नहीं · कोई भंडारण नहीं · HMAC javax.crypto से</string>
+    <string name="scan_camera_unavailable">यह डिवाइस कैमरा नहीं देता — “चित्र से QR” हमेशा काम करता है.</string>
+    <string name="scan_camera_denied">कैमरे से मना कर दिया गया. सिस्टम की ऐप सेटिंग में अनुमति दें — या “चित्र से QR” लें.</string>
 </resources>

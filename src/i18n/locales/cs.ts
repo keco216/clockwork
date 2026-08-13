@@ -219,4 +219,8 @@ export default {
     'Secret, odkaz otpauth nebo obrázek QR — nic z toho neopustí toto zařízení.',
 
   'native.colophon.note': 'Žádná síť · žádné úložiště · HMAC přes javax.crypto',
+
+  'native.scan.camera.unavailable': 'Toto zařízení kameru neuvolní — „QR z obrázku“ funguje vždy.',
+  'native.scan.camera.denied':
+    'Kamera byla odmítnuta. Povolte ji v systémovém nastavení aplikace — nebo použijte „QR z obrázku“.',
 } satisfies Strings;

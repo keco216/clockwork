@@ -98,8 +98,6 @@
     <string name="scan_noQr">Ingen QR-kod gick att urskilja i bilden.</string>
     <string name="scan_unreadable">Bilden gick inte att läsa — är det verkligen en bild?</string>
     <string name="scan_done">QR-koden inläst och insatt.</string>
-    <string name="scan_camera_unavailable">Den här miljön släpper inte fram någon kamera. Öppnad som fil (file://) blockerar de flesta webbläsare den — ”QR från bild” fungerar alltid.</string>
-    <string name="scan_camera_denied">Kameran nekades. Återställ behörigheten i webbläsaren — eller använd ”QR från bild”.</string>
     <string name="scan_camera_notFound">Ingen kamera är ansluten. ”QR från bild” fungerar ändå.</string>
     <string name="scan_camera_busy">Kameran används just nu av ett annat program.</string>
     <string name="scan_camera_failed">Kameran gick inte att starta. ”QR från bild” fungerar alltid.</string>
@@ -146,4 +144,6 @@
     <string name="err_migration_noAccounts">I den här exporten finns inga konton.</string>
     <string name="vacant_text">Secret, otpauth-länk eller QR-bild — inget av det lämnar den här enheten.</string>
     <string name="colophon_note">Inget nätverk · ingen lagring · HMAC via javax.crypto</string>
+    <string name="scan_camera_unavailable">Den här enheten släpper inte fram någon kamera — ”QR från bild” fungerar alltid.</string>
+    <string name="scan_camera_denied">Kameran nekades. Ge behörigheten i systemets appinställningar — eller använd ”QR från bild”.</string>
 </resources>

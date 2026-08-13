@@ -98,8 +98,6 @@
     <string name="scan_noQr">Görselde hiçbir QR kod seçilemedi.</string>
     <string name="scan_unreadable">Görsel okunamadı — bu gerçekten bir görsel mi?</string>
     <string name="scan_done">QR kod okundu ve eklendi.</string>
-    <string name="scan_camera_unavailable">Bu ortam kamera vermiyor. Dosya olarak açıldığında (file://) tarayıcıların çoğu onu engeller — “Görselden QR” her zaman çalışır.</string>
-    <string name="scan_camera_denied">Kameraya izin verilmedi. İzni tarayıcıda sıfırlayın — ya da “Görselden QR” kullanın.</string>
     <string name="scan_camera_notFound">Bağlı kamera yok. “Görselden QR” yine de çalışır.</string>
     <string name="scan_camera_busy">Kamerayı şu anda başka bir program kullanıyor.</string>
     <string name="scan_camera_failed">Kamera başlatılamadı. “Görselden QR” her zaman çalışır.</string>
@@ -146,4 +144,6 @@
     <string name="err_migration_noAccounts">Bu dışa aktarımda hiç hesap yok.</string>
     <string name="vacant_text">Secret, otpauth bağlantısı veya QR görüntüsü — hiçbiri bu cihazdan çıkmaz.</string>
     <string name="colophon_note">Ağ yok · depolama yok · HMAC, javax.crypto üzerinden</string>
+    <string name="scan_camera_unavailable">Bu cihaz kamera vermiyor — “Görselden QR” her zaman çalışır.</string>
+    <string name="scan_camera_denied">Kameraya izin verilmedi. İzni sistemin uygulama ayarlarından verin — ya da “Görselden QR” kullanın.</string>
 </resources>

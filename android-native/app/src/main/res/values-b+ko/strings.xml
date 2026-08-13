@@ -93,8 +93,6 @@
     <string name="scan_noQr">이미지에서 QR 코드를 알아볼 수 없었다.</string>
     <string name="scan_unreadable">이미지를 읽을 수 없었다 — 정말 이미지인가?</string>
     <string name="scan_done">QR 코드를 읽어 넣었다.</string>
-    <string name="scan_camera_unavailable">이 환경은 카메라를 내주지 않는다. 파일로 열면 (file://) 대부분의 브라우저가 카메라를 막는다 — “이미지에서 QR” 은 언제나 된다.</string>
-    <string name="scan_camera_denied">카메라가 거부되었다. 브라우저에서 권한을 다시 설정하거나 “이미지에서 QR” 을 쓰기 바란다.</string>
     <string name="scan_camera_notFound">연결된 카메라가 없다. “이미지에서 QR” 은 그래도 된다.</string>
     <string name="scan_camera_busy">지금 다른 프로그램이 카메라를 쓰고 있다.</string>
     <string name="scan_camera_failed">카메라를 켜지 못했다. “이미지에서 QR” 은 언제나 된다.</string>
@@ -140,4 +138,6 @@
     <string name="err_migration_noAccounts">이 내보내기에는 계정이 하나도 없다.</string>
     <string name="vacant_text">시크릿, otpauth 링크, QR 이미지 — 어느 것도 이 기기를 벗어나지 않는다.</string>
     <string name="colophon_note">네트워크 없음 · 저장 없음 · HMAC 은 javax.crypto 로</string>
+    <string name="scan_camera_unavailable">이 기기는 카메라를 내주지 않는다 — “이미지에서 QR” 은 언제나 된다.</string>
+    <string name="scan_camera_denied">카메라가 거부되었다. 시스템의 앱 설정에서 권한을 허용하거나 “이미지에서 QR” 을 쓰기 바란다.</string>
 </resources>

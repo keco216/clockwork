@@ -86,8 +86,6 @@ object StringKeys {
         "scan.noQr" -> R.string.scan_noQr
         "scan.unreadable" -> R.string.scan_unreadable
         "scan.done" -> R.string.scan_done
-        "scan.camera.unavailable" -> R.string.scan_camera_unavailable
-        "scan.camera.denied" -> R.string.scan_camera_denied
         "scan.camera.notFound" -> R.string.scan_camera_notFound
         "scan.camera.busy" -> R.string.scan_camera_busy
         "scan.camera.failed" -> R.string.scan_camera_failed
@@ -130,6 +128,8 @@ object StringKeys {
         "err.migration.noAccounts" -> R.string.err_migration_noAccounts
         "native.vacant.text" -> R.string.vacant_text
         "native.colophon.note" -> R.string.colophon_note
+        "native.scan.camera.unavailable" -> R.string.scan_camera_unavailable
+        "native.scan.camera.denied" -> R.string.scan_camera_denied
         else -> null
     }
 

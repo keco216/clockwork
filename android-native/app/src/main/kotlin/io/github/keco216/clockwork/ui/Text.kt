@@ -88,16 +88,22 @@ fun text(key: String, args: Map<String, String> = emptyMap()): String =
  * Mehrzahl. `quantity` waehlt die Form, die Werte kommen getrennt herein —
  * deshalb kann die Zahl selbst als bereits formatierter Text uebergeben
  * werden und behaelt ihre lateinischen Ziffern.
+ *
+ * Auch als Context-Funktion, nicht nur als Composable: Die Scan-Rueckwege
+ * (P6) bauen ihre Meldung in einem Callback zusammen, und dort gibt es keine
+ * Komposition — dieselbe Lage wie bei [text].
  */
-@Composable
-@ReadOnlyComposable
-fun textPlural(key: String, quantity: Int, args: Map<String, String> = emptyMap()): String {
-    val context = LocalContext.current
-    val resource = StringKeys.pluralFor(key) ?: return context.text(KEY_UNREADABLE)
+fun Context.textPlural(key: String, quantity: Int, args: Map<String, String> = emptyMap()): String {
+    val resource = StringKeys.pluralFor(key) ?: return text(KEY_UNREADABLE)
     val order = StringKeys.placeholdersFor(key)
     val values = order.map { args[it] ?: "" }.toTypedArray()
-    return context.resources.getQuantityString(resource, quantity, *values)
+    return resources.getQuantityString(resource, quantity, *values)
 }
+
+@Composable
+@ReadOnlyComposable
+fun textPlural(key: String, quantity: Int, args: Map<String, String> = emptyMap()): String =
+    LocalContext.current.textPlural(key, quantity, args)
 
 /** Der haeufigste Fall: „{n} Konten" mit lateinisch gesetzter Zahl. */
 @Composable

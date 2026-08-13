@@ -326,6 +326,27 @@ export interface Strings {
    * Zeichen unverändert.
    */
   'native.colophon.note': string;
+
+  /**
+   * Kamera nicht verfügbar — native Fassung von `scan.camera.unavailable`.
+   *
+   * Der Web-Satz erklärt `file://` und die Browser-Sperre; beides gibt es in
+   * einer nativen App nicht. Übrig bleibt der erste Satz mit dem
+   * Gerätewort aus `native.vacant.text` (dieselbe Wahl je Sprache) und die
+   * „QR aus Bild"-Zusicherung des zweiten — die 35 maschinellen Fassungen
+   * sind so ABGELEITET und erben den Qualitätsvorbehalt ihrer Ausgangssätze.
+   */
+  'native.scan.camera.unavailable': string;
+
+  /**
+   * Kamera abgelehnt — native Fassung von `scan.camera.denied`.
+   *
+   * Der Web-Satz sagt „Erlaubnis im Browser zurücksetzen". Nativ führt der
+   * Weg über die App-Einstellungen des Systems — nur dieser Wegweiser ist
+   * je Sprache getauscht, erster Satz und „QR aus Bild"-Ausweg stehen
+   * unverändert.
+   */
+  'native.scan.camera.denied': string;
 }
 
 /** Alle Schlüssel, deren Wert ein einfacher String ist. */

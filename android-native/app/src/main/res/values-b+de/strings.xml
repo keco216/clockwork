@@ -98,8 +98,6 @@
     <string name="scan_noQr">In dem Bild war kein QR-Code zu erkennen.</string>
     <string name="scan_unreadable">Das Bild konnte nicht gelesen werden — ist es wirklich ein Bild?</string>
     <string name="scan_done">QR-Code gelesen und eingesetzt.</string>
-    <string name="scan_camera_unavailable">Diese Umgebung gibt keine Kamera frei. Beim Öffnen als Datei (file://) sperren die meisten Browser sie — „QR aus Bild“ funktioniert dort immer.</string>
-    <string name="scan_camera_denied">Die Kamera wurde abgelehnt. Erlaubnis im Browser zurücksetzen — oder „QR aus Bild“ nehmen.</string>
     <string name="scan_camera_notFound">Es ist keine Kamera angeschlossen. „QR aus Bild“ funktioniert trotzdem.</string>
     <string name="scan_camera_busy">Die Kamera wird gerade von einem anderen Programm benutzt.</string>
     <string name="scan_camera_failed">Die Kamera ließ sich nicht starten. „QR aus Bild“ funktioniert immer.</string>
@@ -146,4 +144,6 @@
     <string name="err_migration_noAccounts">In diesem Export stehen keine Konten.</string>
     <string name="vacant_text">Secret, otpauth-Link oder QR-Bild — nichts davon verlässt dieses Gerät.</string>
     <string name="colophon_note">Kein Netzwerk · kein Speicher · HMAC über javax.crypto</string>
+    <string name="scan_camera_unavailable">Dieses Gerät gibt keine Kamera frei — „QR aus Bild“ funktioniert immer.</string>
+    <string name="scan_camera_denied">Die Kamera wurde abgelehnt. Erlaubnis in den App-Einstellungen des Systems erteilen — oder „QR aus Bild“ nehmen.</string>
 </resources>

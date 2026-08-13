@@ -194,4 +194,9 @@ export default {
     'Salajane võti, otpauth-link või QR-pilt — miski neist ei lahku sellest seadmest.',
 
   'native.colophon.note': 'Ei mingit võrku · ei mingit salvestust · HMAC javax.crypto kaudu',
+
+  'native.scan.camera.unavailable':
+    'See seade ei anna kaamerat kasutada — „QR pildilt“ töötab alati.',
+  'native.scan.camera.denied':
+    'Kaamerast keelduti. Anna luba süsteemi rakenduste seadetes — või kasuta valikut „QR pildilt“.',
 } satisfies Strings;

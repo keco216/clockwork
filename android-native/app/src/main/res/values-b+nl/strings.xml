@@ -98,8 +98,6 @@
     <string name="scan_noQr">In de afbeelding was geen QR-code te herkennen.</string>
     <string name="scan_unreadable">De afbeelding kon niet worden gelezen — is het echt een afbeelding?</string>
     <string name="scan_done">QR-code gelezen en ingevoegd.</string>
-    <string name="scan_camera_unavailable">Deze omgeving geeft geen camera vrij. Bij het openen als bestand (file://) blokkeren de meeste browsers hem — ‘QR uit afbeelding’ werkt altijd.</string>
-    <string name="scan_camera_denied">De camera is geweigerd. Zet de toestemming in de browser terug — of gebruik ‘QR uit afbeelding’.</string>
     <string name="scan_camera_notFound">Er is geen camera aangesloten. ‘QR uit afbeelding’ werkt toch.</string>
     <string name="scan_camera_busy">De camera is op dit moment in gebruik door een ander programma.</string>
     <string name="scan_camera_failed">De camera kon niet worden gestart. ‘QR uit afbeelding’ werkt altijd.</string>
@@ -146,4 +144,6 @@
     <string name="err_migration_noAccounts">In deze export staan geen accounts.</string>
     <string name="vacant_text">Secret, otpauth-link of QR-afbeelding — niets daarvan verlaat dit apparaat.</string>
     <string name="colophon_note">Geen netwerk · geen opslag · HMAC via javax.crypto</string>
+    <string name="scan_camera_unavailable">Dit apparaat geeft geen camera vrij — ‘QR uit afbeelding’ werkt altijd.</string>
+    <string name="scan_camera_denied">De camera is geweigerd. Geef de toestemming in de app-instellingen van het systeem — of gebruik ‘QR uit afbeelding’.</string>
 </resources>

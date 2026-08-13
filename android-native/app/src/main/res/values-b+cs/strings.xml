@@ -108,8 +108,6 @@
     <string name="scan_noQr">V obrázku nebylo možné rozpoznat žádný QR kód.</string>
     <string name="scan_unreadable">Obrázek se nepodařilo přečíst — je to opravdu obrázek?</string>
     <string name="scan_done">QR kód přečten a vložen.</string>
-    <string name="scan_camera_unavailable">Toto prostředí kameru neuvolní. Při otevření jako soubor (file://) ji většina prohlížečů blokuje — „QR z obrázku“ funguje vždy.</string>
-    <string name="scan_camera_denied">Kamera byla odmítnuta. Zrušte oprávnění v prohlížeči — nebo použijte „QR z obrázku“.</string>
     <string name="scan_camera_notFound">Není připojena žádná kamera. „QR z obrázku“ funguje i tak.</string>
     <string name="scan_camera_busy">Kameru právě používá jiný program.</string>
     <string name="scan_camera_failed">Kameru se nepodařilo spustit. „QR z obrázku“ funguje vždy.</string>
@@ -158,4 +156,6 @@
     <string name="err_migration_noAccounts">V tomto exportu nejsou žádné účty.</string>
     <string name="vacant_text">Secret, odkaz otpauth nebo obrázek QR — nic z toho neopustí toto zařízení.</string>
     <string name="colophon_note">Žádná síť · žádné úložiště · HMAC přes javax.crypto</string>
+    <string name="scan_camera_unavailable">Toto zařízení kameru neuvolní — „QR z obrázku“ funguje vždy.</string>
+    <string name="scan_camera_denied">Kamera byla odmítnuta. Povolte ji v systémovém nastavení aplikace — nebo použijte „QR z obrázku“.</string>
 </resources>

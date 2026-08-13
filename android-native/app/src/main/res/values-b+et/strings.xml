@@ -98,8 +98,6 @@
     <string name="scan_noQr">Pildilt ei olnud ühtki QR-koodi näha.</string>
     <string name="scan_unreadable">Pilti ei õnnestunud lugeda — kas see on tõesti pilt?</string>
     <string name="scan_done">QR-kood loetud ja lisatud.</string>
-    <string name="scan_camera_unavailable">See keskkond ei anna kaamerat kasutada. Failina avades (file://) blokeerib enamik brausereid selle — „QR pildilt“ töötab alati.</string>
-    <string name="scan_camera_denied">Kaamerast keelduti. Lähtesta luba brauseris — või kasuta valikut „QR pildilt“.</string>
     <string name="scan_camera_notFound">Ühtki kaamerat pole ühendatud. „QR pildilt“ töötab siiski.</string>
     <string name="scan_camera_busy">Kaamerat kasutab praegu teine programm.</string>
     <string name="scan_camera_failed">Kaamerat ei õnnestunud käivitada. „QR pildilt“ töötab alati.</string>
@@ -146,4 +144,6 @@
     <string name="err_migration_noAccounts">Selles eksportfailis ei ole ühtki kontot.</string>
     <string name="vacant_text">Salajane võti, otpauth-link või QR-pilt — miski neist ei lahku sellest seadmest.</string>
     <string name="colophon_note">Ei mingit võrku · ei mingit salvestust · HMAC javax.crypto kaudu</string>
+    <string name="scan_camera_unavailable">See seade ei anna kaamerat kasutada — „QR pildilt“ töötab alati.</string>
+    <string name="scan_camera_denied">Kaamerast keelduti. Anna luba süsteemi rakenduste seadetes — või kasuta valikut „QR pildilt“.</string>
 </resources>

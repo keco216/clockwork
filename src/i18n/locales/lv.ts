@@ -196,4 +196,8 @@ export default {
   'native.vacant.text': 'Noslēpums, otpauth saite vai QR attēls — nekas no tā neatstāj šo ierīci.',
 
   'native.colophon.note': 'Bez tīkla · bez krātuves · HMAC caur javax.crypto',
+
+  'native.scan.camera.unavailable': 'Šī ierīce kameru neatdod — „QR no attēla“ darbojas vienmēr.',
+  'native.scan.camera.denied':
+    'Kamera tika atteikta. Piešķiriet atļauju lietotnes iestatījumos sistēmā — vai izmantojiet „QR no attēla“.',
 } satisfies Strings;

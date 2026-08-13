@@ -220,4 +220,9 @@ export default {
     'Slaptas raktas, otpauth nuoroda ar QR paveikslėlis — niekas iš to neišeina iš šio įrenginio.',
 
   'native.colophon.note': 'Jokio tinklo · jokios saugyklos · HMAC per javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Šis įrenginys kameros neatiduoda — „QR iš paveikslo“ veikia visada.',
+  'native.scan.camera.denied':
+    'Kameros neleista. Suteikite leidimą programos nustatymuose sistemoje — arba naudokite „QR iš paveikslo“.',
 } satisfies Strings;
