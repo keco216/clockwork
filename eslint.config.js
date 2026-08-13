@@ -13,6 +13,11 @@ export default tseslint.config(
       'node_modules/',
       'coverage/',
       'android/',
+      // Der Kotlin-Zweig baut nach android-native/**/build/. Darin liegt unter
+      // anderem Gradles HTML-Testbericht mit eigenem JavaScript — Bauergebnis,
+      // kein Quelltext. In der CI faellt das nicht auf (dort laeuft kein
+      // Gradle), lokal sonst schon.
+      'android-native/',
     ],
   },
 
