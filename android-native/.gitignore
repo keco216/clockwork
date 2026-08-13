@@ -1,0 +1,12 @@
+# Bauergebnisse und Maschinenlokales. Alles andere in diesem Ordner ist Quelle
+# — auch die generierten Ressourcen (values-*/strings.xml aus P4), damit ein
+# Bau ohne Node auskommt. Dieselbe Linie wie bei den Icons der 1.x-Fassung.
+build/
+.gradle/
+local.properties
+.cxx/
+
+# Android Studio
+.idea/
+*.iml
+captures/

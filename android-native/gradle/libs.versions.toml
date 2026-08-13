@@ -1,0 +1,82 @@
+# Abhaengigkeiten dieses Projekts — die abschliessende Liste.
+#
+# Die Web-App hat genau EINE Laufzeit-Abhaengigkeit (jsQR). Nativ geht das nicht
+# ganz so knapp, weil die Plattform selbst ueber Bibliotheken ausgeliefert wird
+# (androidx). Die Regel dahinter bleibt aber dieselbe: Was hier steht, muss sich
+# einzeln begruenden lassen — und ein UI-Framework begruendet sich nicht.
+#
+# Alle Versionen sind am 13.08.2026 gegen die maven-metadata.xml der jeweiligen
+# Registry GEMESSEN, nicht aus einer Vorlage abgeschrieben. Jede ist die
+# juengste STABILE (keine alpha/beta/rc).
+
+[versions]
+# Werkzeugkette
+agp = "8.13.2"                    # 8.13 aus dem Auftrag, juengster Patch
+kotlin = "2.4.10"                 # juengste stabile; 2.4.20-RC waere ein RC
+coroutines = "1.11.0"
+
+# androidx — Plattform, kein Framework
+#
+# ACHTUNG, hier stehen NICHT die juengsten Fassungen, und das ist gemessen:
+# core-ktx 1.19.0, lifecycle 2.11.0 und Compose 1.12.0 (BOM 2026.08.00)
+# verlangen `compileSdk 37` UND `Android Gradle plugin 9.1.0 or higher` — der
+# Bau bricht mit 30 solchen Meldungen ab. AGP 8.13 ist hier aber keine Laune,
+# sondern das Ende einer Zange, die in CLAUDE.md gemessen dokumentiert ist:
+# Gradle 9.5.1 ist die juengste Fassung, die auf Java 25 laeuft (das JBR IST
+# Java 25) und noch AGP 8.x traegt; ab Gradle 9.6 fehlt dem AGP eine interne
+# API. AGP 9.1 haette also einen zweiten Gradle im Projekt bedeutet — 240 MB
+# Distribution mehr und zwei Werkzeugketten fuer ein Repo.
+#
+# Genommen ist deshalb je die juengste Fassung, die gegen compileSdk 36 baut.
+coreKtx = "1.17.0"                # 1.18/1.19 verlangen SDK 37
+activityCompose = "1.11.0"        # dieselbe wie im 1.x-Wrap (variables.gradle)
+lifecycle = "2.10.0"              # 2.11 verlangt SDK 37
+appcompat = "1.7.1"               # AUSSCHLIESSLICH fuer die per-App-Sprachwahl
+composeBom = "2026.06.01"         # = Compose 1.11.4; 1.12 verlangt SDK 37
+camera = "1.5.3"
+biometric = "1.1.0"               # letzte STABILE; 1.4.0 gibt es nur als alpha
+
+# Reine Java-Bibliothek fuer die QR-Dekodierung. Apache-2.0, F-Droid-tauglich.
+# ML Kit waere die bequemere Wahl und faellt aus: proprietaer und mit
+# Play-Services-Bindung — beides ist in diesem Projekt ausgeschlossen.
+zxing = "3.5.4"
+
+# Tests
+junit = "4.13.2"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+
+# Compose OHNE Material: foundation/ui/animation/runtime. Jedes Bauteil (Taste,
+# Feld, Chip, Switch, Aufklapper) wird daraus selbst gebaut — genau so, wie im
+# Web aus rohem CSS statt aus einer Komponentenbibliothek.
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+
+androidx-camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camera" }
+androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camera" }
+androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera" }
+androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camera" }
+
+androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
+
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

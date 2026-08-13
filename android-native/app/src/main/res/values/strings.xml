@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Diese Datei traegt NUR den App-Namen. Alle uebrigen Texte entstehen in P4 aus
+  den 37 vorhandenen Locale-Dateien des Web-Projekts (values-*/strings.xml) —
+  von Hand gepflegte Strings gaebe es dann in zwei Wahrheiten.
+
+  Die Wortmarke wird nicht uebersetzt: „Ein Logo wird nicht uebersetzt" steht so
+  schon im Markenhandbuch, und der Launcher-Name IST die Wortmarke. Dieselbe
+  Ausnahme wie im Web, wo `t()` sie ebenfalls nicht anfasst.
+-->
+<resources>
+    <string name="app_name" translatable="false">Clockwork</string>
+</resources>

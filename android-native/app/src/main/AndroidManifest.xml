@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Was hier NICHT steht, ist die eigentliche Aussage dieser Datei:
+
+  * KEINE android.permission.INTERNET. Ohne sie kann der Prozess auf
+    Betriebssystem-Ebene keine Verbindung oeffnen — dieselbe Zusage wie
+    `connect-src 'none'` in der Web-Fassung, nur eine Schicht tiefer und fuer
+    jeden mit `aapt2 dump badging` nachpruefbar.
+  * Keine Berechtigung ueberhaupt, solange die Kamera nicht da ist. CAMERA
+    kommt in P6 dazu, zusammen mit beiden `uses-feature required="false"` —
+    die Berechtigung allein macht `android.hardware.camera` sonst
+    stillschweigend zur Installationsbedingung (gemessene Falle aus 1.x).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      Icon und localeConfig fehlen hier noch mit Absicht: Das Markenzeichen
+      kommt mit dem Theme (P3), die 37 Sprachen mit dem Generator (P4). Ein
+      Verweis auf eine Ressource, die es nicht gibt, waere ein Bau, der nur
+      zufaellig laeuft.
+    -->
+    <application
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Clockwork"
+        android:supportsRtl="true"
+        android:enableOnBackInvokedCallback="true"
+        android:allowBackup="false">
+
+        <!--
+          allowBackup="false": Ohne Tresor gibt es nichts zu sichern, und der
+          verschluesselte Tresor-Umschlag soll das Geraet nicht Richtung
+          Google-Backup verlassen. Dieselbe Entscheidung wie in 1.x.
+        -->
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|locale|layoutDirection|fontScale|density"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          Der Dienst traegt keine Logik — AppCompat liest an ihm nur die
+          Metadaten fuer die per-App-Sprachwahl unterhalb von API 33. Ab 33
+          uebernimmt der LocaleManager der Plattform, und der Eintrag ist
+          wirkungslos. `enabled="false"` ist Absicht: Er soll nie starten.
+        -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
+    </application>
+
+</manifest>
