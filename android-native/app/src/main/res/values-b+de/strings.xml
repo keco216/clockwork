@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — TOTP Authenticator</string>
-    <string name="meta_description">Clockwork — TOTP Authenticator. Erzeugt Zwei-Faktor-Codes vollständig im Browser, ohne Netzwerkanfragen.</string>
     <string name="brand_tagline">TOTP Authenticator · RFC 6238</string>
     <string name="skip_toCodes">Zu den Codes springen</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -116,7 +114,6 @@
     <string name="import_unnamed">Unbenannt</string>
     <string name="import_unreadable">Export unlesbar.</string>
     <string name="vacant_demo">Testschlüssel einfügen</string>
-    <string name="colophon_note">Kein Netzwerk · kein Speicher · HMAC über die Web Crypto API</string>
     <string name="lang_label">Sprache</string>
     <string name="lang_aria">Sprache wählen</string>
     <string name="err_base32_paddingInside">Das Zeichen »=« darf nur am Ende stehen (es ist nur Auffüllung).</string>
@@ -148,4 +145,5 @@
     <string name="err_migration_badBase64">Der »data«-Parameter ist kein gültiges Base64.</string>
     <string name="err_migration_noAccounts">In diesem Export stehen keine Konten.</string>
     <string name="vacant_text">Secret, otpauth-Link oder QR-Bild — nichts davon verlässt dieses Gerät.</string>
+    <string name="colophon_note">Kein Netzwerk · kein Speicher · HMAC über javax.crypto</string>
 </resources>

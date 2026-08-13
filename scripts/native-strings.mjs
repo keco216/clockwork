@@ -78,6 +78,8 @@ import { pathToFileURL } from 'node:url';
 // Auftrags — keine neue Abhaengigkeit — ist damit unveraendert erfuellt.
 import { transformSync } from 'rolldown/experimental';
 
+import { checkWebWords } from './native-web-words.mjs';
+
 const LOCALES_DIR = 'src/i18n/locales';
 const RES_DIR = 'android-native/app/src/main/res';
 const BASE_LOCALE = 'en';
@@ -85,6 +87,22 @@ const TEMP_DIR = 'android-native/app/build/native-strings';
 
 /** Muss mit `NATIVE_PREFIX` in scripts/locale-subset.ts uebereinstimmen. */
 const NATIVE_PREFIX = 'native.';
+
+/**
+ * Schluessel, die es nativ GAR NICHT gibt.
+ *
+ * `meta.title` und `meta.description` sind Metadaten eines HTML-Dokuments —
+ * `<title>` und die Beschreibung fuer Suchmaschinen und Vorschaukarten. Eine
+ * Android-App hat davon nichts: Ihr Name steht in `values/brand.xml`
+ * (`app_name`), und eine Beschreibung fuer den Katalog steht in den
+ * fastlane-Metadaten, nicht in den Ressourcen.
+ *
+ * Sie zu UEBERSETZEN waere doppelt falsch — sie sind ja schon uebersetzt —,
+ * und eine `native.`-Variante anzulegen hiesse, fuer eine Rolle einen Text zu
+ * erfinden, die es nicht gibt. Also raus, mit Begruendung. Der Web-Katalog
+ * behaelt sie unveraendert.
+ */
+const NATIVE_SKIP = new Set(['meta.title', 'meta.description']);
 
 /**
  * Der Ressourcenname zu einem i18n-Schluessel.
@@ -238,8 +256,16 @@ for (const key of shadowed) {
   }
 }
 
+// Eine Skip-Liste, die nichts trifft, ist ein Irrtum ueber den Katalog —
+// dieselbe Regel wie bei F-Droids `scandelete`.
+for (const key of NATIVE_SKIP) {
+  if (!baseKeys.includes(key)) {
+    throw new Error(`NATIVE_SKIP nennt "${key}", den es im Katalog gar nicht gibt`);
+  }
+}
+
 /** Was wirklich in die Ressourcen geht. */
-const emitKeys = baseKeys.filter((key) => !shadowed.has(key));
+const emitKeys = baseKeys.filter((key) => !shadowed.has(key) && !NATIVE_SKIP.has(key));
 
 // Die Zuordnung Name → Position, EINMAL aus der Basissprache. Sie gilt danach
 // fuer alle 37 Sprachen — auch fuer die, die die Teile umstellen.
@@ -259,6 +285,27 @@ for (const key of emitKeys) {
     );
   }
   resourceNames.set(name, key);
+}
+
+/* ── Dauerpruefung: keine Web-Woerter in den nativen Ressourcen ──────────
+   Geprueft wird, was gleich GESCHRIEBEN wird — also nach Skip-Liste und nach
+   dem Ueberschreiben durch `native.`-Schluessel. Ein Web-Satz, der von einer
+   nativen Variante verdeckt ist, ist kein Befund; einer, der wirklich in die
+   App geht, sehr wohl.
+
+   Der Abbruch kommt VOR dem Schreiben: Lieber gar keine Ressourcen als
+   welche, die etwas Falsches ueber die App behaupten. */
+const englishToEmit = Object.fromEntries(emitKeys.map((key) => [key, base[key]]));
+const webWords = checkWebWords(englishToEmit);
+
+if (webWords.length > 0) {
+  process.stderr.write(
+    `native-strings: ${webWords.length} Satz/Saetze sind nur im Browser wahr.\n` +
+      'Sie gehoeren als "native."-Variante angelegt (siehe src/i18n/strings.ts)\n' +
+      'oder in die Skip-Liste, wenn es sie nativ gar nicht gibt.\n\n',
+  );
+  for (const problem of webWords) process.stderr.write(`  ${problem}\n`);
+  process.exit(1);
 }
 
 /** Die sechs CLDR-Kategorien — dieselbe Liste wie in `src/i18n/strings.ts`. */

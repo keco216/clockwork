@@ -266,7 +266,11 @@ describe('stripNativeKeys()', () => {
     }
 
     expect(codes).toHaveLength(37);
-    expect([...sets]).toEqual(['native.vacant.text']);
+    // Genau EINE Menge — alle 37 Dateien tragen dieselben Schlüssel, das
+    // erzwingt der Compiler. Die Liste steht hier ausgeschrieben und nicht
+    // als Länge: Ein neuer `native.`-Schlüssel soll diesen Test anfassen
+    // müssen, damit niemand einen dritten einführt, ohne ihn zu bemerken.
+    expect([...sets]).toEqual(['native.colophon.note,native.vacant.text']);
   });
 });
 

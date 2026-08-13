@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — TOTP autentifikator</string>
-    <string name="meta_description">Clockwork — TOTP autentifikator. Dvofaktorske kodove stvara u cijelosti u pregledniku, bez ijednog mrežnog zahtjeva.</string>
     <string name="brand_tagline">TOTP autentifikator · RFC 6238</string>
     <string name="skip_toCodes">Skoči na kodove</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -122,7 +120,6 @@
     <string name="import_unnamed">Bez naziva</string>
     <string name="import_unreadable">Izvoz nečitljiv.</string>
     <string name="vacant_demo">Umetni testni ključ</string>
-    <string name="colophon_note">Bez mreže · bez pohrane · HMAC preko Web Crypto API</string>
     <string name="lang_label">Jezik</string>
     <string name="lang_aria">Odaberi jezik</string>
     <string name="err_base32_paddingInside">Znak „=“ smije stajati samo na kraju (puko je ispunjavanje).</string>
@@ -154,4 +151,5 @@
     <string name="err_migration_badBase64">Parametar „data“ nije valjani Base64.</string>
     <string name="err_migration_noAccounts">U ovom izvozu nema nijednog računa.</string>
     <string name="vacant_text">Secret, poveznica otpauth ili QR slika — ništa od toga ne napušta ovaj uređaj.</string>
+    <string name="colophon_note">Bez mreže · bez pohrane · HMAC preko javax.crypto</string>
 </resources>

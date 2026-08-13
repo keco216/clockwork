@@ -191,4 +191,6 @@ export default {
 
   'native.vacant.text':
     'Secret, otpauth-link eller QR-billede — intet af det forlader denne enhed.',
+
+  'native.colophon.note': 'Intet netværk · intet lager · HMAC via javax.crypto',
 } satisfies Strings;

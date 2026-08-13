@@ -194,4 +194,6 @@ export default {
   'err.migration.noAccounts': 'Šajā eksportā nav neviena konta.',
 
   'native.vacant.text': 'Noslēpums, otpauth saite vai QR attēls — nekas no tā neatstāj šo ierīci.',
+
+  'native.colophon.note': 'Bez tīkla · bez krātuves · HMAC caur javax.crypto',
 } satisfies Strings;

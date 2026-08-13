@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — TOTP tapatybės tikrintuvas</string>
-    <string name="meta_description">Clockwork — TOTP tapatybės tikrintuvas. Dviejų veiksnių kodus sukuria visiškai naršyklėje, be nė vienos tinklo užklausos.</string>
     <string name="brand_tagline">TOTP tapatybės tikrintuvas · RFC 6238</string>
     <string name="skip_toCodes">Pereiti prie kodų</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -128,7 +126,6 @@
     <string name="import_unnamed">Be pavadinimo</string>
     <string name="import_unreadable">Eksportas neįskaitomas.</string>
     <string name="vacant_demo">Įterpti bandomąjį raktą</string>
-    <string name="colophon_note">Jokio tinklo · jokios saugyklos · HMAC per Web Crypto API</string>
     <string name="lang_label">Kalba</string>
     <string name="lang_aria">Pasirinkite kalbą</string>
     <string name="err_base32_paddingInside">Ženklas „=“ gali stovėti tik gale (tai tėra užpildas).</string>
@@ -160,4 +157,5 @@
     <string name="err_migration_badBase64">Parametras „data“ nėra tinkamas Base64.</string>
     <string name="err_migration_noAccounts">Šiame eksporte nėra nė vienos paskyros.</string>
     <string name="vacant_text">Slaptas raktas, otpauth nuoroda ar QR paveikslėlis — niekas iš to neišeina iš šio įrenginio.</string>
+    <string name="colophon_note">Jokio tinklo · jokios saugyklos · HMAC per javax.crypto</string>
 </resources>

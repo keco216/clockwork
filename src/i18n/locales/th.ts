@@ -181,4 +181,6 @@ export default {
   'err.migration.noAccounts': 'ในไฟล์ส่งออกนี้ไม่มีบัญชีใดเลย',
 
   'native.vacant.text': 'ซีเคร็ต ลิงก์ otpauth หรือรูป QR — ไม่มีสิ่งใดออกจากอุปกรณ์นี้',
+
+  'native.colophon.note': 'ไม่มีเครือข่าย · ไม่มีที่เก็บ · HMAC ผ่าน javax.crypto',
 } satisfies Strings;

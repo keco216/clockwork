@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — TOTP-autentisering</string>
-    <string name="meta_description">Clockwork — TOTP-autentisering. Lager tofaktorkoder utelukkende i nettleseren, uten en eneste nettverksforespørsel.</string>
     <string name="brand_tagline">TOTP-autentisering · RFC 6238</string>
     <string name="skip_toCodes">Hopp til kodene</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -116,7 +114,6 @@
     <string name="import_unnamed">Uten navn</string>
     <string name="import_unreadable">Eksporten kan ikke leses.</string>
     <string name="vacant_demo">Sett inn testnøkkel</string>
-    <string name="colophon_note">Ikke noe nettverk · ingen lagring · HMAC via Web Crypto API</string>
     <string name="lang_label">Språk</string>
     <string name="lang_aria">Velg språk</string>
     <string name="err_base32_paddingInside">Tegnet «=» kan bare stå til slutt (det er ikke annet enn utfylling).</string>
@@ -148,4 +145,5 @@
     <string name="err_migration_badBase64">Parameteren «data» er ikke gyldig Base64.</string>
     <string name="err_migration_noAccounts">I denne eksporten finnes ingen kontoer.</string>
     <string name="vacant_text">Secret, otpauth-lenke eller QR-bilde — ingenting av det forlater denne enheten.</string>
+    <string name="colophon_note">Ikke noe nettverk · ingen lagring · HMAC via javax.crypto</string>
 </resources>

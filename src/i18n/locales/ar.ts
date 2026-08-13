@@ -228,4 +228,6 @@ export default {
   'err.migration.noAccounts': 'لا حسابات في هذه الصادرات.',
 
   'native.vacant.text': 'سر أو رابط otpauth أو صورة QR — لا شيء من ذلك يغادر هذا الجهاز.',
+
+  'native.colophon.note': 'لا شبكة · لا تخزين · HMAC عبر javax.crypto',
 } satisfies Strings;

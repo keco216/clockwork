@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — TOTP-todennin</string>
-    <string name="meta_description">Clockwork — TOTP-todennin. Luo kaksivaiheiset koodit kokonaan selaimessa, ilman ainuttakaan verkkopyyntöä.</string>
     <string name="brand_tagline">TOTP-todennin · RFC 6238</string>
     <string name="skip_toCodes">Siirry koodeihin</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -116,7 +114,6 @@
     <string name="import_unnamed">Nimetön</string>
     <string name="import_unreadable">Vientiä ei voi lukea.</string>
     <string name="vacant_demo">Lisää testiavain</string>
-    <string name="colophon_note">Ei verkkoa · ei tallennusta · HMAC Web Crypto API:n kautta</string>
     <string name="lang_label">Kieli</string>
     <string name="lang_aria">Valitse kieli</string>
     <string name="err_base32_paddingInside">Merkki ”=” saa olla vain lopussa (se on pelkkää täytettä).</string>
@@ -148,4 +145,5 @@
     <string name="err_migration_badBase64">Parametri ”data” ei ole kelvollista Base64:ää.</string>
     <string name="err_migration_noAccounts">Tässä viennissä ei ole yhtään tiliä.</string>
     <string name="vacant_text">Secret, otpauth-linkki tai QR-kuva — mikään niistä ei poistu tästä laitteesta.</string>
+    <string name="colophon_note">Ei verkkoa · ei tallennusta · HMAC javax.crypto:n kautta</string>
 </resources>

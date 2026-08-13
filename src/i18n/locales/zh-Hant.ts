@@ -180,4 +180,6 @@ export default {
   'err.migration.noAccounts': '這份匯出裡沒有任何帳戶。',
 
   'native.vacant.text': '密鑰、otpauth 連結或 QR 圖片——都不會離開這個裝置。',
+
+  'native.colophon.note': '無網路 · 無儲存 · HMAC 經由 javax.crypto',
 } satisfies Strings;

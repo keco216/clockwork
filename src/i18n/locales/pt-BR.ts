@@ -199,4 +199,6 @@ export default {
   'err.migration.noAccounts': 'Nesta exportação não há nenhuma conta.',
 
   'native.vacant.text': 'Secret, link otpauth ou imagem QR — nada disso sai deste dispositivo.',
+
+  'native.colophon.note': 'Sem rede · sem armazenamento · HMAC por javax.crypto',
 } satisfies Strings;

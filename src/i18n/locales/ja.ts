@@ -187,4 +187,6 @@ export default {
   'err.migration.noAccounts': 'このエクスポートにはアカウントが入っていない。',
 
   'native.vacant.text': 'シークレット、otpauth リンク、QR 画像 — どれもこの端末から出ない。',
+
+  'native.colophon.note': 'ネットワークなし · 保存なし · HMAC は javax.crypto 経由',
 } satisfies Strings;

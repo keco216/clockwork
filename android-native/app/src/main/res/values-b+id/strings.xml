@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — autentikator TOTP</string>
-    <string name="meta_description">Clockwork — autentikator TOTP. Membuat kode dua faktor sepenuhnya di peramban, tanpa satu pun permintaan jaringan.</string>
     <string name="brand_tagline">Autentikator TOTP · RFC 6238</string>
     <string name="skip_toCodes">Lompat ke kode</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -110,7 +108,6 @@
     <string name="import_unnamed">Tanpa nama</string>
     <string name="import_unreadable">Ekspor tidak terbaca.</string>
     <string name="vacant_demo">Sisipkan kunci uji</string>
-    <string name="colophon_note">Tanpa jaringan · tanpa penyimpanan · HMAC lewat Web Crypto API</string>
     <string name="lang_label">Bahasa</string>
     <string name="lang_aria">Pilih bahasa</string>
     <string name="err_base32_paddingInside">Karakter “=” hanya boleh berada di akhir (itu sekadar pengisi).</string>
@@ -142,4 +139,5 @@
     <string name="err_migration_badBase64">Parameter “data” bukan Base64 yang sah.</string>
     <string name="err_migration_noAccounts">Tidak ada akun di dalam ekspor ini.</string>
     <string name="vacant_text">Secret, tautan otpauth, atau gambar QR — tidak ada yang meninggalkan perangkat ini.</string>
+    <string name="colophon_note">Tanpa jaringan · tanpa penyimpanan · HMAC lewat javax.crypto</string>
 </resources>

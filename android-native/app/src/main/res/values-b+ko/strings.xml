@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — TOTP 인증기</string>
-    <string name="meta_description">Clockwork — TOTP 인증기. 2단계 인증 코드를 전부 브라우저 안에서 만든다. 네트워크 요청은 하나도 하지 않는다.</string>
     <string name="brand_tagline">TOTP 인증기 · RFC 6238</string>
     <string name="skip_toCodes">코드로 건너뛰기</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -110,7 +108,6 @@
     <string name="import_unnamed">이름 없음</string>
     <string name="import_unreadable">내보내기를 읽을 수 없다.</string>
     <string name="vacant_demo">테스트 키 삽입</string>
-    <string name="colophon_note">네트워크 없음 · 저장 없음 · HMAC 은 Web Crypto API 로</string>
     <string name="lang_label">언어</string>
     <string name="lang_aria">언어 선택</string>
     <string name="err_base32_paddingInside">문자 “=” 는 끝에만 올 수 있다 (채움일 뿐이다).</string>
@@ -142,4 +139,5 @@
     <string name="err_migration_badBase64">“data” 매개변수가 올바른 Base64 가 아니다.</string>
     <string name="err_migration_noAccounts">이 내보내기에는 계정이 하나도 없다.</string>
     <string name="vacant_text">시크릿, otpauth 링크, QR 이미지 — 어느 것도 이 기기를 벗어나지 않는다.</string>
+    <string name="colophon_note">네트워크 없음 · 저장 없음 · HMAC 은 javax.crypto 로</string>
 </resources>

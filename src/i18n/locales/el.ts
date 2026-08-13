@@ -203,4 +203,6 @@ export default {
 
   'native.vacant.text':
     'Μυστικό, σύνδεσμος otpauth ή εικόνα QR — τίποτα από αυτά δεν φεύγει από αυτή τη συσκευή.',
+
+  'native.colophon.note': 'Χωρίς δίκτυο · χωρίς αποθήκευση · HMAC μέσω javax.crypto',
 } satisfies Strings;

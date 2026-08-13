@@ -212,4 +212,6 @@ export default {
   'err.migration.noAccounts': 'בייצוא הזה אין שום חשבון.',
 
   'native.vacant.text': 'סוד, קישור otpauth או תמונת QR — דבר מאלה אינו עוזב את המכשיר הזה.',
+
+  'native.colophon.note': 'בלי רשת · בלי אחסון · HMAC דרך javax.crypto',
 } satisfies Strings;

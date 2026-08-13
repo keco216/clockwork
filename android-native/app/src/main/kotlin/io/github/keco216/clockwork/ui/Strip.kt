@@ -18,9 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.TextUnit
 import io.github.keco216.clockwork.core.groupDigits
 import io.github.keco216.clockwork.ui.theme.Dimens
@@ -121,55 +123,35 @@ fun Strip(
             else -> fromWidth
         }
 
-        Column(verticalArrangement = Arrangement.spacedBy(Dimens.gapPair)) {
-            if (compact) {
-                CompactStrip(
-                    title = title,
-                    subtitle = subtitle,
-                    spec = spec,
-                    code = code,
-                    codeSize = codeSize,
-                    progress = progress,
-                    period = period,
-                    expiring = expiring,
-                    onCopy = onCopy,
-                )
-            } else {
-                WideStrip(
-                    title = title,
-                    subtitle = subtitle,
-                    spec = spec,
-                    code = code,
-                    codeSize = codeSize,
-                    progress = progress,
-                    period = period,
-                    expiring = expiring,
-                    onCopy = onCopy,
-                )
-            }
+        val meta = "${text("strip.next")} ${groupDigits(nextCode)} · " +
+            "$remaining ${text("strip.seconds.abbr")}"
 
-            // Die folgt-Zeile. Sie zeigt, dass der naechste Code jetzt schon
-            // feststeht — TOTP rechnet, es fragt nicht.
-            BasicText(
-                text = "${text("strip.next")} ${groupDigits(nextCode)} · " +
-                    "$remaining ${text("strip.seconds.abbr")}",
-                style = TextStyles.micro.copy(color = LocalColors.current.ink3),
-                maxLines = 1,
+        if (compact) {
+            CompactStrip(
+                title = title,
+                subtitle = subtitle,
+                spec = spec,
+                code = code,
+                codeSize = codeSize,
+                meta = meta,
+                progress = progress,
+                period = period,
+                expiring = expiring,
+                onCopy = onCopy,
             )
-
-            // Im Kompaktraster steht die Kopiertaste GANZ UNTEN und ueber die
-            // volle Kartenbreite: Kopieren ist DIE Handlung dieser Karte, und
-            // unten ist die Daumenzone. 44 dp ist die lg-Sprosse der
-            // Hoehenleiter — dieselbe Zahl wie im Web.
-            if (compact) {
-                Key(
-                    label = text("key.copy"),
-                    onClick = { onCopy(code) },
-                    modifier = Modifier.fillMaxWidth(),
-                    variant = KeyVariant.Default,
-                    large = true,
-                )
-            }
+        } else {
+            WideStrip(
+                title = title,
+                subtitle = subtitle,
+                spec = spec,
+                code = code,
+                codeSize = codeSize,
+                meta = meta,
+                progress = progress,
+                period = period,
+                expiring = expiring,
+                onCopy = onCopy,
+            )
         }
     }
 }
@@ -187,6 +169,7 @@ private fun CompactStrip(
     spec: String,
     code: String,
     codeSize: TextUnit,
+    meta: String,
     progress: Double,
     period: Int,
     expiring: Boolean,
@@ -194,51 +177,82 @@ private fun CompactStrip(
 ) {
     val colors = LocalColors.current
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Dimens.gapPair),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Gauge(
-            progress = progress,
-            period = period,
-            expiring = expiring,
-            modifier = Modifier.size(Dimens.controlHLg),
-        )
-        Column(modifier = Modifier.weight(1f)) {
-            BasicText(
-                text = title,
-                style = TextStyles.lead.copy(color = colors.ink),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+    Column(verticalArrangement = Arrangement.spacedBy(Dimens.gapPair)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.gapPair),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Gauge(
+                progress = progress,
+                period = period,
+                expiring = expiring,
+                modifier = Modifier.size(Dimens.controlHLg),
             )
-            if (subtitle != null) {
+            Column(modifier = Modifier.weight(1f)) {
                 BasicText(
-                    text = subtitle,
-                    style = TextStyles.micro.copy(color = colors.ink3),
+                    text = title,
+                    style = TextStyles.lead.copy(color = colors.ink),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-            }
-            // `margin-block-start: var(--sp-1)` der Web-Fassung.
-            Box(modifier = Modifier.padding(top = Dimens.sp1)) {
-                Chip(label = spec, accent = true)
+                if (subtitle != null) {
+                    BasicText(
+                        text = subtitle,
+                        style = TextStyles.micro.copy(color = colors.ink3),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                // `margin-block-start: var(--sp-1)` der Web-Fassung.
+                Box(modifier = Modifier.padding(top = Dimens.sp1)) {
+                    Chip(label = spec, accent = true)
+                }
             }
         }
-    }
 
-    // Der Code ueber die ganze Kartenbreite — hier kann ihm nichts mehr in den
-    // Weg laufen, weil nichts mehr daneben steht.
-    FlippingCode(code = code, fontSize = codeSize, modifier = Modifier.fillMaxWidth())
+        // Der Code ueber die ganze Kartenbreite — hier kann ihm nichts mehr in
+        // den Weg laufen, weil nichts mehr daneben steht.
+        FlippingCode(code = code, fontSize = codeSize, modifier = Modifier.fillMaxWidth())
+
+        BasicText(
+            text = meta,
+            style = TextStyles.micro.copy(color = colors.ink3),
+            maxLines = 1,
+        )
+
+        // Kopieren ist DIE Handlung dieser Karte, und unten ist die Daumenzone.
+        // 44 dp ist die lg-Sprosse der Hoehenleiter — dieselbe Zahl wie im Web.
+        Key(
+            label = text("key.copy"),
+            onClick = { onCopy(code) },
+            modifier = Modifier.fillMaxWidth(),
+            variant = KeyVariant.Default,
+            large = true,
+        )
+    }
 }
 
 /**
- * Das Raster ab 420 dp: Blatt, Code und Kopiertaste in EINER Zeile.
+ * Das Raster ab 420 dp — und zwar als echtes Raster.
  *
- * Alle drei stehen in der CODE-Zeile und sind darin zentriert, liegen also auf
- * einer Achse. Das war der V8-Befund: Vorher liefen Blatt und Taste ueber alle
- * drei Zeilen und lagen damit auf der Mitte von Kopfzeile, Code und Metazeile
- * zusammen — gemessen 4,5 px neben dem Code.
+ * Die Web-Fassung schreibt drei Spalten (auto / 1fr / auto) und drei Zeilen,
+ * in denen Kopf und Meta NUR die mittlere Spalte belegen und Blatt und Taste
+ * nur die Code-Zeile. Zwei Eigenschaften stecken darin, und beide gehen mit
+ * uebereinander gestapelten Zeilen verloren:
+ *
+ * 1. **Kopfzeile und Metazeile stehen in der CODE-Spalte**, nicht ueber der
+ *    ganzen Karte. Der Name beginnt also dort, wo der Code beginnt — sonst
+ *    zerfaellt die Karte optisch in etwas Breites und etwas Schmales.
+ * 2. **Blatt und Taste stehen NUR in der Code-Zeile** und sind darin
+ *    zentriert. Das war der V8-Befund: Liefen sie ueber alle drei Zeilen,
+ *    lagen sie auf der Mitte von Kopf, Code und Meta zusammen — gemessen
+ *    4,5 px neben dem Code, weil die drei Zeilen nicht symmetrisch sind.
+ *
+ * Compose hat kein CSS-Raster, also steht hier ein eigenes `Layout`. Das ist
+ * kuerzer als der Versuch, dasselbe mit Fuellabstaenden nachzustellen — und
+ * vor allem rechnet es die Spaltenbreite aus den GEMESSENEN Bauteilen statt
+ * aus geratenen Zahlen.
  */
 @Composable
 private fun WideStrip(
@@ -247,6 +261,7 @@ private fun WideStrip(
     spec: String,
     code: String,
     codeSize: TextUnit,
+    meta: String,
     progress: Double,
     period: Int,
     expiring: Boolean,
@@ -254,51 +269,89 @@ private fun WideStrip(
 ) {
     val colors = LocalColors.current
 
-    Row(
+    Layout(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Dimens.gapPair),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            BasicText(
-                text = title,
-                style = TextStyles.lead.copy(color = colors.ink),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+        content = {
+            // Reihenfolge = Rolle. Sie wird unten beim Messen wieder
+            // auseinandergenommen; wer hier umsortiert, muss dort mitziehen.
+            Gauge(
+                progress = progress,
+                period = period,
+                expiring = expiring,
+                modifier = Modifier.size(Dimens.controlHLg),
             )
-            if (subtitle != null) {
-                BasicText(
-                    text = subtitle,
-                    style = TextStyles.micro.copy(color = colors.ink3),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Dimens.gapPair),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    BasicText(
+                        text = title,
+                        style = TextStyles.lead.copy(color = colors.ink),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    if (subtitle != null) {
+                        BasicText(
+                            text = subtitle,
+                            style = TextStyles.micro.copy(color = colors.ink3),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+                Chip(label = spec, accent = true)
             }
-        }
-        Chip(label = spec, accent = true)
-    }
+            FlippingCode(code = code, fontSize = codeSize)
+            BasicText(
+                text = meta,
+                style = TextStyles.micro.copy(color = colors.ink3),
+                maxLines = 1,
+            )
+            Key(
+                label = text("key.copy"),
+                onClick = { onCopy(code) },
+                variant = KeyVariant.Default,
+            )
+        },
+    ) { measurables, constraints ->
+        val gaugeM = measurables[0]
+        val headM = measurables[1]
+        val codeM = measurables[2]
+        val metaM = measurables[3]
+        val copyM = measurables[4]
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        // `column-gap: var(--gap-group)` — 24 dp, nicht 8. Im ersten Wurf
-        // stand hier die Paar-Fuge; die Web-Fassung setzt an dieser einen
-        // Stelle die Gruppen-Fuge, weil Blatt, Code und Taste drei Dinge sind
-        // und kein Paar.
-        horizontalArrangement = Arrangement.spacedBy(Dimens.gapGroup),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Gauge(
-            progress = progress,
-            period = period,
-            expiring = expiring,
-            modifier = Modifier.size(Dimens.controlHLg),
-        )
-        FlippingCode(code = code, fontSize = codeSize, modifier = Modifier.weight(1f))
-        Key(
-            label = text("key.copy"),
-            onClick = { onCopy(code) },
-            variant = KeyVariant.Default,
-        )
+        val columnGap = Dimens.gapGroup.roundToPx()
+        val rowGap = Dimens.gapPair.roundToPx()
+        val full = constraints.maxWidth
+
+        // Die beiden Randspalten sind auto — sie bekommen, was sie brauchen.
+        val loose = constraints.copy(minWidth = 0, maxWidth = Constraints.Infinity)
+        val gauge = gaugeM.measure(loose)
+        val copy = copyM.measure(loose)
+
+        // Die Mittelspalte ist minmax(0, 1fr): der Rest, aber nie negativ.
+        val middle = (full - gauge.width - copy.width - 2 * columnGap).coerceAtLeast(0)
+        val middleC = constraints.copy(minWidth = 0, maxWidth = middle)
+        val head = headM.measure(middleC)
+        val codeP = codeM.measure(middleC)
+        val metaP = metaM.measure(middleC)
+
+        // Die Code-Zeile wird so hoch wie ihr groesstes Bauteil — kein
+        // Ausgleichswert, den man beim naechsten Schriftwechsel nachrechnen
+        // muesste.
+        val codeRow = maxOf(gauge.height, codeP.height, copy.height)
+        val height = head.height + rowGap + codeRow + rowGap + metaP.height
+        val left = gauge.width + columnGap
+        val codeTop = head.height + rowGap
+
+        layout(full, height) {
+            head.place(left, 0)
+            gauge.place(0, codeTop + (codeRow - gauge.height) / 2)
+            codeP.place(left, codeTop + (codeRow - codeP.height) / 2)
+            copy.place(full - copy.width, codeTop + (codeRow - copy.height) / 2)
+            metaP.place(left, codeTop + codeRow + rowGap)
+        }
     }
 }
 

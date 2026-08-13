@@ -193,4 +193,6 @@ export default {
 
   'native.vacant.text':
     'Secret, otpauth bağlantısı veya QR görüntüsü — hiçbiri bu cihazdan çıkmaz.',
+
+  'native.colophon.note': 'Ağ yok · depolama yok · HMAC, javax.crypto üzerinden',
 } satisfies Strings;

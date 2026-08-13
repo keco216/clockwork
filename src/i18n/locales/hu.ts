@@ -194,4 +194,6 @@ export default {
 
   'native.vacant.text':
     'Secret, otpauth-hivatkozás vagy QR-kép — semmi sem hagyja el ezt az eszközt.',
+
+  'native.colophon.note': 'Nincs hálózat · nincs tárolás · HMAC a javax.crypto-n keresztül',
 } satisfies Strings;

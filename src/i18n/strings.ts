@@ -310,6 +310,22 @@ export interface Strings {
    * erben damit den Qualitätsvorbehalt ihrer Ausgangssätze.
    */
   'native.vacant.text': string;
+
+  /**
+   * Die Fußzeile — native Fassung von `colophon.note`.
+   *
+   * Der Web-Satz endet auf „HMAC über die Web Crypto API". Nativ rechnet
+   * `javax.crypto`; die Web-Fassung dort stehen zu lassen wäre schlicht
+   * falsch, und zwar an der einen Stelle, die das Versprechen der App
+   * zusammenfasst.
+   *
+   * Der API-Name bleibt UNÜBERSETZT, genau wie „Web Crypto API" es in allen
+   * 37 Sprachen ist. Das ist auch der Grund, warum die Ableitung so sicher
+   * war: Getauscht wurde nur der Name samt Artikel („über die Web Crypto
+   * API" → „über javax.crypto"), der Rest jedes Satzes steht Zeichen für
+   * Zeichen unverändert.
+   */
+  'native.colophon.note': string;
 }
 
 /** Alle Schlüssel, deren Wert ein einfacher String ist. */

@@ -210,4 +210,6 @@ export default {
 
   'native.vacant.text':
     'Secret, lien otpauth ou image QR — rien de tout cela ne quitte cet appareil.',
+
+  'native.colophon.note': 'Pas de réseau · pas de stockage · HMAC via javax.crypto',
 } satisfies Strings;

@@ -192,4 +192,6 @@ export default {
 
   'native.vacant.text':
     'Salajane võti, otpauth-link või QR-pilt — miski neist ei lahku sellest seadmest.',
+
+  'native.colophon.note': 'Ei mingit võrku · ei mingit salvestust · HMAC javax.crypto kaudu',
 } satisfies Strings;

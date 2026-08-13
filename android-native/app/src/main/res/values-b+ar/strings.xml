@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — مُوثِّق TOTP</string>
-    <string name="meta_description">Clockwork — مُوثِّق TOTP. يُنشئ رموز التحقق بخطوتين داخل المتصفح بالكامل، دون أي طلب شبكة.</string>
     <string name="brand_tagline">مُوثِّق TOTP · RFC 6238</string>
     <string name="skip_toCodes">انتقل إلى الرموز</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -140,7 +138,6 @@
     <string name="import_unnamed">بلا اسم</string>
     <string name="import_unreadable">الصادرات غير مقروءة.</string>
     <string name="vacant_demo">إدراج مفتاح تجريبي</string>
-    <string name="colophon_note">لا شبكة · لا تخزين · HMAC عبر Web Crypto API</string>
     <string name="lang_label">اللغة</string>
     <string name="lang_aria">اختر اللغة</string>
     <string name="err_base32_paddingInside">المحرف «=» لا يجوز إلا في النهاية (فهو حشو ليس إلا).</string>
@@ -172,4 +169,5 @@
     <string name="err_migration_badBase64">المعامل «data» ليس Base64 صالحًا.</string>
     <string name="err_migration_noAccounts">لا حسابات في هذه الصادرات.</string>
     <string name="vacant_text">سر أو رابط otpauth أو صورة QR — لا شيء من ذلك يغادر هذا الجهاز.</string>
+    <string name="colophon_note">لا شبكة · لا تخزين · HMAC عبر javax.crypto</string>
 </resources>

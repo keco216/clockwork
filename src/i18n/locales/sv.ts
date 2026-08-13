@@ -189,4 +189,6 @@ export default {
   'err.migration.noAccounts': 'I den här exporten finns inga konton.',
 
   'native.vacant.text': 'Secret, otpauth-länk eller QR-bild — inget av det lämnar den här enheten.',
+
+  'native.colophon.note': 'Inget nätverk · ingen lagring · HMAC via javax.crypto',
 } satisfies Strings;

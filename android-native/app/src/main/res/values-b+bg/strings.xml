@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — TOTP удостоверител</string>
-    <string name="meta_description">Clockwork — TOTP удостоверител. Създава двуфакторни кодове изцяло в браузъра, без нито една мрежова заявка.</string>
     <string name="brand_tagline">TOTP удостоверител · RFC 6238</string>
     <string name="skip_toCodes">Към кодовете</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -116,7 +114,6 @@
     <string name="import_unnamed">Без име</string>
     <string name="import_unreadable">Износът е нечетлив.</string>
     <string name="vacant_demo">Вмъкване на тестов ключ</string>
-    <string name="colophon_note">Без мрежа · без хранилище · HMAC през Web Crypto API</string>
     <string name="lang_label">Език</string>
     <string name="lang_aria">Изберете език</string>
     <string name="err_base32_paddingInside">Знакът „=“ може да стои само накрая (той е само запълване).</string>
@@ -148,4 +145,5 @@
     <string name="err_migration_badBase64">Параметърът „data“ не е валиден Base64.</string>
     <string name="err_migration_noAccounts">В този износ няма никакви акаунти.</string>
     <string name="vacant_text">Секрет, връзка otpauth или QR изображение — нищо от това не напуска това устройство.</string>
+    <string name="colophon_note">Без мрежа · без хранилище · HMAC през javax.crypto</string>
 </resources>

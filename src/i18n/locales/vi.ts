@@ -187,4 +187,6 @@ export default {
   'err.migration.noAccounts': 'Trong bản xuất này không có tài khoản nào.',
 
   'native.vacant.text': 'Secret, liên kết otpauth hoặc ảnh QR — không có gì rời khỏi thiết bị này.',
+
+  'native.colophon.note': 'Không mạng · không lưu trữ · HMAC qua javax.crypto',
 } satisfies Strings;

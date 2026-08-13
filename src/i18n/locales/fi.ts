@@ -193,4 +193,6 @@ export default {
 
   'native.vacant.text':
     'Secret, otpauth-linkki tai QR-kuva — mikään niistä ei poistu tästä laitteesta.',
+
+  'native.colophon.note': 'Ei verkkoa · ei tallennusta · HMAC javax.crypto:n kautta',
 } satisfies Strings;

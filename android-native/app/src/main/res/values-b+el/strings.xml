@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — έλεγχος ταυτότητας TOTP</string>
-    <string name="meta_description">Clockwork — έλεγχος ταυτότητας TOTP. Παράγει κωδικούς δύο παραγόντων εξ ολοκλήρου στο πρόγραμμα περιήγησης, χωρίς καμία αίτηση δικτύου.</string>
     <string name="brand_tagline">Έλεγχος ταυτότητας TOTP · RFC 6238</string>
     <string name="skip_toCodes">Μετάβαση στους κωδικούς</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -116,7 +114,6 @@
     <string name="import_unnamed">Χωρίς όνομα</string>
     <string name="import_unreadable">Η εξαγωγή δεν διαβάζεται.</string>
     <string name="vacant_demo">Εισαγωγή δοκιμαστικού κλειδιού</string>
-    <string name="colophon_note">Χωρίς δίκτυο · χωρίς αποθήκευση · HMAC μέσω του Web Crypto API</string>
     <string name="lang_label">Γλώσσα</string>
     <string name="lang_aria">Επιλογή γλώσσας</string>
     <string name="err_base32_paddingInside">Ο χαρακτήρας «=» επιτρέπεται μόνο στο τέλος (δεν είναι παρά γέμισμα).</string>
@@ -148,4 +145,5 @@
     <string name="err_migration_badBase64">Η παράμετρος «data» δεν είναι έγκυρο Base64.</string>
     <string name="err_migration_noAccounts">Σε αυτή την εξαγωγή δεν υπάρχουν λογαριασμοί.</string>
     <string name="vacant_text">Μυστικό, σύνδεσμος otpauth ή εικόνα QR — τίποτα από αυτά δεν φεύγει από αυτή τη συσκευή.</string>
+    <string name="colophon_note">Χωρίς δίκτυο · χωρίς αποθήκευση · HMAC μέσω javax.crypto</string>
 </resources>

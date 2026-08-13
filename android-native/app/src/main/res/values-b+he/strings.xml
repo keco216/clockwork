@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — מאמת TOTP</string>
-    <string name="meta_description">Clockwork — מאמת TOTP. מייצר קודי אימות דו־שלבי כולו בדפדפן, בלי אף בקשת רשת.</string>
     <string name="brand_tagline">מאמת TOTP · RFC 6238</string>
     <string name="skip_toCodes">דילוג אל הקודים</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -128,7 +126,6 @@
     <string name="import_unnamed">ללא שם</string>
     <string name="import_unreadable">הייצוא אינו קריא.</string>
     <string name="vacant_demo">הוספת מפתח בדיקה</string>
-    <string name="colophon_note">בלי רשת · בלי אחסון · HMAC דרך Web Crypto API</string>
     <string name="lang_label">שפה</string>
     <string name="lang_aria">בחירת שפה</string>
     <string name="err_base32_paddingInside">התו „=” מותר רק בסוף (הוא ריפוד ותו לא).</string>
@@ -160,4 +157,5 @@
     <string name="err_migration_badBase64">הפרמטר „data” אינו Base64 תקין.</string>
     <string name="err_migration_noAccounts">בייצוא הזה אין שום חשבון.</string>
     <string name="vacant_text">סוד, קישור otpauth או תמונת QR — דבר מאלה אינו עוזב את המכשיר הזה.</string>
+    <string name="colophon_note">בלי רשת · בלי אחסון · HMAC דרך javax.crypto</string>
 </resources>

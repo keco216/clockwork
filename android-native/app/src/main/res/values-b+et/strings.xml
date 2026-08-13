@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — TOTP-autentija</string>
-    <string name="meta_description">Clockwork — TOTP-autentija. Loob kaheastmelise kinnituse koodid täielikult brauseris, ilma ühegi võrgupäringuta.</string>
     <string name="brand_tagline">TOTP-autentija · RFC 6238</string>
     <string name="skip_toCodes">Hüppa koodide juurde</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -116,7 +114,6 @@
     <string name="import_unnamed">Nimeta</string>
     <string name="import_unreadable">Eksportfail ei ole loetav.</string>
     <string name="vacant_demo">Lisa testvõti</string>
-    <string name="colophon_note">Ei mingit võrku · ei mingit salvestust · HMAC Web Crypto API kaudu</string>
     <string name="lang_label">Keel</string>
     <string name="lang_aria">Vali keel</string>
     <string name="err_base32_paddingInside">Märk „=“ tohib olla ainult lõpus (see on pelgalt täide).</string>
@@ -148,4 +145,5 @@
     <string name="err_migration_badBase64">Parameeter „data“ ei ole kehtiv Base64.</string>
     <string name="err_migration_noAccounts">Selles eksportfailis ei ole ühtki kontot.</string>
     <string name="vacant_text">Salajane võti, otpauth-link või QR-pilt — miski neist ei lahku sellest seadmest.</string>
+    <string name="colophon_note">Ei mingit võrku · ei mingit salvestust · HMAC javax.crypto kaudu</string>
 </resources>

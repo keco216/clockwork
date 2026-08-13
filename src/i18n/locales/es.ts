@@ -203,4 +203,6 @@ export default {
 
   'native.vacant.text':
     'Secreto, enlace otpauth o imagen QR: nada de eso sale de este dispositivo.',
+
+  'native.colophon.note': 'Sin red · sin almacenamiento · HMAC mediante javax.crypto',
 } satisfies Strings;

@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — autentificator TOTP</string>
-    <string name="meta_description">Clockwork — autentificator TOTP. Generează coduri cu doi factori în întregime în navigator, fără nicio cerere de rețea.</string>
     <string name="brand_tagline">Autentificator TOTP · RFC 6238</string>
     <string name="skip_toCodes">Sari la coduri</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -122,7 +120,6 @@
     <string name="import_unnamed">Fără nume</string>
     <string name="import_unreadable">Export ilizibil.</string>
     <string name="vacant_demo">Inserează cheia de test</string>
-    <string name="colophon_note">Fără rețea · fără stocare · HMAC prin Web Crypto API</string>
     <string name="lang_label">Limbă</string>
     <string name="lang_aria">Alegeți limba</string>
     <string name="err_base32_paddingInside">Caracterul „=” poate sta doar la sfârșit (nu este decât umplutură).</string>
@@ -154,4 +151,5 @@
     <string name="err_migration_badBase64">Parametrul „data” nu este Base64 valid.</string>
     <string name="err_migration_noAccounts">În acest export nu există niciun cont.</string>
     <string name="vacant_text">Secret, link otpauth sau imagine QR — nimic din toate acestea nu părăsește acest dispozitiv.</string>
+    <string name="colophon_note">Fără rețea · fără stocare · HMAC prin javax.crypto</string>
 </resources>

@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — TOTP प्रमाणक</string>
-    <string name="meta_description">Clockwork — TOTP प्रमाणक. दो-चरणीय कोड पूरी तरह ब्राउज़र में ही बनाता है, एक भी नेटवर्क अनुरोध किए बिना.</string>
     <string name="brand_tagline">TOTP प्रमाणक · RFC 6238</string>
     <string name="skip_toCodes">कोड तक जाएँ</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -116,7 +114,6 @@
     <string name="import_unnamed">बिना नाम</string>
     <string name="import_unreadable">निर्यात पढ़ा नहीं जा सकता.</string>
     <string name="vacant_demo">परीक्षण कुंजी डालें</string>
-    <string name="colophon_note">कोई नेटवर्क नहीं · कोई भंडारण नहीं · HMAC Web Crypto API से</string>
     <string name="lang_label">भाषा</string>
     <string name="lang_aria">भाषा चुनें</string>
     <string name="err_base32_paddingInside">अक्षर “=” केवल अंत में आ सकता है (वह मात्र भराव है).</string>
@@ -148,4 +145,5 @@
     <string name="err_migration_badBase64">“data” पैरामीटर मान्य Base64 नहीं है.</string>
     <string name="err_migration_noAccounts">इस निर्यात में कोई खाता नहीं है.</string>
     <string name="vacant_text">सीक्रेट, otpauth लिंक या QR छवि — इनमें से कुछ भी इस डिवाइस से बाहर नहीं जाता।</string>
+    <string name="colophon_note">कोई नेटवर्क नहीं · कोई भंडारण नहीं · HMAC javax.crypto से</string>
 </resources>

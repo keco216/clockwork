@@ -191,4 +191,6 @@ export default {
 
   'native.vacant.text':
     'सीक्रेट, otpauth लिंक या QR छवि — इनमें से कुछ भी इस डिवाइस से बाहर नहीं जाता।',
+
+  'native.colophon.note': 'कोई नेटवर्क नहीं · कोई भंडारण नहीं · HMAC javax.crypto से',
 } satisfies Strings;

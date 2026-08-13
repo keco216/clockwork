@@ -13,8 +13,6 @@ object StringKeys {
     /** `null`, wenn der Schluessel unbekannt ist — der Aufrufer nimmt dann
      *  die neutrale Auffangmeldung, genau wie `translateLibMessage` im Web. */
     fun resourceFor(key: String): Int? = when (key) {
-        "meta.title" -> R.string.meta_title
-        "meta.description" -> R.string.meta_description
         "brand.tagline" -> R.string.brand_tagline
         "skip.toCodes" -> R.string.skip_toCodes
         "status.line" -> R.string.status_line
@@ -100,7 +98,6 @@ object StringKeys {
         "import.unnamed" -> R.string.import_unnamed
         "import.unreadable" -> R.string.import_unreadable
         "vacant.demo" -> R.string.vacant_demo
-        "colophon.note" -> R.string.colophon_note
         "lang.label" -> R.string.lang_label
         "lang.aria" -> R.string.lang_aria
         "err.base32.paddingInside" -> R.string.err_base32_paddingInside
@@ -132,6 +129,7 @@ object StringKeys {
         "err.migration.badBase64" -> R.string.err_migration_badBase64
         "err.migration.noAccounts" -> R.string.err_migration_noAccounts
         "native.vacant.text" -> R.string.vacant_text
+        "native.colophon.note" -> R.string.colophon_note
         else -> null
     }
 

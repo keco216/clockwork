@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — trình xác thực TOTP</string>
-    <string name="meta_description">Clockwork — trình xác thực TOTP. Tạo mã hai lớp hoàn toàn trong trình duyệt, không một yêu cầu mạng nào.</string>
     <string name="brand_tagline">Trình xác thực TOTP · RFC 6238</string>
     <string name="skip_toCodes">Nhảy tới các mã</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -110,7 +108,6 @@
     <string name="import_unnamed">Không tên</string>
     <string name="import_unreadable">Bản xuất không đọc được.</string>
     <string name="vacant_demo">Chèn khóa thử</string>
-    <string name="colophon_note">Không mạng · không lưu trữ · HMAC qua Web Crypto API</string>
     <string name="lang_label">Ngôn ngữ</string>
     <string name="lang_aria">Chọn ngôn ngữ</string>
     <string name="err_base32_paddingInside">Ký tự “=” chỉ được đứng ở cuối (nó chỉ là phần đệm).</string>
@@ -142,4 +139,5 @@
     <string name="err_migration_badBase64">Tham số “data” không phải Base64 hợp lệ.</string>
     <string name="err_migration_noAccounts">Trong bản xuất này không có tài khoản nào.</string>
     <string name="vacant_text">Secret, liên kết otpauth hoặc ảnh QR — không có gì rời khỏi thiết bị này.</string>
+    <string name="colophon_note">Không mạng · không lưu trữ · HMAC qua javax.crypto</string>
 </resources>

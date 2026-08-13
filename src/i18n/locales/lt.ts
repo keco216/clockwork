@@ -218,4 +218,6 @@ export default {
 
   'native.vacant.text':
     'Slaptas raktas, otpauth nuoroda ar QR paveikslėlis — niekas iš to neišeina iš šio įrenginio.',
+
+  'native.colophon.note': 'Jokio tinklo · jokios saugyklos · HMAC per javax.crypto',
 } satisfies Strings;

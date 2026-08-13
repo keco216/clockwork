@@ -5,8 +5,6 @@
   Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
 -->
 <resources>
-    <string name="meta_title">Clockwork — TOTP autentificētājs</string>
-    <string name="meta_description">Clockwork — TOTP autentificētājs. Divfaktoru kodus veido pilnībā pārlūkā, bez neviena tīkla pieprasījuma.</string>
     <string name="brand_tagline">TOTP autentificētājs · RFC 6238</string>
     <string name="skip_toCodes">Pāriet uz kodiem</string>
     <string name="status_line">%1$s · %2$s</string>
@@ -122,7 +120,6 @@
     <string name="import_unnamed">Bez nosaukuma</string>
     <string name="import_unreadable">Eksports nav salasāms.</string>
     <string name="vacant_demo">Ievietot testa atslēgu</string>
-    <string name="colophon_note">Bez tīkla · bez krātuves · HMAC caur Web Crypto API</string>
     <string name="lang_label">Valoda</string>
     <string name="lang_aria">Izvēlieties valodu</string>
     <string name="err_base32_paddingInside">Zīme „=“ drīkst atrasties tikai beigās (tā ir tikai aizpildījums).</string>
@@ -154,4 +151,5 @@
     <string name="err_migration_badBase64">Parametrs „data“ nav derīgs Base64.</string>
     <string name="err_migration_noAccounts">Šajā eksportā nav neviena konta.</string>
     <string name="vacant_text">Noslēpums, otpauth saite vai QR attēls — nekas no tā neatstāj šo ierīci.</string>
+    <string name="colophon_note">Bez tīkla · bez krātuves · HMAC caur javax.crypto</string>
 </resources>

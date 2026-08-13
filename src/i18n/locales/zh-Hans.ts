@@ -179,4 +179,6 @@ export default {
   'err.migration.noAccounts': '这份导出里没有任何账户。',
 
   'native.vacant.text': '密钥、otpauth 链接或二维码图片——都不会离开这个设备。',
+
+  'native.colophon.note': '无网络 · 无存储 · HMAC 经由 javax.crypto',
 } satisfies Strings;

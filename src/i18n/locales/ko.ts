@@ -183,4 +183,6 @@ export default {
   'err.migration.noAccounts': '이 내보내기에는 계정이 하나도 없다.',
 
   'native.vacant.text': '시크릿, otpauth 링크, QR 이미지 — 어느 것도 이 기기를 벗어나지 않는다.',
+
+  'native.colophon.note': '네트워크 없음 · 저장 없음 · HMAC 은 javax.crypto 로',
 } satisfies Strings;
