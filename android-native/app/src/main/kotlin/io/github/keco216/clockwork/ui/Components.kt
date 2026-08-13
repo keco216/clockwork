@@ -3,6 +3,7 @@ package io.github.keco216.clockwork.ui
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,8 +14,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,12 +27,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.BasicText
 import io.github.keco216.clockwork.ui.theme.Dimens
@@ -262,3 +273,143 @@ fun PairRow(
 
 /** Die Mindesthoehe fuer eine Trefferflaeche, wo sie noetig ist. */
 fun Modifier.touchTarget(): Modifier = this.defaultMinSize(minHeight = Dimens.touchMin)
+
+/* ── Aufklapper: Fold-Zeile und Schublade (V10) ─────────────────────────── */
+
+/**
+ * Der Winkel am Aufklapper — gezeichnet, nicht aus einer Icon-Bibliothek.
+ *
+ * Zwei Striche mit stumpfen Enden, 1,5 dp stark, in 250 ms um 180 Grad
+ * gedreht. Die Zeit ist die der Referenz (`.disclosure__indicator`), und sie
+ * ist bewusst dieselbe wie die der Schublade darunter: Zwei ineinander
+ * geschachtelte Winkel mit verschiedenem Tempo sahen im Web aus wie zwei
+ * Bauteile aus zwei Systemen — das war ein gemessener V11-Befund.
+ */
+@Composable
+private fun Chevron(expanded: Boolean, colour: Color, modifier: Modifier = Modifier) {
+    val turn by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = tween(Motion.calm, easing = Motion.spring),
+        label = "chevron",
+    )
+
+    Canvas(modifier = modifier.size(16.dp)) {
+        rotate(turn) {
+            val w = size.width
+            val h = size.height
+            // Die Spitze zeigt nach unten: von links oben zur Mitte unten und
+            // wieder hinauf. Stumpfe Enden, wie jede Marke dieses Geraets.
+            drawLine(
+                color = colour,
+                start = Offset(w * 0.25f, h * 0.4f),
+                end = Offset(w * 0.5f, h * 0.65f),
+                strokeWidth = 1.5.dp.toPx(),
+                cap = StrokeCap.Butt,
+            )
+            drawLine(
+                color = colour,
+                start = Offset(w * 0.5f, h * 0.65f),
+                end = Offset(w * 0.75f, h * 0.4f),
+                strokeWidth = 1.5.dp.toPx(),
+                cap = StrokeCap.Butt,
+            )
+        }
+    }
+}
+
+/**
+ * Die Fold-Zeile — der Aufklapper aus V10.
+ *
+ * Auf dem Handy schrumpft die Bedienung auf zwei zugeklappte Zeilen, damit
+ * die Codes obenan stehen. Die Zeile ist 44 dp hoch: Das ist die
+ * Touch-Sprosse der Hoehenleiter und nicht verhandelbar — sie wird mit dem
+ * Daumen getroffen.
+ *
+ * `Role.Button` und `stateDescription` stehen hier, weil Foundation nichts
+ * davon mitbringt. Ohne sie waere die Zeile fuer TalkBack ein Stueck Text,
+ * das sich auf Antippen unerklaerlich veraendert — das Gegenstueck zu
+ * `aria-expanded` im Web.
+ */
+@Composable
+fun FoldRow(
+    label: String,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colors = LocalColors.current
+    val interaction = remember { MutableInteractionSource() }
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(Dimens.radiusField))
+            .clickable(
+                interactionSource = interaction,
+                indication = null,
+                role = Role.Button,
+                onClick = onToggle,
+            )
+            .semantics {
+                stateDescription = if (expanded) "expanded" else "collapsed"
+            }
+            .defaultMinSize(minHeight = Dimens.touchMin)
+            .padding(vertical = Dimens.sp2),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        BasicText(
+            text = label,
+            style = TextStyles.small.copy(color = colors.ink),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Chevron(expanded = expanded, colour = colors.ink2)
+    }
+}
+
+/**
+ * Die Schublade darunter — das Gegenstueck zu `grid-template-rows: 0fr -> 1fr`.
+ *
+ * ── Warum ein eigenes Layout und kein Sichtbarkeitsschalter ───────────────
+ * Weil die Web-Fassung genau das tut: Der Inhalt wird in voller Hoehe
+ * GEMESSEN und der Behaelter darueber auf einen Bruchteil davon gesetzt. Ein
+ * Ein-/Ausblenden waere etwas anderes — es kennt die Zielhoehe nicht und
+ * springt deshalb, sobald der Inhalt sich aendert.
+ *
+ * ── Bewegung reduzieren ───────────────────────────────────────────────────
+ * Hier steht dafuer keine einzige Zeile, und das ist Absicht: Compose koppelt
+ * `animateFloatAsState` an die Animator-Skala des Systems
+ * (`MotionDurationScale`). Steht sie auf 0, ist die Fahrt sofort zu Ende —
+ * der Zustand stimmt trotzdem. Gemessen wird das, nicht geglaubt (siehe
+ * android-native/docs/abnahme).
+ */
+@Composable
+fun Drawer(open: Boolean, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    val fraction by animateFloatAsState(
+        targetValue = if (open) 1f else 0f,
+        animationSpec = tween(Motion.calm, easing = Motion.spring),
+        label = "drawer",
+    )
+
+    // Ganz zu heisst: gar nicht erst im Baum. Ein Kasten der Hoehe 0 frisst
+    // sonst die Fuge seines Elternteils — genau die „toten Fugen" aus dem
+    // V8-Abstands-Audit.
+    if (fraction <= 0f) return
+
+    Layout(
+        content = content,
+        modifier = modifier.clipToBounds(),
+    ) { measurables, constraints ->
+        val placeables = measurables.map { it.measure(constraints) }
+        val full = placeables.maxOfOrNull { it.height } ?: 0
+        val width = placeables.maxOfOrNull { it.width } ?: 0
+        val shown = (full * fraction).roundToInt()
+
+        layout(width, shown) {
+            // Oben verankert und unten beschnitten — die Schublade faehrt
+            // heraus, der Inhalt wandert nicht.
+            placeables.forEach { it.place(0, 0) }
+        }
+    }
+}

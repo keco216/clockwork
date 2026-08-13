@@ -58,3 +58,41 @@ angezeigte Code `195 477` (folgt `604 029`) gehört rechnerisch **exakt zum
 verkürzten Secret**, nicht zum vollständigen. Die App rechnet also richtig,
 was im Feld steht. Wer am Gerät misst, prüft den Feldinhalt und nicht die
 Absicht.
+
+## P5 Teil 2 — Bühnen, Fold-Zeilen, Filter
+
+| Datei                   | Was es zeigt                                                                                                                            |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `p5-leerzustand.png`    | Emblem, der **native** Satz („… none of it leaves this device"), Feld mit übersetztem Platzhalter, Testschlüssel-Knopf in voller Breite |
+| `p5-fold-zu.png`        | Arbeitszustand nach dem Testschlüssel: **Codes zuerst**, darunter „Input · 1 account" zugeklappt                                        |
+| `p5-fold-auf.png`       | Dieselbe Zeile aufgetippt: Winkel gedreht, Editor in der Schublade                                                                      |
+| `p5-filter-treffer.png` | Filterzeile ab 8 Einträgen; „CLOUD" findet `Hetzner_Cloud`, Zähler steht auf „7 accounts · 1 error"                                     |
+
+Der Testschlüssel-Knopf trägt wirklich den RFC-4226-Vektor: Gerätezeit
+1786654651, Zähler 59555155, App `722 841 · folgt 858 842 · 29 s`, Node
+`722841 / 858842`. Treffer.
+
+Der Fehlerstreifen in `p5-filter-treffer.png` ist **kein Fehler der App**:
+`adb shell input text` hat beim Anlegen der Testzeilen wieder ein Zeichen
+verschluckt, die Zeile ist 30 Zeichen lang statt 32. Er zeigt dafür nebenbei,
+dass die übersetzte Fehlerkarte samt Begründungstext funktioniert.
+
+## P5 — Bewegung reduzieren, mit Gegenprobe
+
+Compose koppelt seine Fahrten an die Animator-Skala des Systems
+(`MotionDurationScale`) — die App enthält dafür keine einzige eigene Zeile.
+Ob das wirklich greift, kann man nur messen.
+
+Gemessen wurde mit derselben Bildfolge, nur mit verschiedener Skala:
+Fold-Zeile zuklappen, aufklappen, **sofort** aufnehmen.
+
+| Datei                         | Animator-Skala | Was im Bild steht                                                            |
+| ----------------------------- | -------------- | ---------------------------------------------------------------------------- |
+| `p5-motion-skala1-faehrt.png` | `1.0`          | Schublade **halb offen**, Text unten beschnitten, Winkel in Zwischenstellung |
+| `p5-motion-skala0-sofort.png` | `0`            | Schublade **ganz offen**, alle acht Zeilen da, Winkel oben                   |
+
+Das erste Bild ist die Gegenprobe und der eigentliche Beweis: Es zeigt, dass
+die Messung eine laufende Fahrt überhaupt sehen KANN. Ohne sie hieße „bei
+Skala 0 ist alles fertig" nur, dass zu spät aufgenommen wurde.
+
+Ergebnis: **Keine Fahrt läuft, der Zustand stimmt trotzdem.**
