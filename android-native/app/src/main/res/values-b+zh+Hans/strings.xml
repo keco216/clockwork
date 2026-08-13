@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/zh-Hans.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — TOTP 验证器</string>
+    <string name="meta_description">Clockwork — TOTP 验证器。完全在浏览器内生成两步验证码，不发出任何网络请求。</string>
+    <string name="brand_tagline">TOTP 验证器 · RFC 6238</string>
+    <string name="skip_toCodes">跳到验证码</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">离线</string>
+    <string name="status_vault_off">什么都不保存</string>
+    <string name="status_vault_locked">保险箱已锁</string>
+    <string name="status_vault_open">保险箱已开</string>
+    <string name="zone_input">输入</string>
+    <string name="zone_vault">保险箱</string>
+    <string name="zone_codes">验证码</string>
+    <string name="input_legend">每行一个条目</string>
+    <string name="input_placeholder">例如：JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32、%1$s 或 %2$s —— 可以混排。%3$s 开始一条备注。</string>
+    <string name="input_help_images">二维码图片也可以拖到这里，或者用 %1$s 粘贴。</string>
+    <string name="input_help_migration">Google 身份验证器的导出（%1$s）会自动转换。</string>
+    <string name="input_help_more">全部输入格式</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="other">%1$s个账户</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="other">%1$s处错误</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">清空</string>
+    <string name="key_qrImage">从图片读二维码</string>
+    <string name="key_camera">摄像头</string>
+    <string name="key_cameraStop">关闭摄像头</string>
+    <string name="key_copy">复制</string>
+    <string name="key_copyDone">已复制</string>
+    <string name="key_copyFailed">失败</string>
+    <string name="viewfinder_hint">把二维码放进取景框</string>
+    <string name="filter_label">筛选账户</string>
+    <string name="filter_placeholder">按名称筛选</string>
+    <string name="filter_empty">没有与“%1$s”匹配的项。</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="other">%1$s 位</item>
+    </plurals>
+    <string name="strip_period">%1$s 秒</string>
+    <string name="strip_next">下一个</string>
+    <string name="strip_seconds_abbr">秒</string>
+    <string name="strip_seconds_title">秒</string>
+    <string name="strip_seconds_valid">有效</string>
+    <string name="strip_accountFallback">账户 %1$s</string>
+    <string name="strip_copyAria">复制 %1$s 的验证码</string>
+    <string name="strip_copyAnnounce">已复制验证码 %1$s</string>
+    <string name="strip_copyFailedHint">复制失败。请手动选中验证码。</string>
+    <string name="fault_title">此行无法读取</string>
+    <string name="vault_state_off">关闭 —— 什么都不保存</string>
+    <string name="vault_state_locked">已锁 —— 需要密码短语</string>
+    <string name="vault_state_open">已开 —— secret 在文本框里</string>
+    <string name="vault_explain">Clockwork 默认什么都不保存。打开保险箱后，输入的内容会用你的密码短语加密后留在这里；没有密码短语，保存下来的那一块毫无价值。</string>
+    <string name="vault_explain_crypto">密钥由密码短语经 PBKDF2-SHA-256 迭代 %1$s 次导出，加密由 AES-256-GCM 完成。保存的只有封好的信封：明文、密码短语和导出的密钥都不会存下来。</string>
+    <string name="vault_explain_more">全部细节</string>
+    <string name="vault_pass_new">新的密码短语</string>
+    <string name="vault_pass_existing">密码短语</string>
+    <string name="vault_action_seal">加密保存</string>
+    <string name="vault_action_unseal">打开</string>
+    <string name="vault_action_deriving">正在派生密钥 …</string>
+    <string name="vault_action_lock">上锁</string>
+    <string name="vault_action_update">重新保存</string>
+    <string name="vault_action_wipe">全部删除</string>
+    <string name="vault_action_wipeConfirm">真的删除？</string>
+    <string name="vault_timeout_label">无人操作多久后自动上锁</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="other">%1$s 分钟</item>
+    </plurals>
+    <string name="vault_lockOnHide">离开标签页时也上锁</string>
+    <string name="vault_error_nothingToStore">没有可保存的内容 —— 文本框是空的。</string>
+    <string name="vault_error_storageBlocked">浏览器不允许保存（无痕模式？）。</string>
+    <string name="vault_error_noVault">没有保存过任何保险箱。</string>
+    <string name="vault_error_noPassphrase">没有密码短语就没有密钥。</string>
+    <string name="vault_error_sealFailed">保存失败。</string>
+    <string name="vault_error_unsealFailed">打开失败。</string>
+    <string name="vault_msg_sealed">保险箱已加密保存。</string>
+    <string name="vault_msg_resealed">保险箱已重新加密。</string>
+    <string name="vault_msg_unsealed">保险箱已打开。</string>
+    <string name="vault_msg_locked">保险箱已上锁。</string>
+    <string name="vault_msg_wiped">保险箱已删除。</string>
+    <string name="vault_msg_wipedNote">已删除。存储里什么都不剩了。</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="other">%1$s 分钟无输入，已上锁。</item>
+    </plurals>
+    <string name="vault_locked_hidden">离开标签页时已上锁。</string>
+    <string name="scan_noQr">图片里认不出二维码。</string>
+    <string name="scan_unreadable">图片读不出来 —— 这真是一张图片吗？</string>
+    <string name="scan_done">二维码已读取并填入。</string>
+    <string name="scan_camera_unavailable">这个环境不提供摄像头。以文件方式打开时（file://），多数浏览器会封锁它 ——“从图片读二维码”始终可用。</string>
+    <string name="scan_camera_denied">摄像头被拒绝。请在浏览器里重置权限，或改用“从图片读二维码”。</string>
+    <string name="scan_camera_notFound">没有接上摄像头。“从图片读二维码”照样可用。</string>
+    <string name="scan_camera_busy">摄像头正被另一个程序占用。</string>
+    <string name="scan_camera_failed">摄像头启动不了。“从图片读二维码”始终可用。</string>
+    <plurals name="import_done">
+        <item quantity="other">已从 Google 身份验证器的导出中取入 %1$s 个账户</item>
+    </plurals>
+    <string name="import_skipped">已跳过：%1$s</string>
+    <string name="import_skip_hotp">%1$s（HOTP，基于计数器）</string>
+    <string name="import_skip_algorithm">%1$s（不支持的算法）</string>
+    <string name="import_skip_emptySecret">%1$s（secret 为空）</string>
+    <string name="import_unnamed">未命名</string>
+    <string name="import_unreadable">导出无法读取。</string>
+    <string name="vacant_text">密钥、otpauth 链接或二维码图片——都不会离开这个浏览器。</string>
+    <string name="vacant_demo">插入测试密钥</string>
+    <string name="colophon_note">无网络 · 无存储 · HMAC 经由 Web Crypto API</string>
+    <string name="lang_label">语言</string>
+    <string name="lang_aria">选择语言</string>
+    <string name="err_base32_paddingInside">字符“=”只能放在末尾（它不过是填充）。</string>
+    <string name="err_base32_empty">secret 密钥是空的。</string>
+    <string name="err_base32_badChar">第 %2$s 位上是无效字符“%1$s”。Base32 只认得 A–Z 和 2–7 —— 数字 0、1、8 不会出现（是不是和 O、I、B 弄混了？）。</string>
+    <string name="err_base32_badLength">长度无效：%1$s 个字符（不含空格与填充）。Base32 把 5 个字节编成 8 个字符；最后一块只可能是 2、4、5、7 或 8 个字符。多半是少了一个字符，或者多了一个。</string>
+    <string name="err_uri_invalid">这不是有效的 URI。应当是“otpauth://totp/…”。</string>
+    <string name="err_uri_scheme">未知的方案“%1$s”。应当是“otpauth”。</string>
+    <string name="err_uri_hotp">这是 HOTP 的 URI（基于计数器）。本应用只生成基于时间的 TOTP 验证码 —— 另一种需要把计数器的值保存下来。</string>
+    <string name="err_uri_type">未知的类型“%1$s”。“otpauth://”之后必须是“totp”。</string>
+    <string name="err_uri_typeEmpty">（空）</string>
+    <string name="err_uri_noSecret">URI 里缺少参数“secret”。</string>
+    <string name="err_uri_badLabel">URI 的标签里有坏掉的百分号编码（例如单独一个“%”）。</string>
+    <string name="err_uri_algorithm">未知的算法“%1$s”。支持 SHA1、SHA256 和 SHA512。</string>
+    <string name="err_uri_digits">“digits”的取值无效：%1$s。允许 %2$s 到 %3$s。</string>
+    <string name="err_uri_period">“period”的取值无效：%1$s。应当是 1 到 3600 秒。</string>
+    <string name="err_uri_integer">参数“%1$s”必须是整数；找到的是“%2$s”。</string>
+    <string name="err_otp_digits">位数无效：%1$s。允许 %2$s 到 %3$s。</string>
+    <string name="err_otp_emptySecret">secret 是空的 —— 由它算不出任何验证码。</string>
+    <string name="err_line_unreadable">这一行读不出来。</string>
+    <string name="err_vault_openFailed">保险箱打不开。密码短语不对 —— 或者保存的数据被改动过。</string>
+    <string name="err_vault_badFormat">保存的保险箱数据格式不明。</string>
+    <string name="err_vault_version">不支持保险箱版本 %1$s（期望：%2$s）。</string>
+    <string name="err_vault_base64">保险箱数据的“%1$s”字段不是有效的 Base64。</string>
+    <string name="err_vault_iterations">迭代次数无效：%1$s。</string>
+    <string name="err_migration_notExport">这不是 Google 身份验证器的导出。应当是“otpauth-migration://offline?data=…”。</string>
+    <string name="err_migration_noData">URI 里缺少参数“data”。</string>
+    <string name="err_migration_badPercent">参数“data”里有坏掉的百分号编码。</string>
+    <string name="err_migration_badBase64">参数“data”不是有效的 Base64。</string>
+    <string name="err_migration_noAccounts">这份导出里没有任何账户。</string>
+</resources>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/ru.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — аутентификатор TOTP</string>
+    <string name="meta_description">Clockwork — аутентификатор TOTP. Создаёт коды двухфакторной проверки целиком в браузере, без единого сетевого запроса.</string>
+    <string name="brand_tagline">Аутентификатор TOTP · RFC 6238</string>
+    <string name="skip_toCodes">Перейти к кодам</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Без сети</string>
+    <string name="status_vault_off">ничего не сохраняется</string>
+    <string name="status_vault_locked">сейф заперт</string>
+    <string name="status_vault_open">сейф открыт</string>
+    <string name="zone_input">Ввод</string>
+    <string name="zone_vault">Сейф</string>
+    <string name="zone_codes">Коды</string>
+    <string name="input_legend">По одной записи в строке</string>
+    <string name="input_placeholder">напр. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s или %2$s — вперемешку. %3$s начинает заметку.</string>
+    <string name="input_help_images">Изображения с QR-кодом можно перетащить сюда или вставить сочетанием %1$s.</string>
+    <string name="input_help_migration">Выгрузки из Google Authenticator (%1$s) преобразуются сами собой.</string>
+    <string name="input_help_more">Все форматы ввода</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s учётная запись</item>
+        <item quantity="few">%1$s учётные записи</item>
+        <item quantity="many">%1$s учётных записей</item>
+        <item quantity="other">%1$s учётной записи</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s ошибка</item>
+        <item quantity="few">%1$s ошибки</item>
+        <item quantity="many">%1$s ошибок</item>
+        <item quantity="other">%1$s ошибки</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Очистить</string>
+    <string name="key_qrImage">QR из изображения</string>
+    <string name="key_camera">Камера</string>
+    <string name="key_cameraStop">Выключить камеру</string>
+    <string name="key_copy">Копировать</string>
+    <string name="key_copyDone">Скопировано</string>
+    <string name="key_copyFailed">Не удалось</string>
+    <string name="viewfinder_hint">Держите QR-код в рамке</string>
+    <string name="filter_label">Фильтр учётных записей</string>
+    <string name="filter_placeholder">Фильтр по имени</string>
+    <string name="filter_empty">Ничего не найдено по запросу «%1$s».</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s цифра</item>
+        <item quantity="few">%1$s цифры</item>
+        <item quantity="many">%1$s цифр</item>
+        <item quantity="other">%1$s цифры</item>
+    </plurals>
+    <string name="strip_period">%1$s с</string>
+    <string name="strip_next">далее</string>
+    <string name="strip_seconds_abbr">с</string>
+    <string name="strip_seconds_title">секунды</string>
+    <string name="strip_seconds_valid">действует</string>
+    <string name="strip_accountFallback">Запись %1$s</string>
+    <string name="strip_copyAria">Скопировать код для %1$s</string>
+    <string name="strip_copyAnnounce">Код %1$s скопирован</string>
+    <string name="strip_copyFailedHint">Скопировать не удалось. Выделите код вручную.</string>
+    <string name="fault_title">Строка не читается</string>
+    <string name="vault_state_off">Выключен — ничего не сохраняется</string>
+    <string name="vault_state_locked">Заперт — нужна парольная фраза</string>
+    <string name="vault_state_open">Открыт — secret’ы лежат в текстовом поле</string>
+    <string name="vault_explain">По умолчанию Clockwork не сохраняет ничего. Если включить сейф, введённое останется здесь зашифрованным вашей парольной фразой — без неё сохранённый блок ничего не стоит.</string>
+    <string name="vault_explain_crypto">Ключ выводится из парольной фразы через PBKDF2-SHA-256 с %1$s итерациями, а шифрует AES-256-GCM. Сохраняется только запечатанный конверт: никогда открытый текст, никогда парольная фраза, никогда выведенный ключ.</string>
+    <string name="vault_explain_more">Все подробности</string>
+    <string name="vault_pass_new">Новая парольная фраза</string>
+    <string name="vault_pass_existing">Парольная фраза</string>
+    <string name="vault_action_seal">Сохранить зашифрованным</string>
+    <string name="vault_action_unseal">Отпереть</string>
+    <string name="vault_action_deriving">Выводится ключ …</string>
+    <string name="vault_action_lock">Запереть</string>
+    <string name="vault_action_update">Сохранить заново</string>
+    <string name="vault_action_wipe">Удалить всё</string>
+    <string name="vault_action_wipeConfirm">Точно удалить?</string>
+    <string name="vault_timeout_label">Запирается сам через</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s минуту</item>
+        <item quantity="few">%1$s минуты</item>
+        <item quantity="many">%1$s минут</item>
+        <item quantity="other">%1$s минуты</item>
+    </plurals>
+    <string name="vault_lockOnHide">и при уходе со вкладки</string>
+    <string name="vault_error_nothingToStore">Сохранять нечего — текстовое поле пусто.</string>
+    <string name="vault_error_storageBlocked">Браузер не разрешает сохранение (приватный режим?).</string>
+    <string name="vault_error_noVault">Ни один сейф не сохранён.</string>
+    <string name="vault_error_noPassphrase">Без парольной фразы нет ключа.</string>
+    <string name="vault_error_sealFailed">Сохранить не удалось.</string>
+    <string name="vault_error_unsealFailed">Отпереть не удалось.</string>
+    <string name="vault_msg_sealed">Сейф сохранён в зашифрованном виде.</string>
+    <string name="vault_msg_resealed">Сейф зашифрован заново.</string>
+    <string name="vault_msg_unsealed">Сейф отперт.</string>
+    <string name="vault_msg_locked">Сейф заперт.</string>
+    <string name="vault_msg_wiped">Сейф удалён.</string>
+    <string name="vault_msg_wipedNote">Удалено. В хранилище больше ничего не осталось.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Заперт после %1$s минуты без ввода.</item>
+        <item quantity="few">Заперт после %1$s минут без ввода.</item>
+        <item quantity="many">Заперт после %1$s минут без ввода.</item>
+        <item quantity="other">Заперт после %1$s минуты без ввода.</item>
+    </plurals>
+    <string name="vault_locked_hidden">Заперт при уходе со вкладки.</string>
+    <string name="scan_noQr">На изображении не удалось разобрать ни одного QR-кода.</string>
+    <string name="scan_unreadable">Изображение не удалось прочитать — это точно изображение?</string>
+    <string name="scan_done">QR-код прочитан и вставлен.</string>
+    <string name="scan_camera_unavailable">Эта среда не выдаёт камеру. При открытии как файла (file://) большинство браузеров её блокируют — «QR из изображения» работает всегда.</string>
+    <string name="scan_camera_denied">В камере отказано. Сбросьте разрешение в браузере — или возьмите «QR из изображения».</string>
+    <string name="scan_camera_notFound">Камера не подключена. «QR из изображения» работает и так.</string>
+    <string name="scan_camera_busy">Камеру сейчас занимает другая программа.</string>
+    <string name="scan_camera_failed">Камеру не удалось запустить. «QR из изображения» работает всегда.</string>
+    <plurals name="import_done">
+        <item quantity="one">Из выгрузки Google Authenticator перенесена %1$s учётная запись</item>
+        <item quantity="few">Из выгрузки Google Authenticator перенесены %1$s учётные записи</item>
+        <item quantity="many">Из выгрузки Google Authenticator перенесено %1$s учётных записей</item>
+        <item quantity="other">Из выгрузки Google Authenticator перенесено %1$s учётной записи</item>
+    </plurals>
+    <string name="import_skipped">пропущено: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, на основе счётчика)</string>
+    <string name="import_skip_algorithm">%1$s (алгоритм не поддерживается)</string>
+    <string name="import_skip_emptySecret">%1$s (пустой secret)</string>
+    <string name="import_unnamed">Без имени</string>
+    <string name="import_unreadable">Выгрузка не читается.</string>
+    <string name="vacant_text">Секрет, ссылка otpauth или изображение QR — ничто из этого не покидает браузер.</string>
+    <string name="vacant_demo">Вставить тестовый ключ</string>
+    <string name="colophon_note">Никакой сети · никакого хранилища · HMAC через Web Crypto API</string>
+    <string name="lang_label">Язык</string>
+    <string name="lang_aria">Выберите язык</string>
+    <string name="err_base32_paddingInside">Знак «=» может стоять только в конце (это всего лишь заполнение).</string>
+    <string name="err_base32_empty">Ключ secret пуст.</string>
+    <string name="err_base32_badChar">Недопустимый знак «%1$s» на месте %2$s. Base32 знает только A–Z и 2–7 — цифры 0, 1 и 8 в нём не встречаются (перепутаны с O, I и B?).</string>
+    <string name="err_base32_badLength">Недопустимая длина: %1$s знаков (без пробелов и заполнения). Base32 кодирует 5 байт в 8 знаков; в последнем блоке возможны только 2, 4, 5, 7 или 8 знаков. Скорее всего, одного знака не хватает или один лишний.</string>
+    <string name="err_uri_invalid">Это не годный URI. Ожидается «otpauth://totp/…».</string>
+    <string name="err_uri_scheme">Неизвестная схема «%1$s». Ожидается «otpauth».</string>
+    <string name="err_uri_hotp">Это URI типа HOTP (на основе счётчика). Это приложение создаёт только коды TOTP, привязанные ко времени — иначе пришлось бы хранить состояние счётчика.</string>
+    <string name="err_uri_type">Неизвестный тип «%1$s». После «otpauth://» должно стоять «totp».</string>
+    <string name="err_uri_typeEmpty">(пусто)</string>
+    <string name="err_uri_noSecret">В URI не хватает параметра «secret».</string>
+    <string name="err_uri_badLabel">В метке URI испорчено процентное кодирование (например, одинокий знак «%»).</string>
+    <string name="err_uri_algorithm">Неизвестный алгоритм «%1$s». Поддерживаются SHA1, SHA256 и SHA512.</string>
+    <string name="err_uri_digits">Недопустимое значение «digits»: %1$s. Разрешено от %2$s до %3$s.</string>
+    <string name="err_uri_period">Недопустимое значение «period»: %1$s. Ожидается от 1 до 3600 секунд.</string>
+    <string name="err_uri_integer">Параметр «%1$s» должен быть целым числом; найдено «%2$s».</string>
+    <string name="err_otp_digits">Недопустимое число цифр: %1$s. Разрешено от %2$s до %3$s.</string>
+    <string name="err_otp_emptySecret">Secret пуст — из него нельзя вычислить ни одного кода.</string>
+    <string name="err_line_unreadable">Эту строку не удалось прочитать.</string>
+    <string name="err_vault_openFailed">Сейф не открылся. Неверная парольная фраза — или сохранённые данные были изменены.</string>
+    <string name="err_vault_badFormat">Сохранённые данные сейфа имеют неизвестный формат.</string>
+    <string name="err_vault_version">Версия сейфа %1$s не поддерживается (ожидалась: %2$s).</string>
+    <string name="err_vault_base64">Поле «%1$s» данных сейфа не является годным Base64.</string>
+    <string name="err_vault_iterations">Недопустимое число итераций: %1$s.</string>
+    <string name="err_migration_notExport">Это не выгрузка Google Authenticator. Ожидается «otpauth-migration://offline?data=…».</string>
+    <string name="err_migration_noData">В URI не хватает параметра «data».</string>
+    <string name="err_migration_badPercent">В параметре «data» испорчено процентное кодирование.</string>
+    <string name="err_migration_badBase64">Параметр «data» не является годным Base64.</string>
+    <string name="err_migration_noAccounts">В этой выгрузке нет ни одной учётной записи.</string>
+</resources>

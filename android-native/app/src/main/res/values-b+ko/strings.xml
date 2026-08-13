@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/ko.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — TOTP 인증기</string>
+    <string name="meta_description">Clockwork — TOTP 인증기. 2단계 인증 코드를 전부 브라우저 안에서 만든다. 네트워크 요청은 하나도 하지 않는다.</string>
+    <string name="brand_tagline">TOTP 인증기 · RFC 6238</string>
+    <string name="skip_toCodes">코드로 건너뛰기</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">오프라인</string>
+    <string name="status_vault_off">아무것도 저장하지 않음</string>
+    <string name="status_vault_locked">금고 잠김</string>
+    <string name="status_vault_open">금고 열림</string>
+    <string name="zone_input">입력</string>
+    <string name="zone_vault">금고</string>
+    <string name="zone_codes">코드</string>
+    <string name="input_legend">한 줄에 한 항목</string>
+    <string name="input_placeholder">예: JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s 또는 %2$s — 섞어도 된다. %3$s 는 메모를 시작한다.</string>
+    <string name="input_help_images">QR 이미지는 여기로 끌어 놓거나 %1$s 로 붙여 넣어도 된다.</string>
+    <string name="input_help_migration">Google Authenticator 내보내기 (%1$s) 는 저절로 변환된다.</string>
+    <string name="input_help_more">모든 입력 형식</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="other">계정 %1$s개</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="other">오류 %1$s개</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">비우기</string>
+    <string name="key_qrImage">이미지에서 QR</string>
+    <string name="key_camera">카메라</string>
+    <string name="key_cameraStop">카메라 끄기</string>
+    <string name="key_copy">복사</string>
+    <string name="key_copyDone">복사함</string>
+    <string name="key_copyFailed">실패</string>
+    <string name="viewfinder_hint">QR 코드를 테두리 안에 두기</string>
+    <string name="filter_label">계정 필터</string>
+    <string name="filter_placeholder">이름으로 필터</string>
+    <string name="filter_empty">“%1$s”와 일치하는 항목이 없다.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="other">%1$s자리</item>
+    </plurals>
+    <string name="strip_period">%1$s초</string>
+    <string name="strip_next">다음</string>
+    <string name="strip_seconds_abbr">초</string>
+    <string name="strip_seconds_title">초</string>
+    <string name="strip_seconds_valid">유효</string>
+    <string name="strip_accountFallback">계정 %1$s</string>
+    <string name="strip_copyAria">%1$s 의 코드 복사</string>
+    <string name="strip_copyAnnounce">코드 %1$s 복사함</string>
+    <string name="strip_copyFailedHint">복사에 실패했다. 코드를 손으로 선택하기 바란다.</string>
+    <string name="fault_title">읽을 수 없는 줄</string>
+    <string name="vault_state_off">꺼짐 — 아무것도 저장하지 않음</string>
+    <string name="vault_state_locked">잠김 — 암호 문구 필요</string>
+    <string name="vault_state_open">열림 — 시크릿이 텍스트 칸에 있음</string>
+    <string name="vault_explain">Clockwork는 기본적으로 아무것도 저장하지 않는다. 금고를 켜면 입력한 내용이 암호 문구로 암호화된 상태로 이곳에 남는다. 암호 문구가 없으면 저장된 덩어리는 아무 가치가 없다.</string>
+    <string name="vault_explain_crypto">키는 암호 문구에서 PBKDF2-SHA-256을 %1$s회 거쳐 유도하고, 암호화는 AES-256-GCM이 맡는다. 저장되는 것은 봉인된 봉투뿐이며, 평문도 암호 문구도 유도된 키도 남지 않는다.</string>
+    <string name="vault_explain_more">모든 세부 정보</string>
+    <string name="vault_pass_new">새 암호 문구</string>
+    <string name="vault_pass_existing">암호 문구</string>
+    <string name="vault_action_seal">암호화해 저장</string>
+    <string name="vault_action_unseal">열기</string>
+    <string name="vault_action_deriving">키를 유도하는 중 …</string>
+    <string name="vault_action_lock">잠그기</string>
+    <string name="vault_action_update">다시 저장</string>
+    <string name="vault_action_wipe">전부 지우기</string>
+    <string name="vault_action_wipeConfirm">정말 지울까?</string>
+    <string name="vault_timeout_label">이 시간이 지나면 저절로 잠긴다:</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="other">%1$s분</item>
+    </plurals>
+    <string name="vault_lockOnHide">탭을 떠날 때도 잠근다</string>
+    <string name="vault_error_nothingToStore">저장할 것이 없다 — 텍스트 칸이 비어 있다.</string>
+    <string name="vault_error_storageBlocked">브라우저가 저장을 허용하지 않는다 (시크릿 모드?).</string>
+    <string name="vault_error_noVault">저장된 금고가 없다.</string>
+    <string name="vault_error_noPassphrase">암호 문구가 없으면 키도 없다.</string>
+    <string name="vault_error_sealFailed">저장에 실패했다.</string>
+    <string name="vault_error_unsealFailed">여는 데 실패했다.</string>
+    <string name="vault_msg_sealed">금고를 암호화해 저장했다.</string>
+    <string name="vault_msg_resealed">금고를 다시 암호화했다.</string>
+    <string name="vault_msg_unsealed">금고를 열었다.</string>
+    <string name="vault_msg_locked">금고를 잠갔다.</string>
+    <string name="vault_msg_wiped">금고를 지웠다.</string>
+    <string name="vault_msg_wipedNote">지웠다. 저장 공간에 남은 것이 없다.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="other">%1$s분 동안 입력이 없어 잠갔다.</item>
+    </plurals>
+    <string name="vault_locked_hidden">탭을 떠나서 잠갔다.</string>
+    <string name="scan_noQr">이미지에서 QR 코드를 알아볼 수 없었다.</string>
+    <string name="scan_unreadable">이미지를 읽을 수 없었다 — 정말 이미지인가?</string>
+    <string name="scan_done">QR 코드를 읽어 넣었다.</string>
+    <string name="scan_camera_unavailable">이 환경은 카메라를 내주지 않는다. 파일로 열면 (file://) 대부분의 브라우저가 카메라를 막는다 — “이미지에서 QR” 은 언제나 된다.</string>
+    <string name="scan_camera_denied">카메라가 거부되었다. 브라우저에서 권한을 다시 설정하거나 “이미지에서 QR” 을 쓰기 바란다.</string>
+    <string name="scan_camera_notFound">연결된 카메라가 없다. “이미지에서 QR” 은 그래도 된다.</string>
+    <string name="scan_camera_busy">지금 다른 프로그램이 카메라를 쓰고 있다.</string>
+    <string name="scan_camera_failed">카메라를 켜지 못했다. “이미지에서 QR” 은 언제나 된다.</string>
+    <plurals name="import_done">
+        <item quantity="other">Google Authenticator 내보내기에서 계정 %1$s개를 가져왔다</item>
+    </plurals>
+    <string name="import_skipped">건너뜀: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, 카운터 방식)</string>
+    <string name="import_skip_algorithm">%1$s (지원하지 않는 알고리즘)</string>
+    <string name="import_skip_emptySecret">%1$s (빈 시크릿)</string>
+    <string name="import_unnamed">이름 없음</string>
+    <string name="import_unreadable">내보내기를 읽을 수 없다.</string>
+    <string name="vacant_text">시크릿, otpauth 링크, QR 이미지 — 어느 것도 이 브라우저를 벗어나지 않는다.</string>
+    <string name="vacant_demo">테스트 키 삽입</string>
+    <string name="colophon_note">네트워크 없음 · 저장 없음 · HMAC 은 Web Crypto API 로</string>
+    <string name="lang_label">언어</string>
+    <string name="lang_aria">언어 선택</string>
+    <string name="err_base32_paddingInside">문자 “=” 는 끝에만 올 수 있다 (채움일 뿐이다).</string>
+    <string name="err_base32_empty">시크릿 키가 비어 있다.</string>
+    <string name="err_base32_badChar">%2$s번째 자리에 잘못된 문자 “%1$s”. Base32 는 A–Z 와 2–7 만 안다 — 숫자 0, 1, 8 은 나오지 않는다 (O, I, B 와 헷갈렸을까?).</string>
+    <string name="err_base32_badLength">잘못된 길이: %1$s자 (공백과 채움 제외). Base32 는 5바이트를 8자로 부호화한다. 마지막 덩어리에는 2, 4, 5, 7, 8자만 들어갈 수 있다. 한 자가 모자라거나 한 자가 남는 듯하다.</string>
+    <string name="err_uri_invalid">올바른 URI 가 아니다. “otpauth://totp/…” 를 기대한다.</string>
+    <string name="err_uri_scheme">알 수 없는 스킴 “%1$s”. “otpauth” 를 기대한다.</string>
+    <string name="err_uri_hotp">HOTP URI (카운터 방식) 다. 이 앱은 시간 기반 TOTP 코드만 만든다 — 그쪽은 카운터 값을 저장해야 한다.</string>
+    <string name="err_uri_type">알 수 없는 종류 “%1$s”. “otpauth://” 다음에는 “totp” 가 와야 한다.</string>
+    <string name="err_uri_typeEmpty">(비어 있음)</string>
+    <string name="err_uri_noSecret">URI 에 “secret” 매개변수가 없다.</string>
+    <string name="err_uri_badLabel">URI 의 라벨에 깨진 퍼센트 부호화가 있다 (예를 들어 홀로 있는 “%”).</string>
+    <string name="err_uri_algorithm">알 수 없는 알고리즘 “%1$s”. SHA1, SHA256, SHA512 를 지원한다.</string>
+    <string name="err_uri_digits">“digits” 의 값이 잘못됨: %1$s. %2$s부터 %3$s까지 허용한다.</string>
+    <string name="err_uri_period">“period” 의 값이 잘못됨: %1$s. 1초부터 3600초까지 기대한다.</string>
+    <string name="err_uri_integer">매개변수 “%1$s” 은 정수여야 한다. 찾은 값은 “%2$s”.</string>
+    <string name="err_otp_digits">자릿수가 잘못됨: %1$s. %2$s부터 %3$s까지 허용한다.</string>
+    <string name="err_otp_emptySecret">시크릿이 비어 있다 — 그것으로는 코드를 계산할 수 없다.</string>
+    <string name="err_line_unreadable">이 줄은 읽을 수 없었다.</string>
+    <string name="err_vault_openFailed">금고를 열지 못했다. 암호 문구가 틀렸거나 저장된 데이터가 바뀌었다.</string>
+    <string name="err_vault_badFormat">저장된 금고 데이터의 형식을 알 수 없다.</string>
+    <string name="err_vault_version">금고 버전 %1$s 은 지원하지 않는다 (기대: %2$s).</string>
+    <string name="err_vault_base64">금고 데이터의 “%1$s” 항목이 올바른 Base64 가 아니다.</string>
+    <string name="err_vault_iterations">반복 횟수가 잘못됨: %1$s.</string>
+    <string name="err_migration_notExport">Google Authenticator 내보내기가 아니다. “otpauth-migration://offline?data=…” 를 기대한다.</string>
+    <string name="err_migration_noData">URI 에 “data” 매개변수가 없다.</string>
+    <string name="err_migration_badPercent">“data” 매개변수에 깨진 퍼센트 부호화가 있다.</string>
+    <string name="err_migration_badBase64">“data” 매개변수가 올바른 Base64 가 아니다.</string>
+    <string name="err_migration_noAccounts">이 내보내기에는 계정이 하나도 없다.</string>
+</resources>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/da.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — TOTP-godkender</string>
+    <string name="meta_description">Clockwork — TOTP-godkender. Laver tofaktorkoder udelukkende i browseren, uden en eneste netværksforespørgsel.</string>
+    <string name="brand_tagline">TOTP-godkender · RFC 6238</string>
+    <string name="skip_toCodes">Spring til koderne</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Offline</string>
+    <string name="status_vault_off">der gemmes ikke noget</string>
+    <string name="status_vault_locked">boksen er låst</string>
+    <string name="status_vault_open">boksen er åben</string>
+    <string name="zone_input">Indtastning</string>
+    <string name="zone_vault">Boks</string>
+    <string name="zone_codes">Koder</string>
+    <string name="input_legend">Én post pr. linje</string>
+    <string name="input_placeholder">f.eks. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s eller %2$s — blandet. %3$s starter en note.</string>
+    <string name="input_help_images">QR-billeder kan også trækkes herhen eller sættes ind med %1$s.</string>
+    <string name="input_help_migration">Eksporter fra Google Authenticator (%1$s) omdannes automatisk.</string>
+    <string name="input_help_more">Alle inputformater</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s konto</item>
+        <item quantity="other">%1$s konti</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s fejl</item>
+        <item quantity="other">%1$s fejl</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Tøm</string>
+    <string name="key_qrImage">QR fra billede</string>
+    <string name="key_camera">Kamera</string>
+    <string name="key_cameraStop">Sluk kameraet</string>
+    <string name="key_copy">Kopiér</string>
+    <string name="key_copyDone">Kopieret</string>
+    <string name="key_copyFailed">Mislykkedes</string>
+    <string name="viewfinder_hint">Hold QR-koden inden for rammen</string>
+    <string name="filter_label">Filtrér konti</string>
+    <string name="filter_placeholder">Filtrér efter navn</string>
+    <string name="filter_empty">Intet matcher »%1$s«.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s ciffer</item>
+        <item quantity="other">%1$s cifre</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">følger</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">sekunder</string>
+    <string name="strip_seconds_valid">gyldig</string>
+    <string name="strip_accountFallback">Konto %1$s</string>
+    <string name="strip_copyAria">Kopiér koden til %1$s</string>
+    <string name="strip_copyAnnounce">Koden %1$s kopieret</string>
+    <string name="strip_copyFailedHint">Kopieringen mislykkedes. Markér koden i hånden.</string>
+    <string name="fault_title">Linjen kan ikke læses</string>
+    <string name="vault_state_off">Fra — der gemmes ikke noget</string>
+    <string name="vault_state_locked">Låst — der skal bruges en adgangssætning</string>
+    <string name="vault_state_open">Åben — dine secrets ligger i tekstfeltet</string>
+    <string name="vault_explain">Som standard gemmer Clockwork ingenting. Slår du boksen til, bliver det indtastede liggende her krypteret med din adgangssætning — uden den er den gemte blok værdiløs.</string>
+    <string name="vault_explain_crypto">Nøglen udledes af adgangssætningen med PBKDF2-SHA-256 og %1$s iterationer, og AES-256-GCM står for krypteringen. Kun den lukkede kuvert gemmes: aldrig klartekst, aldrig adgangssætningen, aldrig den udledte nøgle.</string>
+    <string name="vault_explain_more">Alle detaljer</string>
+    <string name="vault_pass_new">Ny adgangssætning</string>
+    <string name="vault_pass_existing">Adgangssætning</string>
+    <string name="vault_action_seal">Gem krypteret</string>
+    <string name="vault_action_unseal">Lås op</string>
+    <string name="vault_action_deriving">Nøglen udledes …</string>
+    <string name="vault_action_lock">Lås</string>
+    <string name="vault_action_update">Gem igen</string>
+    <string name="vault_action_wipe">Slet alt</string>
+    <string name="vault_action_wipeConfirm">Slet for alvor?</string>
+    <string name="vault_timeout_label">Låser af sig selv efter</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minut</item>
+        <item quantity="other">%1$s minutter</item>
+    </plurals>
+    <string name="vault_lockOnHide">og når fanen forlades</string>
+    <string name="vault_error_nothingToStore">Der er ikke noget at gemme — tekstfeltet er tomt.</string>
+    <string name="vault_error_storageBlocked">Browseren tillader ikke at gemme (privat tilstand?).</string>
+    <string name="vault_error_noVault">Der er ingen boks gemt.</string>
+    <string name="vault_error_noPassphrase">Uden adgangssætning er der ingen nøgle.</string>
+    <string name="vault_error_sealFailed">Det lykkedes ikke at gemme.</string>
+    <string name="vault_error_unsealFailed">Det lykkedes ikke at låse op.</string>
+    <string name="vault_msg_sealed">Boksen gemt krypteret.</string>
+    <string name="vault_msg_resealed">Boksen krypteret på ny.</string>
+    <string name="vault_msg_unsealed">Boksen låst op.</string>
+    <string name="vault_msg_locked">Boksen låst.</string>
+    <string name="vault_msg_wiped">Boksen slettet.</string>
+    <string name="vault_msg_wipedNote">Slettet. Der ligger ikke mere i lageret.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Låst efter %1$s minut uden indtastning.</item>
+        <item quantity="other">Låst efter %1$s minutter uden indtastning.</item>
+    </plurals>
+    <string name="vault_locked_hidden">Låst, da fanen blev forladt.</string>
+    <string name="scan_noQr">Der var ingen QR-kode at se på billedet.</string>
+    <string name="scan_unreadable">Billedet kunne ikke læses — er det virkelig et billede?</string>
+    <string name="scan_done">QR-koden læst og indsat.</string>
+    <string name="scan_camera_unavailable">Dette miljø giver ikke adgang til noget kamera. Åbnet som fil (file://) spærrer de fleste browsere for det — »QR fra billede« virker altid.</string>
+    <string name="scan_camera_denied">Kameraet blev afvist. Nulstil tilladelsen i browseren — eller brug »QR fra billede«.</string>
+    <string name="scan_camera_notFound">Der er intet kamera tilsluttet. »QR fra billede« virker alligevel.</string>
+    <string name="scan_camera_busy">Kameraet bruges lige nu af et andet program.</string>
+    <string name="scan_camera_failed">Kameraet kunne ikke startes. »QR fra billede« virker altid.</string>
+    <plurals name="import_done">
+        <item quantity="one">%1$s konto hentet fra Google Authenticator-eksporten</item>
+        <item quantity="other">%1$s konti hentet fra Google Authenticator-eksporten</item>
+    </plurals>
+    <string name="import_skipped">sprunget over: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, tællerbaseret)</string>
+    <string name="import_skip_algorithm">%1$s (algoritmen understøttes ikke)</string>
+    <string name="import_skip_emptySecret">%1$s (tom secret)</string>
+    <string name="import_unnamed">Uden navn</string>
+    <string name="import_unreadable">Eksporten kan ikke læses.</string>
+    <string name="vacant_text">Secret, otpauth-link eller QR-billede — intet af det forlader denne browser.</string>
+    <string name="vacant_demo">Indsæt testnøgle</string>
+    <string name="colophon_note">Intet netværk · intet lager · HMAC via Web Crypto API</string>
+    <string name="lang_label">Sprog</string>
+    <string name="lang_aria">Vælg sprog</string>
+    <string name="err_base32_paddingInside">Tegnet »=« må kun stå til sidst (det er ikke andet end udfyldning).</string>
+    <string name="err_base32_empty">Nøglen secret er tom.</string>
+    <string name="err_base32_badChar">Ugyldigt tegn »%1$s« på plads %2$s. Base32 kender kun A–Z og 2–7 — cifrene 0, 1 og 8 forekommer ikke (forvekslet med O, I og B?).</string>
+    <string name="err_base32_badLength">Ugyldig længde: %1$s tegn (uden mellemrum og udfyldning). Base32 koder 5 byte i 8 tegn; i sidste blok er der kun plads til 2, 4, 5, 7 eller 8 tegn. Der mangler sandsynligvis et tegn, eller også er der et for meget.</string>
+    <string name="err_uri_invalid">Dette er ikke en gyldig URI. Der ventes »otpauth://totp/…«.</string>
+    <string name="err_uri_scheme">Ukendt skema »%1$s«. Der ventes »otpauth«.</string>
+    <string name="err_uri_hotp">Dette er en HOTP-URI (tællerbaseret). Denne app laver kun tidsbaserede TOTP-koder — til det andet skulle tællerstanden gemmes.</string>
+    <string name="err_uri_type">Ukendt type »%1$s«. Efter »otpauth://« skal der stå »totp«.</string>
+    <string name="err_uri_typeEmpty">(tom)</string>
+    <string name="err_uri_noSecret">I URI-en mangler parameteren »secret«.</string>
+    <string name="err_uri_badLabel">URI-ens etiket indeholder en ødelagt procentkodning (for eksempel et enkeltstående »%«).</string>
+    <string name="err_uri_algorithm">Ukendt algoritme »%1$s«. Understøttet er SHA1, SHA256 og SHA512.</string>
+    <string name="err_uri_digits">Ugyldig værdi for »digits«: %1$s. Tilladt er %2$s til %3$s.</string>
+    <string name="err_uri_period">Ugyldig værdi for »period«: %1$s. Der ventes 1 til 3600 sekunder.</string>
+    <string name="err_uri_integer">Parameteren »%1$s« skal være et helt tal; fundet blev »%2$s«.</string>
+    <string name="err_otp_digits">Ugyldigt antal cifre: %1$s. Tilladt er %2$s til %3$s.</string>
+    <string name="err_otp_emptySecret">Din secret er tom — deraf kan der ikke beregnes nogen kode.</string>
+    <string name="err_line_unreadable">Denne linje kunne ikke læses.</string>
+    <string name="err_vault_openFailed">Boksen kunne ikke åbnes. Forkert adgangssætning — eller de gemte data er blevet ændret.</string>
+    <string name="err_vault_badFormat">De gemte boksdata har et ukendt format.</string>
+    <string name="err_vault_version">Boksversion %1$s understøttes ikke (ventet: %2$s).</string>
+    <string name="err_vault_base64">Feltet »%1$s« i boksdataene er ikke gyldig Base64.</string>
+    <string name="err_vault_iterations">Ugyldigt antal gentagelser: %1$s.</string>
+    <string name="err_migration_notExport">Dette er ikke en Google Authenticator-eksport. Der ventes »otpauth-migration://offline?data=…«.</string>
+    <string name="err_migration_noData">I URI-en mangler parameteren »data«.</string>
+    <string name="err_migration_badPercent">Parameteren »data« indeholder en ødelagt procentkodning.</string>
+    <string name="err_migration_badBase64">Parameteren »data« er ikke gyldig Base64.</string>
+    <string name="err_migration_noAccounts">I denne eksport er der ingen konti.</string>
+</resources>

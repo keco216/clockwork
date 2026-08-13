@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/he.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — מאמת TOTP</string>
+    <string name="meta_description">Clockwork — מאמת TOTP. מייצר קודי אימות דו־שלבי כולו בדפדפן, בלי אף בקשת רשת.</string>
+    <string name="brand_tagline">מאמת TOTP · RFC 6238</string>
+    <string name="skip_toCodes">דילוג אל הקודים</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">לא מקוון</string>
+    <string name="status_vault_off">שום דבר לא נשמר</string>
+    <string name="status_vault_locked">הכספת נעולה</string>
+    <string name="status_vault_open">הכספת פתוחה</string>
+    <string name="zone_input">קלט</string>
+    <string name="zone_vault">כספת</string>
+    <string name="zone_codes">קודים</string>
+    <string name="input_legend">רשומה אחת בכל שורה</string>
+    <string name="input_placeholder">לדוגמה:\nJBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, ‏%1$s או %2$s — מעורבבים. %3$s פותח הערה.</string>
+    <string name="input_help_images">אפשר גם לגרור לכאן תמונות של קוד QR או להדביק עם %1$s.</string>
+    <string name="input_help_migration">ייצוא מ‑Google Authenticator ‏(%1$s) מומר מאליו.</string>
+    <string name="input_help_more">כל תבניות הקלט</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s חשבון</item>
+        <item quantity="two">%1$s חשבונות</item>
+        <item quantity="many">%1$s חשבונות</item>
+        <item quantity="other">%1$s חשבונות</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s שגיאה</item>
+        <item quantity="two">%1$s שגיאות</item>
+        <item quantity="many">%1$s שגיאות</item>
+        <item quantity="other">%1$s שגיאות</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">ריקון</string>
+    <string name="key_qrImage">QR מתמונה</string>
+    <string name="key_camera">מצלמה</string>
+    <string name="key_cameraStop">כיבוי המצלמה</string>
+    <string name="key_copy">העתקה</string>
+    <string name="key_copyDone">הועתק</string>
+    <string name="key_copyFailed">נכשל</string>
+    <string name="viewfinder_hint">החזיקו את קוד ה‑QR בתוך המסגרת</string>
+    <string name="filter_label">סינון חשבונות</string>
+    <string name="filter_placeholder">סינון לפי שם</string>
+    <string name="filter_empty">אין התאמה ל־\"%1$s\".</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s ספרה</item>
+        <item quantity="two">%1$s ספרות</item>
+        <item quantity="many">%1$s ספרות</item>
+        <item quantity="other">%1$s ספרות</item>
+    </plurals>
+    <string name="strip_period">%1$s שנ׳</string>
+    <string name="strip_next">הבא</string>
+    <string name="strip_seconds_abbr">שנ׳</string>
+    <string name="strip_seconds_title">שניות</string>
+    <string name="strip_seconds_valid">תקף</string>
+    <string name="strip_accountFallback">חשבון %1$s</string>
+    <string name="strip_copyAria">העתקת הקוד של %1$s</string>
+    <string name="strip_copyAnnounce">הקוד %1$s הועתק</string>
+    <string name="strip_copyFailedHint">ההעתקה נכשלה. סמנו את הקוד ידנית.</string>
+    <string name="fault_title">השורה אינה קריאה</string>
+    <string name="vault_state_off">כבויה — שום דבר לא נשמר</string>
+    <string name="vault_state_locked">נעולה — נדרש משפט־סיסמה</string>
+    <string name="vault_state_open">פתוחה — הסודות נמצאים בשדה הטקסט</string>
+    <string name="vault_explain">כברירת מחדל Clockwork אינו שומר דבר. אם תפעיל את הכספת, הקלט יישאר כאן מוצפן במשפט־הסיסמה שלך — בלעדיו הבלוק השמור חסר ערך.</string>
+    <string name="vault_explain_crypto">המפתח נגזר ממשפט־הסיסמה באמצעות ‏PBKDF2-SHA-256 עם %1$s חזרות, וההצפנה היא ‏AES-256-GCM. נשמרת רק המעטפה החתומה: לא הטקסט הגלוי, לא משפט־הסיסמה ולא המפתח הנגזר.</string>
+    <string name="vault_explain_more">כל הפרטים</string>
+    <string name="vault_pass_new">משפט־סיסמה חדש</string>
+    <string name="vault_pass_existing">משפט־סיסמה</string>
+    <string name="vault_action_seal">שמירה מוצפנת</string>
+    <string name="vault_action_unseal">פתיחה</string>
+    <string name="vault_action_deriving">נגזר מפתח …</string>
+    <string name="vault_action_lock">נעילה</string>
+    <string name="vault_action_update">שמירה מחדש</string>
+    <string name="vault_action_wipe">מחיקת הכול</string>
+    <string name="vault_action_wipeConfirm">למחוק באמת?</string>
+    <string name="vault_timeout_label">ננעלת מאליה לאחר</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s דקה</item>
+        <item quantity="two">%1$s דקות</item>
+        <item quantity="many">%1$s דקות</item>
+        <item quantity="other">%1$s דקות</item>
+    </plurals>
+    <string name="vault_lockOnHide">וגם ביציאה מהלשונית</string>
+    <string name="vault_error_nothingToStore">אין מה לשמור — שדה הטקסט ריק.</string>
+    <string name="vault_error_storageBlocked">הדפדפן אינו מתיר שמירה (גלישה פרטית?).</string>
+    <string name="vault_error_noVault">לא שמורה שום כספת.</string>
+    <string name="vault_error_noPassphrase">בלי משפט־סיסמה אין מפתח.</string>
+    <string name="vault_error_sealFailed">השמירה נכשלה.</string>
+    <string name="vault_error_unsealFailed">הפתיחה נכשלה.</string>
+    <string name="vault_msg_sealed">הכספת נשמרה מוצפנת.</string>
+    <string name="vault_msg_resealed">הכספת הוצפנה מחדש.</string>
+    <string name="vault_msg_unsealed">הכספת נפתחה.</string>
+    <string name="vault_msg_locked">הכספת ננעלה.</string>
+    <string name="vault_msg_wiped">הכספת נמחקה.</string>
+    <string name="vault_msg_wipedNote">נמחקה. לא נשאר דבר באחסון.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">ננעלה לאחר %1$s דקה בלי קלט.</item>
+        <item quantity="two">ננעלה לאחר %1$s דקות בלי קלט.</item>
+        <item quantity="many">ננעלה לאחר %1$s דקות בלי קלט.</item>
+        <item quantity="other">ננעלה לאחר %1$s דקות בלי קלט.</item>
+    </plurals>
+    <string name="vault_locked_hidden">ננעלה ביציאה מהלשונית.</string>
+    <string name="scan_noQr">בתמונה לא זוהה שום קוד QR.</string>
+    <string name="scan_unreadable">לא הצלחנו לקרוא את התמונה — זו באמת תמונה?</string>
+    <string name="scan_done">קוד ה‑QR נקרא והוכנס.</string>
+    <string name="scan_camera_unavailable">הסביבה הזאת אינה מוסרת מצלמה. בפתיחה כקובץ ‏(file://)‎ רוב הדפדפנים חוסמים אותה — „QR מתמונה” עובד תמיד.</string>
+    <string name="scan_camera_denied">המצלמה נדחתה. אפסו את ההרשאה בדפדפן — או השתמשו ב„QR מתמונה”.</string>
+    <string name="scan_camera_notFound">אין מצלמה מחוברת. „QR מתמונה” עובד בכל זאת.</string>
+    <string name="scan_camera_busy">המצלמה תפוסה כרגע בידי תוכנה אחרת.</string>
+    <string name="scan_camera_failed">לא הצלחנו להפעיל את המצלמה. „QR מתמונה” עובד תמיד.</string>
+    <plurals name="import_done">
+        <item quantity="one">נקלט %1$s חשבון מייצוא Google Authenticator</item>
+        <item quantity="two">נקלטו %1$s חשבונות מייצוא Google Authenticator</item>
+        <item quantity="many">נקלטו %1$s חשבונות מייצוא Google Authenticator</item>
+        <item quantity="other">נקלטו %1$s חשבונות מייצוא Google Authenticator</item>
+    </plurals>
+    <string name="import_skipped">דולגו: %1$s</string>
+    <string name="import_skip_hotp">%1$s ‏(HOTP, מבוסס מונה)</string>
+    <string name="import_skip_algorithm">%1$s (אלגוריתם שאינו נתמך)</string>
+    <string name="import_skip_emptySecret">%1$s (סוד ריק)</string>
+    <string name="import_unnamed">ללא שם</string>
+    <string name="import_unreadable">הייצוא אינו קריא.</string>
+    <string name="vacant_text">סוד, קישור otpauth או תמונת QR — דבר מאלה אינו עוזב את הדפדפן הזה.</string>
+    <string name="vacant_demo">הוספת מפתח בדיקה</string>
+    <string name="colophon_note">בלי רשת · בלי אחסון · HMAC דרך Web Crypto API</string>
+    <string name="lang_label">שפה</string>
+    <string name="lang_aria">בחירת שפה</string>
+    <string name="err_base32_paddingInside">התו „=” מותר רק בסוף (הוא ריפוד ותו לא).</string>
+    <string name="err_base32_empty">מפתח הסוד ריק.</string>
+    <string name="err_base32_badChar">תו לא חוקי „%1$s” במקום %2$s. ‏Base32 מכיר רק A–Z ו‑2–7 — הספרות 0, 1 ו‑8 אינן מופיעות בו (בלבול עם O, I ו‑B?).</string>
+    <string name="err_base32_badLength">אורך לא חוקי: %1$s תווים (בלי רווחים וריפוד). ‏Base32 מקודד 5 בתים ב‑8 תווים; בבלוק האחרון אפשריים רק 2, 4, 5, 7 או 8 תווים. כנראה חסר תו אחד או שיש אחד מיותר.</string>
+    <string name="err_uri_invalid">זה אינו URI תקין. מצופה „otpauth://totp/…”.</string>
+    <string name="err_uri_scheme">סכמה לא מוכרת „%1$s”. מצופה „otpauth”.</string>
+    <string name="err_uri_hotp">זהו URI מסוג HOTP (מבוסס מונה). היישום הזה מייצר רק קודי TOTP מבוססי זמן — אחרת היה צריך לשמור את מצב המונה.</string>
+    <string name="err_uri_type">סוג לא מוכר „%1$s”. אחרי „otpauth://” חייב לבוא „totp”.</string>
+    <string name="err_uri_typeEmpty">(ריק)</string>
+    <string name="err_uri_noSecret">חסר ב‑URI הפרמטר „secret”.</string>
+    <string name="err_uri_badLabel">בתווית ה‑URI יש קידוד אחוזים שבור (למשל „%” בודד).</string>
+    <string name="err_uri_algorithm">אלגוריתם לא מוכר „%1$s”. נתמכים SHA1, SHA256 ו‑SHA512.</string>
+    <string name="err_uri_digits">ערך לא חוקי ל„digits”: %1$s. מותר מ‑%2$s עד %3$s.</string>
+    <string name="err_uri_period">ערך לא חוקי ל„period”: %1$s. מצופות 1 עד 3600 שניות.</string>
+    <string name="err_uri_integer">הפרמטר „%1$s” חייב להיות מספר שלם; נמצא „%2$s”.</string>
+    <string name="err_otp_digits">מספר ספרות לא חוקי: %1$s. מותר מ‑%2$s עד %3$s.</string>
+    <string name="err_otp_emptySecret">הסוד ריק — אי אפשר לחשב ממנו שום קוד.</string>
+    <string name="err_line_unreadable">לא הצלחנו לקרוא את השורה הזאת.</string>
+    <string name="err_vault_openFailed">הכספת לא נפתחה. משפט־סיסמה שגוי — או שהנתונים השמורים שונו.</string>
+    <string name="err_vault_badFormat">לנתוני הכספת השמורים תבנית לא מוכרת.</string>
+    <string name="err_vault_version">גרסת כספת %1$s אינה נתמכת (מצופה: %2$s).</string>
+    <string name="err_vault_base64">השדה „%1$s” בנתוני הכספת אינו Base64 תקין.</string>
+    <string name="err_vault_iterations">מספר חזרות לא חוקי: %1$s.</string>
+    <string name="err_migration_notExport">זה אינו ייצוא של Google Authenticator. מצופה „otpauth-migration://offline?data=…”.</string>
+    <string name="err_migration_noData">חסר ב‑URI הפרמטר „data”.</string>
+    <string name="err_migration_badPercent">בפרמטר „data” יש קידוד אחוזים שבור.</string>
+    <string name="err_migration_badBase64">הפרמטר „data” אינו Base64 תקין.</string>
+    <string name="err_migration_noAccounts">בייצוא הזה אין שום חשבון.</string>
+</resources>

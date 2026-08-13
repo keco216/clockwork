@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/ro.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — autentificator TOTP</string>
+    <string name="meta_description">Clockwork — autentificator TOTP. Generează coduri cu doi factori în întregime în navigator, fără nicio cerere de rețea.</string>
+    <string name="brand_tagline">Autentificator TOTP · RFC 6238</string>
+    <string name="skip_toCodes">Sari la coduri</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Fără rețea</string>
+    <string name="status_vault_off">nu se salvează nimic</string>
+    <string name="status_vault_locked">seif încuiat</string>
+    <string name="status_vault_open">seif deschis</string>
+    <string name="zone_input">Intrare</string>
+    <string name="zone_vault">Seif</string>
+    <string name="zone_codes">Coduri</string>
+    <string name="input_legend">O intrare pe rând</string>
+    <string name="input_placeholder">de ex. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s sau %2$s — amestecate. %3$s începe o notă.</string>
+    <string name="input_help_images">Imaginile cu cod QR pot fi trase aici sau lipite cu %1$s.</string>
+    <string name="input_help_migration">Exporturile din Google Authenticator (%1$s) sunt convertite automat.</string>
+    <string name="input_help_more">Toate formatele acceptate</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s cont</item>
+        <item quantity="few">%1$s conturi</item>
+        <item quantity="other">%1$s de conturi</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s eroare</item>
+        <item quantity="few">%1$s erori</item>
+        <item quantity="other">%1$s de erori</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Golește</string>
+    <string name="key_qrImage">QR din imagine</string>
+    <string name="key_camera">Cameră</string>
+    <string name="key_cameraStop">Oprește camera</string>
+    <string name="key_copy">Copiază</string>
+    <string name="key_copyDone">Copiat</string>
+    <string name="key_copyFailed">A eșuat</string>
+    <string name="viewfinder_hint">Țineți codul QR în cadru</string>
+    <string name="filter_label">Filtrează conturile</string>
+    <string name="filter_placeholder">Filtrează după nume</string>
+    <string name="filter_empty">Nimic nu corespunde cu „%1$s”.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s cifră</item>
+        <item quantity="few">%1$s cifre</item>
+        <item quantity="other">%1$s de cifre</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">urmează</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">secunde</string>
+    <string name="strip_seconds_valid">valabil</string>
+    <string name="strip_accountFallback">Contul %1$s</string>
+    <string name="strip_copyAria">Copiază codul pentru %1$s</string>
+    <string name="strip_copyAnnounce">Codul %1$s a fost copiat</string>
+    <string name="strip_copyFailedHint">Copierea a eșuat. Selectați codul manual.</string>
+    <string name="fault_title">Rând ilizibil</string>
+    <string name="vault_state_off">Oprit — nu se salvează nimic</string>
+    <string name="vault_state_locked">Încuiat — este nevoie de fraza de acces</string>
+    <string name="vault_state_open">Deschis — secretele sunt în câmpul de text</string>
+    <string name="vault_explain">În mod implicit Clockwork nu păstrează nimic. Dacă porniți seiful, ce ați introdus rămâne aici criptat cu fraza de acces — fără ea blocul păstrat nu valorează nimic.</string>
+    <string name="vault_explain_crypto">Cheia este derivată din fraza de acces prin PBKDF2-SHA-256 cu %1$s iterații, iar AES-256-GCM face criptarea. Se păstrează doar plicul sigilat: niciodată textul în clar, niciodată fraza de acces, niciodată cheia derivată.</string>
+    <string name="vault_explain_more">Toate detaliile</string>
+    <string name="vault_pass_new">Frază de acces nouă</string>
+    <string name="vault_pass_existing">Frază de acces</string>
+    <string name="vault_action_seal">Salvează criptat</string>
+    <string name="vault_action_unseal">Descuie</string>
+    <string name="vault_action_deriving">Se derivă cheia …</string>
+    <string name="vault_action_lock">Încuie</string>
+    <string name="vault_action_update">Salvează din nou</string>
+    <string name="vault_action_wipe">Șterge tot</string>
+    <string name="vault_action_wipeConfirm">Chiar se șterge?</string>
+    <string name="vault_timeout_label">Se încuie singur după</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minut</item>
+        <item quantity="few">%1$s minute</item>
+        <item quantity="other">%1$s de minute</item>
+    </plurals>
+    <string name="vault_lockOnHide">și la părăsirea filei</string>
+    <string name="vault_error_nothingToStore">Nu este nimic de salvat — câmpul de text este gol.</string>
+    <string name="vault_error_storageBlocked">Navigatorul nu permite salvarea (mod privat?).</string>
+    <string name="vault_error_noVault">Niciun seif nu este salvat.</string>
+    <string name="vault_error_noPassphrase">Fără frază de acces nu există cheie.</string>
+    <string name="vault_error_sealFailed">Salvarea a eșuat.</string>
+    <string name="vault_error_unsealFailed">Descuierea a eșuat.</string>
+    <string name="vault_msg_sealed">Seif salvat criptat.</string>
+    <string name="vault_msg_resealed">Seif criptat din nou.</string>
+    <string name="vault_msg_unsealed">Seif descuiat.</string>
+    <string name="vault_msg_locked">Seif încuiat.</string>
+    <string name="vault_msg_wiped">Seif șters.</string>
+    <string name="vault_msg_wipedNote">Șters. În stocare nu a mai rămas nimic.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Încuiat după %1$s minut fără intrări.</item>
+        <item quantity="few">Încuiat după %1$s minute fără intrări.</item>
+        <item quantity="other">Încuiat după %1$s de minute fără intrări.</item>
+    </plurals>
+    <string name="vault_locked_hidden">Încuiat la părăsirea filei.</string>
+    <string name="scan_noQr">În imagine nu s-a putut recunoaște niciun cod QR.</string>
+    <string name="scan_unreadable">Imaginea nu a putut fi citită — chiar este o imagine?</string>
+    <string name="scan_done">Cod QR citit și inserat.</string>
+    <string name="scan_camera_unavailable">Acest mediu nu pune la dispoziție nicio cameră. La deschiderea ca fișier (file://) majoritatea navigatoarelor o blochează — „QR din imagine” funcționează întotdeauna.</string>
+    <string name="scan_camera_denied">Camera a fost refuzată. Resetați permisiunea în navigator — sau folosiți „QR din imagine”.</string>
+    <string name="scan_camera_notFound">Nu este conectată nicio cameră. „QR din imagine” funcționează oricum.</string>
+    <string name="scan_camera_busy">Camera este folosită chiar acum de alt program.</string>
+    <string name="scan_camera_failed">Camera nu a putut fi pornită. „QR din imagine” funcționează întotdeauna.</string>
+    <plurals name="import_done">
+        <item quantity="one">%1$s cont preluat din exportul Google Authenticator</item>
+        <item quantity="few">%1$s conturi preluate din exportul Google Authenticator</item>
+        <item quantity="other">%1$s de conturi preluate din exportul Google Authenticator</item>
+    </plurals>
+    <string name="import_skipped">omise: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, bazat pe contor)</string>
+    <string name="import_skip_algorithm">%1$s (algoritm neacceptat)</string>
+    <string name="import_skip_emptySecret">%1$s (secret gol)</string>
+    <string name="import_unnamed">Fără nume</string>
+    <string name="import_unreadable">Export ilizibil.</string>
+    <string name="vacant_text">Secret, link otpauth sau imagine QR — nimic din toate acestea nu părăsește acest browser.</string>
+    <string name="vacant_demo">Inserează cheia de test</string>
+    <string name="colophon_note">Fără rețea · fără stocare · HMAC prin Web Crypto API</string>
+    <string name="lang_label">Limbă</string>
+    <string name="lang_aria">Alegeți limba</string>
+    <string name="err_base32_paddingInside">Caracterul „=” poate sta doar la sfârșit (nu este decât umplutură).</string>
+    <string name="err_base32_empty">Cheia secret este goală.</string>
+    <string name="err_base32_badChar">Caracter nevalid „%1$s” pe poziția %2$s. Base32 cunoaște doar A–Z și 2–7 — cifrele 0, 1 și 8 nu apar în el (confundate cu O, I și B?).</string>
+    <string name="err_base32_badLength">Lungime nevalidă: %1$s caractere (fără spații și umplutură). Base32 codifică 5 octeți în 8 caractere; în ultimul bloc sunt posibile doar 2, 4, 5, 7 sau 8 caractere. Probabil lipsește un caracter sau este unul în plus.</string>
+    <string name="err_uri_invalid">Acesta nu este un URI valid. Se așteaptă „otpauth://totp/…”.</string>
+    <string name="err_uri_scheme">Schemă necunoscută „%1$s”. Se așteaptă „otpauth”.</string>
+    <string name="err_uri_hotp">Acesta este un URI HOTP (bazat pe contor). Această aplicație generează doar coduri TOTP bazate pe timp — pentru celălalt ar trebui salvată starea contorului.</string>
+    <string name="err_uri_type">Tip necunoscut „%1$s”. După „otpauth://” trebuie să stea „totp”.</string>
+    <string name="err_uri_typeEmpty">(gol)</string>
+    <string name="err_uri_noSecret">Din URI lipsește parametrul „secret”.</string>
+    <string name="err_uri_badLabel">Eticheta URI-ului conține o codificare procentuală stricată (de pildă un „%” singur).</string>
+    <string name="err_uri_algorithm">Algoritm necunoscut „%1$s”. Sunt acceptate SHA1, SHA256 și SHA512.</string>
+    <string name="err_uri_digits">Valoare nevalidă pentru „digits”: %1$s. Sunt permise %2$s până la %3$s.</string>
+    <string name="err_uri_period">Valoare nevalidă pentru „period”: %1$s. Se așteaptă 1 până la 3600 de secunde.</string>
+    <string name="err_uri_integer">Parametrul „%1$s” trebuie să fie un număr întreg; s-a găsit „%2$s”.</string>
+    <string name="err_otp_digits">Număr de cifre nevalid: %1$s. Sunt permise %2$s până la %3$s.</string>
+    <string name="err_otp_emptySecret">Secretul este gol — din el nu se poate calcula niciun cod.</string>
+    <string name="err_line_unreadable">Acest rând nu a putut fi citit.</string>
+    <string name="err_vault_openFailed">Seiful nu s-a putut deschide. Frază de acces greșită — sau datele salvate au fost modificate.</string>
+    <string name="err_vault_badFormat">Datele salvate ale seifului au un format necunoscut.</string>
+    <string name="err_vault_version">Versiunea de seif %1$s nu este acceptată (așteptat: %2$s).</string>
+    <string name="err_vault_base64">Câmpul „%1$s” al datelor seifului nu este Base64 valid.</string>
+    <string name="err_vault_iterations">Număr de iterații nevalid: %1$s.</string>
+    <string name="err_migration_notExport">Acesta nu este un export Google Authenticator. Se așteaptă „otpauth-migration://offline?data=…”.</string>
+    <string name="err_migration_noData">Din URI lipsește parametrul „data”.</string>
+    <string name="err_migration_badPercent">Parametrul „data” conține o codificare procentuală stricată.</string>
+    <string name="err_migration_badBase64">Parametrul „data” nu este Base64 valid.</string>
+    <string name="err_migration_noAccounts">În acest export nu există niciun cont.</string>
+</resources>

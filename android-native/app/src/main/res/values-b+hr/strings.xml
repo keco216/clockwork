@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/hr.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — TOTP autentifikator</string>
+    <string name="meta_description">Clockwork — TOTP autentifikator. Dvofaktorske kodove stvara u cijelosti u pregledniku, bez ijednog mrežnog zahtjeva.</string>
+    <string name="brand_tagline">TOTP autentifikator · RFC 6238</string>
+    <string name="skip_toCodes">Skoči na kodove</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Bez mreže</string>
+    <string name="status_vault_off">ništa se ne sprema</string>
+    <string name="status_vault_locked">sef zaključan</string>
+    <string name="status_vault_open">sef otvoren</string>
+    <string name="zone_input">Unos</string>
+    <string name="zone_vault">Sef</string>
+    <string name="zone_codes">Kodovi</string>
+    <string name="input_legend">Jedan unos po retku</string>
+    <string name="input_placeholder">npr. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s ili %2$s — izmiješano. %3$s započinje bilješku.</string>
+    <string name="input_help_images">Slike s QR kodom mogu se dovući ovamo ili zalijepiti pomoću %1$s.</string>
+    <string name="input_help_migration">Izvozi iz Google Authenticatora (%1$s) pretvaraju se automatski.</string>
+    <string name="input_help_more">Svi ulazni formati</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s račun</item>
+        <item quantity="few">%1$s računa</item>
+        <item quantity="other">%1$s računa</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s greška</item>
+        <item quantity="few">%1$s greške</item>
+        <item quantity="other">%1$s grešaka</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Isprazni</string>
+    <string name="key_qrImage">QR iz slike</string>
+    <string name="key_camera">Kamera</string>
+    <string name="key_cameraStop">Isključi kameru</string>
+    <string name="key_copy">Kopiraj</string>
+    <string name="key_copyDone">Kopirano</string>
+    <string name="key_copyFailed">Nije uspjelo</string>
+    <string name="viewfinder_hint">Držite QR kod u okviru</string>
+    <string name="filter_label">Filtriraj račune</string>
+    <string name="filter_placeholder">Filtriraj po nazivu</string>
+    <string name="filter_empty">Ništa ne odgovara „%1$s“.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s znamenka</item>
+        <item quantity="few">%1$s znamenke</item>
+        <item quantity="other">%1$s znamenki</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">slijedi</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">sekunde</string>
+    <string name="strip_seconds_valid">vrijedi</string>
+    <string name="strip_accountFallback">Račun %1$s</string>
+    <string name="strip_copyAria">Kopiraj kod za %1$s</string>
+    <string name="strip_copyAnnounce">Kod %1$s kopiran</string>
+    <string name="strip_copyFailedHint">Kopiranje nije uspjelo. Označite kod ručno.</string>
+    <string name="fault_title">Redak nečitljiv</string>
+    <string name="vault_state_off">Isključen — ništa se ne sprema</string>
+    <string name="vault_state_locked">Zaključan — potrebna je zaporka</string>
+    <string name="vault_state_open">Otvoren — secreti su u tekstnom polju</string>
+    <string name="vault_explain">Clockwork zadano ne pohranjuje ništa. Uključite li sef, unos ostaje ovdje šifriran vašom zaporkom — bez nje je pohranjeni blok bezvrijedan.</string>
+    <string name="vault_explain_crypto">Ključ se izvodi iz zaporke pomoću PBKDF2-SHA-256 s %1$s iteracija, a šifrira AES-256-GCM. Pohranjuje se samo zapečaćena omotnica: nikad otvoreni tekst, nikad zaporka, nikad izvedeni ključ.</string>
+    <string name="vault_explain_more">Svi detalji</string>
+    <string name="vault_pass_new">Nova zaporka</string>
+    <string name="vault_pass_existing">Zaporka</string>
+    <string name="vault_action_seal">Spremi šifrirano</string>
+    <string name="vault_action_unseal">Otključaj</string>
+    <string name="vault_action_deriving">Izvođenje ključa …</string>
+    <string name="vault_action_lock">Zaključaj</string>
+    <string name="vault_action_update">Spremi ponovno</string>
+    <string name="vault_action_wipe">Izbriši sve</string>
+    <string name="vault_action_wipeConfirm">Zaista izbrisati?</string>
+    <string name="vault_timeout_label">Sam se zaključava nakon</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minute</item>
+        <item quantity="few">%1$s minute</item>
+        <item quantity="other">%1$s minuta</item>
+    </plurals>
+    <string name="vault_lockOnHide">i pri napuštanju kartice</string>
+    <string name="vault_error_nothingToStore">Nema se što spremiti — tekstno polje je prazno.</string>
+    <string name="vault_error_storageBlocked">Preglednik ne dopušta spremanje (privatni način?).</string>
+    <string name="vault_error_noVault">Nijedan sef nije spremljen.</string>
+    <string name="vault_error_noPassphrase">Bez zaporke nema ključa.</string>
+    <string name="vault_error_sealFailed">Spremanje nije uspjelo.</string>
+    <string name="vault_error_unsealFailed">Otključavanje nije uspjelo.</string>
+    <string name="vault_msg_sealed">Sef spremljen šifrirano.</string>
+    <string name="vault_msg_resealed">Sef ponovno šifriran.</string>
+    <string name="vault_msg_unsealed">Sef otključan.</string>
+    <string name="vault_msg_locked">Sef zaključan.</string>
+    <string name="vault_msg_wiped">Sef izbrisan.</string>
+    <string name="vault_msg_wipedNote">Izbrisano. U pohrani više ništa nije ostalo.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Zaključano nakon %1$s minute bez unosa.</item>
+        <item quantity="few">Zaključano nakon %1$s minute bez unosa.</item>
+        <item quantity="other">Zaključano nakon %1$s minuta bez unosa.</item>
+    </plurals>
+    <string name="vault_locked_hidden">Zaključano pri napuštanju kartice.</string>
+    <string name="scan_noQr">Na slici se nije mogao prepoznati nijedan QR kod.</string>
+    <string name="scan_unreadable">Sliku nije bilo moguće pročitati — je li to doista slika?</string>
+    <string name="scan_done">QR kod pročitan i umetnut.</string>
+    <string name="scan_camera_unavailable">Ovo okruženje ne daje kameru. Pri otvaranju kao datoteka (file://) većina je preglednika blokira — „QR iz slike“ radi uvijek.</string>
+    <string name="scan_camera_denied">Kamera je odbijena. Poništite dopuštenje u pregledniku — ili upotrijebite „QR iz slike“.</string>
+    <string name="scan_camera_notFound">Nijedna kamera nije priključena. „QR iz slike“ ipak radi.</string>
+    <string name="scan_camera_busy">Kameru trenutačno koristi drugi program.</string>
+    <string name="scan_camera_failed">Kameru nije bilo moguće pokrenuti. „QR iz slike“ radi uvijek.</string>
+    <plurals name="import_done">
+        <item quantity="one">Preuzet %1$s račun iz izvoza Google Authenticatora</item>
+        <item quantity="few">Preuzeta %1$s računa iz izvoza Google Authenticatora</item>
+        <item quantity="other">Preuzeto %1$s računa iz izvoza Google Authenticatora</item>
+    </plurals>
+    <string name="import_skipped">preskočeno: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, na temelju brojača)</string>
+    <string name="import_skip_algorithm">%1$s (nepodržan algoritam)</string>
+    <string name="import_skip_emptySecret">%1$s (prazan secret)</string>
+    <string name="import_unnamed">Bez naziva</string>
+    <string name="import_unreadable">Izvoz nečitljiv.</string>
+    <string name="vacant_text">Secret, poveznica otpauth ili QR slika — ništa od toga ne napušta ovaj preglednik.</string>
+    <string name="vacant_demo">Umetni testni ključ</string>
+    <string name="colophon_note">Bez mreže · bez pohrane · HMAC preko Web Crypto API</string>
+    <string name="lang_label">Jezik</string>
+    <string name="lang_aria">Odaberi jezik</string>
+    <string name="err_base32_paddingInside">Znak „=“ smije stajati samo na kraju (puko je ispunjavanje).</string>
+    <string name="err_base32_empty">Ključ secret je prazan.</string>
+    <string name="err_base32_badChar">Neispravan znak „%1$s“ na mjestu %2$s. Base32 poznaje samo A–Z i 2–7 — znamenke 0, 1 i 8 u njemu se ne pojavljuju (zamijenjene s O, I i B?).</string>
+    <string name="err_base32_badLength">Neispravna duljina: %1$s znakova (bez razmaka i ispune). Base32 kodira 5 bajtova u 8 znakova; u posljednjem su bloku moguća samo 2, 4, 5, 7 ili 8 znakova. Vjerojatno nedostaje jedan znak ili ga je jedan previše.</string>
+    <string name="err_uri_invalid">Ovo nije valjani URI. Očekuje se „otpauth://totp/…“.</string>
+    <string name="err_uri_scheme">Nepoznata shema „%1$s“. Očekuje se „otpauth“.</string>
+    <string name="err_uri_hotp">Ovo je URI vrste HOTP (na temelju brojača). Ova aplikacija stvara samo vremenske TOTP kodove — inače bi trebalo spremati stanje brojača.</string>
+    <string name="err_uri_type">Nepoznata vrsta „%1$s“. Nakon „otpauth://“ mora stajati „totp“.</string>
+    <string name="err_uri_typeEmpty">(prazno)</string>
+    <string name="err_uri_noSecret">U URI-ju nedostaje parametar „secret“.</string>
+    <string name="err_uri_badLabel">Oznaka URI-ja sadrži pokvareno postotno kodiranje (primjerice usamljen „%“).</string>
+    <string name="err_uri_algorithm">Nepoznat algoritam „%1$s“. Podržani su SHA1, SHA256 i SHA512.</string>
+    <string name="err_uri_digits">Neispravna vrijednost za „digits“: %1$s. Dopušteno je %2$s do %3$s.</string>
+    <string name="err_uri_period">Neispravna vrijednost za „period“: %1$s. Očekuje se 1 do 3600 sekundi.</string>
+    <string name="err_uri_integer">Parametar „%1$s“ mora biti cijeli broj; pronađeno je „%2$s“.</string>
+    <string name="err_otp_digits">Neispravan broj znamenki: %1$s. Dopušteno je %2$s do %3$s.</string>
+    <string name="err_otp_emptySecret">Secret je prazan — iz njega se ne može izračunati nijedan kod.</string>
+    <string name="err_line_unreadable">Ovaj redak nije bilo moguće pročitati.</string>
+    <string name="err_vault_openFailed">Sef se nije dao otvoriti. Pogrešna zaporka — ili su spremljeni podaci izmijenjeni.</string>
+    <string name="err_vault_badFormat">Spremljeni podaci sefa u nepoznatom su obliku.</string>
+    <string name="err_vault_version">Inačica sefa %1$s nije podržana (očekivano: %2$s).</string>
+    <string name="err_vault_base64">Polje „%1$s“ podataka sefa nije valjani Base64.</string>
+    <string name="err_vault_iterations">Neispravan broj ponavljanja: %1$s.</string>
+    <string name="err_migration_notExport">Ovo nije izvoz iz Google Authenticatora. Očekuje se „otpauth-migration://offline?data=…“.</string>
+    <string name="err_migration_noData">U URI-ju nedostaje parametar „data“.</string>
+    <string name="err_migration_badPercent">Parametar „data“ sadrži pokvareno postotno kodiranje.</string>
+    <string name="err_migration_badBase64">Parametar „data“ nije valjani Base64.</string>
+    <string name="err_migration_noAccounts">U ovom izvozu nema nijednog računa.</string>
+</resources>

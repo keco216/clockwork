@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/id.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — autentikator TOTP</string>
+    <string name="meta_description">Clockwork — autentikator TOTP. Membuat kode dua faktor sepenuhnya di peramban, tanpa satu pun permintaan jaringan.</string>
+    <string name="brand_tagline">Autentikator TOTP · RFC 6238</string>
+    <string name="skip_toCodes">Lompat ke kode</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Luring</string>
+    <string name="status_vault_off">tidak ada yang disimpan</string>
+    <string name="status_vault_locked">brankas terkunci</string>
+    <string name="status_vault_open">brankas terbuka</string>
+    <string name="zone_input">Masukan</string>
+    <string name="zone_vault">Brankas</string>
+    <string name="zone_codes">Kode</string>
+    <string name="input_legend">Satu entri per baris</string>
+    <string name="input_placeholder">mis. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s atau %2$s — bercampur. %3$s memulai catatan.</string>
+    <string name="input_help_images">Gambar QR juga bisa diseret ke sini atau ditempel dengan %1$s.</string>
+    <string name="input_help_migration">Ekspor dari Google Authenticator (%1$s) diubah dengan sendirinya.</string>
+    <string name="input_help_more">Semua format masukan</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="other">%1$s akun</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="other">%1$s galat</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Kosongkan</string>
+    <string name="key_qrImage">QR dari gambar</string>
+    <string name="key_camera">Kamera</string>
+    <string name="key_cameraStop">Matikan kamera</string>
+    <string name="key_copy">Salin</string>
+    <string name="key_copyDone">Tersalin</string>
+    <string name="key_copyFailed">Gagal</string>
+    <string name="viewfinder_hint">Tahan kode QR di dalam bingkai</string>
+    <string name="filter_label">Saring akun</string>
+    <string name="filter_placeholder">Saring menurut nama</string>
+    <string name="filter_empty">Tidak ada yang cocok dengan “%1$s”.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="other">%1$s digit</item>
+    </plurals>
+    <string name="strip_period">%1$s dtk</string>
+    <string name="strip_next">berikutnya</string>
+    <string name="strip_seconds_abbr">dtk</string>
+    <string name="strip_seconds_title">detik</string>
+    <string name="strip_seconds_valid">berlaku</string>
+    <string name="strip_accountFallback">Akun %1$s</string>
+    <string name="strip_copyAria">Salin kode untuk %1$s</string>
+    <string name="strip_copyAnnounce">Kode %1$s tersalin</string>
+    <string name="strip_copyFailedHint">Penyalinan gagal. Sorot kodenya dengan tangan.</string>
+    <string name="fault_title">Baris tidak terbaca</string>
+    <string name="vault_state_off">Mati — tidak ada yang disimpan</string>
+    <string name="vault_state_locked">Terkunci — perlu frasa sandi</string>
+    <string name="vault_state_open">Terbuka — secret ada di bidang teks</string>
+    <string name="vault_explain">Secara bawaan Clockwork tidak menyimpan apa pun. Jika lemari besi dinyalakan, masukan tetap di sini terenkripsi dengan frasa sandi Anda — tanpa itu blok yang tersimpan tidak berguna.</string>
+    <string name="vault_explain_crypto">Kunci diturunkan dari frasa sandi lewat PBKDF2-SHA-256 dengan %1$s iterasi, dan AES-256-GCM yang mengenkripsi. Hanya amplop tersegel yang disimpan: tidak pernah teks terbuka, tidak pernah frasa sandi, tidak pernah kunci turunan.</string>
+    <string name="vault_explain_more">Semua detail</string>
+    <string name="vault_pass_new">Frasa sandi baru</string>
+    <string name="vault_pass_existing">Frasa sandi</string>
+    <string name="vault_action_seal">Simpan terenkripsi</string>
+    <string name="vault_action_unseal">Buka</string>
+    <string name="vault_action_deriving">Kunci sedang diturunkan …</string>
+    <string name="vault_action_lock">Kunci</string>
+    <string name="vault_action_update">Simpan lagi</string>
+    <string name="vault_action_wipe">Hapus semua</string>
+    <string name="vault_action_wipeConfirm">Benar-benar dihapus?</string>
+    <string name="vault_timeout_label">Mengunci sendiri setelah</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="other">%1$s menit</item>
+    </plurals>
+    <string name="vault_lockOnHide">dan saat meninggalkan tab</string>
+    <string name="vault_error_nothingToStore">Tidak ada yang bisa disimpan — bidang teks kosong.</string>
+    <string name="vault_error_storageBlocked">Peramban tidak mengizinkan penyimpanan (mode pribadi?).</string>
+    <string name="vault_error_noVault">Tidak ada brankas yang tersimpan.</string>
+    <string name="vault_error_noPassphrase">Tanpa frasa sandi tidak ada kunci.</string>
+    <string name="vault_error_sealFailed">Penyimpanan gagal.</string>
+    <string name="vault_error_unsealFailed">Pembukaan gagal.</string>
+    <string name="vault_msg_sealed">Brankas tersimpan terenkripsi.</string>
+    <string name="vault_msg_resealed">Brankas dienkripsi ulang.</string>
+    <string name="vault_msg_unsealed">Brankas terbuka.</string>
+    <string name="vault_msg_locked">Brankas terkunci.</string>
+    <string name="vault_msg_wiped">Brankas terhapus.</string>
+    <string name="vault_msg_wipedNote">Terhapus. Tidak ada lagi yang tersisa di penyimpanan.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="other">Terkunci setelah %1$s menit tanpa masukan.</item>
+    </plurals>
+    <string name="vault_locked_hidden">Terkunci saat tab ditinggalkan.</string>
+    <string name="scan_noQr">Tidak ada kode QR yang terbaca pada gambar.</string>
+    <string name="scan_unreadable">Gambar tidak bisa dibaca — apakah itu memang gambar?</string>
+    <string name="scan_done">Kode QR terbaca dan disisipkan.</string>
+    <string name="scan_camera_unavailable">Lingkungan ini tidak memberikan kamera. Ketika dibuka sebagai berkas (file://), kebanyakan peramban memblokirnya — “QR dari gambar” selalu berhasil.</string>
+    <string name="scan_camera_denied">Kamera ditolak. Atur ulang izinnya di peramban — atau pakai “QR dari gambar”.</string>
+    <string name="scan_camera_notFound">Tidak ada kamera yang tersambung. “QR dari gambar” tetap berhasil.</string>
+    <string name="scan_camera_busy">Kamera sedang dipakai program lain.</string>
+    <string name="scan_camera_failed">Kamera tidak bisa dijalankan. “QR dari gambar” selalu berhasil.</string>
+    <plurals name="import_done">
+        <item quantity="other">%1$s akun diambil dari ekspor Google Authenticator</item>
+    </plurals>
+    <string name="import_skipped">dilewati: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, berbasis pencacah)</string>
+    <string name="import_skip_algorithm">%1$s (algoritme tidak didukung)</string>
+    <string name="import_skip_emptySecret">%1$s (secret kosong)</string>
+    <string name="import_unnamed">Tanpa nama</string>
+    <string name="import_unreadable">Ekspor tidak terbaca.</string>
+    <string name="vacant_text">Secret, tautan otpauth, atau gambar QR — tidak ada yang meninggalkan peramban ini.</string>
+    <string name="vacant_demo">Sisipkan kunci uji</string>
+    <string name="colophon_note">Tanpa jaringan · tanpa penyimpanan · HMAC lewat Web Crypto API</string>
+    <string name="lang_label">Bahasa</string>
+    <string name="lang_aria">Pilih bahasa</string>
+    <string name="err_base32_paddingInside">Karakter “=” hanya boleh berada di akhir (itu sekadar pengisi).</string>
+    <string name="err_base32_empty">Kunci secret kosong.</string>
+    <string name="err_base32_badChar">Karakter tidak sah “%1$s” pada posisi %2$s. Base32 hanya mengenal A–Z dan 2–7 — angka 0, 1 dan 8 tidak muncul di dalamnya (tertukar dengan O, I dan B?).</string>
+    <string name="err_base32_badLength">Panjang tidak sah: %1$s karakter (tanpa spasi dan pengisi). Base32 mengodekan 5 bita menjadi 8 karakter; pada blok terakhir hanya mungkin 2, 4, 5, 7 atau 8 karakter. Kemungkinan besar ada satu karakter yang kurang atau satu yang berlebih.</string>
+    <string name="err_uri_invalid">Ini bukan URI yang sah. Yang diharapkan “otpauth://totp/…”.</string>
+    <string name="err_uri_scheme">Skema tidak dikenal “%1$s”. Yang diharapkan “otpauth”.</string>
+    <string name="err_uri_hotp">Ini URI HOTP (berbasis pencacah). Aplikasi ini hanya membuat kode TOTP berbasis waktu — untuk yang lain, keadaan pencacah harus disimpan.</string>
+    <string name="err_uri_type">Jenis tidak dikenal “%1$s”. Setelah “otpauth://” harus ada “totp”.</string>
+    <string name="err_uri_typeEmpty">(kosong)</string>
+    <string name="err_uri_noSecret">Parameter “secret” tidak ada di URI.</string>
+    <string name="err_uri_badLabel">Label URI mengandung pengodean persen yang rusak (misalnya sebuah “%” tunggal).</string>
+    <string name="err_uri_algorithm">Algoritme tidak dikenal “%1$s”. Yang didukung SHA1, SHA256 dan SHA512.</string>
+    <string name="err_uri_digits">Nilai tidak sah untuk “digits”: %1$s. Diizinkan %2$s sampai %3$s.</string>
+    <string name="err_uri_period">Nilai tidak sah untuk “period”: %1$s. Diharapkan 1 sampai 3600 detik.</string>
+    <string name="err_uri_integer">Parameter “%1$s” harus berupa bilangan bulat; ditemukan “%2$s”.</string>
+    <string name="err_otp_digits">Jumlah digit tidak sah: %1$s. Diizinkan %2$s sampai %3$s.</string>
+    <string name="err_otp_emptySecret">Secret kosong — tidak ada kode yang bisa dihitung darinya.</string>
+    <string name="err_line_unreadable">Baris ini tidak bisa dibaca.</string>
+    <string name="err_vault_openFailed">Brankas tidak bisa dibuka. Frasa sandi salah — atau data yang tersimpan telah diubah.</string>
+    <string name="err_vault_badFormat">Data brankas yang tersimpan berformat tidak dikenal.</string>
+    <string name="err_vault_version">Versi brankas %1$s tidak didukung (diharapkan: %2$s).</string>
+    <string name="err_vault_base64">Bidang “%1$s” pada data brankas bukan Base64 yang sah.</string>
+    <string name="err_vault_iterations">Jumlah iterasi tidak sah: %1$s.</string>
+    <string name="err_migration_notExport">Ini bukan ekspor Google Authenticator. Yang diharapkan “otpauth-migration://offline?data=…”.</string>
+    <string name="err_migration_noData">Parameter “data” tidak ada di URI.</string>
+    <string name="err_migration_badPercent">Parameter “data” mengandung pengodean persen yang rusak.</string>
+    <string name="err_migration_badBase64">Parameter “data” bukan Base64 yang sah.</string>
+    <string name="err_migration_noAccounts">Tidak ada akun di dalam ekspor ini.</string>
+</resources>

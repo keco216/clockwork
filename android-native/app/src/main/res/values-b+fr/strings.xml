@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/fr.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — Authentificateur TOTP</string>
+    <string name="meta_description">Clockwork — authentificateur TOTP. Génère des codes à deux facteurs entièrement dans le navigateur, sans aucune requête réseau.</string>
+    <string name="brand_tagline">Authentificateur TOTP · RFC 6238</string>
+    <string name="skip_toCodes">Aller aux codes</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Hors ligne</string>
+    <string name="status_vault_off">rien n’est enregistré</string>
+    <string name="status_vault_locked">coffre verrouillé</string>
+    <string name="status_vault_open">coffre ouvert</string>
+    <string name="zone_input">Saisie</string>
+    <string name="zone_vault">Coffre</string>
+    <string name="zone_codes">Codes</string>
+    <string name="input_legend">Une entrée par ligne</string>
+    <string name="input_placeholder">p. ex. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s ou %2$s — mélangés. %3$s commence une note.</string>
+    <string name="input_help_images">Les images de QR code peuvent aussi être glissées ici ou collées avec %1$s.</string>
+    <string name="input_help_migration">Les exports Google Authenticator (%1$s) sont convertis automatiquement.</string>
+    <string name="input_help_more">Tous les formats acceptés</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s compte</item>
+        <item quantity="many">%1$s comptes</item>
+        <item quantity="other">%1$s comptes</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s erreur</item>
+        <item quantity="many">%1$s erreurs</item>
+        <item quantity="other">%1$s erreurs</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Vider</string>
+    <string name="key_qrImage">QR depuis une image</string>
+    <string name="key_camera">Caméra</string>
+    <string name="key_cameraStop">Arrêter la caméra</string>
+    <string name="key_copy">Copier</string>
+    <string name="key_copyDone">Copié</string>
+    <string name="key_copyFailed">Échec</string>
+    <string name="viewfinder_hint">Placez le QR code dans le cadre</string>
+    <string name="filter_label">Filtrer les comptes</string>
+    <string name="filter_placeholder">Filtrer par nom</string>
+    <string name="filter_empty">Rien ne correspond à « %1$s ».</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s chiffre</item>
+        <item quantity="many">%1$s chiffres</item>
+        <item quantity="other">%1$s chiffres</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">suivant</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">secondes</string>
+    <string name="strip_seconds_valid">valide</string>
+    <string name="strip_accountFallback">Compte %1$s</string>
+    <string name="strip_copyAria">Copier le code de %1$s</string>
+    <string name="strip_copyAnnounce">Code %1$s copié</string>
+    <string name="strip_copyFailedHint">La copie a échoué. Sélectionnez le code à la main.</string>
+    <string name="fault_title">Ligne illisible</string>
+    <string name="vault_state_off">Éteint — rien n’est enregistré</string>
+    <string name="vault_state_locked">Verrouillé — phrase secrète requise</string>
+    <string name="vault_state_open">Ouvert — les secrets sont dans le champ de texte</string>
+    <string name="vault_explain">Par défaut, Clockwork ne conserve rien. Si vous activez le coffre, la saisie reste ici chiffrée par votre phrase secrète — sans elle, le bloc enregistré ne vaut rien.</string>
+    <string name="vault_explain_crypto">La clé est dérivée de la phrase secrète par PBKDF2-SHA-256 avec %1$s itérations, et AES-256-GCM assure le chiffrement. Seule l’enveloppe scellée est enregistrée : jamais le texte en clair, jamais la phrase secrète, jamais la clé dérivée.</string>
+    <string name="vault_explain_more">Tous les détails</string>
+    <string name="vault_pass_new">Nouvelle phrase secrète</string>
+    <string name="vault_pass_existing">Phrase secrète</string>
+    <string name="vault_action_seal">Enregistrer chiffré</string>
+    <string name="vault_action_unseal">Déverrouiller</string>
+    <string name="vault_action_deriving">Dérivation de la clé …</string>
+    <string name="vault_action_lock">Verrouiller</string>
+    <string name="vault_action_update">Enregistrer à nouveau</string>
+    <string name="vault_action_wipe">Tout supprimer</string>
+    <string name="vault_action_wipeConfirm">Vraiment supprimer ?</string>
+    <string name="vault_timeout_label">Se verrouille automatiquement après</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minute</item>
+        <item quantity="many">%1$s minutes</item>
+        <item quantity="other">%1$s minutes</item>
+    </plurals>
+    <string name="vault_lockOnHide">et en quittant l’onglet</string>
+    <string name="vault_error_nothingToStore">Il n’y a rien à enregistrer — le champ de texte est vide.</string>
+    <string name="vault_error_storageBlocked">Le navigateur n’autorise pas l’enregistrement (navigation privée ?).</string>
+    <string name="vault_error_noVault">Aucun coffre n’est enregistré.</string>
+    <string name="vault_error_noPassphrase">Sans phrase secrète, il n’y a pas de clé.</string>
+    <string name="vault_error_sealFailed">L’enregistrement a échoué.</string>
+    <string name="vault_error_unsealFailed">Le déverrouillage a échoué.</string>
+    <string name="vault_msg_sealed">Coffre enregistré chiffré.</string>
+    <string name="vault_msg_resealed">Coffre chiffré à nouveau.</string>
+    <string name="vault_msg_unsealed">Coffre déverrouillé.</string>
+    <string name="vault_msg_locked">Coffre verrouillé.</string>
+    <string name="vault_msg_wiped">Coffre supprimé.</string>
+    <string name="vault_msg_wipedNote">Supprimé. Il ne reste rien en mémoire.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Verrouillé après %1$s minute sans saisie.</item>
+        <item quantity="many">Verrouillé après %1$s minutes sans saisie.</item>
+        <item quantity="other">Verrouillé après %1$s minutes sans saisie.</item>
+    </plurals>
+    <string name="vault_locked_hidden">Verrouillé en quittant l’onglet.</string>
+    <string name="scan_noQr">Aucun QR code n’a pu être reconnu dans l’image.</string>
+    <string name="scan_unreadable">L’image n’a pas pu être lue — est-ce bien une image ?</string>
+    <string name="scan_done">QR code lu et inséré.</string>
+    <string name="scan_camera_unavailable">Cet environnement ne donne pas accès à une caméra. À l’ouverture en tant que fichier (file://), la plupart des navigateurs la bloquent — « QR depuis une image » fonctionne toujours.</string>
+    <string name="scan_camera_denied">La caméra a été refusée. Réinitialisez l’autorisation dans le navigateur — ou utilisez « QR depuis une image ».</string>
+    <string name="scan_camera_notFound">Aucune caméra n’est connectée. « QR depuis une image » fonctionne malgré tout.</string>
+    <string name="scan_camera_busy">La caméra est actuellement utilisée par un autre programme.</string>
+    <string name="scan_camera_failed">La caméra n’a pas pu démarrer. « QR depuis une image » fonctionne toujours.</string>
+    <plurals name="import_done">
+        <item quantity="one">%1$s compte repris de l’export Google Authenticator</item>
+        <item quantity="many">%1$s comptes repris de l’export Google Authenticator</item>
+        <item quantity="other">%1$s comptes repris de l’export Google Authenticator</item>
+    </plurals>
+    <string name="import_skipped">ignorés : %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, basé sur un compteur)</string>
+    <string name="import_skip_algorithm">%1$s (algorithme non pris en charge)</string>
+    <string name="import_skip_emptySecret">%1$s (secret vide)</string>
+    <string name="import_unnamed">Sans nom</string>
+    <string name="import_unreadable">Export illisible.</string>
+    <string name="vacant_text">Secret, lien otpauth ou image QR — rien de tout cela ne quitte ce navigateur.</string>
+    <string name="vacant_demo">Insérer une clé de test</string>
+    <string name="colophon_note">Pas de réseau · pas de stockage · HMAC via la Web Crypto API</string>
+    <string name="lang_label">Langue</string>
+    <string name="lang_aria">Choisir la langue</string>
+    <string name="err_base32_paddingInside">Le caractère « = » ne peut se trouver qu’à la fin (ce n’est que du remplissage).</string>
+    <string name="err_base32_empty">La clé secrète est vide.</string>
+    <string name="err_base32_badChar">Caractère invalide « %1$s » à la position %2$s. Base32 ne connaît que A–Z et 2–7 — les chiffres 0, 1 et 8 n’y figurent pas (confondus avec O, I et B ?).</string>
+    <string name="err_base32_badLength">Longueur invalide : %1$s caractères (sans les espaces ni le remplissage). Base32 code 5 octets en 8 caractères ; le dernier bloc ne peut en compter que 2, 4, 5, 7 ou 8. Il manque probablement un caractère, ou il y en a un de trop.</string>
+    <string name="err_uri_invalid">Ce n’est pas une URI valide. Attendu : « otpauth://totp/… ».</string>
+    <string name="err_uri_scheme">Schéma inconnu « %1$s ». Attendu : « otpauth ».</string>
+    <string name="err_uri_hotp">Ceci est une URI HOTP (basée sur un compteur). Cette application ne produit que des codes TOTP fondés sur le temps — il faudrait pour cela enregistrer l’état du compteur.</string>
+    <string name="err_uri_type">Type inconnu « %1$s ». « totp » doit suivre « otpauth:// ».</string>
+    <string name="err_uri_typeEmpty">(vide)</string>
+    <string name="err_uri_noSecret">Le paramètre « secret » manque dans l’URI.</string>
+    <string name="err_uri_badLabel">L’étiquette de l’URI contient un encodage pour cent défectueux (un « % » isolé, par exemple).</string>
+    <string name="err_uri_algorithm">Algorithme inconnu « %1$s ». Sont pris en charge SHA1, SHA256 et SHA512.</string>
+    <string name="err_uri_digits">Valeur invalide pour « digits » : %1$s. Autorisé de %2$s à %3$s.</string>
+    <string name="err_uri_period">Valeur invalide pour « period » : %1$s. Attendu de 1 à 3600 secondes.</string>
+    <string name="err_uri_integer">Le paramètre « %1$s » doit être un nombre entier ; « %2$s » a été trouvé.</string>
+    <string name="err_otp_digits">Nombre de chiffres invalide : %1$s. Autorisé de %2$s à %3$s.</string>
+    <string name="err_otp_emptySecret">Le secret est vide — aucun code ne peut en être calculé.</string>
+    <string name="err_line_unreadable">Cette ligne n’a pas pu être lue.</string>
+    <string name="err_vault_openFailed">Le coffre n’a pas pu être ouvert. Phrase secrète erronée — ou les données enregistrées ont été modifiées.</string>
+    <string name="err_vault_badFormat">Les données de coffre enregistrées ont un format inconnu.</string>
+    <string name="err_vault_version">La version de coffre %1$s n’est pas prise en charge (attendu : %2$s).</string>
+    <string name="err_vault_base64">Le champ « %1$s » des données de coffre n’est pas du Base64 valide.</string>
+    <string name="err_vault_iterations">Nombre d’itérations invalide : %1$s.</string>
+    <string name="err_migration_notExport">Ce n’est pas un export Google Authenticator. Attendu : « otpauth-migration://offline?data=… ».</string>
+    <string name="err_migration_noData">Le paramètre « data » manque dans l’URI.</string>
+    <string name="err_migration_badPercent">Le paramètre « data » contient un encodage pour cent défectueux.</string>
+    <string name="err_migration_badBase64">Le paramètre « data » n’est pas du Base64 valide.</string>
+    <string name="err_migration_noAccounts">Cet export ne contient aucun compte.</string>
+</resources>

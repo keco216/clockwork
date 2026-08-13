@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/de.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — TOTP Authenticator</string>
+    <string name="meta_description">Clockwork — TOTP Authenticator. Erzeugt Zwei-Faktor-Codes vollständig im Browser, ohne Netzwerkanfragen.</string>
+    <string name="brand_tagline">TOTP Authenticator · RFC 6238</string>
+    <string name="skip_toCodes">Zu den Codes springen</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Offline</string>
+    <string name="status_vault_off">nichts gespeichert</string>
+    <string name="status_vault_locked">Tresor gesperrt</string>
+    <string name="status_vault_open">Tresor offen</string>
+    <string name="zone_input">Eingabe</string>
+    <string name="zone_vault">Tresor</string>
+    <string name="zone_codes">Codes</string>
+    <string name="input_legend">Ein Eintrag pro Zeile</string>
+    <string name="input_placeholder">z. B. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s oder %2$s — gemischt. %3$s beginnt eine Notiz.</string>
+    <string name="input_help_images">QR-Bilder lassen sich auch hierher ziehen oder mit %1$s einfügen.</string>
+    <string name="input_help_migration">Google-Authenticator-Exporte (%1$s) werden automatisch umgewandelt.</string>
+    <string name="input_help_more">Alle Eingabeformate</string>
+    <string name="shortcut_modifier">Strg</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s Konto</item>
+        <item quantity="other">%1$s Konten</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s Fehler</item>
+        <item quantity="other">%1$s Fehler</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Leeren</string>
+    <string name="key_qrImage">QR aus Bild</string>
+    <string name="key_camera">Kamera</string>
+    <string name="key_cameraStop">Kamera aus</string>
+    <string name="key_copy">Kopieren</string>
+    <string name="key_copyDone">Kopiert</string>
+    <string name="key_copyFailed">Fehlgeschlagen</string>
+    <string name="viewfinder_hint">QR-Code in den Rahmen halten</string>
+    <string name="filter_label">Konten filtern</string>
+    <string name="filter_placeholder">Nach Name filtern</string>
+    <string name="filter_empty">Nichts passt zu „%1$s“.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s Stelle</item>
+        <item quantity="other">%1$s Stellen</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">folgt</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">Sekunden</string>
+    <string name="strip_seconds_valid">gültig</string>
+    <string name="strip_accountFallback">Konto %1$s</string>
+    <string name="strip_copyAria">Code für %1$s kopieren</string>
+    <string name="strip_copyAnnounce">Code %1$s kopiert</string>
+    <string name="strip_copyFailedHint">Kopieren fehlgeschlagen. Code bitte von Hand markieren.</string>
+    <string name="fault_title">Zeile nicht lesbar</string>
+    <string name="vault_state_off">Aus — es wird nichts gespeichert</string>
+    <string name="vault_state_locked">Gesperrt — Passphrase nötig</string>
+    <string name="vault_state_open">Offen — Secrets liegen im Textfeld</string>
+    <string name="vault_explain">Standardmäßig speichert Clockwork nichts. Wer den Tresor einschaltet, lässt die Eingabe hier mit seiner Passphrase verschlüsselt liegen — ohne sie ist der gespeicherte Block wertlos.</string>
+    <string name="vault_explain_crypto">Den Schlüssel leitet PBKDF2-SHA-256 mit %1$s Iterationen aus der Passphrase ab, verschlüsselt wird mit AES-256-GCM. Gespeichert wird nur der versiegelte Umschlag: nie der Klartext, nie die Passphrase, nie der abgeleitete Schlüssel.</string>
+    <string name="vault_explain_more">Alle Details</string>
+    <string name="vault_pass_new">Neue Passphrase</string>
+    <string name="vault_pass_existing">Passphrase</string>
+    <string name="vault_action_seal">Verschlüsselt speichern</string>
+    <string name="vault_action_unseal">Aufsperren</string>
+    <string name="vault_action_deriving">Schlüssel wird abgeleitet …</string>
+    <string name="vault_action_lock">Zusperren</string>
+    <string name="vault_action_update">Neu speichern</string>
+    <string name="vault_action_wipe">Alles löschen</string>
+    <string name="vault_action_wipeConfirm">Wirklich löschen?</string>
+    <string name="vault_timeout_label">Sperrt automatisch nach</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s Minute</item>
+        <item quantity="other">%1$s Minuten</item>
+    </plurals>
+    <string name="vault_lockOnHide">auch beim Verlassen des Tabs</string>
+    <string name="vault_error_nothingToStore">Es gibt nichts zu speichern — das Textfeld ist leer.</string>
+    <string name="vault_error_storageBlocked">Der Browser lässt kein Speichern zu (privater Modus?).</string>
+    <string name="vault_error_noVault">Es ist kein Tresor gespeichert.</string>
+    <string name="vault_error_noPassphrase">Ohne Passphrase gibt es keinen Schlüssel.</string>
+    <string name="vault_error_sealFailed">Speichern fehlgeschlagen.</string>
+    <string name="vault_error_unsealFailed">Aufsperren fehlgeschlagen.</string>
+    <string name="vault_msg_sealed">Tresor verschlüsselt gespeichert.</string>
+    <string name="vault_msg_resealed">Tresor neu verschlüsselt.</string>
+    <string name="vault_msg_unsealed">Tresor aufgesperrt.</string>
+    <string name="vault_msg_locked">Tresor zugesperrt.</string>
+    <string name="vault_msg_wiped">Tresor gelöscht.</string>
+    <string name="vault_msg_wipedNote">Gelöscht. Es liegt nichts mehr im Speicher.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Nach %1$s Minute ohne Eingabe zugesperrt.</item>
+        <item quantity="other">Nach %1$s Minuten ohne Eingabe zugesperrt.</item>
+    </plurals>
+    <string name="vault_locked_hidden">Beim Verlassen des Tabs zugesperrt.</string>
+    <string name="scan_noQr">In dem Bild war kein QR-Code zu erkennen.</string>
+    <string name="scan_unreadable">Das Bild konnte nicht gelesen werden — ist es wirklich ein Bild?</string>
+    <string name="scan_done">QR-Code gelesen und eingesetzt.</string>
+    <string name="scan_camera_unavailable">Diese Umgebung gibt keine Kamera frei. Beim Öffnen als Datei (file://) sperren die meisten Browser sie — „QR aus Bild“ funktioniert dort immer.</string>
+    <string name="scan_camera_denied">Die Kamera wurde abgelehnt. Erlaubnis im Browser zurücksetzen — oder „QR aus Bild“ nehmen.</string>
+    <string name="scan_camera_notFound">Es ist keine Kamera angeschlossen. „QR aus Bild“ funktioniert trotzdem.</string>
+    <string name="scan_camera_busy">Die Kamera wird gerade von einem anderen Programm benutzt.</string>
+    <string name="scan_camera_failed">Die Kamera ließ sich nicht starten. „QR aus Bild“ funktioniert immer.</string>
+    <plurals name="import_done">
+        <item quantity="one">%1$s Konto aus Google-Authenticator-Export übernommen</item>
+        <item quantity="other">%1$s Konten aus Google-Authenticator-Export übernommen</item>
+    </plurals>
+    <string name="import_skipped">übersprungen: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, zählerbasiert)</string>
+    <string name="import_skip_algorithm">%1$s (nicht unterstützter Algorithmus)</string>
+    <string name="import_skip_emptySecret">%1$s (leeres Secret)</string>
+    <string name="import_unnamed">Unbenannt</string>
+    <string name="import_unreadable">Export unlesbar.</string>
+    <string name="vacant_text">Secret, otpauth-Link oder QR-Bild — nichts davon verlässt diesen Browser.</string>
+    <string name="vacant_demo">Testschlüssel einfügen</string>
+    <string name="colophon_note">Kein Netzwerk · kein Speicher · HMAC über die Web Crypto API</string>
+    <string name="lang_label">Sprache</string>
+    <string name="lang_aria">Sprache wählen</string>
+    <string name="err_base32_paddingInside">Das Zeichen »=« darf nur am Ende stehen (es ist nur Auffüllung).</string>
+    <string name="err_base32_empty">Der Secret-Key ist leer.</string>
+    <string name="err_base32_badChar">Ungültiges Zeichen »%1$s« an Stelle %2$s. Base32 kennt nur A–Z und 2–7 — die Ziffern 0, 1 und 8 kommen nicht vor (verwechselt mit O, I und B?).</string>
+    <string name="err_base32_badLength">Ungültige Länge: %1$s Zeichen (ohne Leerzeichen und Padding). Base32 codiert 5 Byte in 8 Zeichen; im letzten Block sind nur 2, 4, 5, 7 oder 8 Zeichen möglich. Vermutlich fehlt ein Zeichen oder ist eines zu viel.</string>
+    <string name="err_uri_invalid">Das ist keine gültige URI. Erwartet wird »otpauth://totp/…«.</string>
+    <string name="err_uri_scheme">Unbekanntes Schema »%1$s«. Erwartet wird »otpauth«.</string>
+    <string name="err_uri_hotp">Das ist eine HOTP-URI (zählerbasiert). Diese App erzeugt nur zeitbasierte TOTP-Codes — der Zählerstand müsste dafür gespeichert werden.</string>
+    <string name="err_uri_type">Unbekannter Typ »%1$s«. Nach »otpauth://« muss »totp« stehen.</string>
+    <string name="err_uri_typeEmpty">(leer)</string>
+    <string name="err_uri_noSecret">In der URI fehlt der Parameter »secret«.</string>
+    <string name="err_uri_badLabel">Das Label der URI enthält eine kaputte Prozent-Codierung (z. B. ein einzelnes »%«).</string>
+    <string name="err_uri_algorithm">Unbekannter Algorithmus »%1$s«. Unterstützt werden SHA1, SHA256 und SHA512.</string>
+    <string name="err_uri_digits">Ungültiger Wert für »digits«: %1$s. Erlaubt sind %2$s bis %3$s.</string>
+    <string name="err_uri_period">Ungültiger Wert für »period«: %1$s. Erwartet werden 1 bis 3600 Sekunden.</string>
+    <string name="err_uri_integer">Der Parameter »%1$s« muss eine ganze Zahl sein, gefunden wurde »%2$s«.</string>
+    <string name="err_otp_digits">Ungültige Stellenzahl: %1$s. Erlaubt sind %2$s bis %3$s.</string>
+    <string name="err_otp_emptySecret">Das Secret ist leer — daraus lässt sich kein Code berechnen.</string>
+    <string name="err_line_unreadable">Diese Zeile konnte nicht gelesen werden.</string>
+    <string name="err_vault_openFailed">Der Tresor ließ sich nicht öffnen. Passphrase falsch — oder die gespeicherten Daten wurden verändert.</string>
+    <string name="err_vault_badFormat">Die gespeicherten Tresordaten haben ein unbekanntes Format.</string>
+    <string name="err_vault_version">Tresor-Version %1$s wird nicht unterstützt (erwartet: %2$s).</string>
+    <string name="err_vault_base64">Das Feld »%1$s« der Tresordaten ist kein gültiges Base64.</string>
+    <string name="err_vault_iterations">Ungültige Iterationszahl: %1$s.</string>
+    <string name="err_migration_notExport">Das ist kein Google-Authenticator-Export. Erwartet wird »otpauth-migration://offline?data=…«.</string>
+    <string name="err_migration_noData">In der URI fehlt der Parameter »data«.</string>
+    <string name="err_migration_badPercent">Der »data«-Parameter enthält eine kaputte Prozent-Codierung.</string>
+    <string name="err_migration_badBase64">Der »data«-Parameter ist kein gültiges Base64.</string>
+    <string name="err_migration_noAccounts">In diesem Export stehen keine Konten.</string>
+</resources>

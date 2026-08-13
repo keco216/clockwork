@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/sk.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — autentifikátor TOTP</string>
+    <string name="meta_description">Clockwork — autentifikátor TOTP. Vytvára dvojfaktorové kódy úplne v prehliadači, bez jedinej sieťovej požiadavky.</string>
+    <string name="brand_tagline">Autentifikátor TOTP · RFC 6238</string>
+    <string name="skip_toCodes">Prejsť na kódy</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Bez siete</string>
+    <string name="status_vault_off">nič sa neukladá</string>
+    <string name="status_vault_locked">trezor zamknutý</string>
+    <string name="status_vault_open">trezor otvorený</string>
+    <string name="zone_input">Vstup</string>
+    <string name="zone_vault">Trezor</string>
+    <string name="zone_codes">Kódy</string>
+    <string name="input_legend">Jedna položka na riadok</string>
+    <string name="input_placeholder">napr. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s alebo %2$s — pomiešané. %3$s začína poznámku.</string>
+    <string name="input_help_images">Obrázky s QR kódom sa dajú sem aj pretiahnuť alebo vložiť cez %1$s.</string>
+    <string name="input_help_migration">Exporty z Google Authenticatora (%1$s) sa prevádzajú automaticky.</string>
+    <string name="input_help_more">Všetky vstupné formáty</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s účet</item>
+        <item quantity="few">%1$s účty</item>
+        <item quantity="many">%1$s účtu</item>
+        <item quantity="other">%1$s účtov</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s chyba</item>
+        <item quantity="few">%1$s chyby</item>
+        <item quantity="many">%1$s chyby</item>
+        <item quantity="other">%1$s chýb</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Vyprázdniť</string>
+    <string name="key_qrImage">QR z obrázka</string>
+    <string name="key_camera">Kamera</string>
+    <string name="key_cameraStop">Vypnúť kameru</string>
+    <string name="key_copy">Kopírovať</string>
+    <string name="key_copyDone">Skopírované</string>
+    <string name="key_copyFailed">Nepodarilo sa</string>
+    <string name="viewfinder_hint">Držte QR kód v rámčeku</string>
+    <string name="filter_label">Filtrovať účty</string>
+    <string name="filter_placeholder">Filtrovať podľa názvu</string>
+    <string name="filter_empty">Nič nezodpovedá „%1$s“.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s číslica</item>
+        <item quantity="few">%1$s číslice</item>
+        <item quantity="many">%1$s číslice</item>
+        <item quantity="other">%1$s číslic</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">nasleduje</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">sekundy</string>
+    <string name="strip_seconds_valid">platí</string>
+    <string name="strip_accountFallback">Účet %1$s</string>
+    <string name="strip_copyAria">Skopírovať kód pre %1$s</string>
+    <string name="strip_copyAnnounce">Kód %1$s skopírovaný</string>
+    <string name="strip_copyFailedHint">Kopírovanie sa nepodarilo. Označte kód ručne.</string>
+    <string name="fault_title">Riadok nečitateľný</string>
+    <string name="vault_state_off">Vypnuté — nič sa neukladá</string>
+    <string name="vault_state_locked">Zamknuté — treba heslovú frázu</string>
+    <string name="vault_state_open">Otvorené — secrety sú v textovom poli</string>
+    <string name="vault_explain">Clockwork v predvolenom nastavení neukladá nič. Keď zapnete trezor, zostane zadanie tu zašifrované vašou heslovou frázou — bez nej je uložený blok bezcenný.</string>
+    <string name="vault_explain_crypto">Kľúč vzniká z heslovej frázy pomocou PBKDF2-SHA-256 s %1$s iteráciami, šifruje AES-256-GCM. Ukladá sa len zapečatená obálka: nikdy otvorený text, nikdy heslová fráza, nikdy odvodený kľúč.</string>
+    <string name="vault_explain_more">Všetky podrobnosti</string>
+    <string name="vault_pass_new">Nová heslová fráza</string>
+    <string name="vault_pass_existing">Heslová fráza</string>
+    <string name="vault_action_seal">Uložiť zašifrované</string>
+    <string name="vault_action_unseal">Odomknúť</string>
+    <string name="vault_action_deriving">Odvodzuje sa kľúč …</string>
+    <string name="vault_action_lock">Zamknúť</string>
+    <string name="vault_action_update">Uložiť znova</string>
+    <string name="vault_action_wipe">Zmazať všetko</string>
+    <string name="vault_action_wipeConfirm">Naozaj zmazať?</string>
+    <string name="vault_timeout_label">Zamkne sa sám po</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minúte</item>
+        <item quantity="few">%1$s minútach</item>
+        <item quantity="many">%1$s minúty</item>
+        <item quantity="other">%1$s minútach</item>
+    </plurals>
+    <string name="vault_lockOnHide">a pri opustení karty</string>
+    <string name="vault_error_nothingToStore">Nie je čo uložiť — textové pole je prázdne.</string>
+    <string name="vault_error_storageBlocked">Prehliadač ukladanie nepovolí (anonymný režim?).</string>
+    <string name="vault_error_noVault">Žiadny trezor nie je uložený.</string>
+    <string name="vault_error_noPassphrase">Bez heslovej frázy niet kľúča.</string>
+    <string name="vault_error_sealFailed">Uloženie sa nepodarilo.</string>
+    <string name="vault_error_unsealFailed">Odomknutie sa nepodarilo.</string>
+    <string name="vault_msg_sealed">Trezor uložený zašifrovane.</string>
+    <string name="vault_msg_resealed">Trezor znova zašifrovaný.</string>
+    <string name="vault_msg_unsealed">Trezor odomknutý.</string>
+    <string name="vault_msg_locked">Trezor zamknutý.</string>
+    <string name="vault_msg_wiped">Trezor zmazaný.</string>
+    <string name="vault_msg_wipedNote">Zmazané. V úložisku už nič nezostalo.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Zamknuté po %1$s minúte bez zadávania.</item>
+        <item quantity="few">Zamknuté po %1$s minútach bez zadávania.</item>
+        <item quantity="many">Zamknuté po %1$s minúty bez zadávania.</item>
+        <item quantity="other">Zamknuté po %1$s minútach bez zadávania.</item>
+    </plurals>
+    <string name="vault_locked_hidden">Zamknuté pri opustení karty.</string>
+    <string name="scan_noQr">V obrázku sa nedal rozpoznať žiadny QR kód.</string>
+    <string name="scan_unreadable">Obrázok sa nepodarilo prečítať — je to naozaj obrázok?</string>
+    <string name="scan_done">QR kód prečítaný a vložený.</string>
+    <string name="scan_camera_unavailable">Toto prostredie kameru neuvoľní. Pri otvorení ako súbor (file://) ju väčšina prehliadačov blokuje — „QR z obrázka“ funguje vždy.</string>
+    <string name="scan_camera_denied">Kamera bola odmietnutá. Zrušte oprávnenie v prehliadači — alebo použite „QR z obrázka“.</string>
+    <string name="scan_camera_notFound">Nie je pripojená žiadna kamera. „QR z obrázka“ funguje aj tak.</string>
+    <string name="scan_camera_busy">Kameru práve používa iný program.</string>
+    <string name="scan_camera_failed">Kameru sa nepodarilo spustiť. „QR z obrázka“ funguje vždy.</string>
+    <plurals name="import_done">
+        <item quantity="one">Prevzatý %1$s účet z exportu Google Authenticatora</item>
+        <item quantity="few">Prevzaté %1$s účty z exportu Google Authenticatora</item>
+        <item quantity="many">Prevzatých %1$s účtu z exportu Google Authenticatora</item>
+        <item quantity="other">Prevzatých %1$s účtov z exportu Google Authenticatora</item>
+    </plurals>
+    <string name="import_skipped">preskočené: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, založené na počítadle)</string>
+    <string name="import_skip_algorithm">%1$s (nepodporovaný algoritmus)</string>
+    <string name="import_skip_emptySecret">%1$s (prázdny secret)</string>
+    <string name="import_unnamed">Bez názvu</string>
+    <string name="import_unreadable">Export nečitateľný.</string>
+    <string name="vacant_text">Secret, odkaz otpauth alebo obrázok QR — nič z toho neopustí tento prehliadač.</string>
+    <string name="vacant_demo">Vložiť testovací kľúč</string>
+    <string name="colophon_note">Žiadna sieť · žiadne úložisko · HMAC cez Web Crypto API</string>
+    <string name="lang_label">Jazyk</string>
+    <string name="lang_aria">Zvoliť jazyk</string>
+    <string name="err_base32_paddingInside">Znak „=“ smie stáť len na konci (je to iba výplň).</string>
+    <string name="err_base32_empty">Kľúč secret je prázdny.</string>
+    <string name="err_base32_badChar">Neplatný znak „%1$s“ na pozícii %2$s. Base32 pozná len A–Z a 2–7 — číslice 0, 1 a 8 sa v ňom nevyskytujú (zamenené s O, I a B?).</string>
+    <string name="err_base32_badLength">Neplatná dĺžka: %1$s znakov (bez medzier a výplne). Base32 kóduje 5 bajtov do 8 znakov; v poslednom bloku sú možné len 2, 4, 5, 7 alebo 8 znakov. Pravdepodobne jeden znak chýba, alebo je jeden navyše.</string>
+    <string name="err_uri_invalid">Toto nie je platné URI. Očakáva sa „otpauth://totp/…“.</string>
+    <string name="err_uri_scheme">Neznáma schéma „%1$s“. Očakáva sa „otpauth“.</string>
+    <string name="err_uri_hotp">Toto je URI typu HOTP (založené na počítadle). Táto aplikácia vytvára iba časové kódy TOTP — inak by bolo treba ukladať stav počítadla.</string>
+    <string name="err_uri_type">Neznámy typ „%1$s“. Po „otpauth://“ musí stáť „totp“.</string>
+    <string name="err_uri_typeEmpty">(prázdne)</string>
+    <string name="err_uri_noSecret">V URI chýba parameter „secret“.</string>
+    <string name="err_uri_badLabel">Menovka URI obsahuje poškodené percentové kódovanie (napríklad osamotené „%“).</string>
+    <string name="err_uri_algorithm">Neznámy algoritmus „%1$s“. Podporované sú SHA1, SHA256 a SHA512.</string>
+    <string name="err_uri_digits">Neplatná hodnota „digits“: %1$s. Povolené je %2$s až %3$s.</string>
+    <string name="err_uri_period">Neplatná hodnota „period“: %1$s. Očakáva sa 1 až 3600 sekúnd.</string>
+    <string name="err_uri_integer">Parameter „%1$s“ musí byť celé číslo; nájdené bolo „%2$s“.</string>
+    <string name="err_otp_digits">Neplatný počet číslic: %1$s. Povolené je %2$s až %3$s.</string>
+    <string name="err_otp_emptySecret">Secret je prázdny — nedá sa z neho vypočítať žiadny kód.</string>
+    <string name="err_line_unreadable">Tento riadok sa nepodarilo prečítať.</string>
+    <string name="err_vault_openFailed">Trezor sa nepodarilo otvoriť. Chybná heslová fráza — alebo boli uložené údaje zmenené.</string>
+    <string name="err_vault_badFormat">Uložené údaje trezora majú neznámy formát.</string>
+    <string name="err_vault_version">Verzia trezora %1$s nie je podporovaná (očakávané: %2$s).</string>
+    <string name="err_vault_base64">Pole „%1$s“ údajov trezora nie je platné Base64.</string>
+    <string name="err_vault_iterations">Neplatný počet iterácií: %1$s.</string>
+    <string name="err_migration_notExport">Toto nie je export z Google Authenticatora. Očakáva sa „otpauth-migration://offline?data=…“.</string>
+    <string name="err_migration_noData">V URI chýba parameter „data“.</string>
+    <string name="err_migration_badPercent">Parameter „data“ obsahuje poškodené percentové kódovanie.</string>
+    <string name="err_migration_badBase64">Parameter „data“ nie je platné Base64.</string>
+    <string name="err_migration_noAccounts">V tomto exporte nie sú žiadne účty.</string>
+</resources>

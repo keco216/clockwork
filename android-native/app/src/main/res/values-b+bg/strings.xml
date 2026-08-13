@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/bg.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — TOTP удостоверител</string>
+    <string name="meta_description">Clockwork — TOTP удостоверител. Създава двуфакторни кодове изцяло в браузъра, без нито една мрежова заявка.</string>
+    <string name="brand_tagline">TOTP удостоверител · RFC 6238</string>
+    <string name="skip_toCodes">Към кодовете</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Без мрежа</string>
+    <string name="status_vault_off">нищо не се запазва</string>
+    <string name="status_vault_locked">сейфът е заключен</string>
+    <string name="status_vault_open">сейфът е отворен</string>
+    <string name="zone_input">Вход</string>
+    <string name="zone_vault">Сейф</string>
+    <string name="zone_codes">Кодове</string>
+    <string name="input_legend">По един запис на ред</string>
+    <string name="input_placeholder">напр. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s или %2$s — смесено. %3$s започва бележка.</string>
+    <string name="input_help_images">Изображения с QR код може да се влачат тук или да се поставят с %1$s.</string>
+    <string name="input_help_migration">Износите от Google Authenticator (%1$s) се преобразуват автоматично.</string>
+    <string name="input_help_more">Всички входни формати</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s акаунт</item>
+        <item quantity="other">%1$s акаунта</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s грешка</item>
+        <item quantity="other">%1$s грешки</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Изчисти</string>
+    <string name="key_qrImage">QR от изображение</string>
+    <string name="key_camera">Камера</string>
+    <string name="key_cameraStop">Изключи камерата</string>
+    <string name="key_copy">Копирай</string>
+    <string name="key_copyDone">Копирано</string>
+    <string name="key_copyFailed">Неуспешно</string>
+    <string name="viewfinder_hint">Дръжте QR кода в рамката</string>
+    <string name="filter_label">Филтриране на акаунтите</string>
+    <string name="filter_placeholder">Филтриране по име</string>
+    <string name="filter_empty">Нищо не съвпада с „%1$s“.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s цифра</item>
+        <item quantity="other">%1$s цифри</item>
+    </plurals>
+    <string name="strip_period">%1$s с</string>
+    <string name="strip_next">следва</string>
+    <string name="strip_seconds_abbr">с</string>
+    <string name="strip_seconds_title">секунди</string>
+    <string name="strip_seconds_valid">валиден</string>
+    <string name="strip_accountFallback">Акаунт %1$s</string>
+    <string name="strip_copyAria">Копирай кода за %1$s</string>
+    <string name="strip_copyAnnounce">Кодът %1$s е копиран</string>
+    <string name="strip_copyFailedHint">Копирането се провали. Маркирайте кода на ръка.</string>
+    <string name="fault_title">Редът е нечетлив</string>
+    <string name="vault_state_off">Изключен — нищо не се запазва</string>
+    <string name="vault_state_locked">Заключен — нужна е парола-фраза</string>
+    <string name="vault_state_open">Отворен — secret-ите са в текстовото поле</string>
+    <string name="vault_explain">По подразбиране Clockwork не запазва нищо. Ако включите сейфа, въведеното остава тук шифрирано с вашата парола-фраза — без нея запазеният блок не струва нищо.</string>
+    <string name="vault_explain_crypto">Ключът се извежда от парола-фразата чрез PBKDF2-SHA-256 с %1$s итерации, а шифрира AES-256-GCM. Запазва се само запечатаният плик: никога открития текст, никога парола-фразата, никога изведения ключ.</string>
+    <string name="vault_explain_more">Всички подробности</string>
+    <string name="vault_pass_new">Нова парола-фраза</string>
+    <string name="vault_pass_existing">Парола-фраза</string>
+    <string name="vault_action_seal">Запази шифровано</string>
+    <string name="vault_action_unseal">Отключи</string>
+    <string name="vault_action_deriving">Извежда се ключ …</string>
+    <string name="vault_action_lock">Заключи</string>
+    <string name="vault_action_update">Запази отново</string>
+    <string name="vault_action_wipe">Изтрий всичко</string>
+    <string name="vault_action_wipeConfirm">Наистина ли да се изтрие?</string>
+    <string name="vault_timeout_label">Заключва се сам след</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s минута</item>
+        <item quantity="other">%1$s минути</item>
+    </plurals>
+    <string name="vault_lockOnHide">и при напускане на раздела</string>
+    <string name="vault_error_nothingToStore">Няма какво да се запази — текстовото поле е празно.</string>
+    <string name="vault_error_storageBlocked">Браузърът не позволява запазване (частен режим?).</string>
+    <string name="vault_error_noVault">Няма запазен сейф.</string>
+    <string name="vault_error_noPassphrase">Без парола-фраза няма ключ.</string>
+    <string name="vault_error_sealFailed">Запазването се провали.</string>
+    <string name="vault_error_unsealFailed">Отключването се провали.</string>
+    <string name="vault_msg_sealed">Сейфът е запазен шифровано.</string>
+    <string name="vault_msg_resealed">Сейфът е шифрован наново.</string>
+    <string name="vault_msg_unsealed">Сейфът е отключен.</string>
+    <string name="vault_msg_locked">Сейфът е заключен.</string>
+    <string name="vault_msg_wiped">Сейфът е изтрит.</string>
+    <string name="vault_msg_wipedNote">Изтрито. В хранилището не остана нищо.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Заключен след %1$s минута без въвеждане.</item>
+        <item quantity="other">Заключен след %1$s минути без въвеждане.</item>
+    </plurals>
+    <string name="vault_locked_hidden">Заключен при напускане на раздела.</string>
+    <string name="scan_noQr">В изображението не се разпозна никакъв QR код.</string>
+    <string name="scan_unreadable">Изображението не можа да бъде прочетено — наистина ли е изображение?</string>
+    <string name="scan_done">QR кодът е прочетен и вмъкнат.</string>
+    <string name="scan_camera_unavailable">Тази среда не предоставя камера. При отваряне като файл (file://) повечето браузъри я блокират — „QR от изображение“ работи винаги.</string>
+    <string name="scan_camera_denied">Камерата беше отказана. Нулирайте разрешението в браузъра — или използвайте „QR от изображение“.</string>
+    <string name="scan_camera_notFound">Няма свързана камера. „QR от изображение“ работи въпреки това.</string>
+    <string name="scan_camera_busy">Камерата се използва в момента от друга програма.</string>
+    <string name="scan_camera_failed">Камерата не можа да бъде стартирана. „QR от изображение“ работи винаги.</string>
+    <plurals name="import_done">
+        <item quantity="one">Приет %1$s акаунт от износа на Google Authenticator</item>
+        <item quantity="other">Приети %1$s акаунта от износа на Google Authenticator</item>
+    </plurals>
+    <string name="import_skipped">пропуснати: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, на основата на брояч)</string>
+    <string name="import_skip_algorithm">%1$s (неподдържан алгоритъм)</string>
+    <string name="import_skip_emptySecret">%1$s (празен secret)</string>
+    <string name="import_unnamed">Без име</string>
+    <string name="import_unreadable">Износът е нечетлив.</string>
+    <string name="vacant_text">Секрет, връзка otpauth или QR изображение — нищо от това не напуска този браузър.</string>
+    <string name="vacant_demo">Вмъкване на тестов ключ</string>
+    <string name="colophon_note">Без мрежа · без хранилище · HMAC през Web Crypto API</string>
+    <string name="lang_label">Език</string>
+    <string name="lang_aria">Изберете език</string>
+    <string name="err_base32_paddingInside">Знакът „=“ може да стои само накрая (той е само запълване).</string>
+    <string name="err_base32_empty">Ключът secret е празен.</string>
+    <string name="err_base32_badChar">Невалиден знак „%1$s“ на позиция %2$s. Base32 познава само A–Z и 2–7 — цифрите 0, 1 и 8 не се срещат в него (объркани с O, I и B?).</string>
+    <string name="err_base32_badLength">Невалидна дължина: %1$s знака (без интервали и запълване). Base32 кодира 5 байта в 8 знака; в последния блок са възможни само 2, 4, 5, 7 или 8 знака. Вероятно липсва знак или има един в повече.</string>
+    <string name="err_uri_invalid">Това не е валиден URI. Очаква се „otpauth://totp/…“.</string>
+    <string name="err_uri_scheme">Непозната схема „%1$s“. Очаква се „otpauth“.</string>
+    <string name="err_uri_hotp">Това е HOTP URI (на основата на брояч). Това приложение създава само кодове TOTP, основани на времето — иначе би трябвало да се запазва състоянието на брояча.</string>
+    <string name="err_uri_type">Непознат вид „%1$s“. След „otpauth://“ трябва да стои „totp“.</string>
+    <string name="err_uri_typeEmpty">(празно)</string>
+    <string name="err_uri_noSecret">В URI липсва параметърът „secret“.</string>
+    <string name="err_uri_badLabel">Етикетът на URI съдържа развалено процентно кодиране (например самотен „%“).</string>
+    <string name="err_uri_algorithm">Непознат алгоритъм „%1$s“. Поддържат се SHA1, SHA256 и SHA512.</string>
+    <string name="err_uri_digits">Невалидна стойност за „digits“: %1$s. Позволени са от %2$s до %3$s.</string>
+    <string name="err_uri_period">Невалидна стойност за „period“: %1$s. Очакват се от 1 до 3600 секунди.</string>
+    <string name="err_uri_integer">Параметърът „%1$s“ трябва да е цяло число; намерено беше „%2$s“.</string>
+    <string name="err_otp_digits">Невалиден брой цифри: %1$s. Позволени са от %2$s до %3$s.</string>
+    <string name="err_otp_emptySecret">Secret е празен — от него не може да се изчисли никакъв код.</string>
+    <string name="err_line_unreadable">Този ред не можа да бъде прочетен.</string>
+    <string name="err_vault_openFailed">Сейфът не можа да се отвори. Грешна парола-фраза — или запазените данни са били променени.</string>
+    <string name="err_vault_badFormat">Запазените данни на сейфа са в непознат формат.</string>
+    <string name="err_vault_version">Версия на сейфа %1$s не се поддържа (очаквана: %2$s).</string>
+    <string name="err_vault_base64">Полето „%1$s“ от данните на сейфа не е валиден Base64.</string>
+    <string name="err_vault_iterations">Невалиден брой итерации: %1$s.</string>
+    <string name="err_migration_notExport">Това не е износ от Google Authenticator. Очаква се „otpauth-migration://offline?data=…“.</string>
+    <string name="err_migration_noData">В URI липсва параметърът „data“.</string>
+    <string name="err_migration_badPercent">Параметърът „data“ съдържа развалено процентно кодиране.</string>
+    <string name="err_migration_badBase64">Параметърът „data“ не е валиден Base64.</string>
+    <string name="err_migration_noAccounts">В този износ няма никакви акаунти.</string>
+</resources>

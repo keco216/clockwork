@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/th.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — ตัวยืนยันตัวตน TOTP</string>
+    <string name="meta_description">Clockwork — ตัวยืนยันตัวตน TOTP สร้างรหัสสองชั้นภายในเบราว์เซอร์ทั้งหมด โดยไม่มีคำขอเครือข่ายแม้แต่ครั้งเดียว</string>
+    <string name="brand_tagline">ตัวยืนยันตัวตน TOTP · RFC 6238</string>
+    <string name="skip_toCodes">ข้ามไปยังรหัส</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">ออฟไลน์</string>
+    <string name="status_vault_off">ไม่มีการบันทึกสิ่งใด</string>
+    <string name="status_vault_locked">ตู้นิรภัยล็อกอยู่</string>
+    <string name="status_vault_open">ตู้นิรภัยเปิดอยู่</string>
+    <string name="zone_input">การป้อน</string>
+    <string name="zone_vault">ตู้นิรภัย</string>
+    <string name="zone_codes">รหัส</string>
+    <string name="input_legend">หนึ่งรายการต่อหนึ่งบรรทัด</string>
+    <string name="input_placeholder">เช่น JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s หรือ %2$s — ปนกันได้ %3$s เริ่มต้นบันทึกย่อ</string>
+    <string name="input_help_images">ภาพรหัส QR ลากมาวางที่นี่ก็ได้ หรือวางด้วย %1$s</string>
+    <string name="input_help_migration">ไฟล์ส่งออกจาก Google Authenticator (%1$s) จะถูกแปลงให้เอง</string>
+    <string name="input_help_more">รูปแบบข้อมูลทั้งหมด</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="other">%1$s บัญชี</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="other">ผิดพลาด %1$s รายการ</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">ล้าง</string>
+    <string name="key_qrImage">QR จากภาพ</string>
+    <string name="key_camera">กล้อง</string>
+    <string name="key_cameraStop">ปิดกล้อง</string>
+    <string name="key_copy">คัดลอก</string>
+    <string name="key_copyDone">คัดลอกแล้ว</string>
+    <string name="key_copyFailed">ล้มเหลว</string>
+    <string name="viewfinder_hint">ถือรหัส QR ไว้ในกรอบ</string>
+    <string name="filter_label">กรองบัญชี</string>
+    <string name="filter_placeholder">กรองตามชื่อ</string>
+    <string name="filter_empty">ไม่มีรายการที่ตรงกับ “%1$s”</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="other">%1$s หลัก</item>
+    </plurals>
+    <string name="strip_period">%1$s วิ</string>
+    <string name="strip_next">ถัดไป</string>
+    <string name="strip_seconds_abbr">วิ</string>
+    <string name="strip_seconds_title">วินาที</string>
+    <string name="strip_seconds_valid">ใช้ได้</string>
+    <string name="strip_accountFallback">บัญชี %1$s</string>
+    <string name="strip_copyAria">คัดลอกรหัสของ %1$s</string>
+    <string name="strip_copyAnnounce">คัดลอกรหัส %1$s แล้ว</string>
+    <string name="strip_copyFailedHint">คัดลอกไม่สำเร็จ กรุณาเลือกรหัสด้วยมือ</string>
+    <string name="fault_title">บรรทัดนี้อ่านไม่ออก</string>
+    <string name="vault_state_off">ปิดอยู่ — ไม่มีการบันทึกสิ่งใด</string>
+    <string name="vault_state_locked">ล็อกอยู่ — ต้องใช้วลีรหัสผ่าน</string>
+    <string name="vault_state_open">เปิดอยู่ — secret อยู่ในช่องข้อความ</string>
+    <string name="vault_explain">ตามค่าเริ่มต้น Clockwork ไม่เก็บอะไรเลย หากเปิดตู้เซฟ สิ่งที่ป้อนไว้จะอยู่ที่นี่โดยเข้ารหัสด้วยวลีรหัสผ่านของคุณ — ถ้าไม่มีวลีนั้น บล็อกที่เก็บไว้ก็ไร้ค่า</string>
+    <string name="vault_explain_crypto">กุญแจได้มาจากวลีรหัสผ่านด้วย PBKDF2-SHA-256 จำนวน %1$s รอบ และ AES-256-GCM ทำหน้าที่เข้ารหัส ที่เก็บไว้มีเพียงซองที่ปิดผนึกแล้ว ไม่เคยเก็บข้อความธรรมดา ไม่เคยเก็บวลีรหัสผ่าน และไม่เคยเก็บกุญแจที่ได้มา</string>
+    <string name="vault_explain_more">รายละเอียดทั้งหมด</string>
+    <string name="vault_pass_new">วลีรหัสผ่านใหม่</string>
+    <string name="vault_pass_existing">วลีรหัสผ่าน</string>
+    <string name="vault_action_seal">บันทึกแบบเข้ารหัส</string>
+    <string name="vault_action_unseal">ปลดล็อก</string>
+    <string name="vault_action_deriving">กำลังสร้างกุญแจ …</string>
+    <string name="vault_action_lock">ล็อก</string>
+    <string name="vault_action_update">บันทึกใหม่</string>
+    <string name="vault_action_wipe">ลบทั้งหมด</string>
+    <string name="vault_action_wipeConfirm">ลบจริงหรือ?</string>
+    <string name="vault_timeout_label">ล็อกเองหลังจาก</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="other">%1$s นาที</item>
+    </plurals>
+    <string name="vault_lockOnHide">และเมื่อออกจากแท็บ</string>
+    <string name="vault_error_nothingToStore">ไม่มีอะไรให้บันทึก — ช่องข้อความว่างอยู่</string>
+    <string name="vault_error_storageBlocked">เบราว์เซอร์ไม่ยอมให้บันทึก (โหมดส่วนตัวหรือเปล่า?)</string>
+    <string name="vault_error_noVault">ไม่มีตู้นิรภัยที่บันทึกไว้</string>
+    <string name="vault_error_noPassphrase">ไม่มีวลีรหัสผ่านก็ไม่มีกุญแจ</string>
+    <string name="vault_error_sealFailed">บันทึกไม่สำเร็จ</string>
+    <string name="vault_error_unsealFailed">ปลดล็อกไม่สำเร็จ</string>
+    <string name="vault_msg_sealed">บันทึกตู้นิรภัยแบบเข้ารหัสแล้ว</string>
+    <string name="vault_msg_resealed">เข้ารหัสตู้นิรภัยใหม่แล้ว</string>
+    <string name="vault_msg_unsealed">ปลดล็อกตู้นิรภัยแล้ว</string>
+    <string name="vault_msg_locked">ล็อกตู้นิรภัยแล้ว</string>
+    <string name="vault_msg_wiped">ลบตู้นิรภัยแล้ว</string>
+    <string name="vault_msg_wipedNote">ลบแล้ว ไม่มีอะไรเหลืออยู่ในที่เก็บ</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="other">ล็อกหลังจาก %1$s นาทีที่ไม่มีการป้อน</item>
+    </plurals>
+    <string name="vault_locked_hidden">ล็อกเมื่อออกจากแท็บ</string>
+    <string name="scan_noQr">ในภาพไม่พบรหัส QR ใดเลย</string>
+    <string name="scan_unreadable">อ่านภาพไม่ได้ — นี่เป็นภาพจริงหรือ?</string>
+    <string name="scan_done">อ่านรหัส QR และใส่ให้แล้ว</string>
+    <string name="scan_camera_unavailable">สภาพแวดล้อมนี้ไม่เปิดให้ใช้กล้อง เมื่อเปิดเป็นไฟล์ (file://) เบราว์เซอร์ส่วนใหญ่จะปิดกั้นไว้ — “QR จากภาพ” ใช้ได้เสมอ</string>
+    <string name="scan_camera_denied">กล้องถูกปฏิเสธ ตั้งค่าสิทธิ์ในเบราว์เซอร์ใหม่ — หรือใช้ “QR จากภาพ”</string>
+    <string name="scan_camera_notFound">ไม่มีกล้องเชื่อมต่ออยู่ “QR จากภาพ” ยังใช้ได้</string>
+    <string name="scan_camera_busy">ขณะนี้โปรแกรมอื่นกำลังใช้กล้องอยู่</string>
+    <string name="scan_camera_failed">เริ่มกล้องไม่ได้ “QR จากภาพ” ใช้ได้เสมอ</string>
+    <plurals name="import_done">
+        <item quantity="other">รับมา %1$s บัญชีจากไฟล์ส่งออกของ Google Authenticator</item>
+    </plurals>
+    <string name="import_skipped">ข้ามไป: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP อาศัยตัวนับ)</string>
+    <string name="import_skip_algorithm">%1$s (อัลกอริทึมที่ไม่รองรับ)</string>
+    <string name="import_skip_emptySecret">%1$s (secret ว่าง)</string>
+    <string name="import_unnamed">ไม่มีชื่อ</string>
+    <string name="import_unreadable">ไฟล์ส่งออกอ่านไม่ออก</string>
+    <string name="vacant_text">ซีเคร็ต ลิงก์ otpauth หรือรูป QR — ไม่มีสิ่งใดออกจากเบราว์เซอร์นี้</string>
+    <string name="vacant_demo">ใส่คีย์ทดสอบ</string>
+    <string name="colophon_note">ไม่มีเครือข่าย · ไม่มีที่เก็บ · HMAC ผ่าน Web Crypto API</string>
+    <string name="lang_label">ภาษา</string>
+    <string name="lang_aria">เลือกภาษา</string>
+    <string name="err_base32_paddingInside">อักขระ “=” วางได้เฉพาะท้ายสุด (เป็นเพียงตัวเติมเท่านั้น)</string>
+    <string name="err_base32_empty">กุญแจ secret ว่างเปล่า</string>
+    <string name="err_base32_badChar">อักขระไม่ถูกต้อง “%1$s” ที่ตำแหน่ง %2$s Base32 รู้จักเพียง A–Z และ 2–7 — เลข 0, 1 และ 8 ไม่ปรากฏในนั้น (สับสนกับ O, I และ B หรือเปล่า?)</string>
+    <string name="err_base32_badLength">ความยาวไม่ถูกต้อง: %1$s อักขระ (ไม่นับช่องว่างและตัวเติม) Base32 เข้ารหัส 5 ไบต์เป็น 8 อักขระ บล็อกสุดท้ายเป็นได้เพียง 2, 4, 5, 7 หรือ 8 อักขระ เป็นไปได้ว่าขาดไปหนึ่งอักขระหรือเกินมาหนึ่ง</string>
+    <string name="err_uri_invalid">นี่ไม่ใช่ URI ที่ใช้ได้ ต้องเป็น “otpauth://totp/…”</string>
+    <string name="err_uri_scheme">สกีมาที่ไม่รู้จัก “%1$s” ต้องเป็น “otpauth”</string>
+    <string name="err_uri_hotp">นี่คือ URI แบบ HOTP (อาศัยตัวนับ) แอปนี้สร้างเฉพาะรหัส TOTP ที่อิงเวลา — มิฉะนั้นต้องเก็บสถานะตัวนับไว้</string>
+    <string name="err_uri_type">ชนิดที่ไม่รู้จัก “%1$s” หลัง “otpauth://” ต้องเป็น “totp”</string>
+    <string name="err_uri_typeEmpty">(ว่าง)</string>
+    <string name="err_uri_noSecret">ใน URI ขาดพารามิเตอร์ “secret”</string>
+    <string name="err_uri_badLabel">ป้ายของ URI มีการเข้ารหัสเปอร์เซ็นต์ที่เสีย (เช่น “%” เดี่ยว ๆ)</string>
+    <string name="err_uri_algorithm">อัลกอริทึมที่ไม่รู้จัก “%1$s” ที่รองรับคือ SHA1, SHA256 และ SHA512</string>
+    <string name="err_uri_digits">ค่าของ “digits” ไม่ถูกต้อง: %1$s อนุญาตตั้งแต่ %2$s ถึง %3$s</string>
+    <string name="err_uri_period">ค่าของ “period” ไม่ถูกต้อง: %1$s ต้องอยู่ระหว่าง 1 ถึง 3600 วินาที</string>
+    <string name="err_uri_integer">พารามิเตอร์ “%1$s” ต้องเป็นจำนวนเต็ม แต่พบ “%2$s”</string>
+    <string name="err_otp_digits">จำนวนหลักไม่ถูกต้อง: %1$s อนุญาตตั้งแต่ %2$s ถึง %3$s</string>
+    <string name="err_otp_emptySecret">secret ว่างเปล่า — คำนวณรหัสจากมันไม่ได้</string>
+    <string name="err_line_unreadable">อ่านบรรทัดนี้ไม่ได้</string>
+    <string name="err_vault_openFailed">เปิดตู้นิรภัยไม่ได้ วลีรหัสผ่านผิด — หรือข้อมูลที่บันทึกไว้ถูกแก้ไข</string>
+    <string name="err_vault_badFormat">ข้อมูลตู้นิรภัยที่บันทึกไว้อยู่ในรูปแบบที่ไม่รู้จัก</string>
+    <string name="err_vault_version">ตู้นิรภัยรุ่น %1$s ไม่รองรับ (ที่ต้องการ: %2$s)</string>
+    <string name="err_vault_base64">ช่อง “%1$s” ของข้อมูลตู้นิรภัยไม่ใช่ Base64 ที่ถูกต้อง</string>
+    <string name="err_vault_iterations">จำนวนรอบไม่ถูกต้อง: %1$s</string>
+    <string name="err_migration_notExport">นี่ไม่ใช่ไฟล์ส่งออกของ Google Authenticator ต้องเป็น “otpauth-migration://offline?data=…”</string>
+    <string name="err_migration_noData">ใน URI ขาดพารามิเตอร์ “data”</string>
+    <string name="err_migration_badPercent">พารามิเตอร์ “data” มีการเข้ารหัสเปอร์เซ็นต์ที่เสีย</string>
+    <string name="err_migration_badBase64">พารามิเตอร์ “data” ไม่ใช่ Base64 ที่ถูกต้อง</string>
+    <string name="err_migration_noAccounts">ในไฟล์ส่งออกนี้ไม่มีบัญชีใดเลย</string>
+</resources>

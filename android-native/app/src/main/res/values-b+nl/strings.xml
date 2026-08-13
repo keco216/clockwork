@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/nl.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — TOTP-authenticator</string>
+    <string name="meta_description">Clockwork — TOTP-authenticator. Maakt tweefactorcodes volledig in de browser, zonder enig netwerkverzoek.</string>
+    <string name="brand_tagline">TOTP-authenticator · RFC 6238</string>
+    <string name="skip_toCodes">Naar de codes</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Offline</string>
+    <string name="status_vault_off">er wordt niets bewaard</string>
+    <string name="status_vault_locked">kluis op slot</string>
+    <string name="status_vault_open">kluis open</string>
+    <string name="zone_input">Invoer</string>
+    <string name="zone_vault">Kluis</string>
+    <string name="zone_codes">Codes</string>
+    <string name="input_legend">Eén invoer per regel</string>
+    <string name="input_placeholder">bijv. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s of %2$s — door elkaar. %3$s begint een notitie.</string>
+    <string name="input_help_images">QR-afbeeldingen kunnen ook hierheen worden gesleept of met %1$s worden geplakt.</string>
+    <string name="input_help_migration">Exports uit Google Authenticator (%1$s) worden automatisch omgezet.</string>
+    <string name="input_help_more">Alle invoerformaten</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s account</item>
+        <item quantity="other">%1$s accounts</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s fout</item>
+        <item quantity="other">%1$s fouten</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Leegmaken</string>
+    <string name="key_qrImage">QR uit afbeelding</string>
+    <string name="key_camera">Camera</string>
+    <string name="key_cameraStop">Camera uit</string>
+    <string name="key_copy">Kopiëren</string>
+    <string name="key_copyDone">Gekopieerd</string>
+    <string name="key_copyFailed">Mislukt</string>
+    <string name="viewfinder_hint">Houd de QR-code in het kader</string>
+    <string name="filter_label">Accounts filteren</string>
+    <string name="filter_placeholder">Filteren op naam</string>
+    <string name="filter_empty">Niets komt overeen met “%1$s”.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s cijfer</item>
+        <item quantity="other">%1$s cijfers</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">volgt</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">seconden</string>
+    <string name="strip_seconds_valid">geldig</string>
+    <string name="strip_accountFallback">Account %1$s</string>
+    <string name="strip_copyAria">Code van %1$s kopiëren</string>
+    <string name="strip_copyAnnounce">Code %1$s gekopieerd</string>
+    <string name="strip_copyFailedHint">Kopiëren is mislukt. Selecteer de code met de hand.</string>
+    <string name="fault_title">Regel onleesbaar</string>
+    <string name="vault_state_off">Uit — er wordt niets bewaard</string>
+    <string name="vault_state_locked">Op slot — wachtwoordzin nodig</string>
+    <string name="vault_state_open">Open — de secrets staan in het tekstveld</string>
+    <string name="vault_explain">Standaard slaat Clockwork niets op. Zet je de kluis aan, dan blijft de invoer hier versleuteld met je wachtwoordzin — zonder die zin is het opgeslagen blok waardeloos.</string>
+    <string name="vault_explain_crypto">De sleutel komt uit de wachtwoordzin via PBKDF2-SHA-256 met %1$s iteraties, en AES-256-GCM doet het versleutelen. Alleen de gesloten envelop wordt opgeslagen: nooit de leesbare tekst, nooit de wachtwoordzin, nooit de afgeleide sleutel.</string>
+    <string name="vault_explain_more">Alle details</string>
+    <string name="vault_pass_new">Nieuwe wachtwoordzin</string>
+    <string name="vault_pass_existing">Wachtwoordzin</string>
+    <string name="vault_action_seal">Versleuteld bewaren</string>
+    <string name="vault_action_unseal">Openen</string>
+    <string name="vault_action_deriving">Sleutel wordt afgeleid …</string>
+    <string name="vault_action_lock">Op slot</string>
+    <string name="vault_action_update">Opnieuw bewaren</string>
+    <string name="vault_action_wipe">Alles wissen</string>
+    <string name="vault_action_wipeConfirm">Echt wissen?</string>
+    <string name="vault_timeout_label">Gaat vanzelf op slot na</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minuut</item>
+        <item quantity="other">%1$s minuten</item>
+    </plurals>
+    <string name="vault_lockOnHide">en bij het verlaten van het tabblad</string>
+    <string name="vault_error_nothingToStore">Er is niets te bewaren — het tekstveld is leeg.</string>
+    <string name="vault_error_storageBlocked">De browser staat bewaren niet toe (privémodus?).</string>
+    <string name="vault_error_noVault">Er is geen kluis bewaard.</string>
+    <string name="vault_error_noPassphrase">Zonder wachtwoordzin is er geen sleutel.</string>
+    <string name="vault_error_sealFailed">Bewaren is mislukt.</string>
+    <string name="vault_error_unsealFailed">Openen is mislukt.</string>
+    <string name="vault_msg_sealed">Kluis versleuteld bewaard.</string>
+    <string name="vault_msg_resealed">Kluis opnieuw versleuteld.</string>
+    <string name="vault_msg_unsealed">Kluis geopend.</string>
+    <string name="vault_msg_locked">Kluis op slot.</string>
+    <string name="vault_msg_wiped">Kluis gewist.</string>
+    <string name="vault_msg_wipedNote">Gewist. Er staat niets meer in de opslag.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Na %1$s minuut zonder invoer op slot gegaan.</item>
+        <item quantity="other">Na %1$s minuten zonder invoer op slot gegaan.</item>
+    </plurals>
+    <string name="vault_locked_hidden">Op slot gegaan bij het verlaten van het tabblad.</string>
+    <string name="scan_noQr">In de afbeelding was geen QR-code te herkennen.</string>
+    <string name="scan_unreadable">De afbeelding kon niet worden gelezen — is het echt een afbeelding?</string>
+    <string name="scan_done">QR-code gelezen en ingevoegd.</string>
+    <string name="scan_camera_unavailable">Deze omgeving geeft geen camera vrij. Bij het openen als bestand (file://) blokkeren de meeste browsers hem — ‘QR uit afbeelding’ werkt altijd.</string>
+    <string name="scan_camera_denied">De camera is geweigerd. Zet de toestemming in de browser terug — of gebruik ‘QR uit afbeelding’.</string>
+    <string name="scan_camera_notFound">Er is geen camera aangesloten. ‘QR uit afbeelding’ werkt toch.</string>
+    <string name="scan_camera_busy">De camera is op dit moment in gebruik door een ander programma.</string>
+    <string name="scan_camera_failed">De camera kon niet worden gestart. ‘QR uit afbeelding’ werkt altijd.</string>
+    <plurals name="import_done">
+        <item quantity="one">%1$s account overgenomen uit de Google Authenticator-export</item>
+        <item quantity="other">%1$s accounts overgenomen uit de Google Authenticator-export</item>
+    </plurals>
+    <string name="import_skipped">overgeslagen: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, op teller gebaseerd)</string>
+    <string name="import_skip_algorithm">%1$s (niet-ondersteund algoritme)</string>
+    <string name="import_skip_emptySecret">%1$s (leeg secret)</string>
+    <string name="import_unnamed">Naamloos</string>
+    <string name="import_unreadable">Export onleesbaar.</string>
+    <string name="vacant_text">Secret, otpauth-link of QR-afbeelding — niets daarvan verlaat deze browser.</string>
+    <string name="vacant_demo">Testsleutel invoegen</string>
+    <string name="colophon_note">Geen netwerk · geen opslag · HMAC via de Web Crypto API</string>
+    <string name="lang_label">Taal</string>
+    <string name="lang_aria">Taal kiezen</string>
+    <string name="err_base32_paddingInside">Het teken ‘=’ mag alleen aan het eind staan (het is niet meer dan opvulling).</string>
+    <string name="err_base32_empty">De secret-sleutel is leeg.</string>
+    <string name="err_base32_badChar">Ongeldig teken ‘%1$s’ op plaats %2$s. Base32 kent alleen A–Z en 2–7 — de cijfers 0, 1 en 8 komen er niet in voor (verward met O, I en B?).</string>
+    <string name="err_base32_badLength">Ongeldige lengte: %1$s tekens (zonder spaties en opvulling). Base32 codeert 5 bytes in 8 tekens; in het laatste blok passen alleen 2, 4, 5, 7 of 8 tekens. Waarschijnlijk ontbreekt er een teken of is er een te veel.</string>
+    <string name="err_uri_invalid">Dit is geen geldige URI. Verwacht wordt ‘otpauth://totp/…’.</string>
+    <string name="err_uri_scheme">Onbekend schema ‘%1$s’. Verwacht wordt ‘otpauth’.</string>
+    <string name="err_uri_hotp">Dit is een HOTP-URI (op teller gebaseerd). Deze app maakt alleen codes op tijdbasis — daarvoor zou de tellerstand bewaard moeten worden.</string>
+    <string name="err_uri_type">Onbekend type ‘%1$s’. Na ‘otpauth://’ moet ‘totp’ staan.</string>
+    <string name="err_uri_typeEmpty">(leeg)</string>
+    <string name="err_uri_noSecret">In de URI ontbreekt de parameter ‘secret’.</string>
+    <string name="err_uri_badLabel">Het label van de URI bevat een kapotte procentcodering (bijvoorbeeld een losse ‘%’).</string>
+    <string name="err_uri_algorithm">Onbekend algoritme ‘%1$s’. Ondersteund worden SHA1, SHA256 en SHA512.</string>
+    <string name="err_uri_digits">Ongeldige waarde voor ‘digits’: %1$s. Toegestaan zijn %2$s tot %3$s.</string>
+    <string name="err_uri_period">Ongeldige waarde voor ‘period’: %1$s. Verwacht worden 1 tot 3600 seconden.</string>
+    <string name="err_uri_integer">De parameter ‘%1$s’ moet een heel getal zijn; gevonden werd ‘%2$s’.</string>
+    <string name="err_otp_digits">Ongeldig aantal cijfers: %1$s. Toegestaan zijn %2$s tot %3$s.</string>
+    <string name="err_otp_emptySecret">Het secret is leeg — daaruit valt geen code te berekenen.</string>
+    <string name="err_line_unreadable">Deze regel kon niet worden gelezen.</string>
+    <string name="err_vault_openFailed">De kluis ging niet open. Verkeerde wachtwoordzin — of de bewaarde gegevens zijn gewijzigd.</string>
+    <string name="err_vault_badFormat">De bewaarde kluisgegevens hebben een onbekende opmaak.</string>
+    <string name="err_vault_version">Kluisversie %1$s wordt niet ondersteund (verwacht: %2$s).</string>
+    <string name="err_vault_base64">Het veld ‘%1$s’ van de kluisgegevens is geen geldige Base64.</string>
+    <string name="err_vault_iterations">Ongeldig aantal iteraties: %1$s.</string>
+    <string name="err_migration_notExport">Dit is geen Google Authenticator-export. Verwacht wordt ‘otpauth-migration://offline?data=…’.</string>
+    <string name="err_migration_noData">In de URI ontbreekt de parameter ‘data’.</string>
+    <string name="err_migration_badPercent">De parameter ‘data’ bevat een kapotte procentcodering.</string>
+    <string name="err_migration_badBase64">De parameter ‘data’ is geen geldige Base64.</string>
+    <string name="err_migration_noAccounts">In deze export staan geen accounts.</string>
+</resources>

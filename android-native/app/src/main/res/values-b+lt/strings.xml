@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/lt.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="meta_title">Clockwork — TOTP tapatybės tikrintuvas</string>
+    <string name="meta_description">Clockwork — TOTP tapatybės tikrintuvas. Dviejų veiksnių kodus sukuria visiškai naršyklėje, be nė vienos tinklo užklausos.</string>
+    <string name="brand_tagline">TOTP tapatybės tikrintuvas · RFC 6238</string>
+    <string name="skip_toCodes">Pereiti prie kodų</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Be tinklo</string>
+    <string name="status_vault_off">niekas neįrašoma</string>
+    <string name="status_vault_locked">seifas užrakintas</string>
+    <string name="status_vault_open">seifas atrakintas</string>
+    <string name="zone_input">Įvestis</string>
+    <string name="zone_vault">Seifas</string>
+    <string name="zone_codes">Kodai</string>
+    <string name="input_legend">Vienas įrašas eilutėje</string>
+    <string name="input_placeholder">pvz. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s arba %2$s — sumaišyti. %3$s pradeda pastabą.</string>
+    <string name="input_help_images">QR paveikslus taip pat galima atitempti čia arba įklijuoti su %1$s.</string>
+    <string name="input_help_migration">„Google Authenticator“ eksportai (%1$s) pertvarkomi savaime.</string>
+    <string name="input_help_more">Visi įvesties formatai</string>
+    <string name="shortcut_modifier">Vald</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s paskyra</item>
+        <item quantity="few">%1$s paskyros</item>
+        <item quantity="many">%1$s paskyros</item>
+        <item quantity="other">%1$s paskyrų</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s klaida</item>
+        <item quantity="few">%1$s klaidos</item>
+        <item quantity="many">%1$s klaidos</item>
+        <item quantity="other">%1$s klaidų</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Išvalyti</string>
+    <string name="key_qrImage">QR iš paveikslo</string>
+    <string name="key_camera">Kamera</string>
+    <string name="key_cameraStop">Išjungti kamerą</string>
+    <string name="key_copy">Kopijuoti</string>
+    <string name="key_copyDone">Nukopijuota</string>
+    <string name="key_copyFailed">Nepavyko</string>
+    <string name="viewfinder_hint">Laikykite QR kodą rėmelyje</string>
+    <string name="filter_label">Filtruoti paskyras</string>
+    <string name="filter_placeholder">Filtruoti pagal pavadinimą</string>
+    <string name="filter_empty">Niekas neatitinka „%1$s“.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s skaitmuo</item>
+        <item quantity="few">%1$s skaitmenys</item>
+        <item quantity="many">%1$s skaitmens</item>
+        <item quantity="other">%1$s skaitmenų</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">toliau</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">sekundės</string>
+    <string name="strip_seconds_valid">galioja</string>
+    <string name="strip_accountFallback">Paskyra %1$s</string>
+    <string name="strip_copyAria">Kopijuoti %1$s kodą</string>
+    <string name="strip_copyAnnounce">Kodas %1$s nukopijuotas</string>
+    <string name="strip_copyFailedHint">Nukopijuoti nepavyko. Pažymėkite kodą ranka.</string>
+    <string name="fault_title">Eilutė neįskaitoma</string>
+    <string name="vault_state_off">Išjungtas — niekas neįrašoma</string>
+    <string name="vault_state_locked">Užrakintas — reikia slaptafrazės</string>
+    <string name="vault_state_open">Atrakintas — secret yra teksto lauke</string>
+    <string name="vault_explain">Pagal nutylėjimą Clockwork nieko nesaugo. Įjungus seifą, įvestis lieka čia užšifruota tavo slaptafraze — be jos išsaugotas blokas nieko nevertas.</string>
+    <string name="vault_explain_crypto">Raktas iš slaptafrazės išvedamas PBKDF2-SHA-256 su %1$s iteracijų, o šifruoja AES-256-GCM. Saugomas tik užklijuotas vokas: niekada atviras tekstas, niekada slaptafrazė, niekada išvestas raktas.</string>
+    <string name="vault_explain_more">Visa informacija</string>
+    <string name="vault_pass_new">Nauja slaptafrazė</string>
+    <string name="vault_pass_existing">Slaptafrazė</string>
+    <string name="vault_action_seal">Įrašyti užšifruotą</string>
+    <string name="vault_action_unseal">Atrakinti</string>
+    <string name="vault_action_deriving">Išvedamas raktas …</string>
+    <string name="vault_action_lock">Užrakinti</string>
+    <string name="vault_action_update">Įrašyti iš naujo</string>
+    <string name="vault_action_wipe">Ištrinti viską</string>
+    <string name="vault_action_wipeConfirm">Tikrai ištrinti?</string>
+    <string name="vault_timeout_label">Užsirakina pats po</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minutės</item>
+        <item quantity="few">%1$s minučių</item>
+        <item quantity="many">%1$s minutės</item>
+        <item quantity="other">%1$s minučių</item>
+    </plurals>
+    <string name="vault_lockOnHide">ir paliekant kortelę</string>
+    <string name="vault_error_nothingToStore">Nėra ko įrašyti — teksto laukas tuščias.</string>
+    <string name="vault_error_storageBlocked">Naršyklė neleidžia įrašyti (privatusis režimas?).</string>
+    <string name="vault_error_noVault">Nė vienas seifas neįrašytas.</string>
+    <string name="vault_error_noPassphrase">Be slaptafrazės nėra rakto.</string>
+    <string name="vault_error_sealFailed">Įrašyti nepavyko.</string>
+    <string name="vault_error_unsealFailed">Atrakinti nepavyko.</string>
+    <string name="vault_msg_sealed">Seifas įrašytas užšifruotas.</string>
+    <string name="vault_msg_resealed">Seifas užšifruotas iš naujo.</string>
+    <string name="vault_msg_unsealed">Seifas atrakintas.</string>
+    <string name="vault_msg_locked">Seifas užrakintas.</string>
+    <string name="vault_msg_wiped">Seifas ištrintas.</string>
+    <string name="vault_msg_wipedNote">Ištrinta. Saugykloje nieko nebeliko.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Užrakinta po %1$s minutės be įvesties.</item>
+        <item quantity="few">Užrakinta po %1$s minučių be įvesties.</item>
+        <item quantity="many">Užrakinta po %1$s minutės be įvesties.</item>
+        <item quantity="other">Užrakinta po %1$s minučių be įvesties.</item>
+    </plurals>
+    <string name="vault_locked_hidden">Užrakinta paliekant kortelę.</string>
+    <string name="scan_noQr">Paveiksle nepavyko atpažinti nė vieno QR kodo.</string>
+    <string name="scan_unreadable">Paveikslo nepavyko perskaityti — ar tai tikrai paveikslas?</string>
+    <string name="scan_done">QR kodas perskaitytas ir įterptas.</string>
+    <string name="scan_camera_unavailable">Ši aplinka kameros neatiduoda. Atvėrus kaip failą (file://) dauguma naršyklių ją užblokuoja — „QR iš paveikslo“ veikia visada.</string>
+    <string name="scan_camera_denied">Kameros neleista. Atstatykite leidimą naršyklėje — arba naudokite „QR iš paveikslo“.</string>
+    <string name="scan_camera_notFound">Nėra prijungtos kameros. „QR iš paveikslo“ vis tiek veikia.</string>
+    <string name="scan_camera_busy">Kamerą kaip tik naudoja kita programa.</string>
+    <string name="scan_camera_failed">Kameros nepavyko paleisti. „QR iš paveikslo“ veikia visada.</string>
+    <plurals name="import_done">
+        <item quantity="one">Perimta %1$s paskyra iš „Google Authenticator“ eksporto</item>
+        <item quantity="few">Perimtos %1$s paskyros iš „Google Authenticator“ eksporto</item>
+        <item quantity="many">Perimta %1$s paskyros iš „Google Authenticator“ eksporto</item>
+        <item quantity="other">Perimta %1$s paskyrų iš „Google Authenticator“ eksporto</item>
+    </plurals>
+    <string name="import_skipped">praleista: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, pagrįstas skaitikliu)</string>
+    <string name="import_skip_algorithm">%1$s (nepalaikomas algoritmas)</string>
+    <string name="import_skip_emptySecret">%1$s (tuščias secret)</string>
+    <string name="import_unnamed">Be pavadinimo</string>
+    <string name="import_unreadable">Eksportas neįskaitomas.</string>
+    <string name="vacant_text">Slaptas raktas, otpauth nuoroda ar QR paveikslėlis — niekas iš to neišeina iš šios naršyklės.</string>
+    <string name="vacant_demo">Įterpti bandomąjį raktą</string>
+    <string name="colophon_note">Jokio tinklo · jokios saugyklos · HMAC per Web Crypto API</string>
+    <string name="lang_label">Kalba</string>
+    <string name="lang_aria">Pasirinkite kalbą</string>
+    <string name="err_base32_paddingInside">Ženklas „=“ gali stovėti tik gale (tai tėra užpildas).</string>
+    <string name="err_base32_empty">Raktas secret yra tuščias.</string>
+    <string name="err_base32_badChar">Netinkamas ženklas „%1$s“ %2$s vietoje. Base32 pažįsta tik A–Z ir 2–7 — skaitmenų 0, 1 ir 8 jame nėra (supainiota su O, I ir B?).</string>
+    <string name="err_base32_badLength">Netinkamas ilgis: %1$s ženklai (be tarpų ir užpildo). Base32 užkoduoja 5 baitus 8 ženklais; paskutiniame bloke galimi tik 2, 4, 5, 7 arba 8 ženklai. Tikriausiai vieno ženklo trūksta arba vienas yra per daug.</string>
+    <string name="err_uri_invalid">Tai nėra tinkamas URI. Laukiama „otpauth://totp/…“.</string>
+    <string name="err_uri_scheme">Nežinoma schema „%1$s“. Laukiama „otpauth“.</string>
+    <string name="err_uri_hotp">Tai HOTP tipo URI (pagrįstas skaitikliu). Ši programa kuria tik laiku pagrįstus TOTP kodus — kitaip reikėtų įrašyti skaitiklio būseną.</string>
+    <string name="err_uri_type">Nežinomas tipas „%1$s“. Po „otpauth://“ turi būti „totp“.</string>
+    <string name="err_uri_typeEmpty">(tuščia)</string>
+    <string name="err_uri_noSecret">URI trūksta parametro „secret“.</string>
+    <string name="err_uri_badLabel">URI etiketėje yra sugadintas procentinis kodavimas (pavyzdžiui, pavienis „%“).</string>
+    <string name="err_uri_algorithm">Nežinomas algoritmas „%1$s“. Palaikomi SHA1, SHA256 ir SHA512.</string>
+    <string name="err_uri_digits">Netinkama „digits“ reikšmė: %1$s. Leidžiama nuo %2$s iki %3$s.</string>
+    <string name="err_uri_period">Netinkama „period“ reikšmė: %1$s. Laukiama nuo 1 iki 3600 sekundžių.</string>
+    <string name="err_uri_integer">Parametras „%1$s“ turi būti sveikasis skaičius; rasta „%2$s“.</string>
+    <string name="err_otp_digits">Netinkamas skaitmenų skaičius: %1$s. Leidžiama nuo %2$s iki %3$s.</string>
+    <string name="err_otp_emptySecret">Secret tuščias — iš jo neįmanoma apskaičiuoti jokio kodo.</string>
+    <string name="err_line_unreadable">Šios eilutės nepavyko perskaityti.</string>
+    <string name="err_vault_openFailed">Seifo nepavyko atverti. Netinkama slaptafrazė — arba įrašyti duomenys buvo pakeisti.</string>
+    <string name="err_vault_badFormat">Įrašyti seifo duomenys yra nežinomo formato.</string>
+    <string name="err_vault_version">Seifo versija %1$s nepalaikoma (laukta: %2$s).</string>
+    <string name="err_vault_base64">Seifo duomenų laukas „%1$s“ nėra tinkamas Base64.</string>
+    <string name="err_vault_iterations">Netinkamas iteracijų skaičius: %1$s.</string>
+    <string name="err_migration_notExport">Tai nėra „Google Authenticator“ eksportas. Laukiama „otpauth-migration://offline?data=…“.</string>
+    <string name="err_migration_noData">URI trūksta parametro „data“.</string>
+    <string name="err_migration_badPercent">Parametre „data“ yra sugadintas procentinis kodavimas.</string>
+    <string name="err_migration_badBase64">Parametras „data“ nėra tinkamas Base64.</string>
+    <string name="err_migration_noAccounts">Šiame eksporte nėra nė vienos paskyros.</string>
+</resources>
