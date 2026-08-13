@@ -185,4 +185,6 @@ export default {
   'err.migration.badPercent': '引数「data」にパーセント符号化の壊れがある。',
   'err.migration.badBase64': '引数「data」が正しい Base64 ではない。',
   'err.migration.noAccounts': 'このエクスポートにはアカウントが入っていない。',
+
+  'native.vacant.text': 'シークレット、otpauth リンク、QR 画像 — どれもこの端末から出ない。',
 } satisfies Strings;

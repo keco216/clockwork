@@ -13,6 +13,30 @@
  * den Icons der 1.x-Fassung: Der F-Droid-Buildserver von morgen soll kein Node
  * brauchen, um die App zu uebersetzen.
  *
+ * ── Das Praefix `native.` ─────────────────────────────────────────────────
+ * Ein Schluessel `native.X` gehoert NUR der nativen App. Er steht trotzdem im
+ * gemeinsamen Katalog, damit der Compiler ihn in allen 37 Sprachen mitprueft;
+ * aus dem Web-Buendel nimmt ihn `scripts/locale-subset.ts` wieder heraus
+ * (gemessen: das Buendel ist danach byte-identisch zu einem ohne diese
+ * Schluessel).
+ *
+ * Hier gilt die Umkehrung, und zwar in zwei Schritten:
+ *
+ *   • Der Ressourcenname entsteht aus dem Schluessel OHNE Praefix —
+ *     `native.vacant.text` wird `vacant_text`. Das Praefix sagt, woher der
+ *     Text kommt, nicht wie die Ressource heisst; die App fragt nach dem, was
+ *     sie anzeigen will.
+ *   • Gibt es zu `native.X` auch ein `X` im Katalog, wird `X` gar nicht erst
+ *     ausgespielt. Das native ueberschreibt das Web-Gegenstueck, statt neben
+ *     ihm zu liegen — zwei Ressourcen fuer denselben Satz waeren eine Einladung
+ *     zum Verwechseln, und die falsche faellt erst auf dem Geraet auf.
+ *
+ * Der erste Fall dieser Art ist `native.vacant.text`: Der Web-Satz sagt
+ * „… verlaesst diesen Browser", und in einer nativen App gibt es keinen
+ * Browser. Im StringKeys-Nachschlagewerk steht deshalb der VOLLE Schluessel
+ * (`native.vacant.text`) — wer den Aufrufer liest, sieht, dass dieser Text
+ * nativ eigen ist.
+ *
  * ── Die drei Uebersetzungsschritte ────────────────────────────────────────
  *
  * 1. **Schluessel.** `vault.action.seal` wird `vault_action_seal`. Android
@@ -58,6 +82,20 @@ const LOCALES_DIR = 'src/i18n/locales';
 const RES_DIR = 'android-native/app/src/main/res';
 const BASE_LOCALE = 'en';
 const TEMP_DIR = 'android-native/app/build/native-strings';
+
+/** Muss mit `NATIVE_PREFIX` in scripts/locale-subset.ts uebereinstimmen. */
+const NATIVE_PREFIX = 'native.';
+
+/**
+ * Der Ressourcenname zu einem i18n-Schluessel.
+ *
+ * Punkte und Bindestriche kann Android nicht; das `native.`-Praefix soll gar
+ * nicht erst in der Ressource auftauchen (Begruendung am Kopf der Datei).
+ */
+function resourceName(key) {
+  const bare = key.startsWith(NATIVE_PREFIX) ? key.slice(NATIVE_PREFIX.length) : key;
+  return bare.replace(/[.-]/g, '_');
+}
 
 /**
  * Die Basissprache landet in `values/` ohne Qualifier — sie ist der Rueckfall
@@ -182,6 +220,27 @@ if (!codes.includes(BASE_LOCALE)) {
 const base = await loadLocale(BASE_LOCALE);
 const baseKeys = Object.keys(base);
 
+// Ein `native.X` ueberschreibt sein Web-Gegenstueck `X`: Nur der native Text
+// wird ausgespielt, `X` gar nicht erst. Sonst laegen zwei Ressourcen mit
+// demselben Sinn nebeneinander, und die falsche faellt erst auf dem Geraet auf.
+const nativeKeys = baseKeys.filter((key) => key.startsWith(NATIVE_PREFIX));
+const shadowed = new Set(nativeKeys.map((key) => key.slice(NATIVE_PREFIX.length)));
+
+// Ein Praefix-Schluessel OHNE Web-Gegenstueck ist erlaubt (P7 wird solche
+// brauchen) — dann ueberschreibt er eben nichts. Ein Gegenstueck, das es gar
+// nicht gibt, waere aber fast immer ein Tippfehler im Schluessel; deshalb
+// wenigstens ein Hinweis statt stiller Hinnahme.
+for (const key of shadowed) {
+  if (!baseKeys.includes(key)) {
+    process.stdout.write(
+      `Hinweis: ${NATIVE_PREFIX}${key} ueberschreibt nichts — es gibt kein "${key}".\n`,
+    );
+  }
+}
+
+/** Was wirklich in die Ressourcen geht. */
+const emitKeys = baseKeys.filter((key) => !shadowed.has(key));
+
 // Die Zuordnung Name → Position, EINMAL aus der Basissprache. Sie gilt danach
 // fuer alle 37 Sprachen — auch fuer die, die die Teile umstellen.
 const order = new Map();
@@ -192,10 +251,12 @@ for (const key of baseKeys) {
 // Ressourcennamen muessen eindeutig sein. Zwei Schluessel, die sich nur in
 // Punkt gegen Unterstrich unterscheiden, kollidierten sonst stillschweigend.
 const resourceNames = new Map();
-for (const key of baseKeys) {
-  const name = key.replace(/[.-]/g, '_');
+for (const key of emitKeys) {
+  const name = resourceName(key);
   if (resourceNames.has(name)) {
-    throw new Error(`Ressourcenname ${name} entsteht aus zwei Schluesseln`);
+    throw new Error(
+      `Ressourcenname ${name} entsteht aus zwei Schluesseln: ${resourceNames.get(name)} und ${key}`,
+    );
   }
   resourceNames.set(name, key);
 }
@@ -230,14 +291,14 @@ for (const code of codes) {
     '<resources>',
   ];
 
-  for (const key of baseKeys) {
+  for (const key of emitKeys) {
     const value = catalogue[key];
     if (value === undefined) {
       problems.push(`${code}: ${key} fehlt`);
       continue;
     }
 
-    const name = key.replace(/[.-]/g, '_');
+    const name = resourceName(key);
     const names = order.get(key);
     const count = names.length;
 
@@ -343,23 +404,23 @@ const kotlinLines = [
   '    /** `null`, wenn der Schluessel unbekannt ist — der Aufrufer nimmt dann',
   '     *  die neutrale Auffangmeldung, genau wie `translateLibMessage` im Web. */',
   '    fun resourceFor(key: String): Int? = when (key) {',
-  ...baseKeys
+  ...emitKeys
     .filter((key) => typeof base[key] === 'string')
-    .map((key) => `        "${key}" -> R.string.${key.replace(/[.-]/g, '_')}`),
+    .map((key) => `        "${key}" -> R.string.${resourceName(key)}`),
   '        else -> null',
   '    }',
   '',
   '    /** Dasselbe fuer die Mehrzahl-Eintraege. */',
   '    fun pluralFor(key: String): Int? = when (key) {',
-  ...baseKeys
+  ...emitKeys
     .filter((key) => typeof base[key] !== 'string')
-    .map((key) => `        "${key}" -> R.plurals.${key.replace(/[.-]/g, '_')}`),
+    .map((key) => `        "${key}" -> R.plurals.${resourceName(key)}`),
   '        else -> null',
   '    }',
   '',
   '    /** Die Platzhalter je Schluessel, in der Reihenfolge der Basissprache. */',
   '    fun placeholdersFor(key: String): List<String> = when (key) {',
-  ...baseKeys
+  ...emitKeys
     .filter((key) => order.get(key).length > 0)
     .map(
       (key) =>
@@ -401,13 +462,22 @@ if (unusedForms.length > 0) {
 const perLocale = stringCount / codes.length + pluralCount / codes.length;
 process.stdout.write(
   `native-strings: ${codes.length} Sprachen geschrieben.\n` +
-    `  ${baseKeys.length} Schluessel je Sprache ` +
+    `  ${emitKeys.length} Schluessel je Sprache ` +
     `(${stringCount / codes.length} Texte, ${pluralCount / codes.length} Mehrzahl-Eintraege)\n` +
-    `  ${stringCount + pluralCount} Eintraege insgesamt, erwartet ${baseKeys.length * codes.length}\n` +
+    `  ${stringCount + pluralCount} Eintraege insgesamt, erwartet ${emitKeys.length * codes.length}\n` +
     `  locales_config.xml mit ${codes.length} Eintraegen\n`,
 );
 
-if (perLocale !== baseKeys.length) {
+if (nativeKeys.length > 0) {
+  process.stdout.write(
+    `  davon ${nativeKeys.length} aus dem "${NATIVE_PREFIX}"-Vorrat ` +
+      `(${nativeKeys.join(', ')})\n` +
+      `  ${shadowed.size} Web-Schluessel dadurch ueberschrieben und nicht ausgespielt ` +
+      `(${[...shadowed].join(', ')})\n`,
+  );
+}
+
+if (perLocale !== emitKeys.length) {
   process.stderr.write('Die Zahl je Sprache passt nicht zur Schluesselzahl.\n');
   process.exit(1);
 }

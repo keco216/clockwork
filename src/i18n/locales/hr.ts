@@ -191,4 +191,7 @@ export default {
   'err.migration.badPercent': 'Parametar „data“ sadrži pokvareno postotno kodiranje.',
   'err.migration.badBase64': 'Parametar „data“ nije valjani Base64.',
   'err.migration.noAccounts': 'U ovom izvozu nema nijednog računa.',
+
+  'native.vacant.text':
+    'Secret, poveznica otpauth ili QR slika — ništa od toga ne napušta ovaj uređaj.',
 } satisfies Strings;

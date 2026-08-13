@@ -215,4 +215,7 @@ export default {
   'err.migration.badPercent': 'В параметре «data» испорчено процентное кодирование.',
   'err.migration.badBase64': 'Параметр «data» не является годным Base64.',
   'err.migration.noAccounts': 'В этой выгрузке нет ни одной учётной записи.',
+
+  'native.vacant.text':
+    'Секрет, ссылка otpauth или изображение QR — ничто из этого не покидает устройство.',
 } satisfies Strings;

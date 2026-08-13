@@ -193,4 +193,7 @@ export default {
   'err.migration.badPercent': 'De parameter ‘data’ bevat een kapotte procentcodering.',
   'err.migration.badBase64': 'De parameter ‘data’ is geen geldige Base64.',
   'err.migration.noAccounts': 'In deze export staan geen accounts.',
+
+  'native.vacant.text':
+    'Secret, otpauth-link of QR-afbeelding — niets daarvan verlaat dit apparaat.',
 } satisfies Strings;

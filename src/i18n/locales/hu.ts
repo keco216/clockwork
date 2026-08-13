@@ -191,4 +191,7 @@ export default {
   'err.migration.badPercent': 'A „data” paraméter hibás százalékkódolást tartalmaz.',
   'err.migration.badBase64': 'A „data” paraméter nem érvényes Base64.',
   'err.migration.noAccounts': 'Ebben az exportban nincsenek fiókok.',
+
+  'native.vacant.text':
+    'Secret, otpauth-hivatkozás vagy QR-kép — semmi sem hagyja el ezt az eszközt.',
 } satisfies Strings;

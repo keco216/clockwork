@@ -109,7 +109,6 @@
     <string name="import_skip_emptySecret">%1$s (シークレットが空)</string>
     <string name="import_unnamed">名称未設定</string>
     <string name="import_unreadable">エクスポートを読み取れない。</string>
-    <string name="vacant_text">シークレット、otpauth リンク、QR 画像 — どれもこのブラウザーから出ない。</string>
     <string name="vacant_demo">テスト鍵を挿入</string>
     <string name="colophon_note">ネットワークなし · 保存なし · HMAC は Web Crypto API 経由</string>
     <string name="lang_label">言語</string>
@@ -142,4 +141,5 @@
     <string name="err_migration_badPercent">引数「data」にパーセント符号化の壊れがある。</string>
     <string name="err_migration_badBase64">引数「data」が正しい Base64 ではない。</string>
     <string name="err_migration_noAccounts">このエクスポートにはアカウントが入っていない。</string>
+    <string name="vacant_text">シークレット、otpauth リンク、QR 画像 — どれもこの端末から出ない。</string>
 </resources>

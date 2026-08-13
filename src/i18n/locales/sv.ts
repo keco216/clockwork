@@ -187,4 +187,6 @@ export default {
   'err.migration.badPercent': 'Parametern ”data” innehåller trasig procentkodning.',
   'err.migration.badBase64': 'Parametern ”data” är inte giltig Base64.',
   'err.migration.noAccounts': 'I den här exporten finns inga konton.',
+
+  'native.vacant.text': 'Secret, otpauth-länk eller QR-bild — inget av det lämnar den här enheten.',
 } satisfies Strings;

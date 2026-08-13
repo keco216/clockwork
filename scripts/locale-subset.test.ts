@@ -29,9 +29,12 @@ import nl from '../src/i18n/locales/nl';
 import ru from '../src/i18n/locales/ru';
 import {
   ENV_KEY,
+  NATIVE_PLUGIN_NAME,
   PLUGIN_NAME,
   readCatalogue,
   requestedLocales,
+  stripNativeKeys,
+  stripNativeKeysPlugin,
   subsetCatalogue,
   subsetLocalePlugin,
 } from './locale-subset';
@@ -142,6 +145,131 @@ describe('subsetCatalogue()', () => {
   });
 });
 
+/* ── Die native-only-Schlüssel ─────────────────────────────────────────── */
+
+describe('stripNativeKeys()', () => {
+  it('nimmt einen einzeiligen Eintrag heraus', () => {
+    const source = [
+      'export default {',
+      "  'zone.input': 'Input',",
+      "  'native.a': 'X',",
+      '} satisfies Strings;',
+    ].join('\n');
+    const result = stripNativeKeys(source);
+
+    expect(result.removed).toEqual(['native.a']);
+    expect(result.code).toContain("'zone.input': 'Input',");
+    expect(result.code).not.toContain('native.a');
+  });
+
+  it('nimmt auch einen umgebrochenen Eintrag ganz heraus', () => {
+    // Prettier bricht lange Sätze um — gemessen bei 23 der 37 Sprachdateien.
+    // Bliebe die zweite Zeile stehen, wäre die Datei kein gültiges JavaScript
+    // mehr, und der Bau bräche an einer Stelle ab, die nichts damit zu tun hat.
+    const source = [
+      'export default {',
+      "  'native.a':",
+      "    'ein sehr langer Satz, den Prettier umgebrochen hat',",
+      "  'zone.input': 'Input',",
+      '} satisfies Strings;',
+    ].join('\n');
+    const result = stripNativeKeys(source);
+
+    expect(result.removed).toEqual(['native.a']);
+    expect(result.code).not.toContain('Prettier');
+    expect(result.code).toContain("'zone.input': 'Input',");
+  });
+
+  it('nimmt einen Mehrzahl-Eintrag samt seiner Klammern heraus', () => {
+    const source = [
+      'export default {',
+      "  'native.count': {",
+      "    one: 'ein Konto',",
+      "    other: '{n} Konten',",
+      '  },',
+      "  'zone.input': 'Input',",
+      '} satisfies Strings;',
+    ].join('\n');
+    const result = stripNativeKeys(source);
+
+    expect(result.removed).toEqual(['native.count']);
+    expect(result.code).not.toContain('Konto');
+    expect(result.code).toContain("'zone.input': 'Input',");
+  });
+
+  it('lässt sich von Klammern und Kommas IM Text nicht täuschen', () => {
+    // Genau dafür liest der Scanner zeichenweise statt per Muster: Ein Komma
+    // im Satz beendete den Eintrag sonst zu früh, und die Zeile darunter
+    // bliebe als Bruchstück stehen.
+    const source = [
+      'export default {',
+      "  'native.a': 'Klammer } und Komma, mitten im Satz',",
+      "  'zone.input': 'Input',",
+      '} satisfies Strings;',
+    ].join('\n');
+    const result = stripNativeKeys(source);
+
+    expect(result.removed).toEqual(['native.a']);
+    expect(result.code).toContain("'zone.input': 'Input',");
+    expect(result.code).not.toContain('mitten im Satz');
+  });
+
+  it('lässt die Zeilennummern stehen', () => {
+    // Dieselbe Begründung wie bei der Sprachauswahl: Eine gelöschte Zeile
+    // verschöbe alles darunter, und jede Fehlermeldung zeigte auf die falsche
+    // Stelle.
+    const source = ['a', "  'native.a': 'X',", 'b'].join('\n');
+    expect(stripNativeKeys(source).code.split('\n')).toHaveLength(3);
+  });
+
+  it('lässt eine Datei ohne native-Schlüssel unangetastet', () => {
+    const source = ['export default {', "  'zone.input': 'Input',", '} satisfies Strings;'].join(
+      '\n',
+    );
+    const result = stripNativeKeys(source);
+
+    expect(result.removed).toEqual([]);
+    expect(result.code).toBe(source);
+  });
+
+  it('meldet sich, wenn das Bauteil gar keine Sprachdatei gesehen hat', () => {
+    // Der Wächter gegen den eigenen Stillstand: Griffe das Pfadmuster eines
+    // Tages daneben, liefe der Bau durch und das Bündel trüge die
+    // native-Sätze — ohne dass irgendetwas rot würde. Eine Prüfung, deren
+    // Vergleichsfeld leer bleibt, meldet Gleichheit; dieser Test ist der
+    // Beweis, dass sie es hier NICHT tut.
+    const plugin = stripNativeKeysPlugin();
+    const hook = plugin.buildEnd;
+    const run = typeof hook === 'function' ? hook : hook?.handler;
+
+    expect(run).toBeTypeOf('function');
+    expect(() => (run as (this: unknown, error?: Error) => void).call(null)).toThrow(
+      /nicht stattgefunden/,
+    );
+  });
+
+  it('bricht ab, wenn ein Eintrag kein Ende hat', () => {
+    const source = ['export default {', "  'native.a': 'unfertig"].join('\n');
+    expect(() => stripNativeKeys(source)).toThrow(/kein erkennbares Ende/);
+  });
+
+  it('greift auf die echten Sprachdateien und findet dort denselben Schlüssel', async () => {
+    // Gegenprobe an der Wirklichkeit statt an einem gebastelten Beispiel: Was
+    // hier steht, muss in allen 37 Dateien gleich sein — der Compiler erzwingt
+    // das über `satisfies Strings`.
+    const codes = Object.keys(CATALOGUE);
+    const sets = new Set<string>();
+    for (const code of codes) {
+      const file = path.join(root, 'src', 'i18n', 'locales', `${code}.ts`);
+      const result = stripNativeKeys(await readFile(file, 'utf8'));
+      sets.add([...result.removed].sort().join(','));
+    }
+
+    expect(codes).toHaveLength(37);
+    expect([...sets]).toEqual(['native.vacant.text']);
+  });
+});
+
 /* ── Der echte Build ───────────────────────────────────────────────────── */
 
 /**
@@ -216,6 +344,14 @@ describe('Subset-Build', () => {
       const bytes = Buffer.byteLength(html, 'utf8');
       expect(bytes).toBeLessThan(500 * 1024);
 
+      // Die native-only-Schlüssel sind im Bündel nicht vorhanden — und der
+      // Web-Satz derselben Bühne sehr wohl. Beide unterscheiden sich nur im
+      // letzten Wort („Browser" gegen „Gerät"), der Vergleich hängt also
+      // wirklich am Entfernen und nicht an zwei zufällig verschiedenen Sätzen.
+      expect(html).toContain(de['vacant.text']);
+      expect(html).not.toContain(de['native.vacant.text']);
+      expect(html).not.toContain(en['native.vacant.text']);
+
       // Das Versprechen der Datei bleibt, wie es war: eine Datei, keine
       // Verbindung, kein Nachladen.
       expect(html).toContain("connect-src 'none'");
@@ -243,5 +379,20 @@ describe('Der Testlauf sieht immer alle Sprachen', () => {
     // Gegenprobe von der anderen Seite, die auch dann noch gilt, wenn jemand
     // `CLOCKWORK_LANGS` gesetzt hat und `npm test` aufruft.
     expect(Object.keys(CATALOGUE)).toHaveLength(37);
+  });
+
+  it('— und dasselbe gilt für die native-only-Schlüssel', () => {
+    // Dieselbe Zusage, zweiter Fall: Griffe das Entfernen auch im Testlauf,
+    // prüfte `catalogue.test.ts` die `native.`-Schlüssel gar nicht mehr —
+    // sie wären dann in 37 Sprachen ungeprüft.
+    const plugin = stripNativeKeysPlugin();
+    expect(plugin.name).toBe(NATIVE_PLUGIN_NAME);
+    expect(plugin.apply).toBe('build');
+    expect(plugin.enforce).toBe('pre');
+  });
+
+  it('weshalb der Katalog den native-Schlüssel im Testlauf wirklich trägt', () => {
+    expect(en['native.vacant.text']).toContain('device');
+    expect(de['native.vacant.text']).toContain('Gerät');
   });
 });

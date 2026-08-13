@@ -185,4 +185,6 @@ export default {
   'err.migration.badPercent': 'Tham số “data” có mã hoá phần trăm bị hỏng.',
   'err.migration.badBase64': 'Tham số “data” không phải Base64 hợp lệ.',
   'err.migration.noAccounts': 'Trong bản xuất này không có tài khoản nào.',
+
+  'native.vacant.text': 'Secret, liên kết otpauth hoặc ảnh QR — không có gì rời khỏi thiết bị này.',
 } satisfies Strings;

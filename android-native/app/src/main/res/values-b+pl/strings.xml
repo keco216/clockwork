@@ -127,7 +127,6 @@
     <string name="import_skip_emptySecret">%1$s (pusty secret)</string>
     <string name="import_unnamed">Bez nazwy</string>
     <string name="import_unreadable">Eksport nieczytelny.</string>
-    <string name="vacant_text">Secret, link otpauth albo obraz QR — nic z tego nie opuszcza tej przeglądarki.</string>
     <string name="vacant_demo">Wstaw klucz testowy</string>
     <string name="colophon_note">Bez sieci · bez zapisu · HMAC przez Web Crypto API</string>
     <string name="lang_label">Język</string>
@@ -160,4 +159,5 @@
     <string name="err_migration_badPercent">Parametr „data” zawiera uszkodzone kodowanie procentowe.</string>
     <string name="err_migration_badBase64">Parametr „data” nie jest prawidłowym Base64.</string>
     <string name="err_migration_noAccounts">W tym eksporcie nie ma żadnych kont.</string>
+    <string name="vacant_text">Secret, link otpauth albo obraz QR — nic z tego nie opuszcza tego urządzenia.</string>
 </resources>

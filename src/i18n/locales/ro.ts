@@ -197,4 +197,7 @@ export default {
   'err.migration.badPercent': 'Parametrul „data” conține o codificare procentuală stricată.',
   'err.migration.badBase64': 'Parametrul „data” nu este Base64 valid.',
   'err.migration.noAccounts': 'În acest export nu există niciun cont.',
+
+  'native.vacant.text':
+    'Secret, link otpauth sau imagine QR — nimic din toate acestea nu părăsește acest dispozitiv.',
 } satisfies Strings;

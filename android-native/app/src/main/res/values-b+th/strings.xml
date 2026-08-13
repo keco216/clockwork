@@ -109,7 +109,6 @@
     <string name="import_skip_emptySecret">%1$s (secret ว่าง)</string>
     <string name="import_unnamed">ไม่มีชื่อ</string>
     <string name="import_unreadable">ไฟล์ส่งออกอ่านไม่ออก</string>
-    <string name="vacant_text">ซีเคร็ต ลิงก์ otpauth หรือรูป QR — ไม่มีสิ่งใดออกจากเบราว์เซอร์นี้</string>
     <string name="vacant_demo">ใส่คีย์ทดสอบ</string>
     <string name="colophon_note">ไม่มีเครือข่าย · ไม่มีที่เก็บ · HMAC ผ่าน Web Crypto API</string>
     <string name="lang_label">ภาษา</string>
@@ -142,4 +141,5 @@
     <string name="err_migration_badPercent">พารามิเตอร์ “data” มีการเข้ารหัสเปอร์เซ็นต์ที่เสีย</string>
     <string name="err_migration_badBase64">พารามิเตอร์ “data” ไม่ใช่ Base64 ที่ถูกต้อง</string>
     <string name="err_migration_noAccounts">ในไฟล์ส่งออกนี้ไม่มีบัญชีใดเลย</string>
+    <string name="vacant_text">ซีเคร็ต ลิงก์ otpauth หรือรูป QR — ไม่มีสิ่งใดออกจากอุปกรณ์นี้</string>
 </resources>

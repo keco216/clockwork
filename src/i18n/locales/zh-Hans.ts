@@ -177,4 +177,6 @@ export default {
   'err.migration.badPercent': '参数“data”里有坏掉的百分号编码。',
   'err.migration.badBase64': '参数“data”不是有效的 Base64。',
   'err.migration.noAccounts': '这份导出里没有任何账户。',
+
+  'native.vacant.text': '密钥、otpauth 链接或二维码图片——都不会离开这个设备。',
 } satisfies Strings;

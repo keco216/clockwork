@@ -200,4 +200,7 @@ export default {
   'err.migration.badPercent': 'El parámetro « data » contiene una codificación por ciento rota.',
   'err.migration.badBase64': 'El parámetro « data » no es Base64 válido.',
   'err.migration.noAccounts': 'En esta exportación no hay ninguna cuenta.',
+
+  'native.vacant.text':
+    'Secreto, enlace otpauth o imagen QR: nada de eso sale de este dispositivo.',
 } satisfies Strings;

@@ -179,4 +179,6 @@ export default {
   'err.migration.badPercent': 'พารามิเตอร์ “data” มีการเข้ารหัสเปอร์เซ็นต์ที่เสีย',
   'err.migration.badBase64': 'พารามิเตอร์ “data” ไม่ใช่ Base64 ที่ถูกต้อง',
   'err.migration.noAccounts': 'ในไฟล์ส่งออกนี้ไม่มีบัญชีใดเลย',
+
+  'native.vacant.text': 'ซีเคร็ต ลิงก์ otpauth หรือรูป QR — ไม่มีสิ่งใดออกจากอุปกรณ์นี้',
 } satisfies Strings;

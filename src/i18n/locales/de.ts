@@ -198,4 +198,6 @@ export default {
   'err.migration.badPercent': 'Der »data«-Parameter enthält eine kaputte Prozent-Codierung.',
   'err.migration.badBase64': 'Der »data«-Parameter ist kein gültiges Base64.',
   'err.migration.noAccounts': 'In diesem Export stehen keine Konten.',
+
+  'native.vacant.text': 'Secret, otpauth-Link oder QR-Bild — nichts davon verlässt dieses Gerät.',
 } satisfies Strings;

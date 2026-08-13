@@ -121,7 +121,6 @@
     <string name="import_skip_emptySecret">%1$s (secret gol)</string>
     <string name="import_unnamed">Fără nume</string>
     <string name="import_unreadable">Export ilizibil.</string>
-    <string name="vacant_text">Secret, link otpauth sau imagine QR — nimic din toate acestea nu părăsește acest browser.</string>
     <string name="vacant_demo">Inserează cheia de test</string>
     <string name="colophon_note">Fără rețea · fără stocare · HMAC prin Web Crypto API</string>
     <string name="lang_label">Limbă</string>
@@ -154,4 +153,5 @@
     <string name="err_migration_badPercent">Parametrul „data” conține o codificare procentuală stricată.</string>
     <string name="err_migration_badBase64">Parametrul „data” nu este Base64 valid.</string>
     <string name="err_migration_noAccounts">În acest export nu există niciun cont.</string>
+    <string name="vacant_text">Secret, link otpauth sau imagine QR — nimic din toate acestea nu părăsește acest dispozitiv.</string>
 </resources>

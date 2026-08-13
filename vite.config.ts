@@ -4,7 +4,12 @@ import { defineConfig, type Plugin } from 'vitest/config';
 // Konfiguration künftig über Nodes eigenen TypeScript-Modus, und der verlangt
 // den vollständigen Pfad. Ohne die Endung warnt Vite schon heute.
 import { contentSecurityPolicy } from './scripts/csp.ts';
-import { ENV_KEY, requestedLocales, subsetLocalePlugin } from './scripts/locale-subset.ts';
+import {
+  ENV_KEY,
+  requestedLocales,
+  stripNativeKeysPlugin,
+  subsetLocalePlugin,
+} from './scripts/locale-subset.ts';
 import { SITE_URL } from './scripts/site.ts';
 
 /**
@@ -130,6 +135,10 @@ export default defineConfig({
     injectContentSecurityPolicy(SINGLE_FILE),
     preloadLatinFonts(SINGLE_FILE),
     subsetLocalePlugin(LOCALE_SELECTION),
+    // Nimmt die `native.`-Schlüssel aus den Sprachdateien. Sie stehen im
+    // gemeinsamen Katalog, damit der Compiler sie in allen 37 Sprachen prüft —
+    // ins Web-Bündel gehören sie nicht (Begründung in src/i18n/strings.ts).
+    stripNativeKeysPlugin(),
   ],
   build: {
     target: 'es2022',

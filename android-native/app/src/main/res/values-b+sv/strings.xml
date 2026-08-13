@@ -115,7 +115,6 @@
     <string name="import_skip_emptySecret">%1$s (tom secret)</string>
     <string name="import_unnamed">Namnlös</string>
     <string name="import_unreadable">Exporten går inte att läsa.</string>
-    <string name="vacant_text">Secret, otpauth-länk eller QR-bild — inget av det lämnar den här webbläsaren.</string>
     <string name="vacant_demo">Infoga testnyckel</string>
     <string name="colophon_note">Inget nätverk · ingen lagring · HMAC via Web Crypto API</string>
     <string name="lang_label">Språk</string>
@@ -148,4 +147,5 @@
     <string name="err_migration_badPercent">Parametern ”data” innehåller trasig procentkodning.</string>
     <string name="err_migration_badBase64">Parametern ”data” är inte giltig Base64.</string>
     <string name="err_migration_noAccounts">I den här exporten finns inga konton.</string>
+    <string name="vacant_text">Secret, otpauth-länk eller QR-bild — inget av det lämnar den här enheten.</string>
 </resources>

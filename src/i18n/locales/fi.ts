@@ -190,4 +190,7 @@ export default {
   'err.migration.badPercent': 'Parametrissa ”data” on rikkinäinen prosenttikoodaus.',
   'err.migration.badBase64': 'Parametri ”data” ei ole kelvollista Base64:ää.',
   'err.migration.noAccounts': 'Tässä viennissä ei ole yhtään tiliä.',
+
+  'native.vacant.text':
+    'Secret, otpauth-linkki tai QR-kuva — mikään niistä ei poistu tästä laitteesta.',
 } satisfies Strings;

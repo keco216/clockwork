@@ -115,7 +115,6 @@
     <string name="import_skip_emptySecret">%1$s (boş secret)</string>
     <string name="import_unnamed">Adsız</string>
     <string name="import_unreadable">Dışa aktarım okunamıyor.</string>
-    <string name="vacant_text">Secret, otpauth bağlantısı veya QR görüntüsü — hiçbiri bu tarayıcıdan çıkmaz.</string>
     <string name="vacant_demo">Test anahtarı ekle</string>
     <string name="colophon_note">Ağ yok · depolama yok · HMAC, Web Crypto API üzerinden</string>
     <string name="lang_label">Dil</string>
@@ -148,4 +147,5 @@
     <string name="err_migration_badPercent">“data” parametresinde bozuk yüzde kodlaması var.</string>
     <string name="err_migration_badBase64">“data” parametresi geçerli Base64 değil.</string>
     <string name="err_migration_noAccounts">Bu dışa aktarımda hiç hesap yok.</string>
+    <string name="vacant_text">Secret, otpauth bağlantısı veya QR görüntüsü — hiçbiri bu cihazdan çıkmaz.</string>
 </resources>

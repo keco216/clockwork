@@ -178,4 +178,6 @@ export default {
   'err.migration.badPercent': '參數「data」裡有壞掉的百分號編碼。',
   'err.migration.badBase64': '參數「data」不是有效的 Base64。',
   'err.migration.noAccounts': '這份匯出裡沒有任何帳戶。',
+
+  'native.vacant.text': '密鑰、otpauth 連結或 QR 圖片——都不會離開這個裝置。',
 } satisfies Strings;

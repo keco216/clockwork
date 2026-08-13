@@ -192,4 +192,6 @@ export default {
   'err.migration.badPercent': 'Parametrā „data“ ir bojāts procentu kodējums.',
   'err.migration.badBase64': 'Parametrs „data“ nav derīgs Base64.',
   'err.migration.noAccounts': 'Šajā eksportā nav neviena konta.',
+
+  'native.vacant.text': 'Noslēpums, otpauth saite vai QR attēls — nekas no tā neatstāj šo ierīci.',
 } satisfies Strings;

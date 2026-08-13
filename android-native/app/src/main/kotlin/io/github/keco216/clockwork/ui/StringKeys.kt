@@ -99,7 +99,6 @@ object StringKeys {
         "import.skip.emptySecret" -> R.string.import_skip_emptySecret
         "import.unnamed" -> R.string.import_unnamed
         "import.unreadable" -> R.string.import_unreadable
-        "vacant.text" -> R.string.vacant_text
         "vacant.demo" -> R.string.vacant_demo
         "colophon.note" -> R.string.colophon_note
         "lang.label" -> R.string.lang_label
@@ -132,6 +131,7 @@ object StringKeys {
         "err.migration.badPercent" -> R.string.err_migration_badPercent
         "err.migration.badBase64" -> R.string.err_migration_badBase64
         "err.migration.noAccounts" -> R.string.err_migration_noAccounts
+        "native.vacant.text" -> R.string.vacant_text
         else -> null
     }
 

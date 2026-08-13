@@ -52,9 +52,24 @@ export const ENV_KEY = 'CLOCKWORK_LANGS';
 export const BASE_CODE = 'en';
 
 export const PLUGIN_NAME = 'clockwork:locale-subset';
+export const NATIVE_PLUGIN_NAME = 'clockwork:strip-native-keys';
 
 /** Der Pfad, an dem der Katalog steht — in Vite-Schreibweise mit Schrägstrichen. */
 const CATALOGUE_PATH = '/src/i18n/catalogue.ts';
+
+/** Das Verzeichnis der Sprachdateien — ebenfalls in Vite-Schreibweise. */
+const LOCALES_PATH = '/src/i18n/locales/';
+
+/**
+ * Das Präfix der Schlüssel, die nur die native App braucht.
+ *
+ * Sie stehen im gemeinsamen Katalog, damit es eine einzige Textquelle gibt und
+ * der Compiler sie über `satisfies Strings` in allen 37 Sprachen mitprüft
+ * (Begründung ausführlich in `src/i18n/strings.ts`). Ins Web-Bündel gehören sie
+ * trotzdem nicht: Dort ist der Text nicht nur ungenutzt, sondern inhaltlich
+ * falsch — eine Web-App verlässt keinen „Browser", sie IST einer.
+ */
+export const NATIVE_PREFIX = 'native.';
 
 export interface CatalogueEntry {
   /** Der Sprachcode, wie er im Katalog steht — zugleich der Dateiname. */
@@ -245,6 +260,206 @@ export function subsetCatalogue(source: string, requested: readonly string[]): S
   }
 
   return { code, kept, dropped };
+}
+
+/* ── Die native-only-Schlüssel aus dem Web-Bündel nehmen ───────────────────── */
+
+/** Beginn eines Eintrags mit `native.`-Präfix. */
+const NATIVE_ENTRY = /^\s*'(native\.[\w.-]+)'\s*:/;
+
+/** Für die Gegenprobe: irgendein `native.`-Eintrag, der übrig blieb. */
+const NATIVE_ANY = /'native\.[\w.-]+'\s*:/;
+
+export interface NativeStripResult {
+  /** Der veränderte Quelltext. */
+  readonly code: string;
+  /** Die Schlüssel, die herausgenommen wurden — in Reihenfolge der Datei. */
+  readonly removed: readonly string[];
+}
+
+interface ScanState {
+  /** Das öffnende Anführungszeichen, solange eine Zeichenkette läuft. */
+  readonly quote: string | null;
+  /** Klammertiefe außerhalb von Zeichenketten. */
+  readonly depth: number;
+}
+
+/**
+ * Liest eine Zeile zeichenweise und sagt, ob der Eintrag hier endet.
+ *
+ * Zeichenweise und nicht per Muster, weil ein Eintrag über mehrere Zeilen
+ * gehen darf: Prettier bricht lange Sätze um (gemessen: 23 der 37
+ * Sprachdateien), und ein Mehrzahl-Eintrag ist ohnehin ein Objekt. Ein
+ * `{`, `}` oder `,` INNERHALB des Textes darf dabei nicht mitzählen — sonst
+ * endete der Eintrag mitten im Satz und die halbe Datei bliebe stehen.
+ */
+function scanLine(
+  line: string,
+  state: ScanState,
+): { readonly state: ScanState; readonly ends: boolean } {
+  let quote = state.quote;
+  let depth = state.depth;
+  /** Das letzte Zeichen, das kein Leerraum war — außerhalb von Zeichenketten. */
+  let last = '';
+
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index] ?? '';
+
+    if (quote !== null) {
+      // Ein maskiertes Zeichen kann die Zeichenkette nicht beenden.
+      if (char === '\\') {
+        index += 1;
+        continue;
+      }
+      if (char === quote) {
+        quote = null;
+        last = char;
+      }
+      continue;
+    }
+
+    // Ein Zeilenkommentar beendet die Zeile für unsere Zwecke.
+    if (char === '/' && line[index + 1] === '/') {
+      break;
+    }
+    if (char === "'" || char === '"' || char === '`') {
+      quote = char;
+      last = char;
+      continue;
+    }
+    if (char === '{' || char === '[') {
+      depth += 1;
+    } else if (char === '}' || char === ']') {
+      depth -= 1;
+    }
+    if (!/\s/.test(char)) {
+      last = char;
+    }
+  }
+
+  return { state: { quote, depth }, ends: quote === null && depth === 0 && last === ',' };
+}
+
+/**
+ * Nimmt jeden `native.`-Eintrag aus einer Sprachdatei.
+ *
+ * Wie bei der Sprachauswahl werden die Zeilen GELEERT und nicht gelöscht: Die
+ * Zeilennummern bleiben stehen, und eine Fehlermeldung aus diesem Modul zeigt
+ * weiter auf die richtige Stelle.
+ */
+export function stripNativeKeys(source: string): NativeStripResult {
+  const lines = source.split('\n');
+  const removed: string[] = [];
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const key = NATIVE_ENTRY.exec(lines[index] ?? '')?.[1];
+    if (key === undefined) {
+      continue;
+    }
+
+    let state: ScanState = { quote: null, depth: 0 };
+    let end = index;
+    let closed = false;
+    for (; end < lines.length; end += 1) {
+      const step = scanLine(lines[end] ?? '', state);
+      state = step.state;
+      if (step.ends) {
+        closed = true;
+        break;
+      }
+    }
+    if (!closed) {
+      throw new Error(`${WHERE}: Der Eintrag »${key}« hat kein erkennbares Ende.`);
+    }
+
+    for (let line = index; line <= end; line += 1) {
+      lines[line] = '';
+    }
+    removed.push(key);
+    index = end;
+  }
+
+  const code = lines.join('\n');
+
+  // Gegenprobe: Greift das Muster eines Tages daneben, bliebe ein Schlüssel
+  // stehen — und das Web trüge einen Satz mit sich, der dort falsch ist.
+  if (NATIVE_ANY.test(code)) {
+    throw new Error(`${WHERE}: Nach dem Entfernen steht noch ein »${NATIVE_PREFIX}«-Schlüssel da.`);
+  }
+
+  return { code, removed };
+}
+
+/**
+ * Das Vite-Bauteil dazu — es läuft immer, nicht nur bei einer Sprachauswahl.
+ *
+ * Am Ende des Baus vergleicht es, was die einzelnen Sprachdateien geliefert
+ * haben. Der Compiler garantiert über `satisfies Strings`, dass alle dieselben
+ * Schlüssel tragen; kommen hier verschiedene Mengen heraus, hat nicht der
+ * Katalog ein Loch, sondern dieses Bauteil hat in einer Datei danebengegriffen.
+ */
+export function stripNativeKeysPlugin(): Plugin {
+  const seen = new Map<string, readonly string[]>();
+
+  return {
+    name: NATIVE_PLUGIN_NAME,
+
+    // Nur beim Bauen — Dev-Server und Testlauf sehen den vollen Katalog, sonst
+    // prüfte `catalogue.test.ts` die native-Schlüssel je nach Umgebung mal mit
+    // und mal nicht. Dieselbe Begründung wie bei der Sprachauswahl.
+    apply: 'build',
+
+    // Vor Vites eigenem Durchlauf, aus demselben Grund wie oben: Danach ist der
+    // Quelltext neu gesetzt und die zeilenweise Suche griffe ins Leere.
+    enforce: 'pre',
+
+    transform(code, id) {
+      const path = id.replace(/\\/g, '/');
+      if (!path.includes(LOCALES_PATH) || !path.endsWith('.ts')) {
+        return null;
+      }
+
+      const result = stripNativeKeys(code);
+      seen.set(path, result.removed);
+      return { code: result.code, map: null };
+    },
+
+    buildEnd(error) {
+      // Bricht der Bau ohnehin schon, ist diese Meldung nur Lärm über der
+      // eigentlichen Ursache.
+      if (error !== undefined) {
+        return;
+      }
+
+      // Kein einziger Treffer heißt NICHT „alles in Ordnung", sondern: Das
+      // Bauteil hat gar nicht gearbeitet — Pfadmuster daneben, Datei
+      // umbenannt, `enforce` verstellt. Genau dieser Fall ist die Falle, die
+      // dieses Projekt schon einmal teuer bezahlt hat: Eine Prüfung, deren
+      // Vergleichsfeld leer bleibt, meldet Gleichheit. In jedem Bau dieser App
+      // steht mindestens die Basissprache im Modulgraphen.
+      if (seen.size === 0) {
+        throw new Error(
+          `${WHERE}: Keine einzige Sprachdatei gesehen — das Entfernen der ` +
+            `»${NATIVE_PREFIX}«-Schlüssel hat nicht stattgefunden.`,
+        );
+      }
+
+      const [first, ...rest] = [...seen.entries()];
+      if (first === undefined) {
+        return;
+      }
+      const expected = [...first[1]].sort().join(',');
+      for (const [path, keys] of rest) {
+        const found = [...keys].sort().join(',');
+        if (found !== expected) {
+          throw new Error(
+            `${WHERE}: ${path} liefert »${found}«, ${first[0]} aber »${expected}«. ` +
+              'Alle Sprachdateien tragen dieselben Schlüssel — hier hat das Entfernen danebengegriffen.',
+          );
+        }
+      }
+    },
+  };
 }
 
 /**

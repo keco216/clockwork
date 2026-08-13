@@ -189,4 +189,7 @@ export default {
   'err.migration.badPercent': 'Parameeter „data“ sisaldab katkist protsendikodeeringut.',
   'err.migration.badBase64': 'Parameeter „data“ ei ole kehtiv Base64.',
   'err.migration.noAccounts': 'Selles eksportfailis ei ole ühtki kontot.',
+
+  'native.vacant.text':
+    'Salajane võti, otpauth-link või QR-pilt — miski neist ei lahku sellest seadmest.',
 } satisfies Strings;

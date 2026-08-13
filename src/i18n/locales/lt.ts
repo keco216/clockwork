@@ -215,4 +215,7 @@ export default {
   'err.migration.badPercent': 'Parametre „data“ yra sugadintas procentinis kodavimas.',
   'err.migration.badBase64': 'Parametras „data“ nėra tinkamas Base64.',
   'err.migration.noAccounts': 'Šiame eksporte nėra nė vienos paskyros.',
+
+  'native.vacant.text':
+    'Slaptas raktas, otpauth nuoroda ar QR paveikslėlis — niekas iš to neišeina iš šio įrenginio.',
 } satisfies Strings;

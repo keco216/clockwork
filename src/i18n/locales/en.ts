@@ -190,4 +190,6 @@ export default {
   'err.migration.badPercent': 'The “data” parameter contains broken percent encoding.',
   'err.migration.badBase64': 'The “data” parameter is not valid Base64.',
   'err.migration.noAccounts': 'There are no accounts in this export.',
+
+  'native.vacant.text': 'Secret, otpauth link or QR image — none of it leaves this device.',
 } satisfies Strings;

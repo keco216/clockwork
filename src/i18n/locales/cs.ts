@@ -214,4 +214,7 @@ export default {
   'err.migration.badPercent': 'Parametr „data“ obsahuje poškozené procentové kódování.',
   'err.migration.badBase64': 'Parametr „data“ není platné Base64.',
   'err.migration.noAccounts': 'V tomto exportu nejsou žádné účty.',
+
+  'native.vacant.text':
+    'Secret, odkaz otpauth nebo obrázek QR — nic z toho neopustí toto zařízení.',
 } satisfies Strings;

@@ -188,4 +188,7 @@ export default {
   'err.migration.badPercent': 'Parameteren »data« indeholder en ødelagt procentkodning.',
   'err.migration.badBase64': 'Parameteren »data« er ikke gyldig Base64.',
   'err.migration.noAccounts': 'I denne eksport er der ingen konti.',
+
+  'native.vacant.text':
+    'Secret, otpauth-link eller QR-billede — intet af det forlader denne enhed.',
 } satisfies Strings;

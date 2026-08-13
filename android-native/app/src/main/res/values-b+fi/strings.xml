@@ -115,7 +115,6 @@
     <string name="import_skip_emptySecret">%1$s (tyhjä secret)</string>
     <string name="import_unnamed">Nimetön</string>
     <string name="import_unreadable">Vientiä ei voi lukea.</string>
-    <string name="vacant_text">Secret, otpauth-linkki tai QR-kuva — mikään niistä ei poistu tästä selaimesta.</string>
     <string name="vacant_demo">Lisää testiavain</string>
     <string name="colophon_note">Ei verkkoa · ei tallennusta · HMAC Web Crypto API:n kautta</string>
     <string name="lang_label">Kieli</string>
@@ -148,4 +147,5 @@
     <string name="err_migration_badPercent">Parametrissa ”data” on rikkinäinen prosenttikoodaus.</string>
     <string name="err_migration_badBase64">Parametri ”data” ei ole kelvollista Base64:ää.</string>
     <string name="err_migration_noAccounts">Tässä viennissä ei ole yhtään tiliä.</string>
+    <string name="vacant_text">Secret, otpauth-linkki tai QR-kuva — mikään niistä ei poistu tästä laitteesta.</string>
 </resources>

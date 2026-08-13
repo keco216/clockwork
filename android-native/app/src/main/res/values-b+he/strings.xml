@@ -127,7 +127,6 @@
     <string name="import_skip_emptySecret">%1$s (סוד ריק)</string>
     <string name="import_unnamed">ללא שם</string>
     <string name="import_unreadable">הייצוא אינו קריא.</string>
-    <string name="vacant_text">סוד, קישור otpauth או תמונת QR — דבר מאלה אינו עוזב את הדפדפן הזה.</string>
     <string name="vacant_demo">הוספת מפתח בדיקה</string>
     <string name="colophon_note">בלי רשת · בלי אחסון · HMAC דרך Web Crypto API</string>
     <string name="lang_label">שפה</string>
@@ -160,4 +159,5 @@
     <string name="err_migration_badPercent">בפרמטר „data” יש קידוד אחוזים שבור.</string>
     <string name="err_migration_badBase64">הפרמטר „data” אינו Base64 תקין.</string>
     <string name="err_migration_noAccounts">בייצוא הזה אין שום חשבון.</string>
+    <string name="vacant_text">סוד, קישור otpauth או תמונת QR — דבר מאלה אינו עוזב את המכשיר הזה.</string>
 </resources>

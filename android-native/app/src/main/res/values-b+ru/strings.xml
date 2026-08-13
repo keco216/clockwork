@@ -127,7 +127,6 @@
     <string name="import_skip_emptySecret">%1$s (пустой secret)</string>
     <string name="import_unnamed">Без имени</string>
     <string name="import_unreadable">Выгрузка не читается.</string>
-    <string name="vacant_text">Секрет, ссылка otpauth или изображение QR — ничто из этого не покидает браузер.</string>
     <string name="vacant_demo">Вставить тестовый ключ</string>
     <string name="colophon_note">Никакой сети · никакого хранилища · HMAC через Web Crypto API</string>
     <string name="lang_label">Язык</string>
@@ -160,4 +159,5 @@
     <string name="err_migration_badPercent">В параметре «data» испорчено процентное кодирование.</string>
     <string name="err_migration_badBase64">Параметр «data» не является годным Base64.</string>
     <string name="err_migration_noAccounts">В этой выгрузке нет ни одной учётной записи.</string>
+    <string name="vacant_text">Секрет, ссылка otpauth или изображение QR — ничто из этого не покидает устройство.</string>
 </resources>

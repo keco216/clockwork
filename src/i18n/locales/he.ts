@@ -210,4 +210,6 @@ export default {
   'err.migration.badPercent': 'בפרמטר „data” יש קידוד אחוזים שבור.',
   'err.migration.badBase64': 'הפרמטר „data” אינו Base64 תקין.',
   'err.migration.noAccounts': 'בייצוא הזה אין שום חשבון.',
+
+  'native.vacant.text': 'סוד, קישור otpauth או תמונת QR — דבר מאלה אינו עוזב את המכשיר הזה.',
 } satisfies Strings;

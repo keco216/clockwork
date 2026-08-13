@@ -200,4 +200,7 @@ export default {
   'err.migration.badPercent': 'Η παράμετρος «data» περιέχει χαλασμένη κωδικοποίηση επί τοις εκατό.',
   'err.migration.badBase64': 'Η παράμετρος «data» δεν είναι έγκυρο Base64.',
   'err.migration.noAccounts': 'Σε αυτή την εξαγωγή δεν υπάρχουν λογαριασμοί.',
+
+  'native.vacant.text':
+    'Μυστικό, σύνδεσμος otpauth ή εικόνα QR — τίποτα από αυτά δεν φεύγει από αυτή τη συσκευή.',
 } satisfies Strings;

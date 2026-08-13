@@ -187,4 +187,7 @@ export default {
   'err.migration.badPercent': 'Parameter “data” mengandung pengodean persen yang rusak.',
   'err.migration.badBase64': 'Parameter “data” bukan Base64 yang sah.',
   'err.migration.noAccounts': 'Tidak ada akun di dalam ekspor ini.',
+
+  'native.vacant.text':
+    'Secret, tautan otpauth, atau gambar QR — tidak ada yang meninggalkan perangkat ini.',
 } satisfies Strings;

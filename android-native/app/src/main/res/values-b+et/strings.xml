@@ -115,7 +115,6 @@
     <string name="import_skip_emptySecret">%1$s (tühi secret)</string>
     <string name="import_unnamed">Nimeta</string>
     <string name="import_unreadable">Eksportfail ei ole loetav.</string>
-    <string name="vacant_text">Salajane võti, otpauth-link või QR-pilt — miski neist ei lahku sellest brauserist.</string>
     <string name="vacant_demo">Lisa testvõti</string>
     <string name="colophon_note">Ei mingit võrku · ei mingit salvestust · HMAC Web Crypto API kaudu</string>
     <string name="lang_label">Keel</string>
@@ -148,4 +147,5 @@
     <string name="err_migration_badPercent">Parameeter „data“ sisaldab katkist protsendikodeeringut.</string>
     <string name="err_migration_badBase64">Parameeter „data“ ei ole kehtiv Base64.</string>
     <string name="err_migration_noAccounts">Selles eksportfailis ei ole ühtki kontot.</string>
+    <string name="vacant_text">Salajane võti, otpauth-link või QR-pilt — miski neist ei lahku sellest seadmest.</string>
 </resources>

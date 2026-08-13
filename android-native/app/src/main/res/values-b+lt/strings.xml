@@ -127,7 +127,6 @@
     <string name="import_skip_emptySecret">%1$s (tuščias secret)</string>
     <string name="import_unnamed">Be pavadinimo</string>
     <string name="import_unreadable">Eksportas neįskaitomas.</string>
-    <string name="vacant_text">Slaptas raktas, otpauth nuoroda ar QR paveikslėlis — niekas iš to neišeina iš šios naršyklės.</string>
     <string name="vacant_demo">Įterpti bandomąjį raktą</string>
     <string name="colophon_note">Jokio tinklo · jokios saugyklos · HMAC per Web Crypto API</string>
     <string name="lang_label">Kalba</string>
@@ -160,4 +159,5 @@
     <string name="err_migration_badPercent">Parametre „data“ yra sugadintas procentinis kodavimas.</string>
     <string name="err_migration_badBase64">Parametras „data“ nėra tinkamas Base64.</string>
     <string name="err_migration_noAccounts">Šiame eksporte nėra nė vienos paskyros.</string>
+    <string name="vacant_text">Slaptas raktas, otpauth nuoroda ar QR paveikslėlis — niekas iš to neišeina iš šio įrenginio.</string>
 </resources>

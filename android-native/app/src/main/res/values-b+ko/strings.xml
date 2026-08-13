@@ -109,7 +109,6 @@
     <string name="import_skip_emptySecret">%1$s (빈 시크릿)</string>
     <string name="import_unnamed">이름 없음</string>
     <string name="import_unreadable">내보내기를 읽을 수 없다.</string>
-    <string name="vacant_text">시크릿, otpauth 링크, QR 이미지 — 어느 것도 이 브라우저를 벗어나지 않는다.</string>
     <string name="vacant_demo">테스트 키 삽입</string>
     <string name="colophon_note">네트워크 없음 · 저장 없음 · HMAC 은 Web Crypto API 로</string>
     <string name="lang_label">언어</string>
@@ -142,4 +141,5 @@
     <string name="err_migration_badPercent">“data” 매개변수에 깨진 퍼센트 부호화가 있다.</string>
     <string name="err_migration_badBase64">“data” 매개변수가 올바른 Base64 가 아니다.</string>
     <string name="err_migration_noAccounts">이 내보내기에는 계정이 하나도 없다.</string>
+    <string name="vacant_text">시크릿, otpauth 링크, QR 이미지 — 어느 것도 이 기기를 벗어나지 않는다.</string>
 </resources>

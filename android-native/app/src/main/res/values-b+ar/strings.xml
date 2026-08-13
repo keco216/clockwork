@@ -139,7 +139,6 @@
     <string name="import_skip_emptySecret">%1$s (سرّ فارغ)</string>
     <string name="import_unnamed">بلا اسم</string>
     <string name="import_unreadable">الصادرات غير مقروءة.</string>
-    <string name="vacant_text">سر أو رابط otpauth أو صورة QR — لا شيء من ذلك يغادر هذا المتصفح.</string>
     <string name="vacant_demo">إدراج مفتاح تجريبي</string>
     <string name="colophon_note">لا شبكة · لا تخزين · HMAC عبر Web Crypto API</string>
     <string name="lang_label">اللغة</string>
@@ -172,4 +171,5 @@
     <string name="err_migration_badPercent">يحوي المعامل «data» ترميزًا مئويًا معطوبًا.</string>
     <string name="err_migration_badBase64">المعامل «data» ليس Base64 صالحًا.</string>
     <string name="err_migration_noAccounts">لا حسابات في هذه الصادرات.</string>
+    <string name="vacant_text">سر أو رابط otpauth أو صورة QR — لا شيء من ذلك يغادر هذا الجهاز.</string>
 </resources>

@@ -127,7 +127,6 @@
     <string name="import_skip_emptySecret">%1$s (prázdny secret)</string>
     <string name="import_unnamed">Bez názvu</string>
     <string name="import_unreadable">Export nečitateľný.</string>
-    <string name="vacant_text">Secret, odkaz otpauth alebo obrázok QR — nič z toho neopustí tento prehliadač.</string>
     <string name="vacant_demo">Vložiť testovací kľúč</string>
     <string name="colophon_note">Žiadna sieť · žiadne úložisko · HMAC cez Web Crypto API</string>
     <string name="lang_label">Jazyk</string>
@@ -160,4 +159,5 @@
     <string name="err_migration_badPercent">Parameter „data“ obsahuje poškodené percentové kódovanie.</string>
     <string name="err_migration_badBase64">Parameter „data“ nie je platné Base64.</string>
     <string name="err_migration_noAccounts">V tomto exporte nie sú žiadne účty.</string>
+    <string name="vacant_text">Secret, odkaz otpauth alebo obrázok QR — nič z toho neopustí toto zariadenie.</string>
 </resources>

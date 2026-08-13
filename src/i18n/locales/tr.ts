@@ -190,4 +190,7 @@ export default {
   'err.migration.badPercent': '“data” parametresinde bozuk yüzde kodlaması var.',
   'err.migration.badBase64': '“data” parametresi geçerli Base64 değil.',
   'err.migration.noAccounts': 'Bu dışa aktarımda hiç hesap yok.',
+
+  'native.vacant.text':
+    'Secret, otpauth bağlantısı veya QR görüntüsü — hiçbiri bu cihazdan çıkmaz.',
 } satisfies Strings;

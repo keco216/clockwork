@@ -282,6 +282,34 @@ export interface Strings {
   'err.migration.badPercent': string;
   'err.migration.badBase64': string;
   'err.migration.noAccounts': string;
+
+  /* ── Nur für die native App: das Präfix `native.` ────────────────────────
+     Diese Schlüssel stehen hier, weil es genau EINEN Katalog geben soll: Der
+     Compiler prüft sie über `satisfies Strings` in allen 37 Sprachen mit, und
+     `catalogue.test.ts` prüft Platzhalter und Mehrzahlformen ebenso. Eine
+     zweite Textquelle neben diesem Vorrat wäre nach dem ersten Tippfehler
+     stumm veraltet — und zwar in 36 Sprachen, in denen niemand nachsieht.
+
+     Im WEB-Bündel landen sie trotzdem nicht: `scripts/locale-subset.ts` nimmt
+     jeden `native.`-Schlüssel beim Bauen aus den Locale-Dateien. Gemessen ist
+     das Bündel danach byte-identisch zu einem ohne diese Schlüssel — das Web
+     trägt kein Byte davon. Wer hier etwas ergänzt, ändert also die native App
+     und nicht die Web-Fassung.
+
+     Warum es sie überhaupt gibt: Ein Satz wie „nichts davon verlässt diesen
+     Browser" ist im Web wahr und in einer nativen App schlicht falsch — dort
+     gibt es keinen Browser. Denselben Satz für beide zu biegen hieße, die
+     Web-Fassung schlechter zu machen. */
+
+  /**
+   * Der eine Satz der Onboarding-Bühne — native Fassung von `vacant.text`.
+   *
+   * Wortgleich bis auf das letzte Wort: „Gerät" statt „Browser". Die 35
+   * maschinellen Übersetzungen sind aus dem vorhandenen `vacant.text`
+   * ABGELEITET (nur dieses eine Wort getauscht, Satzbau unverändert) und
+   * erben damit den Qualitätsvorbehalt ihrer Ausgangssätze.
+   */
+  'native.vacant.text': string;
 }
 
 /** Alle Schlüssel, deren Wert ein einfacher String ist. */

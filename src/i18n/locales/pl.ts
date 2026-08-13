@@ -217,4 +217,7 @@ export default {
   'err.migration.badPercent': 'Parametr „data” zawiera uszkodzone kodowanie procentowe.',
   'err.migration.badBase64': 'Parametr „data” nie jest prawidłowym Base64.',
   'err.migration.noAccounts': 'W tym eksporcie nie ma żadnych kont.',
+
+  'native.vacant.text':
+    'Secret, link otpauth albo obraz QR — nic z tego nie opuszcza tego urządzenia.',
 } satisfies Strings;

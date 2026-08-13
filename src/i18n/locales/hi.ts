@@ -188,4 +188,7 @@ export default {
   'err.migration.badPercent': '“data” पैरामीटर में टूटी प्रतिशत-कोडिंग है.',
   'err.migration.badBase64': '“data” पैरामीटर मान्य Base64 नहीं है.',
   'err.migration.noAccounts': 'इस निर्यात में कोई खाता नहीं है.',
+
+  'native.vacant.text':
+    'सीक्रेट, otpauth लिंक या QR छवि — इनमें से कुछ भी इस डिवाइस से बाहर नहीं जाता।',
 } satisfies Strings;

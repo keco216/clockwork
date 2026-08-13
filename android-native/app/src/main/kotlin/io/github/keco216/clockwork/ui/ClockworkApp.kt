@@ -113,7 +113,14 @@ private fun VacantStage(field: TextFieldValue, onFieldChange: (TextFieldValue) -
         )
         Spacer(Modifier.height(Dimens.gapGroup))
         BasicText(
-            text = text("vacant.text"),
+            // `native.` und nicht `vacant.text`: Der Web-Satz endet auf „…
+            // verlaesst diesen Browser", und hier gibt es keinen Browser. Der
+            // Schluessel steht im gemeinsamen Katalog (dort prueft der Compiler
+            // ihn in allen 37 Sprachen), wird aber aus dem Web-Buendel
+            // genommen — Einzelheiten in src/i18n/strings.ts. Das Praefix am
+            // Aufruf ist Absicht: Man sieht der Zeile an, dass dieser Text der
+            // nativen App gehoert.
+            text = text("native.vacant.text"),
             style = TextStyles.body.copy(color = colors.ink2),
         )
         Spacer(Modifier.height(Dimens.gapStack))

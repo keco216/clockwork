@@ -115,7 +115,6 @@
     <string name="import_skip_emptySecret">%1$s (tom secret)</string>
     <string name="import_unnamed">Uten navn</string>
     <string name="import_unreadable">Eksporten kan ikke leses.</string>
-    <string name="vacant_text">Secret, otpauth-lenke eller QR-bilde — ingenting av det forlater denne nettleseren.</string>
     <string name="vacant_demo">Sett inn testnøkkel</string>
     <string name="colophon_note">Ikke noe nettverk · ingen lagring · HMAC via Web Crypto API</string>
     <string name="lang_label">Språk</string>
@@ -148,4 +147,5 @@
     <string name="err_migration_badPercent">Parameteren «data» inneholder ødelagt prosentkoding.</string>
     <string name="err_migration_badBase64">Parameteren «data» er ikke gyldig Base64.</string>
     <string name="err_migration_noAccounts">I denne eksporten finnes ingen kontoer.</string>
+    <string name="vacant_text">Secret, otpauth-lenke eller QR-bilde — ingenting av det forlater denne enheten.</string>
 </resources>

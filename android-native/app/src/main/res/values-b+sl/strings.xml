@@ -127,7 +127,6 @@
     <string name="import_skip_emptySecret">%1$s (prazen secret)</string>
     <string name="import_unnamed">Brez imena</string>
     <string name="import_unreadable">Izvoz ni berljiv.</string>
-    <string name="vacant_text">Skrivnost, povezava otpauth ali slika QR — nič od tega ne zapusti tega brskalnika.</string>
     <string name="vacant_demo">Vstavi testni ključ</string>
     <string name="colophon_note">Brez omrežja · brez shrambe · HMAC prek Web Crypto API</string>
     <string name="lang_label">Jezik</string>
@@ -160,4 +159,5 @@
     <string name="err_migration_badPercent">Parameter „data“ vsebuje pokvarjeno odstotkovno kodiranje.</string>
     <string name="err_migration_badBase64">Parameter „data“ ni veljaven Base64.</string>
     <string name="err_migration_noAccounts">V tem izvozu ni nobenega računa.</string>
+    <string name="vacant_text">Skrivnost, povezava otpauth ali slika QR — nič od tega ne zapusti te naprave.</string>
 </resources>

@@ -203,4 +203,7 @@ export default {
   'err.migration.badPercent': 'Il parametro « data » contiene una codifica percentuale rotta.',
   'err.migration.badBase64': 'Il parametro « data » non è Base64 valido.',
   'err.migration.noAccounts': 'In questa esportazione non ci sono account.',
+
+  'native.vacant.text':
+    'Secret, link otpauth o immagine QR: niente di tutto ciò lascia questo dispositivo.',
 } satisfies Strings;

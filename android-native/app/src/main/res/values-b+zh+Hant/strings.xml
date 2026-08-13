@@ -109,7 +109,6 @@
     <string name="import_skip_emptySecret">%1$s（secret 為空）</string>
     <string name="import_unnamed">未命名</string>
     <string name="import_unreadable">匯出無法讀取。</string>
-    <string name="vacant_text">密鑰、otpauth 連結或 QR 圖片——都不會離開這個瀏覽器。</string>
     <string name="vacant_demo">插入測試金鑰</string>
     <string name="colophon_note">無網路 · 無儲存 · HMAC 經由 Web Crypto API</string>
     <string name="lang_label">語言</string>
@@ -142,4 +141,5 @@
     <string name="err_migration_badPercent">參數「data」裡有壞掉的百分號編碼。</string>
     <string name="err_migration_badBase64">參數「data」不是有效的 Base64。</string>
     <string name="err_migration_noAccounts">這份匯出裡沒有任何帳戶。</string>
+    <string name="vacant_text">密鑰、otpauth 連結或 QR 圖片——都不會離開這個裝置。</string>
 </resources>

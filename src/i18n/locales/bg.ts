@@ -192,4 +192,7 @@ export default {
   'err.migration.badPercent': 'Параметърът „data“ съдържа развалено процентно кодиране.',
   'err.migration.badBase64': 'Параметърът „data“ не е валиден Base64.',
   'err.migration.noAccounts': 'В този износ няма никакви акаунти.',
+
+  'native.vacant.text':
+    'Секрет, връзка otpauth или QR изображение — нищо от това не напуска това устройство.',
 } satisfies Strings;

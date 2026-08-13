@@ -109,7 +109,6 @@
     <string name="import_skip_emptySecret">%1$s（secret 为空）</string>
     <string name="import_unnamed">未命名</string>
     <string name="import_unreadable">导出无法读取。</string>
-    <string name="vacant_text">密钥、otpauth 链接或二维码图片——都不会离开这个浏览器。</string>
     <string name="vacant_demo">插入测试密钥</string>
     <string name="colophon_note">无网络 · 无存储 · HMAC 经由 Web Crypto API</string>
     <string name="lang_label">语言</string>
@@ -142,4 +141,5 @@
     <string name="err_migration_badPercent">参数“data”里有坏掉的百分号编码。</string>
     <string name="err_migration_badBase64">参数“data”不是有效的 Base64。</string>
     <string name="err_migration_noAccounts">这份导出里没有任何账户。</string>
+    <string name="vacant_text">密钥、otpauth 链接或二维码图片——都不会离开这个设备。</string>
 </resources>

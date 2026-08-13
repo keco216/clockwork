@@ -121,7 +121,6 @@
     <string name="import_skip_emptySecret">%1$s (secret vazio)</string>
     <string name="import_unnamed">Sem nome</string>
     <string name="import_unreadable">Exportação ilegível.</string>
-    <string name="vacant_text">Secret, ligação otpauth ou imagem QR — nada disso sai deste navegador.</string>
     <string name="vacant_demo">Inserir chave de teste</string>
     <string name="colophon_note">Sem rede · sem armazenamento · HMAC através da Web Crypto API</string>
     <string name="lang_label">Idioma</string>
@@ -154,4 +153,5 @@
     <string name="err_migration_badPercent">O parâmetro « data » tem uma codificação por cento estragada.</string>
     <string name="err_migration_badBase64">O parâmetro « data » não é Base64 válido.</string>
     <string name="err_migration_noAccounts">Nesta exportação não há contas nenhumas.</string>
+    <string name="vacant_text">Secret, ligação otpauth ou imagem QR — nada disso sai deste dispositivo.</string>
 </resources>

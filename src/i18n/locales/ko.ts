@@ -181,4 +181,6 @@ export default {
   'err.migration.badPercent': '“data” 매개변수에 깨진 퍼센트 부호화가 있다.',
   'err.migration.badBase64': '“data” 매개변수가 올바른 Base64 가 아니다.',
   'err.migration.noAccounts': '이 내보내기에는 계정이 하나도 없다.',
+
+  'native.vacant.text': '시크릿, otpauth 링크, QR 이미지 — 어느 것도 이 기기를 벗어나지 않는다.',
 } satisfies Strings;

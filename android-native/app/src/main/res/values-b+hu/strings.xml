@@ -115,7 +115,6 @@
     <string name="import_skip_emptySecret">%1$s (üres secret)</string>
     <string name="import_unnamed">Névtelen</string>
     <string name="import_unreadable">Az export olvashatatlan.</string>
-    <string name="vacant_text">Secret, otpauth-hivatkozás vagy QR-kép — semmi sem hagyja el ezt a böngészőt.</string>
     <string name="vacant_demo">Tesztkulcs beszúrása</string>
     <string name="colophon_note">Nincs hálózat · nincs tárolás · HMAC a Web Crypto API-n keresztül</string>
     <string name="lang_label">Nyelv</string>
@@ -148,4 +147,5 @@
     <string name="err_migration_badPercent">A „data” paraméter hibás százalékkódolást tartalmaz.</string>
     <string name="err_migration_badBase64">A „data” paraméter nem érvényes Base64.</string>
     <string name="err_migration_noAccounts">Ebben az exportban nincsenek fiókok.</string>
+    <string name="vacant_text">Secret, otpauth-hivatkozás vagy QR-kép — semmi sem hagyja el ezt az eszközt.</string>
 </resources>

@@ -115,7 +115,6 @@
     <string name="import_skip_emptySecret">%1$s (leeg secret)</string>
     <string name="import_unnamed">Naamloos</string>
     <string name="import_unreadable">Export onleesbaar.</string>
-    <string name="vacant_text">Secret, otpauth-link of QR-afbeelding — niets daarvan verlaat deze browser.</string>
     <string name="vacant_demo">Testsleutel invoegen</string>
     <string name="colophon_note">Geen netwerk · geen opslag · HMAC via de Web Crypto API</string>
     <string name="lang_label">Taal</string>
@@ -148,4 +147,5 @@
     <string name="err_migration_badPercent">De parameter ‘data’ bevat een kapotte procentcodering.</string>
     <string name="err_migration_badBase64">De parameter ‘data’ is geen geldige Base64.</string>
     <string name="err_migration_noAccounts">In deze export staan geen accounts.</string>
+    <string name="vacant_text">Secret, otpauth-link of QR-afbeelding — niets daarvan verlaat dit apparaat.</string>
 </resources>

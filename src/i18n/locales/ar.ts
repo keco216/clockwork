@@ -226,4 +226,6 @@ export default {
   'err.migration.badPercent': 'يحوي المعامل «data» ترميزًا مئويًا معطوبًا.',
   'err.migration.badBase64': 'المعامل «data» ليس Base64 صالحًا.',
   'err.migration.noAccounts': 'لا حسابات في هذه الصادرات.',
+
+  'native.vacant.text': 'سر أو رابط otpauth أو صورة QR — لا شيء من ذلك يغادر هذا الجهاز.',
 } satisfies Strings;
