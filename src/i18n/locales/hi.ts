@@ -209,4 +209,13 @@ export default {
     'नया बायोमेट्रिक दर्ज हुआ, इसलिए छोटा रास्ता चला गया. पासफ़्रेज़ से खोलें और इसे फिर चालू करें.',
   'native.vault.biometric.failed': 'बायोमेट्रिक से खोलना नहीं हुआ — पासफ़्रेज़ लें.',
   'native.vault.screenshots.label': 'स्क्रीनशॉट और झलक रोकें',
+
+  'native.nav.home': 'होम',
+  'native.nav.settings': 'सेटिंग्स',
+  'native.about.title': 'परिचय',
+  'native.about.version': 'संस्करण',
+  'native.about.network':
+    'ऐप के पास नेटवर्क की अनुमति नहीं है। वह कोई कनेक्शन नहीं खोल सकता — न अपडेट के लिए, न आँकड़ों के लिए, न ग़लती से।',
+  'native.about.licenses': 'लाइसेंस',
+  'native.about.source': 'स्रोत कोड',
 } satisfies Strings;

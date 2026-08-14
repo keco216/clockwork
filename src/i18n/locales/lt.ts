@@ -237,4 +237,13 @@ export default {
     'Užregistruota nauja biometrija, tad spartaus kelio nebėra. Atrakinkite slaptafraze ir vėl ją įjunkite.',
   'native.vault.biometric.failed': 'Atrakinti biometrija nepavyko — naudokite slaptafrazę.',
   'native.vault.screenshots.label': 'Blokuoti ekrano nuotraukas ir peržiūras',
+
+  'native.nav.home': 'Pradžia',
+  'native.nav.settings': 'Nustatymai',
+  'native.about.title': 'Apie',
+  'native.about.version': 'Versija',
+  'native.about.network':
+    'Programa neturi tinklo leidimo. Ji negali užmegzti ryšio — nei atnaujinimams, nei statistikai, nei per klaidą.',
+  'native.about.licenses': 'Licencijos',
+  'native.about.source': 'Pirminis kodas',
 } satisfies Strings;

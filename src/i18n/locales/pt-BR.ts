@@ -220,4 +220,13 @@ export default {
   'native.vault.biometric.failed':
     'O desbloqueio por biometria não funcionou — use a frase secreta.',
   'native.vault.screenshots.label': 'Bloquear capturas de tela e prévias',
+
+  'native.nav.home': 'Início',
+  'native.nav.settings': 'Configurações',
+  'native.about.title': 'Sobre',
+  'native.about.version': 'Versão',
+  'native.about.network':
+    'O app não tem permissão de rede. Ele não consegue abrir conexão alguma — nem para atualizações, nem para estatísticas, nem por engano.',
+  'native.about.licenses': 'Licenças',
+  'native.about.source': 'Código-fonte',
 } satisfies Strings;

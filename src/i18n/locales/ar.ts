@@ -245,4 +245,13 @@ export default {
     'سُجّلت سمات حيوية جديدة، فذهب الاختصار. افتح بعبارة المرور وشغّله من جديد.',
   'native.vault.biometric.failed': 'لم ينجح الفتح بالسمات الحيوية — استعمل عبارة المرور.',
   'native.vault.screenshots.label': 'منع لقطات الشاشة والمعاينات',
+
+  'native.nav.home': 'الرئيسية',
+  'native.nav.settings': 'الإعدادات',
+  'native.about.title': 'عن التطبيق',
+  'native.about.version': 'الإصدار',
+  'native.about.network':
+    'لا يملك التطبيق إذن الشبكة. لا يستطيع فتح أي اتصال — لا للتحديثات ولا للإحصاءات ولا عن طريق الخطأ.',
+  'native.about.licenses': 'التراخيص',
+  'native.about.source': 'الشفرة المصدرية',
 } satisfies Strings;

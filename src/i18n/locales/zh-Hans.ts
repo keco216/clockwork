@@ -196,4 +196,13 @@ export default {
     '注册了新的生物识别，捷径没了。请用密码短语解锁，再重新打开它。',
   'native.vault.biometric.failed': '生物识别解锁没成功 — 请用密码短语。',
   'native.vault.screenshots.label': '阻止截图和预览',
+
+  'native.nav.home': '主页',
+  'native.nav.settings': '设置',
+  'native.about.title': '关于',
+  'native.about.version': '版本',
+  'native.about.network':
+    '这个应用没有网络权限。它打不开任何连接——不为更新，不为统计，也不会误开。',
+  'native.about.licenses': '许可证',
+  'native.about.source': '源代码',
 } satisfies Strings;

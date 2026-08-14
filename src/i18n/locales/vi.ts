@@ -206,4 +206,13 @@ export default {
     'Sinh trắc học mới đã được đăng ký nên lối tắt không còn. Hãy mở bằng cụm mật khẩu rồi bật lại.',
   'native.vault.biometric.failed': 'Mở khoá bằng sinh trắc học không được — hãy dùng cụm mật khẩu.',
   'native.vault.screenshots.label': 'Chặn ảnh chụp màn hình và bản xem trước',
+
+  'native.nav.home': 'Trang chính',
+  'native.nav.settings': 'Cài đặt',
+  'native.about.title': 'Giới thiệu',
+  'native.about.version': 'Phiên bản',
+  'native.about.network':
+    'Ứng dụng không có quyền mạng. Nó không thể mở kết nối nào — không để cập nhật, không để thống kê, cũng không do nhầm lẫn.',
+  'native.about.licenses': 'Giấy phép',
+  'native.about.source': 'Mã nguồn',
 } satisfies Strings;

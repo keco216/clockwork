@@ -137,6 +137,13 @@ object StringKeys {
         "native.vault.biometric.invalidated" -> R.string.vault_biometric_invalidated
         "native.vault.biometric.failed" -> R.string.vault_biometric_failed
         "native.vault.screenshots.label" -> R.string.vault_screenshots_label
+        "native.nav.home" -> R.string.nav_home
+        "native.nav.settings" -> R.string.nav_settings
+        "native.about.title" -> R.string.about_title
+        "native.about.version" -> R.string.about_version
+        "native.about.network" -> R.string.about_network
+        "native.about.licenses" -> R.string.about_licenses
+        "native.about.source" -> R.string.about_source
         else -> null
     }
 

@@ -212,4 +212,13 @@ export default {
   'native.vault.biometric.failed':
     'Biyometriyle kilit açma işe yaramadı — parola cümlesini kullanın.',
   'native.vault.screenshots.label': 'Ekran görüntülerini ve önizlemeleri engelle',
+
+  'native.nav.home': 'Ana sayfa',
+  'native.nav.settings': 'Ayarlar',
+  'native.about.title': 'Hakkında',
+  'native.about.version': 'Sürüm',
+  'native.about.network':
+    'Uygulamanın ağ izni yok. Hiçbir bağlantı açamaz — ne güncelleme için, ne istatistik için, ne de yanlışlıkla.',
+  'native.about.licenses': 'Lisanslar',
+  'native.about.source': 'Kaynak kodu',
 } satisfies Strings;

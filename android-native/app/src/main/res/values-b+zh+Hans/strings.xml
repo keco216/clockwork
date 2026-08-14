@@ -147,4 +147,11 @@
     <string name="vault_biometric_invalidated">注册了新的生物识别，捷径没了。请用密码短语解锁，再重新打开它。</string>
     <string name="vault_biometric_failed">生物识别解锁没成功 — 请用密码短语。</string>
     <string name="vault_screenshots_label">阻止截图和预览</string>
+    <string name="nav_home">主页</string>
+    <string name="nav_settings">设置</string>
+    <string name="about_title">关于</string>
+    <string name="about_version">版本</string>
+    <string name="about_network">这个应用没有网络权限。它打不开任何连接——不为更新，不为统计，也不会误开。</string>
+    <string name="about_licenses">许可证</string>
+    <string name="about_source">源代码</string>
 </resources>

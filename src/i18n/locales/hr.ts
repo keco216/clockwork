@@ -211,4 +211,13 @@ export default {
     'Registrirana je nova biometrija, pa je prečac nestao. Otključajte zaporkom i ponovno ga uključite.',
   'native.vault.biometric.failed': 'Otključavanje biometrijom nije uspjelo — upotrijebite zaporku.',
   'native.vault.screenshots.label': 'Blokiraj snimke zaslona i preglede',
+
+  'native.nav.home': 'Početna',
+  'native.nav.settings': 'Postavke',
+  'native.about.title': 'O aplikaciji',
+  'native.about.version': 'Verzija',
+  'native.about.network':
+    'Aplikacija nema dopuštenje za mrežu. Ne može otvoriti vezu — ni za ažuriranja, ni za statistiku, ni greškom.',
+  'native.about.licenses': 'Licencije',
+  'native.about.source': 'Izvorni kod',
 } satisfies Strings;

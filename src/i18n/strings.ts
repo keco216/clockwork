@@ -424,6 +424,50 @@ export interface Strings {
    * Zuletzt-verwendet-Ansicht sperren. Voreinstellung AN.
    */
   'native.vault.screenshots.label': string;
+
+  /* ── Die zwei Seiten der nativen App (N11) ─────────────────────────────
+     Die Web-Fassung ist EINE Seite: Man scrollt, und unten stehen Fuß,
+     Sprachwahl und Tresor-Konfiguration im Fluss. Nativ ist das falsch —
+     eine App hat Seiten, keine Seitenenden. Die Struktur darf deshalb
+     abweichen, die Designsprache nicht (Kevins Entscheidung, N11a).
+
+     Die Beschriftungen der Leiste sind kurz, weil sie unter einem Zeichen
+     stehen und nicht daneben. */
+
+  /** Navigationsleiste: die Seite mit Codes, Eingabe und Tresor-Zustand. */
+  'native.nav.home': string;
+
+  /** Navigationsleiste: die Seite mit Sprache, Konfiguration und „Über". */
+  'native.nav.settings': string;
+
+  /** Überschrift der Über-Seite. */
+  'native.about.title': string;
+
+  /** Beschriftung vor Versionsname und -nummer. Der Wert kommt vom System. */
+  'native.about.version': string;
+
+  /**
+   * Die Netz-Zusage, ausgeschrieben.
+   *
+   * Im Fuß steht sie als drei Wörter (`native.colophon.note`); auf der
+   * Über-Seite hat sie Platz für den Grund. Die anderen zwei Zusagen
+   * (Tresorformat, Schlüsselableitung) stehen schon in `vault.explain`
+   * und `vault.explain.crypto` und werden dort wiederverwendet.
+   */
+  'native.about.network': string;
+
+  /**
+   * Überschrift über den Lizenzhinweisen.
+   *
+   * Die Hinweise selbst sind Eigennamen und SPDX-Kennungen („ZXing —
+   * Apache-2.0") und stehen deshalb NICHT im Katalog, sondern als
+   * Konstanten im Code — dieselbe Begründung wie bei `javax.crypto` in N8:
+   * Ein technischer Eigenname bleibt in allen 37 Sprachen unübersetzt.
+   */
+  'native.about.licenses': string;
+
+  /** Überschrift über dem Verweis auf das Quelltext-Verzeichnis. */
+  'native.about.source': string;
 }
 
 /** Alle Schlüssel, deren Wert ein einfacher String ist. */

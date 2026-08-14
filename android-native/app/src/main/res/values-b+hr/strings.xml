@@ -159,4 +159,11 @@
     <string name="vault_biometric_invalidated">Registrirana je nova biometrija, pa je prečac nestao. Otključajte zaporkom i ponovno ga uključite.</string>
     <string name="vault_biometric_failed">Otključavanje biometrijom nije uspjelo — upotrijebite zaporku.</string>
     <string name="vault_screenshots_label">Blokiraj snimke zaslona i preglede</string>
+    <string name="nav_home">Početna</string>
+    <string name="nav_settings">Postavke</string>
+    <string name="about_title">O aplikaciji</string>
+    <string name="about_version">Verzija</string>
+    <string name="about_network">Aplikacija nema dopuštenje za mrežu. Ne može otvoriti vezu — ni za ažuriranja, ni za statistiku, ni greškom.</string>
+    <string name="about_licenses">Licencije</string>
+    <string name="about_source">Izvorni kod</string>
 </resources>

@@ -33,13 +33,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -80,15 +85,35 @@ import io.github.keco216.clockwork.ui.theme.TextStyles
  * dagegen mit 0 — dort sitzt er direkt auf der Feldkante. Ein Ring mit Abstand
  * um ein Textfeld saehe aus wie ein zweites, groesseres Feld.
  */
-private fun Modifier.focusRing(
+internal fun Modifier.focusRing(
     focused: Boolean,
     colour: Color,
     shape: Shape,
     offset: androidx.compose.ui.unit.Dp,
-): Modifier = if (!focused) this else this
-    .padding(-offset)
-    .border(BorderStroke(2.dp, colour), shape)
-    .padding(offset)
+): Modifier = if (!focused) this else this.drawWithContent {
+    drawContent()
+
+    /* GEZEICHNET und nicht als Rahmen gelegt — das ist der Unterschied
+       zwischen `outline` und `border` im Web, und er ist hier derselbe: Ein
+       Ring, der Platz braucht, verschiebt beim Fokussieren das Layout.
+
+       Die erste Fassung loeste das mit `padding(-offset)`, also einem
+       NEGATIVEN Polster. Das ist in Compose verboten und wirft
+       „Padding must be non-negative" — nur eben erst, wenn ein Bauteil den
+       Fokus wirklich bekommt. Getippt wird mit dem Finger, und der vergibt
+       keinen Fokus; aufgefallen ist es deshalb erst, als die
+       Navigationsleiste (N11) fokussierbare Posten bekam. Der Fehler lag
+       seit P5 in jeder Taste. */
+    val grow = offset.toPx()
+    val outline = shape.createOutline(
+        Size(size.width + 2 * grow, size.height + 2 * grow),
+        layoutDirection,
+        this,
+    )
+    translate(left = -grow, top = -grow) {
+        drawOutline(outline, colour, style = Stroke(width = 2.dp.toPx()))
+    }
+}
 
 /* ── Taste ──────────────────────────────────────────────────────────────── */
 

@@ -155,7 +155,10 @@ fun rememberStowed(scroll: ScrollState, mastheadHeightPx: Int): Boolean {
     val zurueckAb = with(density) { ZURUECK_AB_DP.dp.roundToPx() }
     val immerSichtbarBis = with(density) { IMMER_SICHTBAR_BIS_DP.dp.roundToPx() }
 
-    val tracker = remember { StowTracker() }
+    /* Der Merker gehoert zu SEINEM Scrollzustand: Seit N11 gibt es zwei
+       Seiten mit je eigener Position. Ein gemeinsamer Merker saehe beim
+       Seitenwechsel einen Sprung und verstaute den Kopf grundlos. */
+    val tracker = remember(scroll) { StowTracker() }
 
     LaunchedEffect(scroll, mastheadHeightPx, verstauenAb, zurueckAb, immerSichtbarBis) {
         snapshotFlow { scroll.value }.collect { y ->

@@ -205,4 +205,13 @@ export default {
   'native.vault.biometric.failed':
     '生体認証での解錠がうまくいかなかった — パスフレーズを使ってほしい。',
   'native.vault.screenshots.label': 'スクリーンショットとプレビューを禁じる',
+
+  'native.nav.home': 'ホーム',
+  'native.nav.settings': '設定',
+  'native.about.title': 'このアプリについて',
+  'native.about.version': 'バージョン',
+  'native.about.network':
+    'このアプリにネットワーク権限はない。接続を開けない — 更新のためにも、統計のためにも、うっかりでも。',
+  'native.about.licenses': 'ライセンス',
+  'native.about.source': 'ソースコード',
 } satisfies Strings;

@@ -202,4 +202,13 @@ export default {
     '생체 인식이 새로 등록되어 지름길이 사라졌다. 암호 문구로 열고 다시 켜기 바란다.',
   'native.vault.biometric.failed': '생체 인식 잠금 해제가 되지 않았다 — 암호 문구를 쓰기 바란다.',
   'native.vault.screenshots.label': '화면 캡처와 미리 보기 막기',
+
+  'native.nav.home': '홈',
+  'native.nav.settings': '설정',
+  'native.about.title': '정보',
+  'native.about.version': '버전',
+  'native.about.network':
+    '이 앱에는 네트워크 권한이 없다. 연결을 열 수 없다 — 업데이트를 위해서도, 통계를 위해서도, 실수로도.',
+  'native.about.licenses': '라이선스',
+  'native.about.source': '소스 코드',
 } satisfies Strings;

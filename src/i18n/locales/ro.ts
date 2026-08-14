@@ -221,4 +221,13 @@ export default {
   'native.vault.biometric.failed':
     'Deblocarea cu biometrie nu a funcționat — folosiți fraza de acces.',
   'native.vault.screenshots.label': 'Blocarea capturilor de ecran și a previzualizărilor',
+
+  'native.nav.home': 'Acasă',
+  'native.nav.settings': 'Setări',
+  'native.about.title': 'Despre',
+  'native.about.version': 'Versiune',
+  'native.about.network':
+    'Aplicația nu are permisiune de rețea. Nu poate deschide nicio conexiune — nici pentru actualizări, nici pentru statistici, nici din greșeală.',
+  'native.about.licenses': 'Licențe',
+  'native.about.source': 'Cod sursă',
 } satisfies Strings;

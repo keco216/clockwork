@@ -147,4 +147,11 @@
     <string name="vault_biometric_invalidated">มีการลงทะเบียนไบโอเมตริกใหม่ ทางลัดจึงหายไป ปลดล็อกด้วยวลีรหัสผ่านแล้วเปิดใหม่อีกครั้ง</string>
     <string name="vault_biometric_failed">ปลดล็อกด้วยไบโอเมตริกไม่สำเร็จ — ใช้วลีรหัสผ่าน</string>
     <string name="vault_screenshots_label">บล็อกภาพหน้าจอและตัวอย่าง</string>
+    <string name="nav_home">หน้าแรก</string>
+    <string name="nav_settings">ตั้งค่า</string>
+    <string name="about_title">เกี่ยวกับ</string>
+    <string name="about_version">รุ่น</string>
+    <string name="about_network">แอปไม่มีสิทธิ์เครือข่าย จึงเปิดการเชื่อมต่อไม่ได้ — ไม่ว่าเพื่ออัปเดต เพื่อสถิติ หรือโดยพลั้งเผลอ</string>
+    <string name="about_licenses">สัญญาอนุญาต</string>
+    <string name="about_source">ซอร์สโค้ด</string>
 </resources>

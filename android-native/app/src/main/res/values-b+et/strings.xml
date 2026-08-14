@@ -153,4 +153,11 @@
     <string name="vault_biometric_invalidated">Registreeriti uus biomeetria, seega otsetee on kadunud. Ava paroolifraasiga ja lülita see uuesti sisse.</string>
     <string name="vault_biometric_failed">Biomeetriline avamine ei õnnestunud — kasuta paroolifraasi.</string>
     <string name="vault_screenshots_label">Blokeeri ekraanipildid ja eelvaated</string>
+    <string name="nav_home">Avaleht</string>
+    <string name="nav_settings">Seaded</string>
+    <string name="about_title">Teave</string>
+    <string name="about_version">Versioon</string>
+    <string name="about_network">Rakendusel pole võrguluba. See ei saa ühendust avada — ei uuenduste, statistika ega kogemata.</string>
+    <string name="about_licenses">Litsentsid</string>
+    <string name="about_source">Lähtekood</string>
 </resources>

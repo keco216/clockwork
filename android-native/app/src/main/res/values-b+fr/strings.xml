@@ -159,4 +159,11 @@
     <string name="vault_biometric_invalidated">Une nouvelle biométrie a été enregistrée, le raccourci a donc disparu. Déverrouillez avec la phrase secrète et réactivez-le.</string>
     <string name="vault_biometric_failed">Le déverrouillage biométrique n’a pas fonctionné — utilisez la phrase secrète.</string>
     <string name="vault_screenshots_label">Bloquer les captures d’écran et les aperçus</string>
+    <string name="nav_home">Accueil</string>
+    <string name="nav_settings">Réglages</string>
+    <string name="about_title">À propos</string>
+    <string name="about_version">Version</string>
+    <string name="about_network">L’application n’a aucune permission réseau. Elle ne peut ouvrir aucune connexion — ni pour des mises à jour, ni pour des statistiques, ni par erreur.</string>
+    <string name="about_licenses">Licences</string>
+    <string name="about_source">Code source</string>
 </resources>

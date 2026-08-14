@@ -159,4 +159,11 @@
     <string name="vault_biometric_invalidated">Tika reģistrēta jauna biometrija, tāpēc īsceļa vairs nav. Atslēdziet ar paroles frāzi un ieslēdziet to no jauna.</string>
     <string name="vault_biometric_failed">Atslēgšana ar biometriju neizdevās — izmantojiet paroles frāzi.</string>
     <string name="vault_screenshots_label">Bloķēt ekrānuzņēmumus un priekšskatījumus</string>
+    <string name="nav_home">Sākums</string>
+    <string name="nav_settings">Iestatījumi</string>
+    <string name="about_title">Par</string>
+    <string name="about_version">Versija</string>
+    <string name="about_network">Lietotnei nav tīkla atļaujas. Tā nevar atvērt savienojumu — ne atjauninājumiem, ne statistikai, ne aiz kļūdas.</string>
+    <string name="about_licenses">Licences</string>
+    <string name="about_source">Pirmkods</string>
 </resources>

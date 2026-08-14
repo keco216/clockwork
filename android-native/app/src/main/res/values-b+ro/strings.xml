@@ -159,4 +159,11 @@
     <string name="vault_biometric_invalidated">A fost înregistrată o biometrie nouă, așa că scurtătura a dispărut. Deblocați cu fraza de acces și porniți-o din nou.</string>
     <string name="vault_biometric_failed">Deblocarea cu biometrie nu a funcționat — folosiți fraza de acces.</string>
     <string name="vault_screenshots_label">Blocarea capturilor de ecran și a previzualizărilor</string>
+    <string name="nav_home">Acasă</string>
+    <string name="nav_settings">Setări</string>
+    <string name="about_title">Despre</string>
+    <string name="about_version">Versiune</string>
+    <string name="about_network">Aplicația nu are permisiune de rețea. Nu poate deschide nicio conexiune — nici pentru actualizări, nici pentru statistici, nici din greșeală.</string>
+    <string name="about_licenses">Licențe</string>
+    <string name="about_source">Cod sursă</string>
 </resources>

@@ -165,4 +165,11 @@
     <string name="vault_biometric_invalidated">Byla zaregistrována nová biometrie, takže zkratka zmizela. Odemkněte heslovou frází a znovu ji zapněte.</string>
     <string name="vault_biometric_failed">Odemknutí biometrií se nezdařilo — použijte heslovou frázi.</string>
     <string name="vault_screenshots_label">Blokovat snímky obrazovky a náhledy</string>
+    <string name="nav_home">Domů</string>
+    <string name="nav_settings">Nastavení</string>
+    <string name="about_title">O aplikaci</string>
+    <string name="about_version">Verze</string>
+    <string name="about_network">Aplikace nemá oprávnění k síti. Nedokáže otevřít spojení — ani kvůli aktualizacím, ani kvůli statistice, ani omylem.</string>
+    <string name="about_licenses">Licence</string>
+    <string name="about_source">Zdrojový kód</string>
 </resources>

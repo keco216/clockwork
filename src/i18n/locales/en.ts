@@ -211,4 +211,13 @@ export default {
     'New biometrics were enrolled, so the shortcut is gone. Unlock with the passphrase and switch it on again.',
   'native.vault.biometric.failed': 'Biometric unlocking did not work — use the passphrase.',
   'native.vault.screenshots.label': 'Block screenshots and previews',
+
+  'native.nav.home': 'Home',
+  'native.nav.settings': 'Settings',
+  'native.about.title': 'About',
+  'native.about.version': 'Version',
+  'native.about.network':
+    'The app has no network permission. It cannot open a connection — not for updates, not for statistics, not by mistake.',
+  'native.about.licenses': 'Licenses',
+  'native.about.source': 'Source code',
 } satisfies Strings;

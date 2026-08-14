@@ -222,4 +222,13 @@ export default {
   'native.vault.biometric.failed':
     'Das Entsperren per Biometrie hat nicht geklappt — nimm die Passphrase.',
   'native.vault.screenshots.label': 'Bildschirmfotos und Vorschaubilder sperren',
+
+  'native.nav.home': 'Start',
+  'native.nav.settings': 'Einstellungen',
+  'native.about.title': 'Über',
+  'native.about.version': 'Version',
+  'native.about.network':
+    'Die App hat keine Netzwerk-Berechtigung. Sie kann keine Verbindung öffnen — nicht für Aktualisierungen, nicht für Statistik, nicht aus Versehen.',
+  'native.about.licenses': 'Lizenzen',
+  'native.about.source': 'Quelltext',
 } satisfies Strings;

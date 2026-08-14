@@ -209,4 +209,13 @@ export default {
     'Biometrik baru didaftarkan, jadi jalan pintasnya hilang. Buka dengan frasa sandi lalu nyalakan lagi.',
   'native.vault.biometric.failed': 'Membuka dengan biometrik tidak berhasil — pakai frasa sandi.',
   'native.vault.screenshots.label': 'Blokir tangkapan layar dan pratinjau',
+
+  'native.nav.home': 'Beranda',
+  'native.nav.settings': 'Pengaturan',
+  'native.about.title': 'Tentang',
+  'native.about.version': 'Versi',
+  'native.about.network':
+    'Aplikasi ini tidak punya izin jaringan. Ia tidak bisa membuka koneksi — bukan untuk pembaruan, bukan untuk statistik, bukan karena keliru.',
+  'native.about.licenses': 'Lisensi',
+  'native.about.source': 'Kode sumber',
 } satisfies Strings;

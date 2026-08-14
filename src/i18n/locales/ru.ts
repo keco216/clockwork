@@ -237,4 +237,13 @@ export default {
     'Зарегистрирована новая биометрия, поэтому короткого пути больше нет. Отоприте парольной фразой и включите его заново.',
   'native.vault.biometric.failed': 'Отпереть биометрией не вышло — возьмите парольную фразу.',
   'native.vault.screenshots.label': 'Запрещать снимки экрана и предпросмотр',
+
+  'native.nav.home': 'Главная',
+  'native.nav.settings': 'Настройки',
+  'native.about.title': 'О приложении',
+  'native.about.version': 'Версия',
+  'native.about.network':
+    'У приложения нет разрешения на сеть. Оно не может открыть соединение — ни для обновлений, ни для статистики, ни по ошибке.',
+  'native.about.licenses': 'Лицензии',
+  'native.about.source': 'Исходный код',
 } satisfies Strings;

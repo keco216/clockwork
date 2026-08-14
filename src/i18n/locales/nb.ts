@@ -214,4 +214,13 @@ export default {
     'Ny biometri ble registrert, så snarveien er borte. Lås opp med passordfrasen og slå den på igjen.',
   'native.vault.biometric.failed': 'Opplåsing med biometri virket ikke — bruk passordfrasen.',
   'native.vault.screenshots.label': 'Blokker skjermbilder og forhåndsvisninger',
+
+  'native.nav.home': 'Hjem',
+  'native.nav.settings': 'Innstillinger',
+  'native.about.title': 'Om',
+  'native.about.version': 'Versjon',
+  'native.about.network':
+    'Appen har ingen nettverkstillatelse. Den kan ikke åpne en forbindelse — verken for oppdateringer, for statistikk eller ved et uhell.',
+  'native.about.licenses': 'Lisenser',
+  'native.about.source': 'Kildekode',
 } satisfies Strings;

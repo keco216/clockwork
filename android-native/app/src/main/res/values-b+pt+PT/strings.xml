@@ -159,4 +159,11 @@
     <string name="vault_biometric_invalidated">Foi registada uma nova biometria, por isso o atalho desapareceu. Destranque com a frase-passe e volte a ativá-lo.</string>
     <string name="vault_biometric_failed">O desbloqueio por biometria não resultou — use a frase-passe.</string>
     <string name="vault_screenshots_label">Bloquear capturas de ecrã e pré-visualizações</string>
+    <string name="nav_home">Início</string>
+    <string name="nav_settings">Definições</string>
+    <string name="about_title">Acerca</string>
+    <string name="about_version">Versão</string>
+    <string name="about_network">A aplicação não tem permissão de rede. Não consegue abrir qualquer ligação — nem para atualizações, nem para estatísticas, nem por engano.</string>
+    <string name="about_licenses">Licenças</string>
+    <string name="about_source">Código-fonte</string>
 </resources>

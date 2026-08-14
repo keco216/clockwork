@@ -165,4 +165,11 @@
     <string name="vault_biometric_invalidated">Užregistruota nauja biometrija, tad spartaus kelio nebėra. Atrakinkite slaptafraze ir vėl ją įjunkite.</string>
     <string name="vault_biometric_failed">Atrakinti biometrija nepavyko — naudokite slaptafrazę.</string>
     <string name="vault_screenshots_label">Blokuoti ekrano nuotraukas ir peržiūras</string>
+    <string name="nav_home">Pradžia</string>
+    <string name="nav_settings">Nustatymai</string>
+    <string name="about_title">Apie</string>
+    <string name="about_version">Versija</string>
+    <string name="about_network">Programa neturi tinklo leidimo. Ji negali užmegzti ryšio — nei atnaujinimams, nei statistikai, nei per klaidą.</string>
+    <string name="about_licenses">Licencijos</string>
+    <string name="about_source">Pirminis kodas</string>
 </resources>

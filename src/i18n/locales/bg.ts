@@ -215,4 +215,13 @@ export default {
   'native.vault.biometric.failed':
     'Отключването с биометрия не се получи — използвайте парола-фразата.',
   'native.vault.screenshots.label': 'Блокиране на снимки на екрана и на прегледите',
+
+  'native.nav.home': 'Начало',
+  'native.nav.settings': 'Настройки',
+  'native.about.title': 'Относно',
+  'native.about.version': 'Версия',
+  'native.about.network':
+    'Приложението няма разрешение за мрежа. Не може да отвори връзка — нито за обновявания, нито за статистика, нито по погрешка.',
+  'native.about.licenses': 'Лицензи',
+  'native.about.source': 'Изходен код',
 } satisfies Strings;

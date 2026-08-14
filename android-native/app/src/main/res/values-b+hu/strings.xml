@@ -153,4 +153,11 @@
     <string name="vault_biometric_invalidated">Új biometria lett regisztrálva, így a rövidítés eltűnt. Oldja fel a jelmondattal, és kapcsolja be újra.</string>
     <string name="vault_biometric_failed">A biometrikus feloldás nem sikerült — használja a jelmondatot.</string>
     <string name="vault_screenshots_label">Képernyőképek és előnézetek tiltása</string>
+    <string name="nav_home">Kezdőlap</string>
+    <string name="nav_settings">Beállítások</string>
+    <string name="about_title">Névjegy</string>
+    <string name="about_version">Verzió</string>
+    <string name="about_network">Az alkalmazásnak nincs hálózati jogosultsága. Nem tud kapcsolatot nyitni — sem frissítéshez, sem statisztikához, sem véletlenül.</string>
+    <string name="about_licenses">Licencek</string>
+    <string name="about_source">Forráskód</string>
 </resources>

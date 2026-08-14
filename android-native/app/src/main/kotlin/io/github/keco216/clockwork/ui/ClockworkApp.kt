@@ -252,7 +252,20 @@ fun ClockworkApp() {
        Zustaende hiessen zwei Wahrheiten darueber, wie weit die Seite gerollt
        ist. Die Kopfhoehe wird gemessen, nicht angenommen — sie haengt an der
        Schriftskala und an der Uebersetzung. */
-    val scroll = rememberScrollState()
+    /* ── Die zwei Seiten (N11) ─────────────────────────────────────────────
+       `rememberSaveable`: Die gewaehlte Seite ist keine Geheimnis-Sache, und
+       sie soll eine Drehung ueberleben. Das Textfeld daneben traegt
+       ausdruecklich `remember` — der Unterschied ist Absicht und in der
+       langen Begruendung oben nachzulesen. */
+    var page by rememberSaveable { mutableStateOf(Page.Home) }
+
+    /* Jede Seite behaelt ihre eigene Scrollposition — sonst landete man auf
+       der Einstellungen-Seite dort, wo die Startseite gerade stand. Der Kopf
+       haengt an der Position der SICHTBAREN Seite. */
+    val homeScroll = rememberScrollState()
+    val settingsScroll = rememberScrollState()
+    val scroll = if (page == Page.Settings) settingsScroll else homeScroll
+
     var mastheadHeight by remember { mutableIntStateOf(0) }
     val stowed = rememberStowed(scroll, mastheadHeight)
     val stow by animateFloatAsState(
@@ -286,7 +299,9 @@ fun ClockworkApp() {
                     }
                 },
         ) {
-            if (vacant) {
+            if (page == Page.Settings) {
+                SettingsPage(vault = vault, scroll = settingsScroll, topInset = topInset)
+            } else if (vacant) {
                 VacantStage(
                     field = field,
                     onFieldChange = { field = it; vault.resetIdleTimer() },
@@ -339,62 +354,51 @@ fun ClockworkApp() {
             )
         }
 
-        Colophon(
-            modifier = Modifier.padding(
-                start = Dimens.gapGroup,
-                end = Dimens.gapGroup,
-                bottom = Dimens.gapGroup,
-                top = Dimens.gapGroup,
-            ),
-        )
+        /* Die Zusagen-Zeile bleibt auf der STARTSEITE (N11b) — und sie steht
+           hier fest statt am Ende des Scrollbereichs.
+
+           Das ist eine bewusste Abweichung von der Web-Fassung, wo sie unten
+           am Dokument haengt: Eine Vertrauenszeile, die man erst erscrollen
+           muss, wirkt genau dann nicht, wenn sie gebraucht wird — beim ersten
+           Blick. Sie kostet zwoelf Punkt Hoehe, und die sind es wert.
+
+           Auf der Einstellungen-Seite steht sie nicht: Dort sagt die
+           Ueber-Seite dasselbe ausfuehrlich, und zweimal derselbe Satz auf
+           einem Schirm ist einer zu viel. */
+        if (page == Page.Home) {
+            ColophonLine(
+                modifier = Modifier.padding(
+                    horizontal = Dimens.gapGroup,
+                    vertical = Dimens.gapPair,
+                ),
+            )
+        }
+
+        BottomNav(current = page, onSelect = { page = it })
     }
 }
 
 /**
- * Der Fuss — die Zusage des Geraets und der Sprachumschalter.
+ * Die Zusagen-Zeile am Fuss der Startseite.
  *
  * Der Satz kommt aus `native.colophon.note` und nicht aus `colophon.note`:
  * Die Web-Fassung endet auf „HMAC ueber die Web Crypto API", und nativ
  * rechnet `javax.crypto`. Ausgerechnet der Satz, der die Zusagen der App
  * zusammenfasst, darf nicht die falsche nennen.
+ *
+ * Der Sprachumschalter stand hier bis N11 daneben — er ist jetzt auf der
+ * Einstellungen-Seite. Ein Auswahlfeld im Fuss ist die Handschrift einer
+ * Webseite, nicht die einer App.
  */
 @Composable
-private fun Colophon(modifier: Modifier = Modifier) {
+private fun ColophonLine(modifier: Modifier = Modifier) {
     val colors = LocalColors.current
-    val context = LocalContext.current
 
-    // Woher die aktuelle Sprache kommt: erst die per-App-Wahl, sonst das, was
-    // die Konfiguration gerade traegt. Beides kann Regionalvarianten
-    // enthalten, deshalb laeuft es durch denselben Aufloeser wie im Web.
-    val applied = AppCompatDelegate.getApplicationLocales()
-    val tags = buildList {
-        for (index in 0 until applied.size()) applied[index]?.toLanguageTag()?.let(::add)
-        val configured = context.resources.configuration.locales
-        for (index in 0 until configured.size()) add(configured[index].toLanguageTag())
-    }
-    val current = resolveLocaleCode(tags)
-
-    Column(
+    BasicText(
+        text = text("native.colophon.note"),
+        style = TextStyles.micro.copy(color = colors.ink3),
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(Dimens.gapPair),
-    ) {
-        BasicText(
-            text = text("native.colophon.note"),
-            style = TextStyles.micro.copy(color = colors.ink3),
-        )
-        LanguagePicker(
-            current = current,
-            onPick = { code ->
-                // Die per-App-Sprachwahl macht das System: ab API 33 der
-                // LocaleManager, darunter AppCompat. Die Web-Logik
-                // `resolveLocale` samt Sonderfaellen entfaellt damit — genau
-                // deshalb steht AppCompat ueberhaupt im Klassenpfad.
-                AppCompatDelegate.setApplicationLocales(
-                    LocaleListCompat.forLanguageTags(code),
-                )
-            },
-        )
-    }
+    )
 }
 
 /**

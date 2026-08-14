@@ -153,4 +153,11 @@
     <string name="vault_biometric_invalidated">Er is nieuwe biometrie geregistreerd, dus de sluiproute is weg. Ontgrendel met de wachtwoordzin en zet hem opnieuw aan.</string>
     <string name="vault_biometric_failed">Ontgrendelen met biometrie lukte niet — gebruik de wachtwoordzin.</string>
     <string name="vault_screenshots_label">Schermafbeeldingen en voorbeelden blokkeren</string>
+    <string name="nav_home">Start</string>
+    <string name="nav_settings">Instellingen</string>
+    <string name="about_title">Over</string>
+    <string name="about_version">Versie</string>
+    <string name="about_network">De app heeft geen netwerkrechten. Hij kan geen verbinding openen — niet voor updates, niet voor statistiek, niet per ongeluk.</string>
+    <string name="about_licenses">Licenties</string>
+    <string name="about_source">Broncode</string>
 </resources>

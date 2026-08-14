@@ -212,4 +212,13 @@ export default {
     'Új biometria lett regisztrálva, így a rövidítés eltűnt. Oldja fel a jelmondattal, és kapcsolja be újra.',
   'native.vault.biometric.failed': 'A biometrikus feloldás nem sikerült — használja a jelmondatot.',
   'native.vault.screenshots.label': 'Képernyőképek és előnézetek tiltása',
+
+  'native.nav.home': 'Kezdőlap',
+  'native.nav.settings': 'Beállítások',
+  'native.about.title': 'Névjegy',
+  'native.about.version': 'Verzió',
+  'native.about.network':
+    'Az alkalmazásnak nincs hálózati jogosultsága. Nem tud kapcsolatot nyitni — sem frissítéshez, sem statisztikához, sem véletlenül.',
+  'native.about.licenses': 'Licencek',
+  'native.about.source': 'Forráskód',
 } satisfies Strings;

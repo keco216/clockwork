@@ -216,4 +216,13 @@ export default {
   'native.vault.biometric.failed':
     'Ontgrendelen met biometrie lukte niet — gebruik de wachtwoordzin.',
   'native.vault.screenshots.label': 'Schermafbeeldingen en voorbeelden blokkeren',
+
+  'native.nav.home': 'Start',
+  'native.nav.settings': 'Instellingen',
+  'native.about.title': 'Over',
+  'native.about.version': 'Versie',
+  'native.about.network':
+    'De app heeft geen netwerkrechten. Hij kan geen verbinding openen — niet voor updates, niet voor statistiek, niet per ongeluk.',
+  'native.about.licenses': 'Licenties',
+  'native.about.source': 'Broncode',
 } satisfies Strings;

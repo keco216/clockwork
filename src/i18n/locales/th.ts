@@ -199,4 +199,13 @@ export default {
     'มีการลงทะเบียนไบโอเมตริกใหม่ ทางลัดจึงหายไป ปลดล็อกด้วยวลีรหัสผ่านแล้วเปิดใหม่อีกครั้ง',
   'native.vault.biometric.failed': 'ปลดล็อกด้วยไบโอเมตริกไม่สำเร็จ — ใช้วลีรหัสผ่าน',
   'native.vault.screenshots.label': 'บล็อกภาพหน้าจอและตัวอย่าง',
+
+  'native.nav.home': 'หน้าแรก',
+  'native.nav.settings': 'ตั้งค่า',
+  'native.about.title': 'เกี่ยวกับ',
+  'native.about.version': 'รุ่น',
+  'native.about.network':
+    'แอปไม่มีสิทธิ์เครือข่าย จึงเปิดการเชื่อมต่อไม่ได้ — ไม่ว่าเพื่ออัปเดต เพื่อสถิติ หรือโดยพลั้งเผลอ',
+  'native.about.licenses': 'สัญญาอนุญาต',
+  'native.about.source': 'ซอร์สโค้ด',
 } satisfies Strings;

@@ -238,4 +238,13 @@ export default {
     'Registrirana je bila nova biometrija, zato je bližnjice konec. Odklenite z geselno frazo in jo znova vklopite.',
   'native.vault.biometric.failed': 'Odklepanje z biometrijo ni uspelo — uporabite geselno frazo.',
   'native.vault.screenshots.label': 'Blokiraj posnetke zaslona in predoglede',
+
+  'native.nav.home': 'Domov',
+  'native.nav.settings': 'Nastavitve',
+  'native.about.title': 'O aplikaciji',
+  'native.about.version': 'Različica',
+  'native.about.network':
+    'Aplikacija nima dovoljenja za omrežje. Povezave ne more odpreti — ne za posodobitve, ne za statistiko, ne pomotoma.',
+  'native.about.licenses': 'Licence',
+  'native.about.source': 'Izvorna koda',
 } satisfies Strings;

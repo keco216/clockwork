@@ -177,4 +177,11 @@
     <string name="vault_biometric_invalidated">سُجّلت سمات حيوية جديدة، فذهب الاختصار. افتح بعبارة المرور وشغّله من جديد.</string>
     <string name="vault_biometric_failed">لم ينجح الفتح بالسمات الحيوية — استعمل عبارة المرور.</string>
     <string name="vault_screenshots_label">منع لقطات الشاشة والمعاينات</string>
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_settings">الإعدادات</string>
+    <string name="about_title">عن التطبيق</string>
+    <string name="about_version">الإصدار</string>
+    <string name="about_network">لا يملك التطبيق إذن الشبكة. لا يستطيع فتح أي اتصال — لا للتحديثات ولا للإحصاءات ولا عن طريق الخطأ.</string>
+    <string name="about_licenses">التراخيص</string>
+    <string name="about_source">الشفرة المصدرية</string>
 </resources>

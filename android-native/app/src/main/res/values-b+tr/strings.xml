@@ -153,4 +153,11 @@
     <string name="vault_biometric_invalidated">Yeni biyometri kaydedildi, bu yüzden kısayol gitti. Parola cümlesiyle açın ve yeniden etkinleştirin.</string>
     <string name="vault_biometric_failed">Biyometriyle kilit açma işe yaramadı — parola cümlesini kullanın.</string>
     <string name="vault_screenshots_label">Ekran görüntülerini ve önizlemeleri engelle</string>
+    <string name="nav_home">Ana sayfa</string>
+    <string name="nav_settings">Ayarlar</string>
+    <string name="about_title">Hakkında</string>
+    <string name="about_version">Sürüm</string>
+    <string name="about_network">Uygulamanın ağ izni yok. Hiçbir bağlantı açamaz — ne güncelleme için, ne istatistik için, ne de yanlışlıkla.</string>
+    <string name="about_licenses">Lisanslar</string>
+    <string name="about_source">Kaynak kodu</string>
 </resources>

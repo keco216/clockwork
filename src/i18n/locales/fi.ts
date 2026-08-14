@@ -211,4 +211,13 @@ export default {
     'Uusi biometria rekisteröitiin, joten oikotie on poissa. Avaa salauslauseella ja kytke se uudelleen päälle.',
   'native.vault.biometric.failed': 'Biometrinen avaus ei onnistunut — käytä salauslausetta.',
   'native.vault.screenshots.label': 'Estä kuvakaappaukset ja esikatselut',
+
+  'native.nav.home': 'Etusivu',
+  'native.nav.settings': 'Asetukset',
+  'native.about.title': 'Tietoja',
+  'native.about.version': 'Versio',
+  'native.about.network':
+    'Sovelluksella ei ole verkkolupaa. Se ei voi avata yhteyttä — ei päivityksiin, ei tilastoihin eikä vahingossa.',
+  'native.about.licenses': 'Lisenssit',
+  'native.about.source': 'Lähdekoodi',
 } satisfies Strings;

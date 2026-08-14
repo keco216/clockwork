@@ -235,4 +235,13 @@ export default {
     'Byla zaregistrována nová biometrie, takže zkratka zmizela. Odemkněte heslovou frází a znovu ji zapněte.',
   'native.vault.biometric.failed': 'Odemknutí biometrií se nezdařilo — použijte heslovou frázi.',
   'native.vault.screenshots.label': 'Blokovat snímky obrazovky a náhledy',
+
+  'native.nav.home': 'Domů',
+  'native.nav.settings': 'Nastavení',
+  'native.about.title': 'O aplikaci',
+  'native.about.version': 'Verze',
+  'native.about.network':
+    'Aplikace nemá oprávnění k síti. Nedokáže otevřít spojení — ani kvůli aktualizacím, ani kvůli statistice, ani omylem.',
+  'native.about.licenses': 'Licence',
+  'native.about.source': 'Zdrojový kód',
 } satisfies Strings;

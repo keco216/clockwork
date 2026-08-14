@@ -227,4 +227,13 @@ export default {
     'È stata registrata una nuova biometria, quindi la scorciatoia non c’è più. Sblocca con la passphrase e riattivala.',
   'native.vault.biometric.failed': 'Lo sblocco biometrico non ha funzionato — usa la passphrase.',
   'native.vault.screenshots.label': 'Bloccare screenshot e anteprime',
+
+  'native.nav.home': 'Home',
+  'native.nav.settings': 'Impostazioni',
+  'native.about.title': 'Informazioni',
+  'native.about.version': 'Versione',
+  'native.about.network':
+    'L’app non ha alcun permesso di rete. Non può aprire una connessione: né per aggiornamenti, né per statistiche, né per errore.',
+  'native.about.licenses': 'Licenze',
+  'native.about.source': 'Codice sorgente',
 } satisfies Strings;

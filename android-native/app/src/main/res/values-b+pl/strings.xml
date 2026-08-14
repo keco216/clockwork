@@ -165,4 +165,11 @@
     <string name="vault_biometric_invalidated">Zarejestrowano nową biometrię, więc skrót zniknął. Odblokuj hasłem i włącz go ponownie.</string>
     <string name="vault_biometric_failed">Odblokowanie biometrią się nie powiodło — użyj hasła.</string>
     <string name="vault_screenshots_label">Blokuj zrzuty ekranu i podglądy</string>
+    <string name="nav_home">Start</string>
+    <string name="nav_settings">Ustawienia</string>
+    <string name="about_title">O aplikacji</string>
+    <string name="about_version">Wersja</string>
+    <string name="about_network">Aplikacja nie ma uprawnienia do sieci. Nie otworzy połączenia — ani po aktualizacje, ani po statystyki, ani przez pomyłkę.</string>
+    <string name="about_licenses">Licencje</string>
+    <string name="about_source">Kod źródłowy</string>
 </resources>

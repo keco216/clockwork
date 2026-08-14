@@ -236,4 +236,13 @@ export default {
     'Зареєстровано нову біометрію, тож коротшого шляху більше немає. Відімкніть парольною фразою і ввімкніть його знову.',
   'native.vault.biometric.failed': 'Відімкнути біометрією не вдалося — візьміть парольну фразу.',
   'native.vault.screenshots.label': 'Забороняти знімки екрана та попередній перегляд',
+
+  'native.nav.home': 'Головна',
+  'native.nav.settings': 'Налаштування',
+  'native.about.title': 'Про застосунок',
+  'native.about.version': 'Версія',
+  'native.about.network':
+    'Застосунок не має дозволу на мережу. Він не може відкрити з’єднання — ні для оновлень, ні для статистики, ні помилково.',
+  'native.about.licenses': 'Ліцензії',
+  'native.about.source': 'Вихідний код',
 } satisfies Strings;

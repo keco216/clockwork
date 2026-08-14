@@ -153,4 +153,11 @@
     <string name="vault_biometric_invalidated">Ny biometri registrerades, så genvägen är borta. Lås upp med lösenfrasen och slå på den igen.</string>
     <string name="vault_biometric_failed">Upplåsning med biometri fungerade inte — använd lösenfrasen.</string>
     <string name="vault_screenshots_label">Blockera skärmbilder och förhandsvisningar</string>
+    <string name="nav_home">Start</string>
+    <string name="nav_settings">Inställningar</string>
+    <string name="about_title">Om</string>
+    <string name="about_version">Version</string>
+    <string name="about_network">Appen har inget nätverkstillstånd. Den kan inte öppna någon anslutning — varken för uppdateringar, för statistik eller av misstag.</string>
+    <string name="about_licenses">Licenser</string>
+    <string name="about_source">Källkod</string>
 </resources>

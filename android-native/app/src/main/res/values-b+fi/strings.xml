@@ -153,4 +153,11 @@
     <string name="vault_biometric_invalidated">Uusi biometria rekisteröitiin, joten oikotie on poissa. Avaa salauslauseella ja kytke se uudelleen päälle.</string>
     <string name="vault_biometric_failed">Biometrinen avaus ei onnistunut — käytä salauslausetta.</string>
     <string name="vault_screenshots_label">Estä kuvakaappaukset ja esikatselut</string>
+    <string name="nav_home">Etusivu</string>
+    <string name="nav_settings">Asetukset</string>
+    <string name="about_title">Tietoja</string>
+    <string name="about_version">Versio</string>
+    <string name="about_network">Sovelluksella ei ole verkkolupaa. Se ei voi avata yhteyttä — ei päivityksiin, ei tilastoihin eikä vahingossa.</string>
+    <string name="about_licenses">Lisenssit</string>
+    <string name="about_source">Lähdekoodi</string>
 </resources>

@@ -559,3 +559,151 @@ werden dabei gekürzt: „Store ag…", „Delete e…". Die Web-Fassung bricht 
 derselben Stelle auf zwei Zeilen um. Sichtbare Abweichung, also nach der
 Auftragsregel ein Fehler — er gehört in den Paritätsdurchgang P9 und nicht in
 diesen Posten.
+
+## N11 — die zwei Seiten: Bottom-Navigation
+
+Kevins Struktur-Entscheidung nach dem Blick auf die P7-Builds: Das 1:1
+übernommene Seitenende der Web-Fassung — Fuß, Sprachwähler und
+Tresor-Konfiguration im Fluss — fühlt sich nach Webseite an, nicht nach App.
+Die **Struktur** darf nativ abweichen, die **Designsprache** nicht.
+
+### Der Schnitt
+
+| Startseite                                                                  | Einstellungen                                                   |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Kopf (N10), Codes, Eingabe-Fold, Filter                                     | Sprache                                                         |
+| **Tresor-Zustand samt Kernaktionen** — aufsperren, zusperren, neu speichern | Zeitschaltung, „beim Verlassen sperren", Biometrie, FLAG_SECURE |
+| die einzeilige Zusagen-Zeile                                                | Gefahrenzone „Alles löschen", Über-Seite                        |
+
+Die Trennlinie ist nicht „selten gebraucht", sondern **„einmal entschieden"**.
+Deshalb bleibt der Tresor-Zustand vorn, obwohl er technisch derselbe Gegenstand
+ist wie seine Konfiguration: Wer die App öffnet, landet genau davor, und die
+Codes hängen daran.
+
+**Die Zusagen-Zeile steht fest statt am Ende des Scrollbereichs** — eine
+bewusste Abweichung von der Web-Fassung. Eine Vertrauenszeile, die man erst
+erscrollen muss, wirkt genau dann nicht, wenn sie gebraucht wird: beim ersten
+Blick. Auf der Einstellungen-Seite fehlt sie, weil die Über-Seite dort dasselbe
+ausführlich sagt.
+
+### Die Bilder
+
+| Datei                         | Was es zeigt                                                                           |
+| ----------------------------- | -------------------------------------------------------------------------------------- |
+| `n11-home-dunkel.png`         | Startseite, dunkel: Kopf, Leerbühne, Zusagen-Zeile, Leiste mit Zifferblatt und Zahnrad |
+| `n11-settings-dunkel.png`     | Einstellungen, dunkel: Sprache, Tresor, Über — der Kopf gilt auch hier                 |
+| `n11-about-dunkel.png`        | Die Über-Seite ausgescrollt: Zusagen, **Lizenzen**, Quelltext                          |
+| `n11-home-hell.png`           | Startseite, hell: Balken auf `--surface` mit Fuge, Cursor hinter „Start"               |
+| `n11-settings-hell.png`       | Einstellungen, hell                                                                    |
+| `n11-rtl-einstellungen.png`   | Arabisch: alles gespiegelt, Leiste ebenso — „الإعدادات" links, „الرئيسية" rechts       |
+| `n11-indikator-unterwegs.png` | **Der Beweis für „Tippen darf nicht warten"** — siehe unten                            |
+
+### Der wandernde Indikator, gemessen
+
+Der Wert **250 ms** ist nicht am Gerät gemessen, sondern durch
+`native-theme-check.mjs` belegt: `Motion.calm` ist deckungsgleich mit
+`--dur-calm` aus `tokens.css` (92 Werte geprüft). Am Gerät zu prüfen war das
+**Verhalten**.
+
+Gemessen wurde die Lage des Cursors in der Aufnahme, mit einem eigenen
+PNG-Leser (dieselbe Technik wie `check-contrast.mjs`): eine Zeile im oberen
+Polster des Cursors, dort liegt weder Zeichen noch Beschriftung.
+
+| Lauf | `animator_duration_scale` | Tipp                       | sofort gemessen | Befund                      |
+| ---- | ------------------------- | -------------------------- | --------------- | --------------------------- |
+| m1   | **0**                     | 270 → 810                  | **810**         | sofort am Ziel — er springt |
+| m2   | **10**                    | 810 → 270                  | **810**         | noch am Start — er fährt    |
+| m3   | 10                        | dieselbe Fahrt, 7 s später | **270**         | angekommen                  |
+
+Gleiche Abtastung, gegenteiliges Ergebnis. Bei gestreckter Skala steht der
+Cursor 1 s nach dem Tipp bei **301** — also unterwegs zwischen 810 und 270.
+`animator_duration_scale = 0` ist die Systemeinstellung „Animationen entfernen";
+dass der Cursor ihr folgt, ist die native Entsprechung von
+`prefers-reduced-motion`, und sie kostet keine eigene Abfrage (dieselbe
+Mechanik wie der Tastendruck seit P5).
+
+**`n11-indikator-unterwegs.png` zeigt beides in einem Bild:** Der Inhalt ist
+schon die Startseite (Konto 1, Code 045 401), die Beschriftung „Start" ist
+schon orange — und der Cursor steht noch unter „Einstellungen". Inhalt sofort,
+nur der Indikator fährt.
+
+### Der Tresor-Fluss auf der Startseite
+
+Einmal komplett durchgespielt, alles auf der Startseite:
+
+| Schritt       | Ergebnis                                                                  |
+| ------------- | ------------------------------------------------------------------------- |
+| Versiegeln    | `vault.json` angelegt                                                     |
+| App verlassen | „Gesperrt — Passphrase nötig", Kopf „Offline · Tresor gesperrt"           |
+| Aufsperren    | „Offen — Secrets liegen im Textfeld", „Tresor aufgesperrt.", Konto zurück |
+
+Die Zone trägt dabei **nur noch** Zustand und Kernaktionen — Zeitschaltung und
+Schalter sind weg, sie stehen auf der zweiten Seite.
+
+### Die Einstellungen-Seite ändert dieselben Werte
+
+**FLAG_SECURE**, über den Schalter auf der neuen Seite, mit Gegenprobe:
+
+| Schalter | `lock-settings.json`       | `adb shell screencap`     |
+| -------- | -------------------------- | ------------------------- |
+| an       | `"blockScreenshots":true`  | **19.193 Byte** (schwarz) |
+| aus      | `"blockScreenshots":false` | **167.846 Byte** (Inhalt) |
+
+**Die Zeitschaltung**, ebenfalls über die neue Seite: um 12:45:07 im
+Auswahlfeld auf „1 Minute" gestellt (`"timeoutMs":60000` in der Datei), um
+**12:46:44** steht der Kopf auf „Offline · **Tresor gesperrt**" und der
+Biometrie-Schalter ist verschwunden. Beides sichtbar, während man auf der
+Einstellungen-Seite steht — die Zustandszeile des Kopfes gilt also auf beiden
+Seiten.
+
+**Die Voreinstellung ist 5 Minuten**, auf frischer Installation gemessen. Die
+15 Minuten auf den P8-Builds waren der Testwert aus dem Migrationsbeweis, nicht
+die Vorgabe.
+
+### Zwei Fehler, die dieser Posten gefunden hat
+
+**1. Ein Absturz, der seit P5 im Code lag.** `focusRing` legte den Ring mit
+einem NEGATIVEN Polster (`padding(-offset)`) — in Compose verboten, es wirft
+`IllegalArgumentException: Padding must be non-negative`. Aufgefallen ist es
+nie, weil ein Finger keinen Fokus vergibt; die neuen Navigationsposten sind
+fokussierbar, und die IME-Aktion beim Aufsperren schob den Fokus dorthin. Die
+App stürzte zweimal reproduzierbar ab („Clockwork keeps stopping").
+
+Der Ring wird jetzt GEZEICHNET statt gelegt (`drawWithContent` + `drawOutline`
+auf einer um den Versatz vergrößerten Kontur) — das ist die wörtliche
+Entsprechung von `outline` + `outline-offset` im Web: kein Platzbedarf, kein
+Layout-Sprung. Gegenprobe: dieselbe Sequenz, die zweimal abstürzte, läuft
+jetzt durch (0 FATAL-Zeilen im Protokoll) und sperrt den Tresor auf.
+
+**2. Der Cursor stand auf Arabisch unter dem falschen Posten.** Gemessen wird
+mit `positionInParent().x` — einer PHYSISCHEN Koordinate. Gesetzt wurde sie mit
+`Modifier.offset` und `Alignment.CenterStart`, und die sind LOGISCH: Auf
+Arabisch zählen sie von rechts. Die Leiste spiegelte korrekt, der Cursor blieb
+links liegen.
+
+Jetzt `absoluteOffset` und `AbsoluteAlignment.CenterLeft`. Gemessen vorher und
+nachher:
+
+| Zustand                             | Cursor vorher | Cursor nachher |
+| ----------------------------------- | ------------- | -------------- |
+| Arabisch, „الرئيسية" (rechts) aktiv | 270 (falsch)  | **810**        |
+| Arabisch, „الإعدادات" (links) aktiv | 270           | **270**        |
+
+Dazu ein dritter, kleinerer Befund: Die Versionszeile las sich auf Arabisch als
+„dev-debug (20000)-2.0.0" — der Bidi-Algorithmus hatte die Teile umgestellt.
+Sie steht jetzt in Bidi-Isolation (U+2068/U+2069) und liest sich wieder als
+`2.0.0-dev-debug (20000)`.
+
+### Was beim Messen selbst schiefging
+
+Zwei Stunden dieses Postens gingen an Messfehler, nicht an Code — beide sind
+in CLAUDE.md als Fallen notiert:
+
+- **`Select-Object -First N` beendet den Node-Prozess vorzeitig.** Der
+  String-Generator wurde mitten im Lauf abgeschnitten und schrieb die neuen
+  Ressourcen nie. Die App zeigte daraufhin den Rückfalltext „This line could
+  not be read." in der Leiste — und das APK war frisch gebaut. Gefunden hat es
+  der Emulator, nicht der Bau.
+- **FLAG_SECURE macht jede Aufnahme schwarz**, und wer dann blind weitertippt,
+  landet in der Benachrichtigungsleiste und deutet den Unsinn als App-Fehler.
+  Erst Sicht herstellen, dann treiben.

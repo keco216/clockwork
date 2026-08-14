@@ -153,4 +153,11 @@
     <string name="vault_biometric_invalidated">Es wurde neue Biometrie registriert, damit ist die Abkürzung weg. Mit der Passphrase aufsperren und sie neu einschalten.</string>
     <string name="vault_biometric_failed">Das Entsperren per Biometrie hat nicht geklappt — nimm die Passphrase.</string>
     <string name="vault_screenshots_label">Bildschirmfotos und Vorschaubilder sperren</string>
+    <string name="nav_home">Start</string>
+    <string name="nav_settings">Einstellungen</string>
+    <string name="about_title">Über</string>
+    <string name="about_version">Version</string>
+    <string name="about_network">Die App hat keine Netzwerk-Berechtigung. Sie kann keine Verbindung öffnen — nicht für Aktualisierungen, nicht für Statistik, nicht aus Versehen.</string>
+    <string name="about_licenses">Lizenzen</string>
+    <string name="about_source">Quelltext</string>
 </resources>

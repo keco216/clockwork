@@ -213,4 +213,13 @@ export default {
   'native.vault.biometric.failed':
     'Atslēgšana ar biometriju neizdevās — izmantojiet paroles frāzi.',
   'native.vault.screenshots.label': 'Bloķēt ekrānuzņēmumus un priekšskatījumus',
+
+  'native.nav.home': 'Sākums',
+  'native.nav.settings': 'Iestatījumi',
+  'native.about.title': 'Par',
+  'native.about.version': 'Versija',
+  'native.about.network':
+    'Lietotnei nav tīkla atļaujas. Tā nevar atvērt savienojumu — ne atjauninājumiem, ne statistikai, ne aiz kļūdas.',
+  'native.about.licenses': 'Licences',
+  'native.about.source': 'Pirmkods',
 } satisfies Strings;

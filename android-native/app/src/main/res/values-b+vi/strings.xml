@@ -147,4 +147,11 @@
     <string name="vault_biometric_invalidated">Sinh trắc học mới đã được đăng ký nên lối tắt không còn. Hãy mở bằng cụm mật khẩu rồi bật lại.</string>
     <string name="vault_biometric_failed">Mở khoá bằng sinh trắc học không được — hãy dùng cụm mật khẩu.</string>
     <string name="vault_screenshots_label">Chặn ảnh chụp màn hình và bản xem trước</string>
+    <string name="nav_home">Trang chính</string>
+    <string name="nav_settings">Cài đặt</string>
+    <string name="about_title">Giới thiệu</string>
+    <string name="about_version">Phiên bản</string>
+    <string name="about_network">Ứng dụng không có quyền mạng. Nó không thể mở kết nối nào — không để cập nhật, không để thống kê, cũng không do nhầm lẫn.</string>
+    <string name="about_licenses">Giấy phép</string>
+    <string name="about_source">Mã nguồn</string>
 </resources>

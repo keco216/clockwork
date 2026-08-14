@@ -210,4 +210,13 @@ export default {
     'Der blev registreret ny biometri, så genvejen er væk. Lås op med adgangssætningen, og slå den til igen.',
   'native.vault.biometric.failed': 'Oplåsning med biometri virkede ikke — brug adgangssætningen.',
   'native.vault.screenshots.label': 'Bloker skærmbilleder og forhåndsvisninger',
+
+  'native.nav.home': 'Start',
+  'native.nav.settings': 'Indstillinger',
+  'native.about.title': 'Om',
+  'native.about.version': 'Version',
+  'native.about.network':
+    'Appen har ingen netværkstilladelse. Den kan ikke åbne en forbindelse — hverken til opdateringer, til statistik eller ved et uheld.',
+  'native.about.licenses': 'Licenser',
+  'native.about.source': 'Kildekode',
 } satisfies Strings;

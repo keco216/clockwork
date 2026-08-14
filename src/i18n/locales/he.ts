@@ -229,4 +229,13 @@ export default {
     'נרשם זיהוי ביומטרי חדש, ולכן קיצור הדרך נעלם. פתחו עם משפט־הסיסמה והפעילו אותו מחדש.',
   'native.vault.biometric.failed': 'הפתיחה בזיהוי ביומטרי לא הצליחה — השתמשו במשפט־הסיסמה.',
   'native.vault.screenshots.label': 'חסימת צילומי מסך ותצוגות מקדימות',
+
+  'native.nav.home': 'בית',
+  'native.nav.settings': 'הגדרות',
+  'native.about.title': 'אודות',
+  'native.about.version': 'גרסה',
+  'native.about.network':
+    'ליישום אין הרשאת רשת. הוא לא יכול לפתוח חיבור — לא לעדכונים, לא לסטטיסטיקה ולא בטעות.',
+  'native.about.licenses': 'רישיונות',
+  'native.about.source': 'קוד המקור',
 } satisfies Strings;

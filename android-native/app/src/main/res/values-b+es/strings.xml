@@ -159,4 +159,11 @@
     <string name="vault_biometric_invalidated">Se registró una biometría nueva, así que el atajo desapareció. Desbloquea con la frase de contraseña y vuelve a activarlo.</string>
     <string name="vault_biometric_failed">El desbloqueo biométrico no funcionó — usa la frase de contraseña.</string>
     <string name="vault_screenshots_label">Bloquear capturas de pantalla y vistas previas</string>
+    <string name="nav_home">Inicio</string>
+    <string name="nav_settings">Ajustes</string>
+    <string name="about_title">Acerca de</string>
+    <string name="about_version">Versión</string>
+    <string name="about_network">La aplicación no tiene permiso de red. No puede abrir ninguna conexión: ni para actualizaciones, ni para estadísticas, ni por error.</string>
+    <string name="about_licenses">Licencias</string>
+    <string name="about_source">Código fuente</string>
 </resources>

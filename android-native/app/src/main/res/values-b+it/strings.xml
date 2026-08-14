@@ -159,4 +159,11 @@
     <string name="vault_biometric_invalidated">È stata registrata una nuova biometria, quindi la scorciatoia non c’è più. Sblocca con la passphrase e riattivala.</string>
     <string name="vault_biometric_failed">Lo sblocco biometrico non ha funzionato — usa la passphrase.</string>
     <string name="vault_screenshots_label">Bloccare screenshot e anteprime</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_settings">Impostazioni</string>
+    <string name="about_title">Informazioni</string>
+    <string name="about_version">Versione</string>
+    <string name="about_network">L’app non ha alcun permesso di rete. Non può aprire una connessione: né per aggiornamenti, né per statistiche, né per errore.</string>
+    <string name="about_licenses">Licenze</string>
+    <string name="about_source">Codice sorgente</string>
 </resources>

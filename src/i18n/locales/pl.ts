@@ -238,4 +238,13 @@ export default {
     'Zarejestrowano nową biometrię, więc skrót zniknął. Odblokuj hasłem i włącz go ponownie.',
   'native.vault.biometric.failed': 'Odblokowanie biometrią się nie powiodło — użyj hasła.',
   'native.vault.screenshots.label': 'Blokuj zrzuty ekranu i podglądy',
+
+  'native.nav.home': 'Start',
+  'native.nav.settings': 'Ustawienia',
+  'native.about.title': 'O aplikacji',
+  'native.about.version': 'Wersja',
+  'native.about.network':
+    'Aplikacja nie ma uprawnienia do sieci. Nie otworzy połączenia — ani po aktualizacje, ani po statystyki, ani przez pomyłkę.',
+  'native.about.licenses': 'Licencje',
+  'native.about.source': 'Kod źródłowy',
 } satisfies Strings;

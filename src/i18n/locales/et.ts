@@ -211,4 +211,13 @@ export default {
     'Registreeriti uus biomeetria, seega otsetee on kadunud. Ava paroolifraasiga ja lülita see uuesti sisse.',
   'native.vault.biometric.failed': 'Biomeetriline avamine ei õnnestunud — kasuta paroolifraasi.',
   'native.vault.screenshots.label': 'Blokeeri ekraanipildid ja eelvaated',
+
+  'native.nav.home': 'Avaleht',
+  'native.nav.settings': 'Seaded',
+  'native.about.title': 'Teave',
+  'native.about.version': 'Versioon',
+  'native.about.network':
+    'Rakendusel pole võrguluba. See ei saa ühendust avada — ei uuenduste, statistika ega kogemata.',
+  'native.about.licenses': 'Litsentsid',
+  'native.about.source': 'Lähtekood',
 } satisfies Strings;

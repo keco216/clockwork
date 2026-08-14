@@ -165,4 +165,11 @@
     <string name="vault_biometric_invalidated">Зарегистрирована новая биометрия, поэтому короткого пути больше нет. Отоприте парольной фразой и включите его заново.</string>
     <string name="vault_biometric_failed">Отпереть биометрией не вышло — возьмите парольную фразу.</string>
     <string name="vault_screenshots_label">Запрещать снимки экрана и предпросмотр</string>
+    <string name="nav_home">Главная</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="about_title">О приложении</string>
+    <string name="about_version">Версия</string>
+    <string name="about_network">У приложения нет разрешения на сеть. Оно не может открыть соединение — ни для обновлений, ни для статистики, ни по ошибке.</string>
+    <string name="about_licenses">Лицензии</string>
+    <string name="about_source">Исходный код</string>
 </resources>

@@ -153,4 +153,11 @@
     <string name="vault_biometric_invalidated">Καταχωρίστηκαν νέα βιομετρικά, οπότε η συντόμευση χάθηκε. Ξεκλειδώστε με τη συνθηματική φράση και ενεργοποιήστε την ξανά.</string>
     <string name="vault_biometric_failed">Το ξεκλείδωμα με βιομετρικά δεν πέτυχε — χρησιμοποιήστε τη συνθηματική φράση.</string>
     <string name="vault_screenshots_label">Αποκλεισμός στιγμιότυπων οθόνης και προεπισκοπήσεων</string>
+    <string name="nav_home">Αρχική</string>
+    <string name="nav_settings">Ρυθμίσεις</string>
+    <string name="about_title">Σχετικά</string>
+    <string name="about_version">Έκδοση</string>
+    <string name="about_network">Η εφαρμογή δεν έχει άδεια δικτύου. Δεν μπορεί να ανοίξει σύνδεση — ούτε για ενημερώσεις, ούτε για στατιστικά, ούτε κατά λάθος.</string>
+    <string name="about_licenses">Άδειες</string>
+    <string name="about_source">Πηγαίος κώδικας</string>
 </resources>

@@ -231,4 +231,13 @@ export default {
   'native.vault.biometric.failed':
     'Le déverrouillage biométrique n’a pas fonctionné — utilisez la phrase secrète.',
   'native.vault.screenshots.label': 'Bloquer les captures d’écran et les aperçus',
+
+  'native.nav.home': 'Accueil',
+  'native.nav.settings': 'Réglages',
+  'native.about.title': 'À propos',
+  'native.about.version': 'Version',
+  'native.about.network':
+    'L’application n’a aucune permission réseau. Elle ne peut ouvrir aucune connexion — ni pour des mises à jour, ni pour des statistiques, ni par erreur.',
+  'native.about.licenses': 'Licences',
+  'native.about.source': 'Code source',
 } satisfies Strings;

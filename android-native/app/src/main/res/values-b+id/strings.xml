@@ -147,4 +147,11 @@
     <string name="vault_biometric_invalidated">Biometrik baru didaftarkan, jadi jalan pintasnya hilang. Buka dengan frasa sandi lalu nyalakan lagi.</string>
     <string name="vault_biometric_failed">Membuka dengan biometrik tidak berhasil — pakai frasa sandi.</string>
     <string name="vault_screenshots_label">Blokir tangkapan layar dan pratinjau</string>
+    <string name="nav_home">Beranda</string>
+    <string name="nav_settings">Pengaturan</string>
+    <string name="about_title">Tentang</string>
+    <string name="about_version">Versi</string>
+    <string name="about_network">Aplikasi ini tidak punya izin jaringan. Ia tidak bisa membuka koneksi — bukan untuk pembaruan, bukan untuk statistik, bukan karena keliru.</string>
+    <string name="about_licenses">Lisensi</string>
+    <string name="about_source">Kode sumber</string>
 </resources>

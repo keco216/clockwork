@@ -208,4 +208,13 @@ export default {
     'Ny biometri registrerades, så genvägen är borta. Lås upp med lösenfrasen och slå på den igen.',
   'native.vault.biometric.failed': 'Upplåsning med biometri fungerade inte — använd lösenfrasen.',
   'native.vault.screenshots.label': 'Blockera skärmbilder och förhandsvisningar',
+
+  'native.nav.home': 'Start',
+  'native.nav.settings': 'Inställningar',
+  'native.about.title': 'Om',
+  'native.about.version': 'Version',
+  'native.about.network':
+    'Appen har inget nätverkstillstånd. Den kan inte öppna någon anslutning — varken för uppdateringar, för statistik eller av misstag.',
+  'native.about.licenses': 'Licenser',
+  'native.about.source': 'Källkod',
 } satisfies Strings;

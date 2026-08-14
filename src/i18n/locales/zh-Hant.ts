@@ -197,4 +197,13 @@ export default {
     '註冊了新的生物辨識，捷徑沒了。請用密碼短語解鎖，再重新打開它。',
   'native.vault.biometric.failed': '生物辨識解鎖沒成功 — 請用密碼短語。',
   'native.vault.screenshots.label': '阻擋螢幕擷取和預覽',
+
+  'native.nav.home': '主頁',
+  'native.nav.settings': '設定',
+  'native.about.title': '關於',
+  'native.about.version': '版本',
+  'native.about.network':
+    '這個應用沒有網路權限。它打不開任何連線——不為更新，不為統計，也不會誤開。',
+  'native.about.licenses': '授權條款',
+  'native.about.source': '原始碼',
 } satisfies Strings;

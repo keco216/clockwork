@@ -165,4 +165,11 @@
     <string name="vault_biometric_invalidated">נרשם זיהוי ביומטרי חדש, ולכן קיצור הדרך נעלם. פתחו עם משפט־הסיסמה והפעילו אותו מחדש.</string>
     <string name="vault_biometric_failed">הפתיחה בזיהוי ביומטרי לא הצליחה — השתמשו במשפט־הסיסמה.</string>
     <string name="vault_screenshots_label">חסימת צילומי מסך ותצוגות מקדימות</string>
+    <string name="nav_home">בית</string>
+    <string name="nav_settings">הגדרות</string>
+    <string name="about_title">אודות</string>
+    <string name="about_version">גרסה</string>
+    <string name="about_network">ליישום אין הרשאת רשת. הוא לא יכול לפתוח חיבור — לא לעדכונים, לא לסטטיסטיקה ולא בטעות.</string>
+    <string name="about_licenses">רישיונות</string>
+    <string name="about_source">קוד המקור</string>
 </resources>

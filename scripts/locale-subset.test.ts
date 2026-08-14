@@ -310,7 +310,17 @@ describe('stripNativeKeys()', () => {
     // müssen, damit niemand einen weiteren einführt, ohne ihn zu bemerken.
     expect([...sets]).toEqual([
       [
+        // Seit N11: die zwei Seiten der nativen App. Die Web-Fassung ist EINE
+        // Seite und braucht deshalb weder Navigation noch eine Über-Seite;
+        // die Lizenzhinweise selbst sind Eigennamen und stehen im Code.
+        'native.about.licenses',
+        'native.about.network',
+        'native.about.source',
+        'native.about.title',
+        'native.about.version',
         'native.colophon.note',
+        'native.nav.home',
+        'native.nav.settings',
         'native.scan.camera.denied',
         'native.scan.camera.unavailable',
         'native.vacant.text',

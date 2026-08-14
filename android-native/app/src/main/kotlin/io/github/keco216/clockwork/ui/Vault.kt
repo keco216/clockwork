@@ -639,13 +639,13 @@ fun VaultZone(
                         }
                     }
 
+                    /* Nur die KERNAKTIONEN stehen hier. Zeitschaltung,
+                       Biometrie-Schalter, Bildschirmfoto-Sperre und das
+                       Loeschen sind seit N11 auf der Einstellungen-Seite:
+                       Sie werden konfiguriert, nicht bedient. Was der
+                       Arbeitsfluss braucht — aufsperren, zusperren, neu
+                       speichern — bleibt vorn. */
                     VaultActions(controller = controller, state = state)
-
-                    VaultSettings(
-                        controller = controller,
-                        state = state,
-                        activity = activity,
-                    )
                 }
             }
 
@@ -729,47 +729,67 @@ private fun PassphraseForm(
     }
 }
 
-/** Zusperren, neu speichern, alles loeschen. */
+/**
+ * Zusperren und neu speichern.
+ *
+ * „Alles loeschen" stand hier bis N11 daneben — als dritte Taste in derselben
+ * Zeile, in der man zusperrt. Es steht jetzt als [VaultDanger] auf der
+ * Einstellungen-Seite, raeumlich abgesetzt: Eine Taste, die alles
+ * unwiderruflich wegnimmt, gehoert nicht neben die, die man staendig
+ * benutzt.
+ */
 @Composable
 private fun VaultActions(controller: VaultController, state: VaultState) {
-    if (state == VaultState.Off) return
+    if (state != VaultState.Open) return
 
     Row(horizontalArrangement = Arrangement.spacedBy(Dimens.gapPair)) {
-        if (state == VaultState.Open) {
-            Key(
-                label = text("vault.action.lock"),
-                onClick = { controller.lock() },
-                modifier = Modifier.weight(1f),
-            )
-            Key(
-                label = text("vault.action.update"),
-                onClick = { controller.update() },
-                modifier = Modifier.weight(1f),
-            )
-        }
         Key(
-            label = if (controller.wipeArmed) {
-                text("vault.action.wipeConfirm")
-            } else {
-                text("vault.action.wipe")
-            },
-            onClick = {
-                if (controller.wipeArmed) {
-                    controller.disarmWipe()
-                    controller.wipe()
-                } else {
-                    controller.armWipe()
-                }
-            },
+            label = text("vault.action.lock"),
+            onClick = { controller.lock() },
             modifier = Modifier.weight(1f),
-            variant = KeyVariant.Danger,
+        )
+        Key(
+            label = text("vault.action.update"),
+            onClick = { controller.update() },
+            modifier = Modifier.weight(1f),
         )
     }
 }
 
+/**
+ * Die Gefahrenzone: alles loeschen, zweistufig.
+ *
+ * Zweistufig heisst hier woertlich, was es im Web heisst: Der erste Tipp
+ * SCHAERFT nur und beschriftet die Taste um, der zweite loescht. Wer den
+ * zweiten nicht tippt, hat nichts verloren — die Schaerfung faellt nach
+ * kurzer Zeit von selbst zurueck.
+ */
+@Composable
+fun VaultDanger(controller: VaultController, state: VaultState) {
+    if (state == VaultState.Off) return
+
+    Key(
+        label = if (controller.wipeArmed) {
+            text("vault.action.wipeConfirm")
+        } else {
+            text("vault.action.wipe")
+        },
+        onClick = {
+            if (controller.wipeArmed) {
+                controller.disarmWipe()
+                controller.wipe()
+            } else {
+                controller.armWipe()
+            }
+        },
+        modifier = Modifier.fillMaxWidth(),
+        variant = KeyVariant.Danger,
+    )
+}
+
 /** Sperrzeit, Sperren beim Verlassen, Biometrie, Bildschirmfotos. */
 @Composable
-private fun VaultSettings(
+fun VaultSettings(
     controller: VaultController,
     state: VaultState,
     activity: FragmentActivity?,

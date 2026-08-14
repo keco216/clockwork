@@ -153,4 +153,11 @@
     <string name="vault_biometric_invalidated">Ny biometri ble registrert, så snarveien er borte. Lås opp med passordfrasen og slå den på igjen.</string>
     <string name="vault_biometric_failed">Opplåsing med biometri virket ikke — bruk passordfrasen.</string>
     <string name="vault_screenshots_label">Blokker skjermbilder og forhåndsvisninger</string>
+    <string name="nav_home">Hjem</string>
+    <string name="nav_settings">Innstillinger</string>
+    <string name="about_title">Om</string>
+    <string name="about_version">Versjon</string>
+    <string name="about_network">Appen har ingen nettverkstillatelse. Den kan ikke åpne en forbindelse — verken for oppdateringer, for statistikk eller ved et uhell.</string>
+    <string name="about_licenses">Lisenser</string>
+    <string name="about_source">Kildekode</string>
 </resources>

@@ -147,4 +147,11 @@
     <string name="vault_biometric_invalidated">生体認証が新しく登録されたので近道は消えた。パスフレーズで解錠して、もう一度入れてほしい。</string>
     <string name="vault_biometric_failed">生体認証での解錠がうまくいかなかった — パスフレーズを使ってほしい。</string>
     <string name="vault_screenshots_label">スクリーンショットとプレビューを禁じる</string>
+    <string name="nav_home">ホーム</string>
+    <string name="nav_settings">設定</string>
+    <string name="about_title">このアプリについて</string>
+    <string name="about_version">バージョン</string>
+    <string name="about_network">このアプリにネットワーク権限はない。接続を開けない — 更新のためにも、統計のためにも、うっかりでも。</string>
+    <string name="about_licenses">ライセンス</string>
+    <string name="about_source">ソースコード</string>
 </resources>

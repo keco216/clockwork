@@ -224,4 +224,13 @@ export default {
   'native.vault.biometric.failed':
     'Το ξεκλείδωμα με βιομετρικά δεν πέτυχε — χρησιμοποιήστε τη συνθηματική φράση.',
   'native.vault.screenshots.label': 'Αποκλεισμός στιγμιότυπων οθόνης και προεπισκοπήσεων',
+
+  'native.nav.home': 'Αρχική',
+  'native.nav.settings': 'Ρυθμίσεις',
+  'native.about.title': 'Σχετικά',
+  'native.about.version': 'Έκδοση',
+  'native.about.network':
+    'Η εφαρμογή δεν έχει άδεια δικτύου. Δεν μπορεί να ανοίξει σύνδεση — ούτε για ενημερώσεις, ούτε για στατιστικά, ούτε κατά λάθος.',
+  'native.about.licenses': 'Άδειες',
+  'native.about.source': 'Πηγαίος κώδικας',
 } satisfies Strings;

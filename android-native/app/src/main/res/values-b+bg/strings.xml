@@ -153,4 +153,11 @@
     <string name="vault_biometric_invalidated">Регистрирана е нова биометрия, така че прекият път го няма. Отключете с парола-фразата и го включете отново.</string>
     <string name="vault_biometric_failed">Отключването с биометрия не се получи — използвайте парола-фразата.</string>
     <string name="vault_screenshots_label">Блокиране на снимки на екрана и на прегледите</string>
+    <string name="nav_home">Начало</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="about_title">Относно</string>
+    <string name="about_version">Версия</string>
+    <string name="about_network">Приложението няма разрешение за мрежа. Не може да отвори връзка — нито за обновявания, нито за статистика, нито по погрешка.</string>
+    <string name="about_licenses">Лицензи</string>
+    <string name="about_source">Изходен код</string>
 </resources>

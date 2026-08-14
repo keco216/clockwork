@@ -223,4 +223,13 @@ export default {
     'Foi registada uma nova biometria, por isso o atalho desapareceu. Destranque com a frase-passe e volte a ativá-lo.',
   'native.vault.biometric.failed': 'O desbloqueio por biometria não resultou — use a frase-passe.',
   'native.vault.screenshots.label': 'Bloquear capturas de ecrã e pré-visualizações',
+
+  'native.nav.home': 'Início',
+  'native.nav.settings': 'Definições',
+  'native.about.title': 'Acerca',
+  'native.about.version': 'Versão',
+  'native.about.network':
+    'A aplicação não tem permissão de rede. Não consegue abrir qualquer ligação — nem para atualizações, nem para estatísticas, nem por engano.',
+  'native.about.licenses': 'Licenças',
+  'native.about.source': 'Código-fonte',
 } satisfies Strings;
