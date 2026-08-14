@@ -202,6 +202,36 @@ class VaultTest {
     }
 
     @Test
+    fun `weist eine unsinnig hohe Iterationszahl zurueck, BEVOR sie rechnet`() {
+        // Der teure Fall: `iterations` steht im Umschlag als JSON-Zahl, wird
+        // also als Double gelesen. Ohne Obergrenze liefe die Ableitung mit
+        // Int.MAX_VALUE los und kaeme nie zurueck — der Tresor waere ohne
+        // „App-Daten loeschen" nicht mehr erreichbar.
+        //
+        // Dass der Test in Millisekunden durchlaeuft, IST die Aussage: Waere
+        // die Grenze weg, liefe er praktisch endlos.
+        val envelope = sealVault(secrets, "pass", fast)
+        val error = capture { openVault(envelope.copy(iterations = Int.MAX_VALUE), "pass") }
+        assertEquals("err.vault.iterations", error.key)
+        assertEquals(Int.MAX_VALUE.toString(), error.args["value"])
+    }
+
+    @Test
+    fun `lehnt erst OBERHALB der Grenze ab und laesst jeden echten Umschlag durch`() {
+        val envelope = sealVault(secrets, "pass", fast)
+        assertKey("err.vault.iterations") {
+            openVault(envelope.copy(iterations = MAX_VAULT_ITERATIONS + 1), "pass")
+        }
+
+        // Die Gegenrichtung wird NICHT durch einen Aufruf geprueft: Ein
+        // `openVault` mit MAX_VAULT_ITERATIONS wuerde die zehn Millionen
+        // Runden wirklich rechnen und den Testlauf um Sekunden verlaengern —
+        // fuer eine Aussage, die eine Zahl schon hergibt. Was zaehlt, ist,
+        // dass die Grenze ueber allem liegt, was diese App je schreibt.
+        assertTrue(MAX_VAULT_ITERATIONS > PBKDF2_ITERATIONS)
+    }
+
+    @Test
     fun `erkennt ein fremdes Verfahren nicht als Umschlag`() {
         assertFalse(isVaultEnvelope(VaultEnvelope(1, "scrypt", 1, "", "", "")))
         assertTrue(isVaultEnvelope(VaultEnvelope(1, "PBKDF2-SHA-256", 1, "", "", "")))

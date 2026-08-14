@@ -297,6 +297,16 @@ sealed class BiometricOutcome {
  * nicht, versuch es noch mal", und die Abfrage bleibt stehen. Nur Erfolg und
  * Fehler sind Endzustaende, und nur auf sie wird geantwortet — sonst
  * antwortete dieselbe Coroutine mehrfach.
+ *
+ * ── Warum trotzdem `isActive` an beiden Stellen steht ─────────────────────
+ * Weil „Endzustand" eine Zusage der Bibliothek ist und keine der Plattform.
+ * Es ist ein bekanntes Verhalten mancher Geraete, nach `onAuthenticationSuc-
+ * ceeded` noch ein `onAuthenticationError(ERROR_CANCELED)` nachzuschieben; und
+ * `invokeOnCancellation` ruft selbst `cancelAuthentication()` auf, was
+ * denselben Rueckruf ausloest. Ein zweites `resume` auf derselben Fortsetzung
+ * wirft `IllegalStateException` — aus einer geglueckten Entsperrung wuerde ein
+ * Absturz. Die zwei Abfragen kosten nichts, und die Nachbarn in
+ * `WebViewImport` machen es aus demselben Grund seit P8 genauso.
  */
 suspend fun askBiometric(
     activity: FragmentActivity,
@@ -309,6 +319,7 @@ suspend fun askBiometric(
         ContextCompat.getMainExecutor(activity),
         object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                if (!continuation.isActive) return
                 val unlocked = result.cryptoObject?.cipher
                 continuation.resume(
                     if (unlocked == null) BiometricOutcome.Failed else BiometricOutcome.Ok(unlocked),
@@ -316,6 +327,7 @@ suspend fun askBiometric(
             }
 
             override fun onAuthenticationError(code: Int, message: CharSequence) {
+                if (!continuation.isActive) return
                 continuation.resume(
                     when (code) {
                         BiometricPrompt.ERROR_NEGATIVE_BUTTON,

@@ -1875,3 +1875,361 @@ Vollständigkeit ist hier wichtiger als ein gutes Bild:
 Der Grund ist derselbe für alle sechs: Kevin hat ab Punkt 5 selbst getestet, und
 zwei Hände auf einem Telefon ergeben keinen Messaufbau. **P9 fotografiert den
 Endstand ohnehin.**
+
+---
+
+## N17 — Bug- und Security-Durchgang auf dem Stand nach N15
+
+Auftrag war ein vollständiger Durchgang in zwei Blöcken, dazu die offenen
+Restbeweise. **Der Auftrag stand nicht in `PROMPT-KOTLIN.md`** — die Datei endet
+unverändert bei N14 (50.321 Byte, 14.08. 17:53, 921 Zeilen, letzte Überschrift
+„Gegenprüfungs-Befund zum P0–P4-Stand"). Einen „Nachtrag 5" oder „N17" gibt es
+dort nicht; gearbeitet ist nach der Nachricht, und der Blockschnitt A/B ist
+selbst gesetzt. Dieselbe Lage wie in N15 und dieselbe Antwort darauf.
+
+**Block A** ist alles, was ohne Gerät entscheidbar ist: Quelltext, Manifest,
+Bauplan, Abhängigkeiten, die vorhandenen Dauerprüfungen. **Block B** ist alles,
+was nur das laufende Programm beantwortet: Berechtigungen im Kernel,
+Dateirechte, Prozessabbild, Sicherung, Bildschirmschutz.
+
+Gemessen auf dem physischen S24 Ultra, angeschlossen über WLAN
+(`192.168.1.142:5555` — die scrcpy-Verbindung aus N13; die USB-Kennung
+`R3CXB0R3C2K` trifft dann NICHT mehr, `adb` meldet „device not found").
+
+### Der Befund in einem Satz
+
+Der Kern ist sauber — Krypto, Speicher, Parser und die Netz-Zusage halten jeder
+Nachmessung stand. Der eine Fund von Gewicht kam nicht aus dem eigenen Code,
+sondern aus einer Abhängigkeit: **Die App holte bei jedem Kaltstart die
+Emoji-Schrift von Google Play Services.**
+
+### Der Hauptfund: eine Web-Schrift, die niemand bestellt hat
+
+`androidx.appcompat` — im Baum für genau eine Sache, die per-App-Sprachwahl —
+zieht `androidx.emoji2` mit. Dessen `EmojiCompatInitializer` hängt sich über
+`androidx.startup` in den Prozessstart und fragt den Schriftanbieter von Google
+Play Services nach `NotoColorEmojiCompat`.
+
+Der Beweis ist das Prozessabbild, nicht ein Verdacht:
+
+```
+$ adb shell run-as io.github.keco216.clockwork.dev cat /proc/12697/maps \
+    | grep -iE '\.(ttf|otf|ttc)' | awk '{print $NF}' | sort -u
+/data/data/com.google.android.gms/files/fonts/opentype/Noto_COLR_Emoji_Compat-400-100_0-0_0.ttf
+/system/fonts/Roboto-Regular.ttf
+/system/fonts/RobotoStatic-Regular.ttf
+```
+
+Warum das zählt, obwohl die App selbst nichts herunterlädt: Harte Regel 4 des
+Projekts lautet „zur Laufzeit keine fremde Netzwerkanfrage, **keine Web-Fonts
+von außen**". Die Verbindung baut Google Play Services stellvertretend auf; die
+App bleibt ohne INTERNET und ohne Socket. Übrig bleibt trotzdem eine Abfrage an
+einen Google-Dienst, bei der Google das anfragende Paket sieht — also ein
+Startsignal von Clockwork an Google, bei jedem Kaltstart. Genau die Bindung,
+wegen der `libs.versions.toml` ML Kit ausschließt.
+
+Zweiter Punkt: Es war eine **Verhaltens-Gabelung**. Auf einem F-Droid-Gerät ohne
+Play Services passiert gar nichts, auf einem Play-Gerät passiert es. Von zwei
+Fällen wäre nur einer je gemessen worden.
+
+**Behoben** über den Manifest-Merger (`tools:node="remove"` am Metadatum des
+Initialisierers). Die zwei anderen Initialisierer bleiben — sie sind
+prozessintern und fragen niemanden.
+
+Gegenmessung nach dem Bau, gleiches Gerät, gleicher Ablauf:
+
+|         | Treffer auf `gms/files/fonts` | Schriften im Prozess    |
+| ------- | ----------------------------- | ----------------------- |
+| vorher  | **1**                         | Noto-Emoji + 2 × Roboto |
+| nachher | **0**                         | nur 2 × Roboto          |
+
+Und die App zeichnet unverändert: derselbe Bildausschnitt vorher 1302, nachher
+1311 verschiedene Farben, die drei häufigsten auf das Pixel gleich (`#060607`
+Grund, `#27272a` Leistenpille, `#f05a28` Signal) — der Unterschied ist der
+weitergelaufene Countdown, nicht die Darstellung. Kein Absturz durch fehlendes
+`EmojiCompat`: Compose fragt `isConfigured()`, bevor es zugreift.
+
+Der Preis ist benannt: Emoji, die neuer sind als die Systemschrift, erscheinen
+als Kästchen.
+
+### Die offenen Restbeweise — alle drei nachgeholt
+
+**1. FLAG_SECURE bei der Erstinstallation.** Deinstalliert (vorher geprüft: es
+lag KEIN `vault.json` im `filesDir`, nur `lock-settings.json`), frisch
+installiert, `files/` existierte danach gar nicht — der Schalter kam also aus
+der Code-Voreinstellung und nicht aus einer Datei.
+
+| Zustand                                    | Ausschnitt (Zeilen 200–2900, 1440 px breit) | verschiedene Farben |
+| ------------------------------------------ | ------------------------------------------- | ------------------- |
+| frisch installiert, Schalter nie angefasst | 3.888.000 px                                | **1** (`#000000`)   |
+| `blockScreenshots:false`, sonst identisch  | 3.888.000 px                                | **1302**            |
+
+Die Grenze gehört dazu und ist neu gemessen: Über das **ganze** Bild sind es 474
+Farben, nicht 1. Die Systemleisten zeichnet SystemUI, und `FLAG_SECURE` deckt
+nur die Fläche des APP-Fensters. 4.473.658 von 4.492.800 px (99,57 %) sind
+schwarz; der Rest ist Uhr, Akku und Gestenbalken. Wer „eine Farbe" behauptet,
+muss den Ausschnitt mitnennen.
+
+**2. Die Ausnahmeliste in `native-web-words.mjs` ist leer.** `ALLOWED = new
+Map([])` im Quelltext, und der Generator läuft durch: 37 Sprachen, 137
+Schlüssel je Sprache, 5069 Einträge (erwartet 5069), 21 davon aus dem
+`native.`-Vorrat. Danach `git status` über `res/`, `StringKeys.kt` und
+`LocaleRegistry.kt`: **leer** — der Generator schreibt genau das, was schon
+dasteht.
+
+**3. Die P7-Zahlen.** Kreuzproben neu erzeugt und in beide Richtungen gefahren:
+Node versiegelt → Kotlin öffnet **4/4**, Kotlin versiegelt → Node öffnet
+**4/4** (ascii, nicht-ascii, leerer Klartext, volle 600.000 Iterationen).
+`VaultTest` 26 Tests, `VaultKeyTest` 13, null Fehler. Die sechs
+Manipulations-Gegenproben sind da und grün: gekipptes Bit im Chiffrat,
+gekipptes Bit im Tag, veränderter IV, verändertes Salt, abgeschnittenes
+Chiffrat, heruntergesetzte Iterationszahl.
+
+**Was NICHT nachgeholt ist, und warum:** die Biometrie-Invalidierung. Sie
+verlangt, einen Fingerabdruck zu registrieren oder zu entfernen — auf diesem
+Gerät sind das Kevins echte. Der Beweis von P7 ist am Emulator mit
+eingespielten Abdrücken geführt worden und bleibt der gültige.
+
+### Block B — was das laufende Programm sagt
+
+**Die Netz-Zusage hält auf Kernel-Ebene.** Nicht das Manifest ist der Beweis,
+sondern die Gruppenliste des Prozesses:
+
+```
+$ adb shell cat /proc/14999/status | grep -E '^(Uid|Gid|Groups):'
+Uid:    10384   10384   10384   10384
+Gid:    10384   10384   10384   10384
+Groups: 9997 20384 50384
+```
+
+**3003 (`inet`) fehlt.** Ohne diese Gruppe kann der Prozess keinen Netz-Socket
+öffnen — eine Aussage über das Betriebssystem und nicht über die Absicht der
+App. Dazu `aapt2 dump badging` am Release-APK: INTERNET-Treffer **0**,
+angefragte Berechtigungen genau CAMERA, USE_BIOMETRIC, USE_FINGERPRINT
+(maxSdk 27) und die signaturgeschützte `DYNAMIC_RECEIVER_NOT_EXPORTED`; beide
+Kamera-Features `uses-feature-not-required`; minSdk 26, target 36.
+
+**Eine Messfalle dabei, und sie ist neu:** `adb shell run-as <pkg> id` zeigt
+**3003(inet)** in den Gruppen — und das ist falsch. `run-as` läuft in seinem
+eigenen Kontext (`u:r:runas_app:s0`) und meldet dessen Zusatzgruppen, nicht die
+des App-Prozesses. Wer die Netz-Zusage messen will, liest `/proc/<pid>/status`
+des laufenden Prozesses. Beinahe wäre daraus ein Befund geworden, den es nicht
+gibt — dieselbe Familie wie das leere Vergleichsfeld beim APK-Vergleich.
+
+**Zur Laufzeit erteilt** sind USE_BIOMETRIC und die eigene
+Signaturberechtigung; **CAMERA steht auf `granted=false`** und wurde nie
+erteilt.
+
+**Die Sicherung ist wirklich aus.** `dumpsys package` listet die Flags
+`[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ]` — **`ALLOW_BACKUP` steht nicht
+darin**, und `dumpsys backup` kennt das Paket nicht. `allowBackup="false"`
+wirkt also, nicht nur im Manifest.
+
+**Dateirechte im `filesDir`:** `-rw-------` für jede Datei, das Verzeichnis
+`drwxrwx--x` und ihm übergeordnet `drwx------`. Kein anderes Paket kommt heran.
+
+**Was sonst noch im Datenverzeichnis liegt** — vollständig, weil die Zusage
+„ohne Tresor wird nichts gespeichert" davon lebt:
+
+| Datei                                             | Wer schreibt sie            | Inhalt                             |
+| ------------------------------------------------- | --------------------------- | ---------------------------------- |
+| `files/lock-settings.json`                        | die App                     | vier Einstellungen, kein Geheimnis |
+| `files/profileInstalled`                          | `androidx.profileinstaller` | Merker, 24 Byte                    |
+| `shared_prefs/android.app.ActivityThread.IDS.xml` | die Plattform               | `IDSCount=1`                       |
+
+`profileInstalled` entsteht auch auf einer frischen Installation ohne jede
+Bedienung — nachgemessen direkt nach `install`. Kein Nutzerdatum, aber es
+gehört gewusst.
+
+### Was geprüft wurde und sauber ist
+
+Das ist der längere Teil des Berichts und der wichtigere.
+
+**Krypto (`core/Vault.kt`).** PBKDF2-SHA-256 mit 600.000 Runden; AES-GCM mit
+96-Bit-IV (die Länge, bei der GCM den Zählerblock direkt bildet) und
+128-Bit-Tag; frischer IV bei jedem Versiegeln, auch bei „Neu speichern"; die
+AAD bindet Version, Verfahren und Iterationszahl; jeder Fehlschlag beim Öffnen
+gibt dieselbe Meldung, egal ob falsche Passphrase, gekipptes Bit oder
+abgeschnittenes Chiffrat. `VaultKey.clear()` überschreibt mit Nullen, und
+`SecretKeySpec` wird bei jedem Aufruf neu gebaut statt im Feld gehalten — sonst
+läge eine zweite Kopie außerhalb der Reichweite von `clear()`. Die Grenze („die
+JVM gibt Speicher nicht auf Zuruf frei") steht im Quelltext, statt übergangen
+zu werden.
+
+**Keystore und Biometrie.** Ausdrücklich `BIOMETRIC_STRONG` und ausdrücklich
+**kein** `DEVICE_CREDENTIAL` — die Geräte-PIN ist nicht die Passphrase des
+Tresors. `setUserAuthenticationParameters(0, …)` ab API 30 heißt Freigabe bei
+JEDER Benutzung. `setInvalidatedByBiometricEnrollment(true)` entwertet den
+Wickel, sobald jemand einen neuen Finger registriert. Eingewickelt wird der
+ABGELEITETE Schlüssel, nie die Passphrase, und das Salt des Umschlags liegt als
+Veraltungsanker daneben.
+
+**Speicher.** `vault.json` wird atomar geschrieben (Nebendatei, `fd.sync()`,
+`Files.move` mit `ATOMIC_MOVE`) — ein abgebrochener Schreibvorgang kann den
+Tresor nicht halbieren. `EncryptedSharedPreferences` ist begründet verworfen:
+Es hängt den Tresor an das Gerät statt an die Passphrase.
+
+**Parser gegen fremde Eingaben** (QR-Code, eingefügter Text). Der
+Protobuf-Leser begrenzt Varints auf 10 Byte, prüft jede Längenangabe gegen die
+Restlänge **vor** der Wandlung nach `Int` und lehnt Wire-Type und Feldnummer 0
+ab. Base32 schneidet das Padding in einer Schleife statt mit `/=+$/` — der
+Regex hatte im Web quadratische Laufzeit. `parseIntegerStrict` nimmt nur
+Ziffern; `parsePeriod` klemmt auf 1…3600, `digits` auf 6…8. `decodePayload`
+schneidet den `data`-Parameter von Hand heraus, weil jeder Formular-Decoder das
+`+` in Base64 still zu einem Leerzeichen macht.
+
+**Format-Zeichenketten.** Die Stelle, an der ich einen Fehler erwartet und
+keinen gefunden habe. `err_uri_badLabel` enthält in allen 37 Sprachen ein
+nacktes `%` („ein einzelnes »%«") — bei einem Aufruf über `String.format` wäre
+das eine `UnknownFormatConversionException` beim ANZEIGEN einer Fehlermeldung.
+Es kann nicht passieren: `native-strings.mjs` verdoppelt `%` genau dann, wenn
+der Text Platzhalter hat, und `Text.kt` formatiert genau dann. Beide
+Entscheidungen kommen aus derselben Quelle (`placeholderNames` der
+Basissprache, aus der auch `placeholdersFor` erzeugt wird). Die Invariante hat
+eine Wahrheit, nicht zwei.
+
+**Der WebView-Pfad (P8)** hält allem stand, was ich ihm entgegengehalten habe:
+Jede Anfrage wird aus dem Programm mit einer leeren Seite beantwortet, das
+Skript ist eine Konstante ohne eingesetzte Werte, gelöscht wird erst nach
+bestätigtem Schreiben, und ein Umschlag, den diese Fassung nicht kennt, bleibt
+unangetastet liegen.
+
+**Was im Quelltext gar nicht vorkommt** — jedes einzeln gesucht: `Log.`,
+`println`, `printStackTrace`; `Class.forName`, `Runtime.getRuntime`,
+`ProcessBuilder`, `System.loadLibrary`; `Intent(`, `registerReceiver`,
+`sendBroadcast`, `startActivity`. Die App schreibt nichts ins Protokoll, lädt
+nichts nach und hat außer ihrer Launcher-Activity keine eigene IPC-Oberfläche.
+
+**Das Secret-Feld** trägt `remember` und nicht `rememberSaveable` (die
+P6-Lehre), dazu `KeyboardType.Ascii`, keine Großschreibung, keine
+Autokorrektur. `IME_FLAG_NO_PERSONALIZED_LEARNING` bleibt unerreichbar — das
+steht seit N15 dabei und gilt weiter.
+
+**Die Zwischenablage** wird ab API 33 als `EXTRA_IS_SENSITIVE` markiert, die
+Lücke darunter ist im Quelltext benannt.
+
+### Die kleinen Fixes dieses Laufs
+
+Vier, alle im selben Lauf gemessen.
+
+**1. Eine Iterationszahl ohne Obergrenze konnte die App unerreichbar machen.**
+`iterations` steht im Umschlag als JSON-Zahl, wird also als `Double` gelesen;
+`1e20` wird beim Wandeln zu `Int.MAX_VALUE`. Geprüft wurde bisher nur
+„mindestens 1". Ein verrutschtes Byte in `vault.json` hätte die Ableitung mit
+2.147.483.647 Runden starten lassen — rund 3500-mal so lang wie vorgesehen,
+also praktisch für immer, und zwar bevor die AAD überhaupt zum Zug kommt (die
+merkt es erst beim Entschlüsseln, also NACH der Ableitung). Der Tresor wäre
+ohne „App-Daten löschen" nicht mehr erreichbar gewesen, und mit dem Löschen
+weg. Jetzt gilt `MAX_VAULT_ITERATIONS = 10_000_000` — reichlich sechzehnmal die
+eigene Vorgabe, also öffnet jeder echte Umschlag unverändert. Zwei Tests dazu;
+dass sie in Millisekunden durchlaufen, IST die Aussage. Bewusste Abweichung von
+`src/lib/vault.ts`, das seit v1 eingefroren ist und nur nach unten prüft — die
+Abweichung geht in die sichere Richtung.
+
+**2. Die Biometrie-Abfrage konnte zweimal antworten.**
+`onAuthenticationSucceeded` und `onAuthenticationError` riefen beide
+`continuation.resume` ohne `isActive`-Prüfung. Manche Geräte schieben nach
+einem Erfolg noch ein `ERROR_CANCELED` nach, und `invokeOnCancellation` ruft
+selbst `cancelAuthentication()` auf — ein zweites `resume` wirft
+`IllegalStateException`. Aus einer geglückten Entsperrung wäre ein Absturz
+geworden. Die Nachbarn in `WebViewImport` prüfen seit P8 genau so.
+
+**3. Die Bildgrenze hielt nicht, was ihr Kommentar versprach.**
+`MAX_IMAGE_EDGE` heißt „größte Kantenlänge, mit der ein gewähltes Bild
+dekodiert wird" und steht auf 2048. Die Schleife war das übliche
+BitmapFactory-Muster (`… / (sample * 2) >= MAX`) und rechnet andersherum: Sie
+sucht die stärkste Verkleinerung, bei der das Bild noch MINDESTENS so groß ist
+wie verlangt. Herausgekommen ist eine Kante zwischen 2048 und 4095.
+
+| Bild                         | vorher Kante / Speicher | nachher Kante / Speicher |
+| ---------------------------- | ----------------------- | ------------------------ |
+| S24-Bildschirmfoto 1080×2400 | 2400 / 21 MB            | 1200 / 5 MB              |
+| 12-MP-Foto 4000×3000         | 4000 / **96 MB**        | 2000 / 24 MB             |
+| 50-MP-Foto 8160×6120         | 4080 / **100 MB**       | 2040 / 25 MB             |
+
+(Speicher = Bitmap 4 B/px + das `IntArray` der Pixel 4 B/px.) Ein gewöhnliches
+Handyfoto lief ungesampelt durch. Jetzt hält die Grenze, und der Kommentar
+stimmt. **Offen:** Der Picker-Weg ist danach nicht noch einmal am Gerät
+durchgespielt worden — gehört zu P9.
+
+**4. Die Emoji-Schrift** — siehe oben.
+
+**Ketten nach den Fixes:** Kotlin **223 Tests** (221 + 2), null Fehler;
+`checkNoMaterial` grün; Release baut, **3.291.141 Byte**, INTERNET-Treffer 0,
+Emoji-Initialisierer im gepackten Release-Manifest **0**. Die Web-Kette ist
+unberührt (kein Byte unter `src/` oder `scripts/` angefasst) und in diesem Lauf
+trotzdem gefahren: typecheck, **560 Tests**, Lint, Prettier, Build, und
+`dist/clockwork.html` byte-identisch — 801.401 Byte, SHA-256 `175f4a8e…584e`,
+vor und nach dem Bau gehasht.
+
+### Die Folgeposten — was nicht in diesen Lauf gehörte
+
+Nummeriert, damit man sie einzeln nehmen kann.
+
+**F1 — Die Zeitschaltung misst die falsche Uhr.** `resetIdleTimer` benutzt
+`delay(timeoutMs)` auf dem Kompositions-Scope. Dessen Verzögerung läuft über
+eine MONOTONE Uhr (`nanoTime` bzw. `Handler.postDelayed` auf `uptimeMillis`),
+und die steht im Tiefschlaf des Geräts still — anders als `elapsedRealtime`.
+Liegt das Telefon drei Stunden in der Tasche, sind davon für die Frist nur die
+Wachzeiten vergangen. Im Normalfall greift vorher `lockOnHide` (Voreinstellung
+an, und der Bildschirm-Aus schickt die Activity durch `onStop`); wer den
+Schalter ausmacht, verlässt sich aber genau auf diese Frist. **Nicht gemessen,
+hergeleitet** — Tiefschlaf lässt sich am Schreibtisch nicht in Minuten
+herbeiführen, und `force-idle` legt die CPU nicht schlafen. Der Weg wäre eine
+Frist in `SystemClock.elapsedRealtime()` plus eine Prüfung beim Zurückkommen;
+das ändert Verhalten und braucht einen eigenen Beweis.
+
+**F2 — ART-Baseline-Profile: entscheiden statt erben.** Die 1.x-Fassung
+schaltet sie ausdrücklich ab, weil `assets/dexopt/baseline.prof` unter AGP
+nicht deterministisch ausfällt (gemessen gegen den F-Droid-Buildserver: 1761
+gegen 1759 Byte). Die native Fassung hat sie an — `files/profileInstalled` ist
+der Beweis. Die Begründung von damals trägt hier NICHT: Dort war die Java-Seite
+eine dünne Capacitor-Brücke, hier ist die ganze Oberfläche Kotlin, ein Profil
+hilft also wirklich. Es bleibt eine Quelle der Nichtreproduzierbarkeit für ein
+späteres F-Droid-2.0.0 und eine stille Abweichung von 1.x. Entscheidung, kein
+Fehler.
+
+**F3 — Die Zwischenablage wird nie geleert.** Ein kopierter Code bleibt darin
+stehen, bis ihn etwas ersetzt. Entschärft ist es durch die Plattform: Seit
+Android 10 liest keine Hintergrund-App die Zwischenablage. Etablierte
+Authenticatoren bieten trotzdem ein „nach n Sekunden leeren". Produktfrage.
+
+**F4 — Tapjacking.** Die App setzt weder `filterTouchesWhenObscured` noch
+`Window.setHideOverlayWindows` (ab API 31). Eine Overlay-App könnte über dem
+Passphrasenfeld liegen. Braucht Entwurf und eine Messung.
+
+**F5 — `taskAffinity`.** Die Activity läuft mit `singleTask` und der
+voreingestellten Affinität (= Paketname). `android:taskAffinity=""` ist die
+übliche Härtung gegen fremde Activities in derselben Aufgabe. Zu prüfen ist, ob
+es das Verhalten am Launcher ändert.
+
+**F6 — Der exportierte `ProfileInstallReceiver`.** `androidx.profileinstaller`
+mischt ihn ein: `exported="true"`, geschützt durch `android.permission.DUMP`
+(signature|privileged) — erreichbar also nur von Shell und System, kein
+Angriffsweg. Er steht trotzdem in keinem der beiden Manifeste, und der Kopf von
+`AndroidManifest.xml` behauptet, das Nichtvorhandene sei die Aussage der Datei.
+Dieselbe Lehre wie bei den zwei Biometrie-Berechtigungen in P7: Eine Zusage,
+die eine Abhängigkeit still ändern kann, ist keine. Entweder ausschreiben oder
+mit F2 zusammen entfernen.
+
+**F7 — Kleinkram, gesammelt.** (a) Der Filtertext steht in `rememberSaveable`
+und damit im Instanzzustand der Activity — er ist kein Secret, verrät aber
+Kontonamen. (b) `PercentCodec.hexValue` benutzt `Character.digit` und
+`Json.readEscape` benutzt `toIntOrNull(16)`; beide nehmen Ziffern an, die
+`decodeURIComponent` ablehnt (arabisch-indische, Vollbreite, führendes
+Vorzeichen). Folgenlos, weil dahinter strenge Prüfungen stehen — aber eine
+Abweichung vom Web. (c) Die per-App-Sprache liegt ab API 33 in den
+Systemeinstellungen und überlebt „App-Daten löschen". (d) R8 meldet fünfmal
+„error occurred when parsing kotlin metadata" — Kotlin 2.4.10 ist neuer als das
+R8 von AGP 8.13; das kostet Optimierung, nicht Korrektheit.
+
+### Zwei Messfallen für die Sammlung
+
+1. **`run-as … id` lügt über die Gruppen.** Siehe oben. Die Wahrheit steht in
+   `/proc/<pid>/status` des laufenden Prozesses.
+2. **Git-Bash schreibt auch den GERÄTEPFAD eines `run-as cp` um.** Bekannt war
+   die Falle für `screencap`; sie gilt genauso für das QUELL-Argument eines
+   `cp` in der Geräte-Shell. `cp: 'files/lock-settings.json' not directory` ist
+   die Fehlermeldung dafür — sie zeigt auf das falsche Argument.
+   `MSYS_NO_PATHCONV=1` gehört vor JEDEN `adb`-Aufruf, dessen Argumente auf dem
+   Gerät liegen.

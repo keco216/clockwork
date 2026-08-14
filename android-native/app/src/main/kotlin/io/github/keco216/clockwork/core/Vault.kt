@@ -56,6 +56,37 @@ import javax.crypto.spec.SecretKeySpec
 /** OWASP-Empfehlung fuer PBKDF2-SHA-256. */
 const val PBKDF2_ITERATIONS = 600_000
 
+/**
+ * Obergrenze fuer eine GELESENE Iterationszahl.
+ *
+ * ── Warum es sie geben muss ───────────────────────────────────────────────
+ * Die Zahl kommt aus einer Datei, und `iterations` steht im Umschlag als
+ * JSON-Zahl — also als `Double`. `1e20` wird beim Lesen zu `Int.MAX_VALUE`
+ * (2 147 483 647), und die einzige Pruefung war bisher „mindestens 1". Ein
+ * einziges verrutschtes Byte in `vault.json` liesse die App damit rund
+ * 3500-mal so lange ableiten wie vorgesehen — praktisch fuer immer. Das
+ * Ergebnis ist kein Fehler, sondern ein haengender Knopf; der Tresor waere
+ * ohne „App-Daten loeschen" nicht mehr erreichbar, und mit dem Loeschen
+ * waere er weg.
+ *
+ * Die AAD schuetzt hier NICHT: Sie bindet die Iterationszahl zwar an das
+ * Chiffrat, aber gemerkt wird das erst beim Entschluesseln — also NACH der
+ * Ableitung. Die Grenze muss davor stehen.
+ *
+ * ── Warum genau diese Zahl ────────────────────────────────────────────────
+ * 10 Millionen ist reichlich sechzehnmal die eigene Vorgabe und liegt weit
+ * ueber allem, was ein Werkzeug real schreibt — jeder echte Umschlag oeffnet
+ * unveraendert weiter. Sie ist keine Sicherheitsschwelle, sondern eine
+ * Plausibilitaetsgrenze: Was darueber steht, ist kaputt und nicht streng.
+ *
+ * ── Eine bewusste Abweichung von der Web-Fassung ──────────────────────────
+ * `src/lib/vault.ts` prueft nur nach unten und ist seit v1 byte-identisch
+ * eingefroren — dort aendert sich nichts. Die Abweichung geht in die
+ * sichere Richtung: Diese Fassung lehnt einen Umschlag ab, den die
+ * Web-Fassung stundenlang zu oeffnen versuchte.
+ */
+const val MAX_VAULT_ITERATIONS = 10_000_000
+
 /** 128 Bit Salt — verhindert vorberechnete Tabellen ueber mehrere Tresore. */
 private const val SALT_BYTES = 16
 
@@ -381,17 +412,21 @@ private fun assertEnvelope(envelope: VaultEnvelope) {
 }
 
 /**
- * Eine Iterationszahl unter 1 ist keine Manipulation, sondern Unsinn — sie
- * bekommt deshalb ihre EIGENE Meldung und nicht die neutrale „Oeffnen
- * fehlgeschlagen".
+ * Eine Iterationszahl ausserhalb von 1 bis [MAX_VAULT_ITERATIONS] ist keine
+ * Manipulation, sondern Unsinn — sie bekommt deshalb ihre EIGENE Meldung und
+ * nicht die neutrale „Oeffnen fehlgeschlagen".
  *
  * Die Unterscheidung ist kein Widerspruch zur Regel weiter oben: Verschwiegen
  * wird, WORAN eine Entschluesselung gescheitert ist. Dass eine Datei
  * offensichtlich kaputt ist, verraet einem Angreifer nichts, was er nicht
  * ohnehin sieht.
+ *
+ * Die Reihenfolge ist der Punkt: Diese Pruefung steht in [deriveVaultKey] VOR
+ * der Ableitung. Danach waere sie wertlos — die teure Rechnung ist dann
+ * bereits gelaufen. Siehe [MAX_VAULT_ITERATIONS].
  */
 private fun assertIterations(iterations: Int) {
-    if (iterations < 1) {
+    if (iterations < 1 || iterations > MAX_VAULT_ITERATIONS) {
         throw VaultError("err.vault.iterations", mapOf("value" to iterations.toString()))
     }
 }

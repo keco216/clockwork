@@ -511,8 +511,17 @@ private fun readScaledBitmap(context: Context, uri: Uri): Bitmap? {
         measured.use { BitmapFactory.decodeStream(it, null, bounds) }
         if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
 
+        /* Verkleinern, bis die laengste Kante WIRKLICH unter der Grenze liegt.
+           Hier stand das uebliche Muster aus der BitmapFactory-Doku
+           (`… / (sample * 2) >= MAX`), und das rechnet andersherum: Es sucht
+           die groesste Verkleinerung, bei der das Bild noch MINDESTENS so gross
+           ist wie verlangt. Ergebnis war eine Kante zwischen 2048 und 4095 —
+           also bis zu viermal so viele Pixel, wie der Kommentar an
+           MAX_IMAGE_EDGE ausrechnet, und zweimal so viele wie ZXing braucht.
+           Ein 4000er-Handyfoto lief damit ungesampelt durch: 48 MB Bitmap plus
+           48 MB IntArray fuer die Pixel. */
         var sample = 1
-        while (maxOf(bounds.outWidth, bounds.outHeight) / (sample * 2) >= MAX_IMAGE_EDGE) {
+        while (maxOf(bounds.outWidth, bounds.outHeight) / sample > MAX_IMAGE_EDGE) {
             sample *= 2
         }
 
