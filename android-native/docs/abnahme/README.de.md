@@ -1311,3 +1311,414 @@ den Endstand ohnehin; die Bilder gehören dorthin.**
 
 Was in diesem Abschnitt an Zahlen steht, ist gemessen: am Pixel (N13-Geometrie,
 unverändert gültig), im Kontrastskript und in den Ketten.
+
+---
+
+## N15 — Der Niveau-Pass
+
+Zehn Punkte in der Reihenfolge des Auftrags. Zwei Dinge vorweg, weil sie das
+ganze Kapitel prägen:
+
+**Der Auftrag lag nicht in `PROMPT-KOTLIN.md`.** Die Datei endet mit N14; der
+Nachtrag 4 ist nur als Nachricht gekommen. Gebaut ist deshalb nach Kevins
+Aufzählung — zehn Punkte, in seiner Reihenfolge. Standen dort gemessene
+Sollwerte, die die Nachricht nicht nennt, fehlen sie hier.
+
+**Ab Punkt 5 hat Kevin das Gerät selbst bedient** („testen musst du nicht das
+mache ich selber"). Die Messungen bis dahin sind meine, die danach fehlen — und
+das ist keine Auslassung, sondern die N14-Lehre: Zwei Hände auf demselben
+Telefon ergeben keinen reproduzierbaren Messaufbau. Was fehlt, steht am Ende
+dieses Abschnitts.
+
+### 1. Die Popover-Baustelle
+
+Vier Fehler, alle an derselben Wurzel: Das Popover war ein freistehender Kasten
+mit geratenen Zahlen statt eines Aufsatzes auf seinem Auslöser.
+
+| Was           | Vorher                         | Jetzt                                                             |
+| ------------- | ------------------------------ | ----------------------------------------------------------------- |
+| Verankerung   | Geschwister der Spalte im Baum | im Trigger selbst, eigener Positionsgeber mit Umklappen nach oben |
+| Breite        | Konstante 240 dp / 200 dp      | die GEMESSENE Triggerbreite (`inset-inline: 0`)                   |
+| Höhe          | Konstante 320 dp / 200 dp      | `min(60 vh, 22 rem)`                                              |
+| Kante         | keine                          | hell `--elev-2`-Schatten, dunkel eine Sprosse heller              |
+| Kantenzeichen | keines                         | Maske wie `mask-image` im Web, und nur wo etwas verborgen liegt   |
+
+**Am Pixel, S24 Ultra, Dichte 600 (1 dp = 3,75 px), dunkel:**
+
+- **Breite 1260 px = 336 dp** — und die Karte, in der die Zeile sitzt, ist
+  1440 − 2 × 90 = 1260 px breit. Nicht „ungefähr gleich", sondern dieselbe Zahl.
+  Im hellen Modus dasselbe Maß, unabhängig gemessen.
+- **Höhe 1380 px = 368 dp** = 352 dp Deckel + 2 × 8 dp Polster. Der
+  60-%-Deckel greift auf diesem Gerät nicht (832 dp × 0,6 = 468 dp), der
+  22-rem-Deckel greift — genau so ist `min()` gemeint.
+- **Zeitschaltung: 555 px = 148 dp** = 3 Zeilen × 44 dp + 2 × 8 dp. Ein Popover
+  mit drei Einträgen ist so hoch wie drei Einträge; der Deckel ist eine Grenze
+  und kein Maß.
+- **Die Maske steht nur da, wo sie etwas tut.** Im Sprach-Popover (37 Zeilen) ist
+  die letzte Zeile abgeblendet, die erste nicht: „Español" misst am Stamm volle
+  Tinte `#fcfcfc`, „Français" 120 px weiter unten nur noch `#b7b7b8` — hell
+  dasselbe Bild, dort `#18181b` gegen `#6e6e70`. Im Zeitschaltungs-Popover ist
+  die letzte Zeile volle Tinte: Es liegt nichts verborgen, also gibt es keine
+  Kante.
+- **Die Kante hell** ist der Schatten: unter der Unterkante messbar als
+  `#fcfcfc` → `#fdfdfd` → `#fefefe` über 65 px Auslauf.
+
+**Die Optionen der Zeitschaltung sind gegen das Web gemessen**, nicht gegen die
+Erinnerung: `index.html` hat drei `<option>` (60000, 300000 mit `selected`,
+900000), `LockSettings.TIMEOUT_CHOICES` hat dieselben drei Werte, und am Gerät
+steht „1 Minute · 5 Minuten · 15 Minuten" — die Mehrzahlformen kommen aus dem
+Katalog und stimmen im Singular wie im Plural. **Keine Abweichung.**
+
+Bilder: `n15-1-popover-dunkel.png`, `n15-1-popover-hell.png`,
+`n15-1-zeitschaltung-dunkel.png`, `n15-1-zeitschaltung-hell.png`.
+
+#### Die dunkle Kante ist noch im Lauf zurückgenommen worden
+
+Der erste Anlauf setzte `--elev-2` wörtlich um: dunkel `inset 0 0 1px rgb(255
+255 255 / 30%)`. Gemessen waren das **4 px in `#5e5e60`** — die Rechnung für Weiß
+30 % auf `#18181b` gibt `#5d5d5f`, also auf zwei Stellen genau.
+
+Kevins Urteil an der Spiegelung: „die fette Umrandung brauche ich nicht beim
+Darkmode." Er hat recht, und die Zahl sagt warum: 1 dp sind auf diesem Gerät
+vier Pixel in einem Ton zwischen Fläche und Text. Das liest sich als Rahmen, und
+Rahmen hat dieses Gerät seit V9 keine mehr.
+
+Die Aufgabe blieb — ein Popover auf `--surface` über einer Karte auf `--surface`
+hat gar keine Kante. Gelöst ist sie jetzt mit dem Mittel, das dieses Haus im
+Dunkeln ohnehin benutzt: **die nächste Sprosse der Flächenleiter**
+(`--surface-fill`, #27272a auf #18181b). Am Panel steht die Regel wörtlich —
+„dunkel NICHTS, dort trennt allein die Helligkeit" —, und die Leiste unten macht
+es seit N14 genauso: Kante weg, Fläche trägt.
+
+Das Bild `n15-1-popover-dunkel.png` zeigt noch die verworfene Fassung. Es bleibt
+liegen, weil es die Messung belegt, aus der die Entscheidung folgt.
+
+### 2. Die Einstellungen sind Listenzeilen
+
+Vorher gestapelte Web-Struktur: ein Auswahlfeld mit Beschriftung darüber,
+darunter drei Schalter mit der Bahn VOR dem Wort. Das ist die Anordnung eines
+Formulars. Eine Einstellungsseite wird aber nicht ausgefüllt, sondern
+durchsucht — man will EINEN Posten finden, seinen Wert sehen und ihn ändern.
+
+Neu ist ein Bauteil, `ListRow`: Beschriftung links, Wert und Bedienelement
+rechts, Trefferfläche über die ganze Kartenbreite, Haarlinie zwischen den
+Zeilen. Die Karte trägt dafür kein waagerechtes Polster mehr — das bringen die
+Zeilen mit, damit ihre Berührungsfläche bis zur Kartenkante reicht.
+
+**Kein neues Maß und keine neue Farbe:** 44 dp Trefferfläche (`--touch-min`),
+`--gap-group` Einrückung, `--t-small` in `--ink`, Beschreibung `--t-micro` in
+`--ink-3`, Wert in `--ink-2`, Berührung `--surface-active` in 150 ms.
+
+**Am Gerät nachgemessen** (aus dem Ansichtsbaum, nicht geschätzt): Der Text jeder
+Zeile beginnt bei x = 180 px = 48 dp — 24 dp Seitenrand der Seite plus 24 dp
+Einrückung der Zeile. Die Werte stehen rechts davon („Sprache · Deutsch",
+„Sperrt automatisch nach · 5 Minuten"), der Winkel schließt die Zeile ab. Die
+Haarlinie misst **4 px in `#212124`** (dunkel) beziehungsweise `#e4e4e7` (hell) —
+beides `--rule` auf den Kanalwert.
+
+**Der Schalter steht jetzt am Zeilenende.** Das ist eine STRUKTUR-Abweichung und
+von N11a gedeckt; am Bauteil ändert sich nichts (40 × 20, Daumen 22 × 16, Weg
+14, 250/300 ms, Bahn im Akzent).
+
+Bilder: `n15-2-listenzeilen-dunkel.png`, `n15-2-listenzeilen-hell.png`.
+
+### 3. Das Haptik-Konzept
+
+Neu ist `ui/Haptics.kt` — eine Stelle, eine Regel:
+
+> **Haptik quittiert einen ZUSTANDSWECHSEL, nicht eine Berührung.**
+
+Das ist die haptische Fassung von „genau ein Akzent, nur für Zustände mit
+Bedeutung". Eine App, die bei jedem Tipp brummt, hat ihr lautestes Mittel an das
+häufigste Ereignis verschwendet. Wer eine Taste drückt, SIEHT die Fläche
+umkehren und das Nachgeben (N14) — das ist die Rückmeldung für die Berührung.
+
+| Wo                             | Wirkung                    | Warum                                                |
+| ------------------------------ | -------------------------- | ---------------------------------------------------- |
+| Code kopiert                   | `CONFIRM`                  | der Blick liegt danach im fremden Anmeldefeld        |
+| QR erkannt                     | `CONFIRM`                  | der Blick liegt auf dem Motiv, nicht am Schirm       |
+| Tresor auf / versiegelt        | `CONFIRM`                  | ein Vorgang mit Wartezeit endet                      |
+| Passphrase falsch              | `REJECT`                   | die einzige ertastbare Fehlermeldung                 |
+| Tresor zugesperrt              | Rastung                    | Zustandswechsel ohne Ergebnis                        |
+| Schalter an / aus              | `TOGGLE_ON` / `TOGGLE_OFF` | zwei Richtungen, zwei Signale                        |
+| Seitenwechsel, Wahl im Popover | Rastung                    | dieselbe Metapher wie das Zahnrad                    |
+| „Alles löschen" scharf         | Schwellen-Wirkung          | die Schärfung ist der eigentliche Moment             |
+| „Alles löschen" ausgeführt     | `REJECT`                   | unwiderruflich — darf sich nicht wie ein OK anfühlen |
+
+Stumm bleiben Fold-Zeilen, Textfelder, „QR aus Bild" und der
+Testschlüssel-Knopf.
+
+**Zwei Entscheidungen, die dazugehören:** Der Weg läuft über
+`View.performHapticFeedback` mit den Konstanten der Plattform und nicht über
+`Vibrator` mit eigenen Millisekunden — eine Zahl, die auf genau einem Gerät
+passt, wäre keine. Und er **gehorcht der Systemeinstellung**: Das Flag, mit dem
+man sie übergehen könnte (`FLAG_IGNORE_GLOBAL_SETTING`), kommt nicht vor; es
+wäre das haptische Gegenstück zum Ignorieren von `prefers-reduced-motion`.
+
+Die feinen Wirkungen sind jung (`CONFIRM`/`REJECT` ab API 30,
+`TOGGLE_*`/`SEGMENT_TICK` ab 34, minSdk ist 26). Die Abfrage steht deshalb nicht
+gegen einen Absturz — die Konstanten sind `static final int` und werden beim
+Kompilieren eingesetzt —, sondern damit auf Android 8 bis 13 überhaupt etwas zu
+spüren ist.
+
+**Kein Bildbeweis, und das ist keine Lücke, sondern die Natur der Sache:**
+Haptik lässt sich nicht fotografieren. Nachprüfbar ist sie am Gerät über
+`dumpsys vibrator_manager` (Wirkungs-Historie); diese Messung steht offen.
+
+### 4. Der Marken-Splash
+
+`androidx.core:core-splashscreen 1.2.0` — am 14.08. gegen die maven-metadata.xml
+gemessen: `<release>` ist 1.2.0, alles darüber gibt es nur als alpha/rc. Sie
+zieht `appcompat-resources` und `annotation` mit, kein Material —
+**`gradlew checkNoMaterial` bleibt grün, nachgemessen.**
+
+Das Zeichen ist NICHT neu gezeichnet: `scripts/native-icons.mjs` schreibt es aus
+derselben Geometrie wie das Launcher-Icon (21 Hemmungszähne, Werkbrücke, Lager)
+in zwei Fassungen — `drawable/splash_mark.xml` in `--ink` hell und
+`drawable-night/splash_mark.xml` in `--ink` dunkel. Der Splash steht auf dem
+SEITENGRUND und nicht auf der Icon-Fläche; Papier wäre im Hellen unsichtbar.
+
+**Am Gerät belegt** (`n15-4-splash-dunkel.png`):
+
+- Die Plattform führt für unser Paket ein eigenes Fenster:
+  `Window{… Splash Screen io.github.keco216.clockwork.dev}` mit
+  `ty=APPLICATION_STARTING`.
+- Grund gemessen **`#060607`** — `--ground` dunkel, auf den Kanalwert.
+- Das Zeichen ist **602 px = 160,5 dp** hoch. Das ist die Icon-Größe, die die
+  Plattform für einen Splash ohne Icon-Hintergrund vorsieht — die Vorlage sitzt
+  also richtig in ihrem Feld und wird nicht verzerrt. Die Breite ist kleiner,
+  weil das C-Werk auf der rechten Seite sein Maul hat.
+
+**Was am Bild zu erklären ist:** Der Splash ist kürzer als ein `screencap`.
+Gehalten wurde er mit `am start -D` (Warten auf den Debugger) — deshalb steht der
+Systemdialog „Waiting For Debugger" darin. Er ist ein Artefakt der MESSUNG und
+nicht der App, und er dimmt das Fenster um etwa 4 % (Marke gemessen `#f1f1f1`
+statt `#fcfcfc`, Lager `#e65626` statt `#f05a28`).
+
+**Was ausdrücklich NICHT gebaut ist:** `setKeepOnScreenCondition`. Damit ließe
+sich der Splash halten, bis die App „fertig" ist — und diese App hat nichts zu
+laden. Einen Startbildschirm länger stehen zu lassen, als der Start dauert, wäre
+eine erfundene Wartezeit; „Tippen darf nicht warten" gilt auch für den ersten
+Tipp. Ebenso kein eigener Abgang: Den fährt die Plattform, und zwar so wie in
+jeder anderen App des Geräts.
+
+### 5. Die Kopier-Quittung ist ein Zustand
+
+Bis N14 wechselte nur das WORT (und die Nabe des Zifferblatts). Das war die halbe
+Web-Fassung: Dort ist `.strip--copied` eine KLASSE, also ein Zustand, an dem
+mehrere Bauteile hängen — und ein Zustand hält, während eine Bewegung vergeht.
+
+Drei Dinge halten jetzt die 1,6 Sekunden lang: das Wort, die **Haltefarbe** der
+Taste und das **Häkchen** anstelle des Kopier-Zeichens. Das Häkchen ist dasselbe
+Bauteil, das im Popover die gewählte Zeile markiert; es bringt seinen
+250-ms-Eintritt aus `scale(.7)` selbst mit, weil es mit dem Zustand ENTSTEHT.
+
+**Am Pixel (`n15-5-kopiert.png`):** Beschriftung und Häkchen messen `#f98b6a` =
+`--signal-soft-ink` dunkel, auf den Kanalwert. Die Nabe des Zifferblatts misst
+`#f4825c` = `--signal-text` dunkel, ebenfalls exakt. Die Tastenfläche misst
+`#43261f`; die Rechnung für `--signal-soft` (12,2 % Orange auf `#18181b`) gibt
+`#32201d` — die Aufnahme fiel in die noch laufende 150-ms-Farbfahrt, sie war bei
+etwa 92 % der Strecke. Ein zweiter Anlauf auf den Endwert steht offen.
+
+Das Tonpaar ist keines aus dem Nichts: `--signal-soft` auf `--signal-soft-ink`
+ist genau der Akzent-Chip, den dieselbe Karte im Kopf schon trägt.
+
+### 6. Die Karten treten ein
+
+250 ms, 8 dp Weg, 20 ms Versatz je Karte — alle drei Zahlen sind schon im Haus
+(`--dur-calm`, der Weg von `slot-value-in`, `--stagger-flap` von der
+Fallblattanzeige). Die Web-Fassung hat keine Karten-Eintritte, und das ist kein
+Versehen: Eine Seite im Browser ist einfach da. Nativ ENTSTEHT sie — hinter dem
+Splash und bei jedem Seitenwechsel.
+
+**Am Pixel, ein Bild mitten in der Fahrt (`n15-6-karten-unterwegs.png`):**
+
+| Karte       | Füllung gemessen | daraus Deckkraft | Versatz              |
+| ----------- | ---------------- | ---------------- | -------------------- |
+| 1 (Sprache) | `#101011`        | 0,56             | 14 px unter Ruhelage |
+| 2 (Tresor)  | `#09090a`        | 0,17             | —                    |
+| 3 (Über)    | noch nichts      | 0                | —                    |
+
+Die Rechnung dazu: `--surface` #18181b über `--ground` #060607 ergibt bei
+Deckkraft a den Wert a · 24 + (1 − a) · 6; aus 16 folgt a = 0,56. Der Versatz
+muss dann 8 dp × (1 − 0,56) = 3,55 dp = **13,3 px** sein — gemessen sind es 14.
+Zwei unabhängige Größen, EIN Fortschrittswert: Das ist der Beweis, dass Deckkraft
+und Weg an derselben Fahrt hängen.
+
+Nebenbei zeigt dasselbe Bild die **Pille der Leiste unterwegs** samt Farbfahrt
+der Zeichen — der Bildbeweis, der N13 und N14 gefehlt hat.
+
+### 7. Die Tasten-Zeichen sitzen im Raster
+
+**Der Befund war ein Widerspruch zwischen Kommentar und Code.** An `Key` stand:
+„Das Raster bleibt dasselbe — `Glyph` rechnet in Anteilen der Kastenseite, also
+skaliert der Strich mit." Der Code tat das nicht: Jedes Zeichen nahm
+`Glyph.stroke.toPx()`, also 2 dp ABSOLUT. In einem 24-dp-Kasten ist das ein
+Zwölftel der Seite, in den 20 dp einer Taste ein Zehntel — **20 % mehr Gewicht**
+an demselben Zeichen.
+
+Behoben mit `gridStroke()`: zwei von vierundzwanzig Einheiten. Bei 24 dp kommt
+derselbe Wert heraus wie vorher, nur die kleineren Zeichen ändern sich.
+
+**Am Pixel, dieselbe Aufnahme, zwei Kästen (`n15-7-tastenzeichen.png`):**
+
+| Zeichen                       | Kasten | Strich gemessen        | Soll    |
+| ----------------------------- | ------ | ---------------------- | ------- |
+| „QR aus Bild" (Bild-Zeichen)  | 20 dp  | 7 px Spanne, 5 px Kern | 6,25 px |
+| „Start" (Zifferblatt, Leiste) | 24 dp  | 9 px Spanne, 7 px Kern | 7,5 px  |
+
+Das Verhältnis der beiden Striche ist 6,25 / 7,5 = **20 / 24** — genau das
+Verhältnis der Kästen. Vor N15 hätten beide 7,5 px gemessen.
+
+Die Ecken des Suchers bleiben absolut bei 2 dp: Sie werden nicht in einem
+24-dp-Kasten gezeichnet, sondern auf der Fläche des Suchers, und ein
+Vierundzwanzigstel davon wäre ein Balken. Die zwei Regeln widersprechen sich
+nicht — bei 24 dp liefern sie denselben Wert.
+
+### 8. IME-Politur
+
+Das Secret-Feld enthält Schlüsselmaterial, und die Tastatur darf dort nichts
+mitreden:
+
+- **`autoCorrectEnabled = false`** — der wichtigere der beiden Schalter. Eine
+  Autokorrektur, die einen 32-Zeichen-Schlüssel für ein verschriebenes Wort
+  hält, ändert ihn STILL: Der Code rechnet sich weiter aus, er stimmt nur nicht
+  mehr. Genau dieser Fehler hat dem Projekt schon eine Dreiviertelstunde
+  gekostet, damals mit `adb shell input text` als Verursacher.
+- **`KeyboardCapitalization.None`** — aus `otpauth://` wird sonst `Otpauth://`.
+- **`KeyboardType.Ascii`** (`IME_FLAG_FORCE_ASCII`) — auf einem Gerät mit
+  kyrillischem oder arabischem Layout stünde sonst eine Tastatur da, mit der man
+  kein Base32 tippen kann.
+- **KEIN `imeAction`**: Das Feld ist mehrzeilig, eine Zeile ist ein Konto. Die
+  Eingabetaste bleibt ein Zeilenumbruch.
+
+Die Filterzeile bekommt `ImeAction.Search`; auf Search hin gehen Tastatur und
+Fokus weg. Gefiltert wird bei jedem Zeichen, das Absenden ist also schon
+passiert — was der Nutzer meint, ist „zeig mir die Treffer", und dafür muss die
+Tastatur aus dem Weg.
+
+**Was hier NICHT erreichbar ist, und das gehört gesagt:**
+`IME_FLAG_NO_PERSONALIZED_LEARNING`, also die Bitte, das Getippte nicht ins
+Wörterbuch der Tastatur zu übernehmen. Compose' `KeyboardOptions` hat dafür
+keinen Griff, und ein Passwort-Typ ist hier falsch: Man muss den Schlüssel SEHEN,
+um ihn zu prüfen. Die Passphrase des Tresors trägt `KeyboardType.Password` und
+ist damit abgedeckt; dieses Feld ist es nicht.
+
+**Der Beweis am Gerät steht offen** — `dumpsys input_method` zeigt `inputType`
+und `imeOptions` der laufenden Verbindung.
+
+### 9. Predictive Back und Overscroll
+
+**Zurück führte auf BEIDEN Seiten aus der App heraus.** Auf der
+Einstellungen-Seite ist das falsch: Wer dort etwas eingestellt hat, will zurück
+zu seinen Codes. Die Folge war am Gerät gemessen — der nächste Wisch scrollte den
+Launcher (die Falle steht seit P7 in CLAUDE.md).
+
+Gebaut ist `PredictiveBackHandler` und nicht `BackHandler`: Android 14 hat die
+Geste sichtbar gemacht, wer vom Rand zieht sieht WOHIN es geht und kann
+umkehren. Die Vorschau ist die der Plattform — die abtretende Seite zieht sich um
+bis zu 5 % zusammen, ohne Ausblenden. Der Fortschritt ist der echte des Systems
+und keine eigene Fahrt: Die Bewegung gehört dem Finger.
+
+**Gemessen:** Zurück auf der Einstellungen-Seite → die App bleibt
+`topResumedActivity`, und die Startseite steht da. Die Vorschau-Aufnahme mitten
+in der Geste steht offen.
+
+**Overscroll, mit gehaltenem Finger gemessen** (`n15-9-overscroll.png`, über
+`input motionevent` gezogen und während des Ziehens aufgenommen):
+
+| Landmarke       | in Ruhe | gezogen | Verschiebung |
+| --------------- | ------- | ------- | ------------ |
+| Kartenoberkante | 531     | 543     | +12 px       |
+| Trennlinie 1    | 1180    | 1210    | +30 px       |
+| Trennlinie 2    | 1349    | 1383    | +34 px       |
+| Trennlinie 3    | 1601    | 1640    | +39 px       |
+| Trennlinie 4    | 2299    | 2349    | +50 px       |
+
+Die Verschiebung WÄCHST mit der Tiefe. Das ist also keine Verschiebung, sondern
+eine Streckung — der Dehn-Overscroll der Plattform, etwa 2,2 % senkrechte
+Skalierung am Ende der Geste. Er ist unverändert der der Plattform: Diese App
+legt keine eigene Hand daran, und das ist die Entscheidung. Ein eigener
+Overscroll wäre eine Bewegung, die nur diese App kennt.
+
+### 10. Der Statuspunkt gegen das Web
+
+**Der Befund:** Die Tresor-Leuchte war immer GEFÜLLT und trug zwei Töne — Akzent
+für „offen", Tinte für alles andere. Der ausgeschaltete Tresor sah damit genauso
+aus wie der gesperrte. Von den drei Zuständen waren zwei nicht zu unterscheiden,
+und zwar bei der wichtigsten Auskunft der App.
+
+Die Web-Fassung macht es anders und begründet es in `panels.css`: „Aus = leerer
+Ring, gesperrt = gefüllt in Ink, offen = gefüllt im Akzent. Nie NUR über Farbe:
+Ring gegen Fläche ist ein Formunterschied." Dazu färbt dort die Statuszeile
+mit — „die Leiter geht mit dem Gewicht der Auskunft".
+
+Beides steht jetzt hier, und dazu die zweite Zahl: Die Leuchte am Tresor ist
+**8 dp** (`.vault__lamp`), die im Kopf bleibt **6 dp** (`.lamp`). Nativ stand an
+beiden Stellen die 6 — die wichtigere der zwei Leuchten war die kleinere.
+
+**Am Pixel, Zustand „aus" (`n15-10-leuchte-aus.png`):**
+
+- Durchmesser **30 px = 8,0 dp**, auf den Punkt `Glyph.dotState`.
+- Es ist ein RING: Die Zeile durch die Leuchte misst Wand (`#9f9fa9`, 3 px Kern),
+  20 px Kartenfarbe `#18181b`, Wand — innen ist nichts.
+- Ring UND Beschriftung messen `#9f9fa9` = `--ink-3` dunkel, auf den Kanalwert.
+
+Die Zustände „gesperrt" und „offen" sind nicht mehr fotografiert worden.
+
+### Die zwei Nachträge aus P7 und N14
+
+**FLAG_SECURE bei der ERSTinstallation.** P7 hatte den Schalter belegt, nicht die
+Voreinstellung. Frisch installiert, gestartet, aufgenommen:
+
+- `run-as … ls files/` ist **leer** — es gibt noch keine `lock-settings.json`, es
+  gilt also die Voreinstellung im Code (`blockScreenshots = true`).
+- Die Aufnahme ist im ganzen App-Fenster **EINE Farbe**: Spalte x = 720 von
+  y = 150 bis 2950 ein einziger Lauf `#000000`, Zeile y = 1500 über die ganze
+  Breite ebenso. Die 0,39 % Nicht-Schwarz im Bild sind Status- und
+  Navigationsleiste — ein eigenes Fenster, das FLAG_SECURE nicht betrifft.
+- **Gegenprobe:** Schalter aus, dieselbe Stelle — **1340 Farben**. Und erst mit
+  diesem Tipp entstand `lock-settings.json`.
+
+Bilder: `p7-flagsecure-erstinstallation.png`,
+`p7-flagsecure-erstinstallation-gegenprobe.png`.
+
+**Die Ausnahmeliste der Web-Wörter ist leer** (Punkt 5 der Release-Checkliste).
+Im Quelltext: `export const ALLOWED = new Map([])`. Gemessen: Der Generator läuft
+durch und schreibt 37 Sprachen, **137 Schlüssel je Sprache = 5069 Einträge**,
+davon 21 aus dem `native.`-Vorrat — ohne Abbruch und ohne eine einzige geänderte
+Datei. Der Lauf ist idempotent, `git status` bleibt für die Ressourcen leer.
+
+### Ketten
+
+| Kette                                    | Ergebnis                                                     |
+| ---------------------------------------- | ------------------------------------------------------------ |
+| `gradlew testDebugUnitTest`              | **221 Tests, 0 Fehler** (unverändert)                        |
+| `gradlew checkNoMaterial`                | grün — auch mit core-splashscreen im Baum                    |
+| `node scripts/native-theme-check.mjs`    | **92 Werte** deckungsgleich (50 Farben, 42 Maße)             |
+| `node scripts/native-nav-contrast.mjs`   | 8 Messpunkte grün; Gegenprobe fällt bei 50 % durch (4 von 8) |
+| `node scripts/native-strings.mjs`        | 5069 Einträge, Ausnahmeliste 0, keine Datei geändert         |
+| Web: typecheck · Tests · Lint · Prettier | grün, **560 Tests**                                          |
+
+**Keine neuen Unit-Tests**, wie in N12 bis N14: Was dieser Posten ändert, sind
+Geometrie, Farbe, Bewegung und Haptik. Geprüft wird das am Pixel und von
+Skripten, die rechnen — nicht auf der JVM. Die einzige neue reine Funktion
+(`Feedback.constant()`) ist eine Zuordnungstabelle auf Plattform-Konstanten; ein
+Test darüber prüfte, dass eine Konstante gleich sich selbst ist.
+
+### Was an Beweisen offen bleibt
+
+Vollständigkeit ist hier wichtiger als ein gutes Bild:
+
+1. **Haptik am Gerät** — `dumpsys vibrator_manager` nach einem Kopiervorgang.
+2. **IME-Flags am Gerät** — `dumpsys input_method`, `inputType`/`imeOptions`.
+3. **Die Tresor-Leuchte „gesperrt" und „offen"** als Bild.
+4. **Die Haltefarbe der Kopiertaste im Endwert** — die Aufnahme fiel in die
+   Farbfahrt.
+5. **Die Predictive-Back-Vorschau** mitten in der Geste.
+6. **Die neue dunkle Popover-Fläche** (`--surface-fill`) ist nach Kevins Befund
+   gebaut und installiert, aber nicht mehr von mir fotografiert.
+
+Der Grund ist derselbe für alle sechs: Kevin hat ab Punkt 5 selbst getestet, und
+zwei Hände auf einem Telefon ergeben keinen Messaufbau. **P9 fotografiert den
+Endstand ohnehin.**

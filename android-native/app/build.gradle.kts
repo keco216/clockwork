@@ -178,6 +178,20 @@ dependencies {
        AppCompatActivity ohnehin eine. */
     implementation(libs.androidx.biometric)
 
+    /* Der Start-Bildschirm (N15). Er ist NICHT bloss Kosmetik: Zwischen dem
+       Antippen des Icons und dem ersten Compose-Bild zeigt Android das
+       `windowBackground` — eine leere Flaeche in `--ground`, die genau so lange
+       steht, wie die App zum Starten braucht. Mit dem Splash steht dort das
+       Markenzeichen, und der Uebergang ins erste Bild gehoert der Plattform
+       statt dem Zufall.
+
+       Die Bibliothek gibt es aus einem Grund: Die Plattform-API dahinter kam
+       erst mit API 31, minSdk ist 26. Sie bildet dieselbe Deklaration auf
+       beiden Seiten der Grenze ab — genau die Sorte Aufgabe, fuer die eine
+       androidx-Bibliothek da ist, und dieselbe Begruendung wie bei AppCompat
+       fuer die per-App-Sprachwahl. */
+    implementation(libs.androidx.core.splashscreen)
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
 }

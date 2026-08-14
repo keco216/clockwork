@@ -17,4 +17,17 @@
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
     </style>
+
+    <!--
+      Der Start-Bildschirm im Dunkeln. Die Flaeche ist dieselbe wie
+      windowBackground darueber; das ZEICHEN wechselt ueber den
+      Ressourcen-Qualifier von selbst mit (drawable-night/splash_mark.xml, in
+      Tinte statt in Papier). Deshalb steht der Verweis hier unveraendert —
+      aufgeloest wird er beim Zeichnen.
+    -->
+    <style name="Theme.Clockwork.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#060607</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_mark</item>
+        <item name="postSplashScreenTheme">@style/Theme.Clockwork</item>
+    </style>
 </resources>

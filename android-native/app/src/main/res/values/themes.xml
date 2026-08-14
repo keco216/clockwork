@@ -26,4 +26,43 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
     </style>
+
+    <!--
+      Der Start-Bildschirm (N15).
+
+      Er ist das Thema, mit dem die Activity STARTET; sobald Compose zeichnet,
+      schaltet `installSplashScreen()` auf Theme.Clockwork um (der Verweis dazu
+      steht unten in postSplashScreenTheme). Genau deshalb steht hier nur, was
+      VOR dem ersten Bild gilt.
+
+      Drei Angaben, und keine mehr:
+
+      windowSplashScreenBackground  derselbe Wert wie windowBackground oben.
+        Die beiden MUESSEN gleich sein — sonst blitzt beim Uebergang eine
+        zweite Farbe auf. Sie stehen bewusst in derselben Datei untereinander,
+        damit das beim Aendern auffaellt.
+
+      windowSplashScreenAnimatedIcon  das Markenzeichen, erzeugt von
+        scripts/native-icons.mjs aus derselben Geometrie wie das Launcher-Icon.
+        Der Name ist irrefuehrend: „animated" heisst nur, dass hier auch eine
+        AnimatedVectorDrawable stehen DUERFTE. Hier steht keine, und das ist
+        eine Entscheidung — siehe MainActivity.
+
+      postSplashScreenTheme  das eigentliche Thema. Ohne diese Zeile blieb die
+        App im Splash-Thema haengen, und AppCompatActivity braucht ein
+        AppCompat-Thema.
+
+      Das Elternthema kommt aus der Bibliothek und leitet sich vom
+      PLATTFORM-Material ab (android:Theme.Material). Das ist kein Verstoss
+      gegen „kein Material": Gemeint ist damit `androidx.compose.material`, also
+      eine Komponentenbibliothek im Klassenpfad. Ein Plattform-Thema faerbt ein
+      Fenster und liefert keine Bauteile — dieselbe Unterscheidung, mit der auch
+      Theme.AppCompat hier steht. `gradlew checkNoMaterial` misst genau das und
+      bleibt gruen.
+    -->
+    <style name="Theme.Clockwork.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#f5f5f5</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_mark</item>
+        <item name="postSplashScreenTheme">@style/Theme.Clockwork</item>
+    </style>
 </resources>

@@ -458,6 +458,7 @@ private fun NavItem(
        gemerkt an `previously`. */
     val turn = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
+    val feedback = rememberFeedback()
 
     /* ── Die Beruehrung bekommt eine eigene Flaeche (N14) ──────────────────
        Kevins Befund am Vorbild: Samsungs Leiste zeigt auch am BERUEHRTEN
@@ -504,6 +505,13 @@ private fun NavItem(
                 role = Role.Tab,
                 onClick = {
                     onSelect()
+                    /* Eine RASTUNG (N15). Die Metapher ist dieselbe, die das
+                       Zeichen darueber schon zeigt: Das Zahnrad rastet um einen
+                       Zahn weiter, und genau so fuehlt sich der Seitenwechsel
+                       an. Nur hier und im Popover steht eine Rastung — an einer
+                       Taste waere sie Krach, denn eine Taste bewegt nichts,
+                       sondern tut etwas (Konzept in Haptics.kt). */
+                    feedback(Feedback.Detent)
                     // Bei JEDEM Tipp, auch auf den schon gewaehlten Posten:
                     // Ein Uhrwerk laeuft auch dann weiter, wenn man es
                     // zweimal anstoesst.

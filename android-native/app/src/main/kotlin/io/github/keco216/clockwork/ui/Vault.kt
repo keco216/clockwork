@@ -534,10 +534,16 @@ fun VaultZone(
     // MARKIEREN, und genau das passiert nach einem Fehlversuch.
     var passphrase by remember { mutableStateOf(TextFieldValue("")) }
     val state = controller.state
+    val feedback = rememberFeedback()
 
     LaunchedEffect(controller.failedAttempts) {
         if (controller.failedAttempts > 0) {
             passphrase = passphrase.copy(selection = TextRange(0, passphrase.text.length))
+            /* Die einzige Fehlermeldung dieser App, die man ertasten kann — und
+               die haeufigste ueberhaupt. Wer eine Passphrase eintippt, sieht
+               dabei auf die Tastatur; die Markierung im Feld bemerkt er
+               vielleicht erst beim naechsten Zeichen (N15/3). */
+            feedback(Feedback.Reject)
         }
     }
 
@@ -553,12 +559,29 @@ fun VaultZone(
        dem darf nichts unter der Hand zuklappen. */
     LaunchedEffect(state) {
         if (controller.paintedState != state) {
+            val vorher = controller.paintedState
             controller.paintedState = state
             passphrase = TextFieldValue("")
             when (state) {
                 VaultState.Locked -> onExpandedChange(true)
                 VaultState.Open -> onExpandedChange(false)
                 VaultState.Off -> Unit
+            }
+
+            /* Haptik nur bei einem WECHSEL, und der erste Anstrich ist keiner:
+               Beim Start steht `paintedState` auf `null`, und ein gesperrter
+               Tresor, der schon gesperrt WAR, hat nichts quittiert. */
+            if (vorher != null) {
+                when (state) {
+                    // Aufsperren und Versiegeln enden beide hier — und beide
+                    // haben eine Wartezeit (PBKDF2). Genau dafuer gibt es
+                    // CONFIRM: Der Vorgang ist durch.
+                    VaultState.Open -> feedback(Feedback.Confirm)
+                    // Zusperren ist ein Zustandswechsel ohne Ergebnis: eine
+                    // Rastung, kein Erfolg.
+                    VaultState.Locked -> feedback(Feedback.Detent)
+                    VaultState.Off -> Unit
+                }
             }
         }
     }
@@ -570,13 +593,37 @@ fun VaultZone(
         else -> text("vault.state.open")
     }
 
+    /* ── Die drei Zustaende in FORM und Farbe (N15) ────────────────────────
+       Bis N14 war die Leuchte immer gefuellt und trug nur zwei Toene: Akzent
+       fuer „offen", Tinte fuer alles andere. Der AUSGESCHALTETE Tresor sah
+       damit genauso aus wie der gesperrte — von den drei Zustaenden waren zwei
+       nicht zu unterscheiden, und der Unterschied ist der wichtigste der App
+       („liegt hier etwas gespeichert?").
+
+       Die Web-Fassung macht es anders und begruendet es in `panels.css`: „Aus =
+       leerer Ring, gesperrt = gefuellt in Ink, offen = gefuellt im Akzent. Nie
+       NUR ueber Farbe: Ring gegen Flaeche ist ein Formunterschied, und der
+       bleibt auch fuer jemanden lesbar, der die beiden Toene nicht
+       unterscheiden kann." Dazu faerbt dort die Zustandszeile mit — „die Leiter
+       geht mit dem Gewicht der Auskunft".
+
+       Beides steht jetzt hier. Es ist kein neuer Ton und kein neues Mass: alle
+       drei Farben und beide Formen kommen aus der Web-Fassung. */
+    val lampColour = when (state) {
+        VaultState.Off -> colors.ink3
+        VaultState.Locked -> colors.ink
+        VaultState.Open -> colors.signalText
+    }
+
     Panel(modifier = modifier, padding = FoldPanelPadding) {
         Column {
             FoldRow(
                 label = stateLabel,
                 expanded = expanded,
                 onToggle = { onExpandedChange(!expanded) },
-                lamp = if (state == VaultState.Open) colors.signalText else colors.ink,
+                lamp = lampColour,
+                lampFilled = state != VaultState.Off,
+                labelColour = lampColour,
             )
 
             Drawer(open = expanded) {
@@ -786,6 +833,8 @@ private fun VaultActions(controller: VaultController, state: VaultState) {
 fun VaultDanger(controller: VaultController, state: VaultState) {
     if (state == VaultState.Off) return
 
+    val feedback = rememberFeedback()
+
     Key(
         label = if (controller.wipeArmed) {
             text("vault.action.wipeConfirm")
@@ -796,8 +845,18 @@ fun VaultDanger(controller: VaultController, state: VaultState) {
             if (controller.wipeArmed) {
                 controller.disarmWipe()
                 controller.wipe()
+                /* Ein Loeschen quittiert mit ABLEHNUNG und nicht mit
+                   Bestaetigung. Das ist kein Wortspiel: Die beiden Wirkungen
+                   der Plattform fuehlen sich verschieden an, und was
+                   unwiderruflich ist, darf sich nicht anfuehlen wie ein
+                   gelungener Vorgang. */
+                feedback(Feedback.Reject)
             } else {
+                // Die SCHAERFUNG ist der eigentliche Moment — danach genuegt
+                // ein zweiter Tipp. Wer sie nur mit dem Auge bemerkt, hat sie
+                // vielleicht nicht bemerkt.
                 controller.armWipe()
+                feedback(Feedback.Warn)
             }
         },
         modifier = Modifier.fillMaxWidth(),
@@ -805,7 +864,15 @@ fun VaultDanger(controller: VaultController, state: VaultState) {
     )
 }
 
-/** Sperrzeit, Sperren beim Verlassen, Biometrie, Bildschirmfotos. */
+/**
+ * Sperrzeit, Sperren beim Verlassen, Biometrie, Bildschirmfotos — als
+ * Listenzeilen (N15).
+ *
+ * Keine Fuge zwischen den Zeilen und kein `spacedBy`: Eine Zeile bringt ihre
+ * 44 dp und ihr senkrechtes Polster selbst mit, und getrennt werden sie durch
+ * die Haarlinie. Ein zusaetzlicher Abstand machte aus der Liste wieder einen
+ * Stapel Kaesten.
+ */
 @Composable
 fun VaultSettings(
     controller: VaultController,
@@ -826,7 +893,7 @@ fun VaultSettings(
         )
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(Dimens.gapPair)) {
+    Column {
         Pick(
             label = text("vault.timeout.label"),
             aria = text("vault.timeout.label"),
@@ -834,9 +901,10 @@ fun VaultSettings(
             selected = choices.firstOrNull { it == settings.timeoutMs },
             display = minutes,
             onPick = { controller.setTimeout(it) },
-            popoverWidth = 200.dp,
-            maxPopoverHeight = 200.dp,
+            style = PickStyle.Row,
         )
+
+        RowDivider()
 
         Switch(
             checked = settings.lockOnHide,
@@ -851,6 +919,8 @@ fun VaultSettings(
             val available = remember { VaultKeystore.isAvailable(context) }
             val title = text("native.vault.biometric.label")
             val negative = text("native.vault.biometric.cancel")
+
+            RowDivider()
 
             Switch(
                 checked = settings.biometric,
@@ -870,6 +940,8 @@ fun VaultSettings(
                 },
             )
         }
+
+        RowDivider()
 
         Switch(
             checked = settings.blockScreenshots,

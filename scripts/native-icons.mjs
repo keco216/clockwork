@@ -54,6 +54,24 @@ const SIGNAL = '#FFF05A28';
 const MONO = '#FF000000';
 
 /**
+ * Die zwei Tinten des Start-Zeichens (N15).
+ *
+ * Das Launcher-Icon steht auf SEINER eigenen Flaeche (Nacht) und ist deshalb in
+ * Papier gezeichnet. Der Splash steht auf dem SEITENGRUND der App — hell
+ * #f5f5f5, dunkel #060607 —, und dort waere Papier im Hellen unsichtbar. Es
+ * traegt deshalb `--ink` des jeweiligen Themes, und die Umschaltung macht der
+ * Ressourcen-Qualifier `-night`: dieselbe Mechanik wie `values-night/themes.xml`
+ * und dieselbe wie `prefers-color-scheme` im Web.
+ *
+ * Die zwei Werte stehen hier als Zahl, weil dieses Skript ohnehin die
+ * Markenfarben als Zahl haelt. Sie sind die von `--ink` aus tokens.css und
+ * stimmen mit Tokens.kt ueberein — nachpruefbar, weil sie in drei Dateien
+ * denselben Namen tragen.
+ */
+const INK_LIGHT = '#FF18181B'; // css: light --ink
+const INK_DARK = '#FFFCFCFC'; // css: dark --ink
+
+/**
  * Die Leinwand des adaptiven Icons ist 108 dp; sichtbar bleibt nur der innere
  * Bereich, weil jeder Launcher seine eigene Maske darueberlegt. Die Marke sitzt
  * deshalb in 60 % des Halbmessers — dieselbe Schutzzone wie in der
@@ -173,7 +191,28 @@ const adaptive = [
   '',
 ].join('\n');
 
+/**
+ * Das Zeichen des Start-Bildschirms (N15).
+ *
+ * ── Warum dieselbe Datei-Geometrie wie das Launcher-Icon ──────────────────
+ * Weil es dieselbe Marke ist. Der Splash zeigt genau das Zeichen, das man
+ * gerade angetippt hat — das ist der ganze Zweck der Uebung: Der Start
+ * schliesst die Luecke zwischen Icon und App, statt sie mit einem weissen
+ * Fenster zu fuellen.
+ *
+ * Es liegt auf derselben 108er-Leinwand mit derselben Schutzzone. Die Plattform
+ * skaliert das Zeichen in ihr eigenes Feld (240 dp Fenster, Zeichen im inneren
+ * Drittel) und erwartet dabei genau die Proportion eines adaptiven
+ * Icon-Vordergrunds — also die hier.
+ *
+ * Das Lager bleibt SIGNAL: Der einzige Farbpunkt der Marke ist auch beim Start
+ * der einzige Farbpunkt.
+ */
+const splash = (ink) =>
+  vector([...werkPaths.map((d) => path(d, ink)), path(bearingPath(), SIGNAL)]);
+
 await mkdir(join(RES_DIR, 'drawable'), { recursive: true });
+await mkdir(join(RES_DIR, 'drawable-night'), { recursive: true });
 await mkdir(join(RES_DIR, 'mipmap-anydpi-v26'), { recursive: true });
 
 await writeFile(join(RES_DIR, 'drawable', 'ic_launcher_foreground.xml'), foreground, 'utf8');
@@ -184,11 +223,15 @@ await writeFile(join(RES_DIR, 'mipmap-anydpi-v26', 'ic_launcher.xml'), adaptive,
 // und zwei Fassungen derselben Form waeren zwei Wahrheiten.
 await writeFile(join(RES_DIR, 'mipmap-anydpi-v26', 'ic_launcher_round.xml'), adaptive, 'utf8');
 
+await writeFile(join(RES_DIR, 'drawable', 'splash_mark.xml'), splash(INK_LIGHT), 'utf8');
+await writeFile(join(RES_DIR, 'drawable-night', 'splash_mark.xml'), splash(INK_DARK), 'utf8');
+
 process.stdout.write(
-  `native-icons: adaptives Icon geschrieben.\n` +
+  `native-icons: adaptives Icon und Start-Zeichen geschrieben.\n` +
     `  ${werkPaths.length} Pfade im Werk (${TEETH_COUNT} Zaehne + Bruecke) plus Lager\n` +
     `  Leinwand ${CANVAS} dp, Schutzzone ${SAFE_ZONE * 100} % = ` +
     `${round(SCALE * 2)} dp Durchmesser\n` +
     `  drawable/ic_launcher_{foreground,background,monochrome}.xml\n` +
-    `  mipmap-anydpi-v26/ic_launcher{,_round}.xml\n`,
+    `  mipmap-anydpi-v26/ic_launcher{,_round}.xml\n` +
+    `  drawable{,-night}/splash_mark.xml (Tinte ${INK_LIGHT} / ${INK_DARK})\n`,
 );

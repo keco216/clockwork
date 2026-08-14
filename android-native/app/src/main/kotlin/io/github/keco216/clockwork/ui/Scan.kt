@@ -108,6 +108,7 @@ fun ScanControls(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val feedback = rememberFeedback()
 
     // KEIN rememberSaveable: Nach einem Prozess-Neustart soll die Kamera
     // nicht ungefragt wieder anspringen. Configuration-Changes ueberleben
@@ -159,7 +160,11 @@ fun ScanControls(
         decoding = true
         scope.launch {
             when (val outcome = decodePickedImage(context, uri)) {
-                is PickOutcome.Found -> onScan(outcome.text)
+                is PickOutcome.Found -> {
+                    // Ein Treffer ist ein Ergebnis, kein Tastendruck (N15/3).
+                    feedback(Feedback.Confirm)
+                    onScan(outcome.text)
+                }
                 PickOutcome.NoQr -> onNote(noQrText)
                 PickOutcome.Unreadable -> onNote(unreadableText)
             }
@@ -212,6 +217,11 @@ fun ScanControls(
         if (scanning) {
             Viewfinder(
                 onFound = { found ->
+                    /* Der wichtigste haptische Moment der App: Wer einen QR-Code
+                       filmt, sieht auf das MOTIV und nicht auf den Schirm. Ohne
+                       Rueckmeldung haelt man das Telefon weiter still und
+                       wartet auf etwas, das schon passiert ist. */
+                    feedback(Feedback.Confirm)
                     closeViewfinder()
                     onScan(found)
                 },

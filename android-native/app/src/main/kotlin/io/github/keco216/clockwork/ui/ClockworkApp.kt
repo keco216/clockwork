@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Build
 import android.os.PersistableBundle
 import android.view.WindowManager
+import androidx.activity.compose.PredictiveBackHandler
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -33,11 +34,14 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,14 +54,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -81,7 +91,9 @@ import io.github.keco216.clockwork.core.parseMigrationUri
 import io.github.keco216.clockwork.core.periodProgress
 import io.github.keco216.clockwork.core.timeCounter
 import io.github.keco216.clockwork.store.WebViewImport
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import io.github.keco216.clockwork.ui.theme.Dimens
 import io.github.keco216.clockwork.ui.theme.LocalColors
 import io.github.keco216.clockwork.ui.theme.TextStyles
@@ -324,6 +336,45 @@ fun ClockworkApp() {
     val keyboardUp = WindowInsets.ime.getBottom(density) > 0
     val bottomInset = if (keyboardUp) 0.dp else with(density) { navHeight.toDp() }
 
+    /* ── Zurueck fuehrt zur Startseite (N15) ───────────────────────────────
+       Seit N11 hat die App zwei Seiten, und bis N14 fuehrte die Zurueck-Geste
+       auf BEIDEN aus der App heraus. Auf der Einstellungen-Seite ist das
+       falsch: Wer dort etwas eingestellt hat, will zurueck zu seinen Codes und
+       nicht auf den Startbildschirm. Am Geraet gemessen war die Folge, dass der
+       naechste Wisch den Launcher scrollte (die Falle steht seit P7 in
+       CLAUDE.md).
+
+       ── Warum PREDICTIVE und nicht einfach `BackHandler` ──────────────────
+       Weil Android 14 die Geste sichtbar gemacht hat: Wer vom Rand zieht, sieht
+       WOHIN es geht, und kann mitten in der Bewegung umkehren. Ein
+       `BackHandler` kennt nur das Ergebnis; das Ziehen zeigte dann nichts, und
+       ein Abbruch waere nicht zu unterscheiden von einem Treffer.
+
+       Die Vorschau ist die der Plattform: Die abtretende Seite ZIEHT SICH
+       ZUSAMMEN, bis zu 5 % bei voller Geste. Kein Ausblenden dazu — was
+       zurueckkommen kann, soll nicht wie etwas aussehen, das verschwindet. Der
+       Fortschritt ist der echte des Systems (`BackEventCompat.progress`), keine
+       eigene Fahrt: Die Bewegung gehoert dem Finger.
+
+       `--dur-calm` steht hier NICHT: Solange gezogen wird, gibt es keine Dauer.
+       Nur der Ruecksprung nach einem Abbruch faehrt, und den fuehrt die
+       Plattform, indem sie den Fortschritt selbst zurueckdreht. */
+    var backProgress by remember { mutableFloatStateOf(0f) }
+
+    PredictiveBackHandler(enabled = page == Page.Settings) { gesture ->
+        try {
+            gesture.collect { event -> backProgress = event.progress }
+            // Durchgezogen: erst die Seite wechseln, dann die Vorschau
+            // zuruecknehmen — in dieser Reihenfolge, sonst blitzt die
+            // Einstellungen-Seite in voller Groesse auf, bevor sie geht.
+            page = Page.Home
+            backProgress = 0f
+        } catch (_: CancellationException) {
+            // Abgebrochen: Die Seite bleibt, die Vorschau geht zurueck.
+            backProgress = 0f
+        }
+    }
+
     /* ── Die Buehne liegt UNTER der Leiste (N12) ───────────────────────────
        Bis N11 war das hier eine Spalte: Buehne, Fusszeile, Leiste — jede mit
        ihrem eigenen Platz. Seit die Leiste SCHWEBT, gibt es diesen Platz
@@ -360,7 +411,21 @@ fun ClockworkApp() {
            nichts an, und die Leiste soll hinter ihr verschwinden statt auf
            ihr zu reiten. Genau deshalb sitzt `imePadding()` hier an einer
            eigenen Huelle und nicht an der grossen Box. */
-        Box(modifier = Modifier.fillMaxSize().imePadding()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .imePadding()
+                /* Die Vorschau der Zurueck-Geste. Der Wert wird IM
+                   `graphicsLayer` gelesen und invalidiert damit nur das
+                   Zeichnen, nicht die Zusammensetzung — dieselbe Bauart wie der
+                   verstaute Kopf. Bei 0 ist die Kette wirkungslos, also braucht
+                   sie keine Bedingung. */
+                .graphicsLayer {
+                    val shrink = 1f - 0.05f * backProgress
+                    scaleX = shrink
+                    scaleY = shrink
+                },
+        ) {
             if (page == Page.Settings) {
                 SettingsPage(
                     vault = vault,
@@ -773,7 +838,10 @@ private fun WorkingStage(
             ),
         verticalArrangement = Arrangement.spacedBy(Dimens.gapGroup),
     ) {
-        Panel(modifier = Modifier.fillMaxWidth()) {
+        // Die drei Karten treten NACHEINANDER ein (N15) — 20 ms Versatz, wie
+        // die Ziffern eines Codes. Die Reihenfolge ist die des Lesens: erst die
+        // Codes, dann die Eingabe, dann der Tresor.
+        Panel(modifier = Modifier.fillMaxWidth().cardEnter(0)) {
             Column(verticalArrangement = Arrangement.spacedBy(Dimens.gapPair)) {
                 if (showFilter) {
                     FilterField(value = filter, onValueChange = { filter = it })
@@ -856,7 +924,10 @@ private fun WorkingStage(
         // ── Die Eingabe als Fold-Zeile (V10) ───────────────────────────────
         // „Eingabe · 3 Konten" mit demselben Zaehler wie im Web: eine Zahl,
         // eine Quelle. Tippen oeffnet den Editor in der Schublade darunter.
-        Panel(modifier = Modifier.fillMaxWidth(), padding = FoldPanelPadding) {
+        Panel(
+            modifier = Modifier.fillMaxWidth().cardEnter(1),
+            padding = FoldPanelPadding,
+        ) {
             Column {
                 FoldRow(
                     label = "${text("zone.input")} · ${countLabel(entries)}",
@@ -913,7 +984,7 @@ private fun WorkingStage(
             controller = vault,
             expanded = vaultOpen,
             onExpandedChange = onVaultOpenChange,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().cardEnter(2),
         )
 
         ColophonLine()
@@ -951,6 +1022,8 @@ private fun countLabel(entries: List<ParsedEntry>): String {
 private fun FilterField(value: String, onValueChange: (String) -> Unit) {
     val colors = LocalColors.current
     val interaction = remember { MutableInteractionSource() }
+    val keyboard = LocalSoftwareKeyboardController.current
+    val focus = LocalFocusManager.current
     // Ausserhalb des Modifiers geholt: `semantics {}` ist kein Composable und
     // darf `text()` nicht aufrufen.
     val label = text("filter.label")
@@ -959,6 +1032,34 @@ private fun FilterField(value: String, onValueChange: (String) -> Unit) {
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
+        /* ── IME-Politur (N15) ────────────────────────────────────────────
+           Drei Angaben, und jede loest etwas Sichtbares:
+
+           `ImeAction.Search` beschriftet die Eingabetaste der Tastatur mit der
+           Lupe. Vorher stand dort ein Zeilenumbruch — in einem EINZEILIGEN Feld
+           also eine Taste, die nichts tut.
+
+           Auf Search hin geht die Tastatur zu und der Fokus weg: Gesucht wird
+           bei jedem Zeichen (die Liste filtert live), das Absenden ist also
+           schon passiert. Was der Nutzer meint, ist „fertig, zeig mir die
+           Treffer" — und dafuer muss die Tastatur aus dem Weg, die auf einem
+           Telefon die halbe Liste verdeckt.
+
+           Keine Grossschreibung, keine Autokorrektur: Ein Aussteller heisst
+           „github" und nicht „Github", und eine Autokorrektur, die aus einem
+           Kontonamen ein Wort ihres Woerterbuchs macht, laesst die Liste leer
+           aussehen. */
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.None,
+            autoCorrectEnabled = false,
+            imeAction = ImeAction.Search,
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                keyboard?.hide()
+                focus.clearFocus()
+            },
+        ),
         textStyle = TextStyles.body.copy(color = colors.ink),
         cursorBrush = androidx.compose.ui.graphics.SolidColor(colors.signal),
         interactionSource = interaction,
@@ -987,6 +1088,39 @@ private fun FilterField(value: String, onValueChange: (String) -> Unit) {
  *
  * `BasicTextField` und nicht `TextField`: Letzteres kommt aus Material und
  * braechte Label, Rahmen und Fuellung seines eigenen Systems mit.
+ *
+ * ── Die Tastatur darf hier NICHTS mitreden (N15) ──────────────────────────
+ * In diesem Feld steht Schluesselmaterial: `otpauth://`-Zeilen und Base32.
+ * Beides vertraegt keine Hilfe.
+ *
+ * `KeyboardCapitalization.None` — eine Tastatur, die den Satzanfang gross
+ * schreibt, macht aus `otpauth://` ein `Otpauth://`. Base32 ist zwar
+ * gross-klein-gleichgueltig (`base32.ts` faltet), die URI ist es nicht.
+ *
+ * `autoCorrectEnabled = false` — das ist der wichtigere der beiden. Eine
+ * Autokorrektur, die einen 32-Zeichen-Schluessel für ein verschriebenes Wort
+ * haelt, aendert ihn STILL, und man sieht dem Ergebnis nichts an: Der Code
+ * rechnet sich weiter aus, er stimmt nur nicht mehr. Genau dieser Fehler ist
+ * dem Projekt schon einmal passiert, nur mit `adb shell input text` als
+ * Verursacher (CLAUDE.md, Fallen) — und er hat damals eine Dreiviertelstunde
+ * gekostet, weil der falsche Code aussah wie ein Rechenfehler.
+ *
+ * `KeyboardType.Ascii` — bittet um ein lateinisches Tastenfeld
+ * (`IME_FLAG_FORCE_ASCII`). Auf einem Geraet mit kyrillischem oder
+ * arabischem Layout steht sonst eine Tastatur da, mit der man kein Base32
+ * tippen kann. Die Sprache der Oberflaeche bleibt davon unberuehrt — es geht um
+ * die Zeichen im FELD, nicht um die der App.
+ *
+ * KEIN `imeAction`: Das Feld ist mehrzeilig, eine Zeile ist ein Konto. Die
+ * Eingabetaste muss also ein Zeilenumbruch bleiben — hier waere eine
+ * Aktionstaste ein Verlust.
+ *
+ * ── Was hier NICHT erreichbar ist, und das gehoert gesagt ─────────────────
+ * `IME_FLAG_NO_PERSONALIZED_LEARNING` — die Bitte an die Tastatur, das
+ * Getippte nicht in ihr Woerterbuch zu uebernehmen. Compose' `KeyboardOptions`
+ * hat dafuer keinen Griff, und ein Passwort-Typ ist hier falsch: Man muss den
+ * Schluessel SEHEN, um ihn zu pruefen. Die Passphrase des Tresors traegt
+ * `KeyboardType.Password` und ist damit abgedeckt; dieses Feld ist es nicht.
  */
 @Composable
 private fun SecretField(
@@ -1000,6 +1134,11 @@ private fun SecretField(
     BasicTextField(
         value = field,
         onValueChange = onFieldChange,
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.None,
+            autoCorrectEnabled = false,
+            keyboardType = KeyboardType.Ascii,
+        ),
         textStyle = TextStyles.body.copy(color = colors.ink),
         cursorBrush = androidx.compose.ui.graphics.SolidColor(colors.signal),
         interactionSource = interaction,

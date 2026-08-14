@@ -139,9 +139,14 @@ fun Strip(
         delay(COPY_FEEDBACK_MS)
         copied = false
     }
+    val feedback = rememberFeedback()
     val copyNow: () -> Unit = {
         onCopy(code)
         copyStamp++
+        /* Die eine Handlung dieser App — und die einzige, bei der der Blick
+           gleich danach WOANDERS ist: in einem fremden Anmeldefeld. Genau dafuer
+           gibt es die haptische Quittung (Konzept in Haptics.kt). */
+        feedback(Feedback.Confirm)
     }
 
     BoxWithConstraints(
@@ -608,9 +613,26 @@ private fun CopyKey(
         label = if (copied) text("key.copyDone") else text("key.copy"),
         onClick = onCopy,
         modifier = modifier,
-        variant = KeyVariant.Default,
+        /* ── Die Quittung ist ein ZUSTAND, nicht eine Bewegung (N15) ───────
+           Bis N14 wechselte nur das WORT (und die Nabe des Zifferblatts). Das
+           war die halbe Web-Fassung: Dort ist `.strip--copied` eine KLASSE, also
+           ein Zustand, an dem mehrere Bauteile haengen — und ein Zustand haelt,
+           waehrend eine Bewegung vergeht. Wer beim Eintritt des Wortes nicht
+           hinsah, hatte nichts.
+
+           Drei Dinge halten jetzt die 1,6 Sekunden lang: das Wort, die
+           HALTEFARBE der Taste (`--signal-soft` auf `--signal-soft-ink`, das
+           Tonpaar des Akzent-Chips) und das HAEKCHEN anstelle des
+           Kopier-Zeichens. Das Haekchen ist dasselbe Bauteil, das im Popover
+           die gewaehlte Zeile markiert — es bringt seinen 250-ms-Eintritt aus
+           `scale(.7)` selbst mit, weil es mit dem Zustand ENTSTEHT.
+
+           Die Flaeche muss dafuer nicht animiert werden: Sie haengt seit N14 an
+           `animateColorAsState`, faehrt also von selbst in 150 ms hinein und
+           wieder heraus. */
+        variant = if (copied) KeyVariant.Accent else KeyVariant.Default,
         large = large,
-        glyph = { tint -> CopyGlyph(tint) },
+        glyph = { tint -> if (copied) CheckGlyph(tint) else CopyGlyph(tint) },
         labelModifier = Modifier.graphicsLayer {
             alpha = progress
             // Versatz und Groesse NUR auf dem Hinweg: Der Rueckweg ist im Web

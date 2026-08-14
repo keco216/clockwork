@@ -1,9 +1,11 @@
 package io.github.keco216.clockwork.ui
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -22,6 +24,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,13 +39,18 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
@@ -57,6 +66,7 @@ import io.github.keco216.clockwork.ui.theme.Dimens
 import io.github.keco216.clockwork.ui.theme.LocalColors
 import io.github.keco216.clockwork.ui.theme.Motion
 import io.github.keco216.clockwork.ui.theme.TextStyles
+import kotlinx.coroutines.delay
 
 /**
  * Die Bauteile — aus Compose Foundation, nicht aus Material.
@@ -115,13 +125,21 @@ internal fun Modifier.focusRing(
 /* ── Taste ──────────────────────────────────────────────────────────────── */
 
 /**
- * Die vier Tastenvarianten der Web-Fassung.
+ * Die vier Tastenvarianten der Web-Fassung — und eine fuenfte, die ein ZUSTAND
+ * ist.
  *
  * `Primary` ist die EINE Haupthandlung eines Panels, `Default` die neutrale
  * Fuellung, `Flat` die halbe Fuellung („Leeren"), `Danger` die getoente
  * Warnform („Alles loeschen").
+ *
+ * `Accent` (N15) ist keine fuenfte Sorte Taste, sondern die HALTEFARBE einer
+ * quittierenden: Die Kopiertaste traegt sie die 1,6 Sekunden lang, in denen
+ * „Kopiert" steht. Das Tonpaar ist keines aus dem Nichts — `--signal-soft` auf
+ * `--signal-soft-ink` ist genau der Akzent-Chip, den die Karte im Kopf schon
+ * traegt. Der Wechsel faehrt darum von selbst: Die Flaeche haengt seit N14 an
+ * `animateColorAsState`.
  */
-enum class KeyVariant { Primary, Default, Flat, Danger }
+enum class KeyVariant { Primary, Default, Flat, Danger, Accent }
 
 @Composable
 fun Key(
@@ -167,6 +185,7 @@ fun Key(
         KeyVariant.Default -> if (pressed) colors.fillActive else colors.surfaceFill
         KeyVariant.Flat -> colors.fillSoft
         KeyVariant.Danger -> if (pressed) colors.faultSoftHover else colors.faultSoft
+        KeyVariant.Accent -> colors.signalSoft
     }
 
     /* ── Die Flaeche FAEHRT, sie springt nicht (N14) ───────────────────────
@@ -191,6 +210,7 @@ fun Key(
         KeyVariant.Primary -> colors.signalInk
         KeyVariant.Default, KeyVariant.Flat -> colors.ink
         KeyVariant.Danger -> colors.faultSoftInk
+        KeyVariant.Accent -> colors.signalSoftInk
     }
 
     /* Der Druckpunkt: 3 % nachgeben auf der Federkurve. Im Web ist das
@@ -416,6 +436,18 @@ private fun Modifier.shadowApprox(shape: Shape): Modifier = this.shadow(
  * Trefferflaeche von 44 dp — dieselbe Sprosse wie die Aufklapper. Ein 20 dp
  * hohes Ziel ist auf einem Telefon kein Ziel, sondern eine Geduldsprobe.
  *
+ * ── Und die Bahn steht seit N15 am ZEILENENDE ─────────────────────────────
+ * Im Web steht das Kaestchen VOR seiner Beschriftung (`.vault__check`). Auf
+ * Android steht das Bedienelement einer Einstellungszeile am Ende — und zwar
+ * nicht aus Gewohnheit: Die Zeilen einer Liste werden an ihrem Anfang gelesen
+ * und an ihrem Ende bedient, deshalb fluchten dort alle Schalter untereinander
+ * statt hinter Woertern verschiedener Laenge zu wandern.
+ *
+ * Das ist eine STRUKTUR-Abweichung und damit von N11a ausdruecklich gedeckt
+ * („Die Struktur darf nativ abweichen, die Designsprache nicht"). Am Bauteil
+ * selbst aendert sich nichts: 40 × 20, Daumen 22 × 16, Weg 14, 250/300 ms,
+ * Bahn im Akzent. Es steht nur woanders.
+ *
  * ── Warum der Weg ueber `offset` und nicht `absoluteOffset` laeuft ────────
  * `offset` ist leserichtungsbewusst: Auf Arabisch faehrt der Daumen von
  * selbst nach links. Die Web-Fassung braucht dafuer eine eigene
@@ -433,6 +465,7 @@ fun Switch(
     val colors = LocalColors.current
     val interaction = remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
+    val feedback = rememberFeedback()
 
     val travel by animateFloatAsState(
         targetValue = if (checked) 1f else 0f,
@@ -447,45 +480,149 @@ fun Switch(
 
     val trackShape = RoundedCornerShape(Dimens.radiusKey)
 
+    ListRow(
+        label = label,
+        description = description,
+        modifier = modifier.alpha(if (enabled) 1f else 0.5f),
+        enabled = enabled,
+        interaction = interaction,
+        // `Switch` und nicht `Checkbox`: TalkBack sagt dann „an"/„aus"
+        // statt „angehakt", und genau das ist dieses Bauteil.
+        role = Role.Switch,
+        stateLabel = if (checked) "on" else "off",
+        onClick = {
+            onCheckedChange(!checked)
+            // Zwei Richtungen, zwei Wirkungen — das Konzept steht in Haptics.kt.
+            feedback(if (checked) Feedback.Untoggle else Feedback.Toggle)
+        },
+        trailing = {
+            Box(
+                modifier = Modifier
+                    .focusRing(focused, colors.signal, trackShape, 2.dp)
+                    .size(width = 40.dp, height = 20.dp)
+                    .clip(trackShape)
+                    .background(lerp(colors.surfaceFill, colors.signal, tint)),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .offset(x = (14 * travel).dp)
+                        .size(width = 22.dp, height = 16.dp)
+                        .clip(RoundedCornerShape(Dimens.radiusInset))
+                        .background(colors.switchThumb),
+                )
+            }
+        },
+    )
+}
+
+/* ── Listenzeile ────────────────────────────────────────────────────────────
+   Die Zeile der Einstellungen-Seite (N15). */
+
+/**
+ * Das Polster einer Karte, die LISTENZEILEN traegt.
+ *
+ * Waagerecht NICHTS — das tragen die Zeilen selbst. Der Unterschied ist
+ * sichtbar und beabsichtigt: Die Trefferflaeche und die Beruehrungsfarbe einer
+ * Zeile laufen damit von Kartenkante zu Kartenkante, so wie in jeder
+ * Einstellungsliste dieser Plattform. Stuende das Polster an der Karte, saesse
+ * die Zeile in einem Rahmen und man traefe neben ihr ins Leere.
+ *
+ * Senkrecht `--sp-2` wie am Fold-Panel: Eine Liste aus 44-dp-Zeilen braucht
+ * keine 24 dp Luft darueber, die Zeilen bringen ihre eigene mit.
+ *
+ * Die WAAGERECHTE Einrueckung der Zeilen ist trotzdem `--gap-group`, damit ihr
+ * Text mit dem Inhalt der Nachbarkarten fluchtet — dieselbe Begruendung wie bei
+ * [FoldPanelPadding].
+ */
+val ListPanelPadding: PaddingValues = PaddingValues(vertical = Dimens.sp2)
+
+/**
+ * Eine Zeile in einer Einstellungsliste: Beschriftung links, Wert und
+ * Bedienelement rechts.
+ *
+ * ── Warum die Einstellungen ueberhaupt Zeilen geworden sind (N15) ──────────
+ * Bis N14 stand dort gestapelte Web-Struktur: ein Auswahlfeld mit Beschriftung
+ * darueber, darunter drei Schalter mit ihrer Bahn VOR dem Wort. Das ist die
+ * Anordnung eines Formulars — man liest sie von oben nach unten und fuellt sie
+ * aus. Eine Einstellungsseite ist aber kein Formular: Man sucht darin EINEN
+ * Posten, sieht seinen Wert und aendert ihn. Dafuer gibt es auf dieser
+ * Plattform genau eine Form, und sie ist so alt wie sie: die Zeile.
+ *
+ * Was das praktisch bringt, ist an zwei Stellen messbar: Der WERT steht jetzt
+ * neben seinem Posten, ohne dass man ein Feld oeffnen muss („Sprache ·
+ * Deutsch"), und alle Bedienelemente fluchten am rechten Rand.
+ *
+ * ── Die Designsprache bleibt ──────────────────────────────────────────────
+ * Kein neues Mass, keine neue Farbe: 44 dp Trefferflaeche (`--touch-min`),
+ * `--gap-group` Einrueckung, `--t-small` in `--ink` fuer die Beschriftung,
+ * `--t-micro` in `--ink-3` fuer die Beschreibung, der Wert in `--ink-2`, und
+ * die Beruehrungsfarbe ist dieselbe `--surface-active` in 150 ms wie an
+ * Fold-Zeile und Navigationsposten (N14).
+ *
+ * @param value Der aktuelle Wert, rechts vor dem Bedienelement.
+ * @param stateLabel Was ein Screenreader als Zustand hoeren soll.
+ * @param interaction Von aussen, wenn das Bedienelement im [trailing]-Fach den
+ *   Fokus des Zeilen-Knopfes anzeigen muss (so macht es der [Switch]).
+ */
+@Composable
+fun ListRow(
+    label: String,
+    modifier: Modifier = Modifier,
+    value: String? = null,
+    description: String? = null,
+    labelColour: Color? = null,
+    enabled: Boolean = true,
+    role: Role = Role.Button,
+    stateLabel: String? = null,
+    interaction: MutableInteractionSource? = null,
+    onClick: (() -> Unit)? = null,
+    trailing: (@Composable () -> Unit)? = null,
+) {
+    val colors = LocalColors.current
+    val source = interaction ?: remember { MutableInteractionSource() }
+    val pressed by source.collectIsPressedAsState()
+
+    val touch by animateColorAsState(
+        targetValue = if (pressed) colors.surfaceActive else Color.Transparent,
+        animationSpec = tween(durationMillis = Motion.quick, easing = Motion.spring),
+        label = "Zeilen-Beruehrung",
+    )
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(Dimens.radiusField))
-            .clickable(
-                interactionSource = interaction,
-                indication = null,
-                enabled = enabled,
-                // `Switch` und nicht `Checkbox`: TalkBack sagt dann „an"/„aus"
-                // statt „angehakt", und genau das ist dieses Bauteil.
-                role = Role.Switch,
-                onClick = { onCheckedChange(!checked) },
+            .background(touch)
+            .then(
+                if (onClick == null) {
+                    Modifier
+                } else {
+                    Modifier
+                        .clickable(
+                            interactionSource = source,
+                            indication = null,
+                            enabled = enabled,
+                            role = role,
+                            onClick = onClick,
+                        )
+                        .semantics {
+                            if (stateLabel != null) stateDescription = stateLabel
+                        }
+                },
             )
-            .semantics { stateDescription = if (checked) "on" else "off" }
             .defaultMinSize(minHeight = Dimens.touchMin)
-            .alpha(if (enabled) 1f else 0.5f)
-            .padding(vertical = Dimens.sp2),
-        horizontalArrangement = Arrangement.spacedBy(Dimens.gapPair),
+            .padding(horizontal = Dimens.gapGroup, vertical = Dimens.sp2),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.gapStack),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(
-            modifier = Modifier
-                .focusRing(focused, colors.signal, trackShape, 2.dp)
-                .size(width = 40.dp, height = 20.dp)
-                .clip(trackShape)
-                .background(lerp(colors.surfaceFill, colors.signal, tint)),
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(Dimens.sp1),
         ) {
-            Box(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .offset(x = (14 * travel).dp)
-                    .size(width = 22.dp, height = 16.dp)
-                    .clip(RoundedCornerShape(Dimens.radiusInset))
-                    .background(colors.switchThumb),
+            BasicText(
+                text = label,
+                style = TextStyles.small.copy(color = labelColour ?: colors.ink),
             )
-        }
-
-        Column(verticalArrangement = Arrangement.spacedBy(Dimens.sp1)) {
-            BasicText(text = label, style = TextStyles.small.copy(color = colors.ink))
             if (description != null) {
                 BasicText(
                     text = description,
@@ -493,7 +630,41 @@ fun Switch(
                 )
             }
         }
+
+        if (value != null) {
+            BasicText(
+                text = value,
+                style = TextStyles.small.copy(color = colors.ink2),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        if (trailing != null) trailing()
     }
+}
+
+/**
+ * Die Haarlinie zwischen zwei Listenzeilen.
+ *
+ * `--rule`, 1 dp, und waagerecht auf `--gap-group` eingerueckt: Sie beginnt
+ * dort, wo der Text beginnt. Eine Linie, die von Kartenkante zu Kartenkante
+ * lief, teilte die Karte in Kaesten — hier soll sie Zeilen trennen, nicht
+ * Bereiche.
+ *
+ * Dieselbe Rolle wie die Fuge zwischen zwei Kanalzuegen, und aus demselben
+ * Grund dieselbe Farbe.
+ */
+@Composable
+fun RowDivider(modifier: Modifier = Modifier) {
+    val colors = LocalColors.current
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.gapGroup)
+            .height(1.dp)
+            .background(colors.rule),
+    )
 }
 
 /* ── Zeile ──────────────────────────────────────────────────────────────── */
@@ -569,6 +740,20 @@ fun FoldRow(
      * tragen muss. Ihr Mass steht seit N12 als `Glyph.dot` an einer Stelle.
      */
     lamp: Color? = null,
+    /**
+     * Ob die Leuchte gefuellt ist — beim Tresor sagt die FORM den dritten
+     * Zustand (N15, siehe [Lamp]).
+     */
+    lampFilled: Boolean = true,
+    /**
+     * Die Farbe der Beschriftung, wenn sie mit dem Zustand geht.
+     *
+     * Der Tresor tut das: `--ink-3` aus, `--ink` gesperrt, `--signal-text`
+     * offen — die Leiter der Web-Fassung („die Leiter geht mit dem Gewicht der
+     * Auskunft", styles/panels.css). Die Eingabe-Zeile daneben tut es nicht,
+     * ihre Beschriftung ist immer gleich wichtig.
+     */
+    labelColour: Color? = null,
 ) {
     val colors = LocalColors.current
     val interaction = remember { MutableInteractionSource() }
@@ -609,11 +794,13 @@ fun FoldRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (lamp != null) {
-                Lamp(colour = lamp)
+                // 8 dp und nicht 6: Das ist die ZUSTANDS-Leuchte, und die
+                // Web-Fassung gibt ihr an dieser Stelle ein eigenes Mass.
+                Lamp(colour = lamp, filled = lampFilled, size = Glyph.dotState)
             }
             BasicText(
                 text = label,
-                style = TextStyles.small.copy(color = colors.ink),
+                style = TextStyles.small.copy(color = labelColour ?: colors.ink),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -665,6 +852,148 @@ fun Drawer(open: Boolean, modifier: Modifier = Modifier, content: @Composable ()
             // heraus, der Inhalt wandert nicht.
             placeables.forEach { it.place(0, 0) }
         }
+    }
+}
+
+/* ── Kantenzeichen an einer Scrollflaeche (N15) ─────────────────────────── */
+
+/**
+ * Blendet den Inhalt an der Kante aus, an der etwas verborgen liegt.
+ *
+ * ── Warum eine MASKE und kein Verlauf darueber ────────────────────────────
+ * Weil ein Verlauf eine Farbe braeuchte, und die gibt es hier nicht: Das
+ * Popover traegt `--surface`, der Inhalt darunter sind Zeilen mit
+ * Beruehrungsflaeche. Ein Streifen in `--surface` laege ueber einer beruehrten
+ * Zeile als heller Fleck. Eine Maske hat das Problem nicht — sie blendet aus,
+ * was da ist, statt etwas darueberzulegen. Genau deshalb arbeitet auch die
+ * Referenz mit `mask-image` (`scroll-shadow.css`), und die Web-Fassung dieses
+ * Projekts in `styles/panels.css` ebenso.
+ *
+ * `BlendMode.DstIn` ist die woertliche Entsprechung: Der Verlauf liefert nur
+ * Deckung, und was er nicht deckt, verschwindet.
+ *
+ * ── Warum die Maske nur dasteht, wenn sie etwas tut ───────────────────────
+ * Weil sie eine eigene Zeichenebene kostet (`CompositingStrategy.Offscreen`) —
+ * dasselbe Argument, mit dem die Web-Fassung ihre Maske an ein Attribut
+ * gebunden hat: gemessen 19 Compositor-Ebenen mit, 18 ohne.
+ *
+ * ── Warum hier trotz Scrollen nichts je Bild neu zusammengesetzt wird ─────
+ * Die zwei Fragen sind Wahrheitswerte („liegt oben etwas verborgen?"), und sie
+ * stehen in `derivedStateOf`. Damit loest nur der WECHSEL eine
+ * Neuzusammensetzung aus, nicht jeder gescrollte Pixel — das native Gegenstueck
+ * zum IntersectionObserver, den `ui/scroll-edge.ts` aus genau diesem Grund
+ * benutzt.
+ *
+ * Die Laenge faehrt in 150 ms auf `--ease-snap` herein, wie im Web
+ * (`--fade-start` ist dort ueber `@property` animierbar gemacht).
+ *
+ * @param fade `--scroll-fade`, also `--sp-6`.
+ */
+@Composable
+fun Modifier.scrollEdges(state: ScrollState, fade: Dp = Dimens.sp6): Modifier {
+    val atStart by remember(state) { derivedStateOf { state.value > 0 } }
+    val atEnd by remember(state) { derivedStateOf { state.value < state.maxValue } }
+
+    val head by animateFloatAsState(
+        targetValue = if (atStart) 1f else 0f,
+        animationSpec = tween(Motion.quick, easing = Motion.snapEasing),
+        label = "scroll-fade-start",
+    )
+    val foot by animateFloatAsState(
+        targetValue = if (atEnd) 1f else 0f,
+        animationSpec = tween(Motion.quick, easing = Motion.snapEasing),
+        label = "scroll-fade-end",
+    )
+
+    if (head <= 0f && foot <= 0f) return this
+
+    val length = with(LocalDensity.current) { fade.toPx() }
+
+    return this
+        .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+        .drawWithContent {
+            drawContent()
+
+            /* Der Verlauf klemmt ausserhalb seiner Haltepunkte (`TileMode.Clamp`
+               ist die Vorgabe). Ueber `length` hinaus ist er deshalb deckend
+               schwarz und laesst alles stehen — deswegen darf das Rechteck die
+               ganze Flaeche sein und muss kein Streifen sein. */
+            if (head > 0f) {
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        0f to Color.Transparent,
+                        1f to Color.Black,
+                        startY = 0f,
+                        endY = length * head,
+                    ),
+                    blendMode = BlendMode.DstIn,
+                )
+            }
+            if (foot > 0f) {
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        0f to Color.Black,
+                        1f to Color.Transparent,
+                        startY = size.height - length * foot,
+                        endY = size.height,
+                    ),
+                    blendMode = BlendMode.DstIn,
+                )
+            }
+        }
+}
+
+/* ── Karten-Eintritt (N15) ──────────────────────────────────────────────── */
+
+/**
+ * Eine Karte TRITT EIN, statt einfach dazustehen.
+ *
+ * ── Was Kevin daran wollte, und was dagegen sprach ────────────────────────
+ * Der Auftrag nennt „Karten-Eintritte". Die Web-Fassung hat sie NICHT, und das
+ * ist kein Versehen: Eine Seite im Browser wird gezeichnet, wenn sie ankommt,
+ * und ihre Karten sind einfach da.
+ *
+ * Nativ ist die Lage anders, und zwar zweimal: Die App baut ihre Seite nach
+ * einem Kaltstart hinter dem Splash auf (N15/4), und sie WECHSELT Seiten
+ * (N11). In beiden Faellen entsteht die Karte in dem Moment, in dem man
+ * hinsieht — und etwas, das entsteht, darf man entstehen sehen. Das ist die
+ * gleiche Begruendung, mit der die Meldungszeile einfaehrt statt aufzuploppen.
+ *
+ * ── Die Zahlen sind alle schon im Haus ────────────────────────────────────
+ *   250 ms   `--dur-calm`, die Hausdauer fuer eine Bewegung, die etwas erzaehlt
+ *   8 dp     derselbe Weg wie beim Wert-Eintritt (`slot-value-in`)
+ *   20 ms    `--stagger-flap` je Karte — die Zahl, mit der schon die Ziffern
+ *            eines Codes nacheinander fallen
+ *
+ * Der Versatz macht aus drei gleichzeitigen Eintritten eine REIHENFOLGE. Mehr
+ * als 20 ms saehe nach Animation aus, weniger nach Zufall — dasselbe Urteil,
+ * das an der Fallblattanzeige schon gefaellt ist.
+ *
+ * ── Es laeuft genau EINMAL ────────────────────────────────────────────────
+ * `LaunchedEffect(Unit)` an einem `remember`-Wert: Die Fahrt haengt am
+ * ENTSTEHEN des Bauteils, nicht an seinen Werten. Ein Kanalzug, der jede
+ * Sekunde eine neue Zahl bekommt, tritt deshalb nicht jede Sekunde neu ein.
+ *
+ * Gelesen wird der Wert INNERHALB von `graphicsLayer` — damit invalidiert er
+ * nur das Zeichnen und nicht die Zusammensetzung, wie schon beim verstauten
+ * Kopf (`offset {}`).
+ *
+ * ── Reduzierte Bewegung ───────────────────────────────────────────────────
+ * Wie ueberall hier ohne eigene Abfrage: `Animatable` haengt an der
+ * Animator-Skala des Systems. Steht sie auf 0, ist die Karte sofort da.
+ */
+@Composable
+fun Modifier.cardEnter(order: Int = 0): Modifier {
+    val enter = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        if (order > 0) delay((order * Motion.staggerFlap).toLong())
+        enter.animateTo(1f, tween(Motion.calm, easing = Motion.spring))
+    }
+
+    return this.graphicsLayer {
+        alpha = enter.value
+        translationY = (1f - enter.value) * 8.dp.toPx()
     }
 }
 

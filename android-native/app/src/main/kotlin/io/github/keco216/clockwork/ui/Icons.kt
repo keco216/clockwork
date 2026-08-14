@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -40,6 +41,11 @@ import io.github.keco216.clockwork.ui.theme.Motion
  * Seit N12 gilt: **24-dp-Kasten, 2 dp Strich, runde Kappen und Ecken.** Wer
  * ein Zeichen braucht, holt es hier; wer eines aendert, aendert es fuer alle.
  *
+ * **Seit N15 ist der Strich ein Anteil des Rasters** und keine absolute Zahl:
+ * 2 von 24 Einheiten ([gridStroke]). Bei 24 dp ist das derselbe Wert wie vorher
+ * — bei den 20 dp in einer Taste ist es der richtige. Die Begruendung samt
+ * gemessenem Befund steht bei [gridStroke].
+ *
  * ── Die eine Ausnahme, und warum sie eine bleibt ──────────────────────────
  * Das Zifferblatt neben dem Code ([Gauge]) und die beiden O der Wortmarke
  * sind KEINE Zeichen, sondern die MARKE in Betrieb. Sie tragen weiter stumpfe
@@ -70,7 +76,39 @@ object Glyph {
      * als Nabe sitzt.
      */
     val dot: Dp = 6.dp
+
+    /**
+     * Die ZUSTANDS-Leuchte des Tresors: 8 dp — und das ist keine zweite
+     * Meinung, sondern die zweite Zahl der Web-Fassung (N15).
+     *
+     * Dort gibt es beide: `.lamp` im Kopf ist 6 px, `.vault__lamp` am Panel
+     * 8 px. Nativ stand an beiden Stellen die 6, und damit war die WICHTIGERE
+     * der zwei Leuchten die kleinere. Sie sagt, ob etwas gespeichert ist; die
+     * im Kopf sagt nur, dass das Geraet laeuft.
+     */
+    val dotState: Dp = 8.dp
 }
+
+/**
+ * Das Strichgewicht IM Raster: 2 von 24 Einheiten.
+ *
+ * ── Der Befund, der das noetig gemacht hat (N15) ──────────────────────────
+ * Bis N14 stand in jedem Zeichen `Glyph.stroke.toPx()`, also 2 dp ABSOLUT.
+ * Solange jedes Zeichen 24 dp gross ist, stimmt das auch. Seit N14 sitzt in
+ * jeder Taste aber eines mit **20 dp** (`KEY_GLYPH`) — und ein `Modifier.size`
+ * klemmt sich in die Vorgaben des Elternteils, der Kasten wird also wirklich
+ * 20 dp. Der Strich blieb dabei 2 dp und war damit ein Zehntel der Kastenseite
+ * statt eines Zwoelftels: **20 % mehr Gewicht als am selben Zeichen im Satz.**
+ *
+ * Der Kommentar an `Key` behauptete das Gegenteil („`Glyph` rechnet in
+ * Anteilen der Kastenseite, also skaliert der Strich mit"). Er war die
+ * Absicht, nicht der Code — jetzt ist er beides.
+ *
+ * Bei 24 dp kommt hier auf den Punkt derselbe Wert heraus wie vorher; nur die
+ * kleineren Zeichen aendern sich. Deshalb ist das keine Umstellung des Satzes,
+ * sondern die Reparatur einer Ausnahme.
+ */
+private fun DrawScope.gridStroke(): Float = 2f * unit()
 
 /**
  * Die Umrechnung: eine Einheit des 24er-Rasters in Pixel.
@@ -127,7 +165,7 @@ private fun DrawScope.unit(): Float = size.minDimension / 24f
 fun DialGlyph(tint: Color, modifier: Modifier = Modifier, turn: Float = 0f) {
     Canvas(modifier = modifier.size(Glyph.box)) {
         val u = unit()
-        val stroke = Glyph.stroke.toPx()
+        val stroke = gridStroke()
 
         /* ── Schnitt v3 (N14): der Ring ist GESCHLOSSEN ────────────────────
            Die Marken sind weg. Zwoelf davon (v2) lasen sich weiterhin als
@@ -216,7 +254,7 @@ fun DialGlyph(tint: Color, modifier: Modifier = Modifier, turn: Float = 0f) {
 fun GearGlyph(tint: Color, modifier: Modifier = Modifier, turn: Float = 0f) {
     Canvas(modifier = modifier.size(Glyph.box)) {
         val u = unit()
-        val stroke = Glyph.stroke.toPx()
+        val stroke = gridStroke()
 
         val teeth = 8
         val outer = 9.0f * u
@@ -305,7 +343,7 @@ fun ChevronGlyph(tint: Color, turn: Float, modifier: Modifier = Modifier) {
                 path = path,
                 color = tint,
                 style = Stroke(
-                    width = Glyph.stroke.toPx(),
+                    width = gridStroke(),
                     cap = StrokeCap.Round,
                     join = StrokeJoin.Round,
                 ),
@@ -351,7 +389,7 @@ fun CheckGlyph(tint: Color, modifier: Modifier = Modifier) {
                 path = path,
                 color = tint,
                 style = Stroke(
-                    width = Glyph.stroke.toPx(),
+                    width = gridStroke(),
                     cap = StrokeCap.Round,
                     join = StrokeJoin.Round,
                 ),
@@ -366,14 +404,42 @@ fun CheckGlyph(tint: Color, modifier: Modifier = Modifier) {
  * Sie steht im Kopf (Zustandszeile) und an der Fold-Zeile des Tresors. Bis N12
  * war sie an beiden Stellen ein eigener 6-dp-Kasten mit derselben Zahl — zwei
  * Kopien, die beim naechsten Mal auseinanderlaufen.
+ *
+ * ── Die Form traegt mit, nicht nur die Farbe (N15) ────────────────────────
+ * Am Tresor gibt es DREI Zustaende, und die Web-Fassung unterscheidet sie
+ * ausdruecklich nicht allein ueber Farbe: „Aus = leerer Ring, gesperrt =
+ * gefuellt in Ink, offen = gefuellt im Akzent. Nie NUR ueber Farbe: Ring gegen
+ * Flaeche ist ein Formunterschied, und der bleibt auch fuer jemanden lesbar,
+ * der die beiden Toene nicht unterscheiden kann." (styles/panels.css)
+ *
+ * Nativ war die Leuchte bis N14 immer gefuellt — der ausgeschaltete Tresor sah
+ * damit aus wie ein gesperrter, nur in derselben Farbe. Von den drei
+ * Zustaenden waren zwei nicht auseinanderzuhalten.
+ *
+ * @param filled falsch = leerer Ring mit 1 dp Kante in der uebergebenen Farbe.
+ * @param size 6 dp im Kopf, 8 dp am Tresor — die beiden Masse der Web-Fassung.
  */
 @Composable
-fun Lamp(colour: Color, modifier: Modifier = Modifier) {
+fun Lamp(
+    colour: Color,
+    modifier: Modifier = Modifier,
+    filled: Boolean = true,
+    size: Dp = Glyph.dot,
+) {
     Box(
         modifier = modifier
-            .size(Glyph.dot)
+            .size(size)
             .clip(CircleShape)
-            .background(colour),
+            .then(
+                if (filled) {
+                    Modifier.background(colour)
+                } else {
+                    // 1 dp wie `border: 1px solid var(--ink-3)` im Web. Ein
+                    // Rahmen und kein gezeichneter Ring: Er braucht hier keinen
+                    // Platz im Layout, weil der Kasten ohnehin fest ist.
+                    Modifier.border(1.dp, colour, CircleShape)
+                },
+            ),
     )
 }
 
@@ -396,6 +462,11 @@ internal fun DrawScope.drawViewfinderCorner(
     leg: Float,
     colour: Color,
 ) {
+    /* Hier ABSOLUT und nicht im Raster (N15): Diese Ecken werden nicht in einem
+       24-dp-Kasten gezeichnet, sondern auf der Flaeche des Suchers. `gridStroke`
+       waere dort ein Vierundzwanzigstel der Sucherbreite, also ein Balken. Die
+       zwei Regeln widersprechen sich nicht — sie liefern bei 24 dp genau
+       denselben Wert und trennen nur, WAS das Raster ist. */
     val stroke = Glyph.stroke.toPx()
     val half = stroke / 2f
     val dx = if (toRight) 1f else -1f
@@ -447,7 +518,7 @@ internal fun DrawScope.drawViewfinderCorner(
 fun CopyGlyph(tint: Color, modifier: Modifier = Modifier) {
     Canvas(modifier = modifier.size(Glyph.box)) {
         val u = unit()
-        val stroke = Glyph.stroke.toPx()
+        val stroke = gridStroke()
 
         // Das vordere Blatt: 10 x 12 Einheiten, unten rechts.
         drawRoundRect(
@@ -485,7 +556,7 @@ fun CopyGlyph(tint: Color, modifier: Modifier = Modifier) {
 fun ImageGlyph(tint: Color, modifier: Modifier = Modifier) {
     Canvas(modifier = modifier.size(Glyph.box)) {
         val u = unit()
-        val stroke = Glyph.stroke.toPx()
+        val stroke = gridStroke()
 
         drawRoundRect(
             color = tint,
@@ -521,7 +592,7 @@ fun ImageGlyph(tint: Color, modifier: Modifier = Modifier) {
 fun CameraGlyph(tint: Color, modifier: Modifier = Modifier) {
     Canvas(modifier = modifier.size(Glyph.box)) {
         val u = unit()
-        val stroke = Glyph.stroke.toPx()
+        val stroke = gridStroke()
 
         // Der Buckel sitzt AUF dem Gehaeuse und wird von ihm ueberzeichnet —
         // deshalb zuerst.
@@ -560,7 +631,7 @@ fun CameraGlyph(tint: Color, modifier: Modifier = Modifier) {
 fun KeyGlyph(tint: Color, modifier: Modifier = Modifier) {
     Canvas(modifier = modifier.size(Glyph.box)) {
         val u = unit()
-        val stroke = Glyph.stroke.toPx()
+        val stroke = gridStroke()
 
         drawCircle(
             color = tint,

@@ -36,6 +36,13 @@ composeBom = "2026.06.01"         # = Compose 1.11.4; 1.12 verlangt SDK 37
 camera = "1.5.3"
 biometric = "1.1.0"               # letzte STABILE; 1.4.0 gibt es nur als alpha
 
+# Der Start-Bildschirm (N15). Am 14.08.2026 gegen die maven-metadata.xml
+# gemessen: 1.2.0 ist `<release>`, alles darueber gibt es nur als alpha/rc.
+# Die Bibliothek zieht `appcompat-resources` mit — das liegt ueber appcompat
+# ohnehin im Baum — und sonst nur `annotation`. Kein Material, `checkNoMaterial`
+# bleibt gruen; nachgemessen, nicht angenommen.
+splashscreen = "1.2.0"
+
 # Reine Java-Bibliothek fuer die QR-Dekodierung. Apache-2.0, F-Droid-tauglich.
 # ML Kit waere die bequemere Wahl und faellt aus: proprietaer und mit
 # Play-Services-Bindung — beides ist in diesem Projekt ausgeschlossen.
@@ -69,6 +76,8 @@ androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycl
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camera" }
 
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 
 zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
 
