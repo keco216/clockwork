@@ -1706,14 +1706,20 @@ Skripten, die rechnen — nicht auf der JVM. Die einzige neue reine Funktion
 (`Feedback.constant()`) ist eine Zuordnungstabelle auf Plattform-Konstanten; ein
 Test darüber prüfte, dass eine Konstante gleich sich selbst ist.
 
-### Nachtrag aus Kevins Sichtung: der Zeiger, der Knopf und der Fokus
+### Nachtrag aus Kevins Sichtung: Zeiger, Knopf, Fokus, „Leeren"
 
-Drei Befunde von ihm, und sie haben **fünf Fehler** aufgedeckt — drei am
-Zifferblatt (seit P5), einen am Knopf und einen am Textfeld (seit P5). Kevins
-Sätze: „beim logo design die uhr muss beim zeiger orange sein, und beim button
-den testschlüssel bitte auch orange machen" — „ich meine den hover button herum
-orange nicht den schlüssel" — „aber die schrifttexte weiss" — „beim input text
-wenn ich wieder zurückgehe ist es immer noch angetastet".
+Vier Befunde von ihm, und sie haben **sechs Lücken** aufgedeckt — drei am
+Zifferblatt (seit P5), eine am Knopf, eine am Textfeld (seit P5) und eine ganze
+fehlende Taste. Seine Sätze: „beim logo design die uhr muss beim zeiger orange
+sein, und beim button den testschlüssel bitte auch orange machen" — „ich meine
+den hover button herum orange nicht den schlüssel" — „aber die schrifttexte
+weiss" — „beim input text wenn ich wieder zurückgehe ist es immer noch
+angetastet" — „ich würde da noch einbauen das man den eingabe leeren kann".
+
+Bemerkenswert daran: **Fünf der sechs sind Paritätslücken**, keine
+Gestaltungswünsche. Er hat sie am Bild gefunden, und jede war im Web schon
+entschieden und begründet. Das ist der beste Beleg dafür, dass die P9-Aufgabe
+„Vergleichsbilder Web-mobil gegen nativ" wirklich nötig ist.
 
 **Das Zifferblatt.** Was `styles/mark.css` sagt, und was nativ danebenstand:
 
@@ -1810,6 +1816,43 @@ Der Fokus kommt VOR der Tastatur. Wer das Feld antippt, hat einen Wimpernschlag
 lang Fokus ohne IME — eine Regel „kein IME, also kein Fokus" würde genau dann
 zuschlagen, und die Tastatur ginge nie auf. Geräumt wird deshalb nur der Wechsel
 von „Tastatur war da" zu „Tastatur ist weg".
+
+#### „Leeren" fehlte ganz — die Ressource lag seit P4 unbenutzt im Baum
+
+Kevins fünfter Satz: „ich würde da noch einbauen das man den eingabe leeren
+kann." Die Web-Fassung hat die Taste seit V6 (`#key-clear`, `key--flat`), der
+Katalogschlüssel `key.clear` ist in allen 37 Sprachen da, und
+`values/strings.xml` trägt `key_clear` seit P4 — nativ hat sie nur nie jemand
+aufgerufen.
+
+**Sie hängt am FELDINHALT, nicht an der Bühne**, wörtlich wie in `app.ts`:
+`keyClear.hidden = input.value === ''` und `keyDemo.hidden = !empty`. Die beiden
+sind damit gegenseitig ausschließend, und deshalb stehen sie nativ im **selben
+Platz**: leer → Testschlüssel, nicht leer → Leeren. Dass im Leerzustand
+überhaupt etwas im Feld stehen kann, ist kein Widerspruch — eine Zeile, die nur
+ein `#`-Kommentar ist, ergibt keinen Eintrag: Die Bühne bleibt leer, das Feld ist
+es nicht. Genau diesen Fall nennt die Web-Fassung als Begründung dafür, die
+Tasten am Feld und nicht an der Bühne zu führen.
+
+**Sie gibt den Fokus zurück**, und das ist keine Höflichkeit: Sie VERSCHWINDET im
+selben Moment (das Feld ist jetzt leer), und ein Bauteil, das den Fokus hält und
+aus der Komposition fällt, gibt ihn nicht weiter — die Falle steht in CLAUDE.md.
+Die Web-Fassung löst es mit derselben Zeile (`input.focus()` direkt nach dem
+Leeren).
+
+**Zwei Abweichungen, benannt:** Im Web steht die Taste mobil ABSOLUT in der
+Legendenzeile der Eingabe-Zone (36 px). Nativ ist diese Zeile selbst ein Knopf,
+der die Schublade schaltet — eine Taste darin wäre ein Ziel in einem Ziel. Sie
+steht deshalb in der Schublade, direkt unter dem Inhalt, den sie räumt, in voller
+Breite und auf der 40-dp-Sprosse der Höhenleiter.
+
+**Nebenbei hat das die `Flat`-Variante zum ersten Mal wirklich in Betrieb
+gebracht.** Sie war seit P5 definiert und nirgends benutzt — und trug deshalb nur
+die halbe Hälfte ihrer Web-Fassung: Fläche `--fill-soft`, aber ohne Druckpunkt
+und mit `--ink` statt `--ink-2`. Jetzt vollständig: Ruhe `--fill-soft` auf
+`--ink-2`, Druck `--surface-fill` auf `--ink`, beides in 150 ms — genau
+`.key--flat` und `.key--flat:hover`. Sie ist die leiseste Taste des Geräts und
+zeigt ihre volle Tinte erst beim Anfassen.
 
 Gebaut, 221 Tests unverändert, `checkNoMaterial` grün, installiert. **Die Bilder
 dazu macht Kevin selbst** — er testet.

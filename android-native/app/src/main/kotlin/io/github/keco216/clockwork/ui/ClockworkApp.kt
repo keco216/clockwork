@@ -51,6 +51,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -741,11 +743,32 @@ private fun VacantStage(
             style = TextStyles.body.copy(color = colors.ink2),
         )
         Spacer(Modifier.height(Dimens.gapStack))
+        val fieldFocus = remember { FocusRequester() }
         SecretField(
             field = field,
             onFieldChange = onFieldChange,
             onFocusChange = onFocusChange,
+            focusRequester = fieldFocus,
         )
+
+        /* ── Genau EINE Taste steht hier, und welche, sagt das FELD ─────────
+           Leer → Testschluessel; nicht leer → Leeren. Die beiden sind im Web
+           gegenseitig ausschliessend (`app.ts`: `keyClear.hidden = value ===
+           ''`, `keyDemo.hidden = !empty`), und hier stehen sie deshalb im
+           selben Platz. Dass im Leerzustand ueberhaupt etwas im Feld stehen
+           kann, ist kein Widerspruch: Eine Zeile, die nur ein `#`-Kommentar
+           ist, ergibt keinen Eintrag — die Buehne bleibt leer, das Feld ist es
+           nicht. */
+        if (field.text.isNotEmpty()) {
+            Spacer(Modifier.height(Dimens.gapPair))
+            ClearKey(
+                onClear = {
+                    onFieldChange(TextFieldValue(""))
+                    fieldFocus.requestFocus()
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
 
         // ── Der Testschluessel-Knopf ───────────────────────────────────────
         // Er lebt NUR im Leerzustand, und zusaetzlich prueft der Handler auf
@@ -998,11 +1021,35 @@ private fun WorkingStage(
                         modifier = Modifier.padding(top = Dimens.gapPair, bottom = Dimens.gapPair),
                         verticalArrangement = Arrangement.spacedBy(Dimens.gapPair),
                     ) {
+                        val fieldFocus = remember { FocusRequester() }
                         SecretField(
                             field = field,
                             onFieldChange = onFieldChange,
                             onFocusChange = onFocusChange,
+                            focusRequester = fieldFocus,
                         )
+
+                        /* „Leeren" steht direkt an dem Inhalt, den es raeumt —
+                           und wie im Web an derselben Bedingung: nicht am
+                           Zustand der Buehne, sondern am Feld. Auf der
+                           Arbeitsbuehne ist es praktisch immer da; die Bedingung
+                           steht trotzdem, weil es dieselbe Regel wie im
+                           Leerzustand sein soll und nicht eine zweite.
+
+                           NICHT in der Fold-Zeile wie in der Web-Mobilfassung
+                           (dort steht es absolut in der Legendenzeile): Hier ist
+                           diese Zeile selbst ein KNOPF, der die Schublade
+                           schaltet. Eine Taste darin waere ein Ziel in einem
+                           Ziel. */
+                        if (field.text.isNotEmpty()) {
+                            ClearKey(
+                                onClear = {
+                                    onFieldChange(TextFieldValue(""))
+                                    fieldFocus.requestFocus()
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
                         // `active = inputOpen`: Faehrt die Schublade zu, endet
                         // eine laufende Kamera mit — die V10-Regel.
                         ScanControls(
@@ -1136,6 +1183,45 @@ private fun FilterField(value: String, onValueChange: (String) -> Unit) {
 }
 
 /**
+ * „Leeren" — die Taste, die das Eingabefeld raeumt (N15).
+ *
+ * ── Sie fehlte, und das war eine Paritaetsluecke ──────────────────────────
+ * Kevins Befund am Geraet: „ich wuerde da noch einbauen das man den eingabe
+ * leeren kann." Die Web-Fassung hat sie seit V6 (`#key-clear`, `key--flat`,
+ * Katalogschluessel `key.clear` — nativ lag die Ressource fertig im Baum und
+ * wurde nie benutzt).
+ *
+ * ── Sie haengt am FELDINHALT, nicht an der Buehne ─────────────────────────
+ * Woertlich die Regel aus `app.ts`: `keyClear.hidden = input.value === ''` und
+ * `keyDemo.hidden = !empty`. Beide Tasten sind damit gegenseitig
+ * ausschliessend, und beide fragen das FELD, nicht die Buehne — eine Zeile, die
+ * nur ein `#`-Kommentar ist, ergibt keinen Eintrag, die Buehne bliebe also leer,
+ * obwohl sehr wohl etwas im Feld steht, das man leeren kann.
+ *
+ * Genau deshalb steht sie hier an EINER Stelle und wird von beiden Buehnen
+ * aufgerufen: Es gibt nur eine Definition von „leer".
+ *
+ * ── Warum sie den Fokus zurueckgibt ──────────────────────────────────────
+ * Weil sie im selben Moment VERSCHWINDET (das Feld ist jetzt leer). Ein
+ * Bauteil, das den Fokus haelt und aus der Komposition faellt, gibt ihn nicht
+ * weiter — die Falle steht in CLAUDE.md, und die Web-Fassung loest sie mit
+ * derselben Zeile (`input.focus()` direkt nach dem Leeren).
+ *
+ * KEINE Rueckfrage: Die Web-Fassung hat keine, und die Taste steht direkt an
+ * dem Inhalt, den sie raeumt. Was im Tresor liegt, ist davon ohnehin
+ * unberuehrt — geleert wird das Feld, nicht der Umschlag.
+ */
+@Composable
+private fun ClearKey(onClear: () -> Unit, modifier: Modifier = Modifier) {
+    Key(
+        label = text("key.clear"),
+        onClick = onClear,
+        modifier = modifier,
+        variant = KeyVariant.Flat,
+    )
+}
+
+/**
  * Das Textfeld.
  *
  * `BasicTextField` und nicht `TextField`: Letzteres kommt aus Material und
@@ -1179,6 +1265,8 @@ private fun SecretField(
     field: TextFieldValue,
     onFieldChange: (TextFieldValue) -> Unit,
     onFocusChange: (Boolean) -> Unit,
+    /** Damit „Leeren" den Fokus zurueckgeben kann — siehe [ClearKey]. */
+    focusRequester: FocusRequester,
 ) {
     val colors = LocalColors.current
     val interaction = remember { MutableInteractionSource() }
@@ -1196,6 +1284,7 @@ private fun SecretField(
         interactionSource = interaction,
         modifier = Modifier
             .fillMaxWidth()
+            .focusRequester(focusRequester)
             .onFocusChanged { onFocusChange(it.isFocused) }
             .clip(RoundedCornerShape(Dimens.radiusField))
             .background(fieldFill(interaction))

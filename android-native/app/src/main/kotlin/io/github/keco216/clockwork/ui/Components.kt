@@ -183,7 +183,12 @@ fun Key(
     val target = when (variant) {
         KeyVariant.Primary -> if (pressed) colors.signalHover else colors.signal
         KeyVariant.Default -> if (pressed) colors.fillActive else colors.surfaceFill
-        KeyVariant.Flat -> colors.fillSoft
+        // Die halbe Fuellung, und beim Druck die VOLLE — so steht es im Web
+        // (`.key--flat { --key-bg: var(--fill-soft); --key-bg-hover:
+        // var(--surface-fill) }`). N15 ist der erste Posten, der diese Variante
+        // wirklich benutzt („Leeren"), und damit der erste, an dem ihre
+        // Rueckmeldung ueberhaupt sichtbar wird.
+        KeyVariant.Flat -> if (pressed) colors.surfaceFill else colors.fillSoft
         KeyVariant.Danger -> if (pressed) colors.faultSoftHover else colors.faultSoft
         KeyVariant.Accent -> colors.signalSoft
     }
@@ -206,14 +211,24 @@ fun Key(
         animationSpec = tween(durationMillis = Motion.quick, easing = Motion.spring),
         label = "Tastenflaeche",
     )
-    val foreground = when (variant) {
+    /* Die Tinte FAEHRT mit, weil die Flat-Taste als einzige zwei hat: `--ink-2`
+       in Ruhe, `--ink` beim Druck (`.key--flat:hover { color: var(--ink) }`).
+       Sie ist die leiseste Taste des Geraets — eine, die man nicht sucht, und
+       die deshalb erst beim Anfassen ihre volle Tinte zeigt. */
+    val foregroundTarget = when (variant) {
         // Snow und nicht `--signal-ink` — Kevins Entscheidung, samt gemessener
         // Folge dokumentiert bei `ClockworkColors.signalKeyInk` (N15).
         KeyVariant.Primary -> colors.signalKeyInk
-        KeyVariant.Default, KeyVariant.Flat -> colors.ink
+        KeyVariant.Default -> colors.ink
+        KeyVariant.Flat -> if (pressed) colors.ink else colors.ink2
         KeyVariant.Danger -> colors.faultSoftInk
         KeyVariant.Accent -> colors.signalSoftInk
     }
+    val foreground by animateColorAsState(
+        targetValue = foregroundTarget,
+        animationSpec = tween(durationMillis = Motion.quick, easing = Motion.spring),
+        label = "Tastentinte",
+    )
 
     /* Der Druckpunkt: 3 % nachgeben auf der Federkurve. Im Web ist das
        `scale(.97)` — die Physik, die Apple jedem Knopf mitgibt, und seit V5
