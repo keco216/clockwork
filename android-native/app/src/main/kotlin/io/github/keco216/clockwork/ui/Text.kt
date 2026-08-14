@@ -3,6 +3,7 @@ package io.github.keco216.clockwork.ui
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.LocalContext
 import io.github.keco216.clockwork.core.KEY_UNREADABLE
 import java.text.NumberFormat
@@ -49,12 +50,28 @@ fun formatNumber(value: Long, locale: Locale): String {
 @ReadOnlyComposable
 fun formatNumber(value: Long): String = formatNumber(value, currentLocale())
 
+/**
+ * Die Sprache der Oberflaeche — BEOBACHTBAR gelesen.
+ *
+ * Hier stand bis N20 `LocalContext.current.resources.configuration`, und das
+ * ist genau eine Sorte falsch: Eine Aenderung der Konfiguration macht
+ * `LocalContext` NICHT ungueltig. Wer die Sprache umstellt, bekommt die
+ * Activity dank `configChanges` im Manifest gar nicht neu — die Komposition
+ * laeuft weiter, und diese Funktion haette den alten Wert weitergereicht. Die
+ * Zahlen einer neu gewaehlten Sprache stuenden dann noch in der Gruppierung
+ * der alten (600,000 statt 600 000). Gefunden hat es Android Lint
+ * (`LocalContextConfigurationRead` / `NonObservableLocaleRead`), nicht das
+ * Auge.
+ *
+ * `LocalLocale.current` ist die beobachtbare Fassung: Sie loest eine
+ * Neuzeichnung aus, wenn sich die Sprache aendert. Ein Rueckfall auf
+ * `Locale.getDefault()` steht bewusst NICHT daneben — auch der laese an der
+ * Beobachtung vorbei, und Lint beanstandet ihn aus genau diesem Grund
+ * (`NonObservableLocale`). Ohne Sprache gibt es keine Komposition.
+ */
 @Composable
 @ReadOnlyComposable
-private fun currentLocale(): Locale {
-    val configuration = LocalContext.current.resources.configuration
-    return configuration.locales[0] ?: Locale.getDefault()
-}
+private fun currentLocale(): Locale = LocalLocale.current.platformLocale
 
 /**
  * Schlaegt einen i18n-Schluessel samt Parametern nach.

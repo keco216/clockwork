@@ -12,6 +12,33 @@
   * Dazu seit P7 die zwei Biometrie-Berechtigungen unten. Sie stehen hier
     ausdruecklich, obwohl androidx.biometric sie ohnehin hineinmischen wuerde
     — siehe Begruendung dort.
+
+  ── Was die Abhaengigkeiten HINEINMISCHEN (N20) ────────────────────────────
+  Der Satz oben ist nur wahr, wenn man auch sagt, was NICHT in dieser Datei
+  steht und trotzdem im fertigen Manifest landet. Am gemergten Manifest
+  abgelesen, nicht vermutet:
+
+  * `androidx.camera.core.impl.MetadataHolderService` — enabled=false,
+    exported=false, traegt nur ein Metadatum (CameraX-Konfiguration).
+  * `androidx.startup.InitializationProvider` — exported=false, mit zwei
+    Initialisierern (ProcessLifecycle, ProfileInstaller). Der dritte,
+    EmojiCompat, ist seit N17 ausdruecklich entfernt; siehe unten.
+  * `androidx.profileinstaller.ProfileInstallReceiver` — **exported=true**,
+    geschuetzt durch `android.permission.DUMP` (signature|privileged).
+    Erreichbar also nur von Shell und System, kein Angriffsweg von einer
+    anderen App. Er kommt mit den ART-Baseline-Profilen (siehe
+    `assets/dexopt/baseline.prof`, 5,8 kB), und die bleiben bewusst an:
+    Anders als in der 1.x-Fassung, wo die Java-Seite eine duenne
+    Capacitor-Bruecke war, ist hier die GANZE Oberflaeche Kotlin und Compose
+    — das Profil beschleunigt genau den teuren Kaltstart. Die
+    Reproduzierbarkeit, wegen der 1.x sie abschaltet, scheitert ohnehin an
+    anderer Stelle (R8 unter fremdem JDK).
+  * Zwei `uses-library`-Eintraege (`androidx.window.extensions`/`sidecar`),
+    beide `required="false"`.
+
+  Damit sagt diese Datei, was das APK sagt. Wer hier etwas hinzufuegt, prueft
+  das gemergte Manifest mit — eine Zusage, die eine Abhaengigkeit still
+  aendern kann, ist keine (die Lehre aus P7 und N17).
 -->
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -78,18 +105,41 @@
         android:supportsRtl="true"
         android:localeConfig="@xml/locales_config"
         android:enableOnBackInvokedCallback="true"
-        android:allowBackup="false">
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules">
 
         <!--
           allowBackup="false": Ohne Tresor gibt es nichts zu sichern, und der
           verschluesselte Tresor-Umschlag soll das Geraet nicht Richtung
           Google-Backup verlassen. Dieselbe Entscheidung wie in 1.x.
+
+          Seit N20 steht `dataExtractionRules` daneben, und das ist kein
+          Beiwerk: Ab Android 12 gilt `allowBackup` NUR NOCH fuer die
+          Cloud-Sicherung — die Geraete-zu-Geraete-Uebertragung laeuft daneben
+          weiter und wird ausschliesslich in jener Datei geregelt. Ohne sie
+          waere der Umschlag beim Telefonwechsel mitgewandert, obwohl hier
+          seit 1.x das Gegenteil steht. Begruendung samt Preis in
+          `res/xml/data_extraction_rules.xml`.
         -->
 
+        <!--
+          `taskAffinity=""` (F5, N20): Eine Activity gehoert per Voreinstellung
+          zur Aufgabe mit dem Namen des Pakets. Eine fremde App kann sich
+          dieselbe Affinitaet geben und ihre eigene Activity damit in DIESE
+          Aufgabe legen — der Nutzer wischt aus Clockwork heraus und landet in
+          etwas, das aussieht wie Clockwork. Mit leerer Affinitaet gehoert
+          diese Activity zu gar keiner benannten Aufgabe, und niemand kann
+          sich dazustellen.
+
+          Zusammen mit `singleTask` bleibt das Verhalten am Launcher
+          unveraendert — am Geraet nachgesehen: gestartet, verlassen,
+          zurueckgeholt, in der Uebersicht steht ein Eintrag.
+        -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
+            android:taskAffinity=""
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|locale|layoutDirection|fontScale|density"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -129,10 +179,19 @@
           Preis. Die beiden anderen Initialisierer bleiben — sie sind
           prozessintern und fragen niemanden.
         -->
+        <!--
+          `tools:ignore="MissingClass"`: Lint sucht die Klasse im Quellbaum
+          und findet sie nicht — sie kommt aus `androidx.startup` und wird
+          erst beim Manifest-Merge eingesetzt. Der Eintrag hier ist kein
+          eigener Provider, sondern eine Aenderung an jenem (`node="merge"`).
+          Ohne diese Ausnahme faellt `lintRelease` mit einem Fehler aus, der
+          nichts meldet.
+        -->
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
+            tools:ignore="MissingClass"
             tools:node="merge">
             <meta-data
                 android:name="androidx.emoji2.text.EmojiCompatInitializer"

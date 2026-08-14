@@ -1,6 +1,7 @@
 package io.github.keco216.clockwork.ui
 
 import android.content.Context
+import android.os.SystemClock
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -35,6 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import io.github.keco216.clockwork.core.IdleWindow
 import io.github.keco216.clockwork.core.PBKDF2_ITERATIONS
 import io.github.keco216.clockwork.core.VaultEnvelope
 import io.github.keco216.clockwork.core.VaultError
@@ -114,6 +117,12 @@ class VaultMessage(
 class VaultController(
     filesDir: File,
     private val scope: CoroutineScope,
+    /**
+     * Die Uhr der Zeitschaltung — ausdruecklich `elapsedRealtime` und nicht
+     * `uptimeMillis`, weil nur sie im Tiefschlaf weiterlaeuft. Als Parameter,
+     * damit die Rechnung ohne Geraet pruefbar bleibt (siehe [IdleWindow]).
+     */
+    now: () -> Long = { SystemClock.elapsedRealtime() },
 ) {
     private val vaultStore = VaultStore(filesDir)
     private val settingsStore = LockSettingsStore(filesDir)
@@ -163,6 +172,12 @@ class VaultController(
      * speichern" im offenen Panel darf das Panel nicht zuschlagen.
      */
     var paintedState: VaultState? = null
+
+    /**
+     * Die Frist selbst. Der Job darunter ist nur der Wecker — die WAHRHEIT
+     * steht hier, und sie wird bei jedem Wiedereintritt neu befragt.
+     */
+    private val idle = IdleWindow(now)
 
     private var idleJob: Job? = null
     private var wipeJob: Job? = null
@@ -300,6 +315,7 @@ class VaultController(
         val key = sessionKey ?: return
         key.clear()
         sessionKey = null
+        idle.stop()
         idleJob?.cancel()
         idleJob = null
         writeSecrets("")
@@ -326,6 +342,7 @@ class VaultController(
         sessionKey?.clear()
         sessionKey = null
         envelope = null
+        idle.stop()
         idleJob?.cancel()
         idleJob = null
         writeSecrets("")
@@ -460,18 +477,63 @@ class VaultController(
      */
     fun resetIdleTimer() {
         idleJob?.cancel()
-        if (sessionKey == null) return
-        idleJob = scope.launch {
-            delay(settings.timeoutMs)
-            lock(
-                VaultMessage(
-                    "vault.locked.idle",
-                    MessageTone.Status,
-                    quantity = (settings.timeoutMs / 60_000L).toInt(),
-                    args = mapOf("n" to (settings.timeoutMs / 60_000L).toString()),
-                ),
-            )
+        idleJob = null
+        if (sessionKey == null) {
+            idle.stop()
+            return
         }
+        idle.markActive()
+        idleJob = scope.launch {
+            /* Der Wecker klingelt, die Uhr entscheidet.
+
+               Bis N19 stand hier ein einzelnes `delay(timeoutMs)`, und damit
+               hing die Frist an der monotonen Uhr der Coroutine — die steht
+               im Tiefschlaf still. Jetzt wird nach JEDEM Klingeln neu
+               gerechnet: Ist die Realzeit-Frist noch nicht um, wird die
+               Restzeit weitergeschlafen. Ist sie um, wird gesperrt.
+
+               Die Schleife laeuft damit hoechstens ein zweites Mal und kann
+               nicht haengen: `remainingMs` wird nur dann > 0, wenn wirklich
+               noch Zeit uebrig ist, und `delay` bringt sie herunter. */
+            while (idle.remainingMs(settings.timeoutMs) > 0L) {
+                delay(idle.remainingMs(settings.timeoutMs))
+            }
+            lockIdle()
+        }
+    }
+
+    /**
+     * Prueft beim Wiedereintritt, ob die Frist waehrend der Abwesenheit
+     * abgelaufen ist — `onStart`.
+     *
+     * Das ist der eigentliche Fix aus N19, und er sitzt hier und nicht im
+     * Wecker: Wer das Geraet drei Stunden liegen laesst, kommt zurueck, BEVOR
+     * ein monotoner Wecker die drei Stunden mitbekommen hat. Gesperrt wird
+     * deshalb, bevor wieder jemand etwas SIEHT — `onStart` liegt vor dem
+     * ersten Bild.
+     *
+     * Kein `AlarmManager` und keine neue Berechtigung: Es muss nicht im
+     * Hintergrund gesperrt werden. Solange niemand hinsieht, schadet ein
+     * offener Tresor im Arbeitsspeicher nicht mehr als der Schluessel, der
+     * ohnehin darin liegt — und der Bildschirmschutz haengt an FLAG_SECURE,
+     * nicht an dieser Frist.
+     */
+    fun onStarted() {
+        if (sessionKey == null) return
+        if (idle.isExpired(settings.timeoutMs)) lockIdle()
+    }
+
+    /** Zusperren mit der Meldung der Zeitschaltung — an zwei Stellen gebraucht. */
+    private fun lockIdle() {
+        val minutes = settings.timeoutMs / 60_000L
+        lock(
+            VaultMessage(
+                "vault.locked.idle",
+                MessageTone.Status,
+                quantity = minutes.toInt(),
+                args = mapOf("n" to minutes.toString()),
+            ),
+        )
     }
 
     fun clearMessage() {
@@ -884,12 +946,19 @@ fun VaultSettings(
 
     // Die Auswahl braucht die drei Beschriftungen ueber die Mehrzahlregeln —
     // „1 Minute", „5 Minuten", auf Polnisch „5 minutach".
+    //
+    // Die Sprache wird HIER gelesen und nicht in der Lambda: `LocalConfiguration`
+    // ist die beobachtbare Quelle, `context.resources.configuration` nicht —
+    // dieselbe Falle wie in Text.kt, und dort steht die Begruendung
+    // ausfuehrlich. Eine Lambda, die den Kontext erst beim Aufruf befragt,
+    // haette den Sprachwechsel gar nicht mitbekommen.
+    val locale = LocalConfiguration.current.locales[0]
     val choices = LockSettings.TIMEOUT_CHOICES
     val minutes: (Long) -> String = { ms ->
         context.textPlural(
             "vault.timeout.minutes",
             (ms / 60_000L).toInt(),
-            mapOf("n" to formatNumber(ms / 60_000L, context.resources.configuration.locales[0])),
+            mapOf("n" to formatNumber(ms / 60_000L, locale)),
         )
     }
 

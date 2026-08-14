@@ -2233,3 +2233,345 @@ R8 von AGP 8.13; das kostet Optimierung, nicht Korrektheit.
    die Fehlermeldung dafür — sie zeigt auf das falsche Argument.
    `MSYS_NO_PATHCONV=1` gehört vor JEDEN `adb`-Aufruf, dessen Argumente auf dem
    Gerät liegen.
+
+---
+
+## N19 — Die Zeitschaltung misst jetzt die richtige Uhr
+
+Der F1-Befund aus N17 war kein Backlog-Posten, sondern ein Muss-Fix: „Sperrt
+automatisch nach 5 Minuten" steht als Zusage an der Oberfläche, und sie hielt
+im Tiefschlaf nicht.
+
+### Was falsch war
+
+`resetIdleTimer` bestand aus einem einzelnen `delay(timeoutMs)` auf dem
+Kompositions-Scope. Die Verzögerung von `kotlinx.coroutines` hängt an einer
+MONOTONEN Uhr — `System.nanoTime` bzw. `Handler.postDelayed` auf
+`SystemClock.uptimeMillis` —, und die steht still, sobald das Gerät wirklich
+schläft. `SystemClock.elapsedRealtime` läuft weiter.
+
+**Die Größenordnung ist auf Kevins S24 gemessen, nicht geschätzt.**
+`dumpsys batterystats` führt beide Uhren nebeneinander:
+
+```
+Time on battery screen off: 7m 19s 279ms (99,0%) realtime, 2m 33s 502ms (34,6%) uptime
+Total run time:             9m 54s 836ms         realtime, 5m  9s  61ms         uptime
+```
+
+In 439,279 s mit ausgeschaltetem Bildschirm sind nur 153,502 s monotone Zeit
+vergangen — **65 % der Zeit war das Gerät suspendiert.** Eine Frist von fünf
+Minuten hätte in diesem Betriebszustand rund `300 / 0,35 ≈ 860 s`, also etwa
+14 Minuten Realzeit gebraucht, um überhaupt zu feuern. Fast dreimal so lang wie
+zugesagt.
+
+### Wie es jetzt gebaut ist
+
+`core/IdleWindow.kt` ist neu und enthält die reine Rechnung: `markActive`,
+`stop`, `isExpired(timeoutMs)`, `remainingMs(timeoutMs)`. Die Zeitquelle ist
+ein Parameter (`now: () -> Long`), im Betrieb `SystemClock.elapsedRealtime`.
+`core/` bleibt damit androidfrei.
+
+Zwei Stellen benutzen sie:
+
+- **Der Wecker rechnet nach jedem Klingeln neu.** Statt eines einzelnen
+  `delay(timeoutMs)` läuft eine Schleife `while (remainingMs > 0) delay(...)`.
+  Ist die Realzeit-Frist noch nicht um, wird die Restzeit weitergeschlafen.
+- **`onStarted()` prüft beim Wiedereintritt** und ist der eigentliche Fix. Es
+  hängt an `ON_START` und nicht an `ON_RESUME`, weil `ON_START` VOR dem ersten
+  Bild liegt: Gesperrt wird, bevor jemand wieder etwas sieht.
+
+Kein `AlarmManager`, keine neue Berechtigung — es muss nicht im Hintergrund
+gesperrt werden.
+
+### Der Beweis: sieben Unit-Tests mit gestellter Uhr
+
+`IdleWindowTest` schiebt die Zeitquelle von Hand weiter. Der Kern ist der
+Test `der Tiefschlaf zaehlt mit — das ist der ganze Punkt von N19`: drei
+Stunden vergehen in einer Zuweisung, die Frist ist danach abgelaufen. Dazu die
+Grenzfälle (eine Millisekunde davor / genau auf der Grenze), das Zurücksetzen
+bei jeder Berührung, die drei Stufen des Auswahlfelds, und eine rückwärts
+laufende Uhr — die sperrt zu, statt offen zu lassen, und `remainingMs` läuft
+dabei nicht über.
+
+Kotlin-Tests damit **230**, null Fehler.
+
+### Was am Gerät NICHT zu messen war, und warum
+
+Der Auftrag nennt einen Doze-Beweis. Er ist versucht und **nicht gelungen**:
+
+| Messung                             | Realzeit  | Uptime    | Differenz |
+| ----------------------------------- | --------- | --------- | --------- |
+| 150 s Bildschirm aus, adb verbunden | 156,245 s | 156,246 s | **0**     |
+
+Der Grund ist der Messaufbau selbst: **Eine bestehende adb-Verbindung hält das
+Gerät wach.** Die Abweichung aus den Zählern oben (285,775 s) war vor der
+Sitzung entstanden und ist über alle drei Ablesungen konstant geblieben — das
+Gerät hat, solange ich daran hing, kein einziges Mal suspendiert.
+
+Ein sauberer Doze-Beweis bräuchte eine Sitzung OHNE adb und ein Zeitfenster,
+in dem die monotone Uhr unter der Zeitschaltung bleibt (bei 65 % Suspend also
+mehr als das Dreifache der Frist). **Das ist Kevins Geräteabnahme**, und das
+Rezept ist kurz: Tresor aufsperren, Zeitschaltung 1 Minute, „beim Verlassen
+sperren" AUS, Telefon fünf Minuten weglegen, App wieder holen → muss gesperrt
+sein. Vor dem Fix wäre sie offen geblieben.
+
+---
+
+## N20 — Die Breite des Audits nachgezogen
+
+N17 hat in die TIEFE gemessen (Krypto, Netz, Speicher, Rechte). N20 holt die
+BREITE nach: die neun Punkte aus dem N17-Auftrag, die der Lauf nicht gesehen
+hat, und die kleinen Befunde F2–F7.
+
+**Zur Arbeitsweise:** Kevin hat mitten im Lauf angesagt, dass Prüfen im CODE
+stattfindet und nicht am Handy — er testet selbst. Der Rest dieses Abschnitts
+folgt dem: Lint, Abhängigkeitsbaum, `aapt2`-Dumps, Grep über den Quellbaum.
+Die zwei Geräte-Messungen, die vorher liefen, stehen weiter drin, weil sie den
+schwersten Befund erst belegt haben.
+
+### Der schwerste Fund: zwei Sprachen waren still kaputt
+
+**Hebräisch und Indonesisch fielen auf Englisch zurück** — seit P4, in jeder
+Fassung, unbemerkt.
+
+Die Kette, Stück für Stück gemessen:
+
+| Ebene          | Befund                                                         |
+| -------------- | -------------------------------------------------------------- |
+| Android Lint   | `LocaleFolder`: „The locale folder `he` should be called `iw`" |
+| Quelle         | `values-b+he/strings.xml` — die hebräischen Texte liegen da    |
+| APK            | `aapt2 dump resources`: `(he) "הוספת מפתח בדיקה"` — auch da    |
+| System         | `cmd locale set-app-locales … --locales he` speichert `he`     |
+| **Bildschirm** | **„Insert test key"** — also Englisch                          |
+
+Die Ursache ist `java.util.Locale`: Es schreibt die drei alten Sprachcodes bei
+jeder Gelegenheit zurück (`he`→`iw`, `id`→`in`, `yi`→`ji`), auch bei einem
+selbst gebauten Locale. Das Ressourcensystem fragt deshalb nach `iw`, im APK
+stand aber `he` — kein Treffer, Rückfall auf die Basissprache. Im APK lagen
+BEIDE Codes nebeneinander: `he`/`id` von uns, `iw`/`in` von den
+androidx-Bibliotheken, die es richtig machen.
+
+**Was daran lehrreich ist:** Im Generator stand ein Kommentar, der genau diese
+Frage schon beantwortet hatte — „aapt2 normalisiert die Qualifier selbst … und
+die Laufzeit bildet `iw`/`in` darauf ab", mit dem Zusatz „NACHGEMESSEN am
+gebauten APK". Gemessen worden war die ANZAHL der Konfigurationen (37, und die
+stimmte). Nie gemessen worden war, ob Hebräisch auch hebräisch erscheint. Ein
+Kommentar mit dem Wort „nachgemessen" darin ist keine Messung.
+
+**Behoben** in `scripts/native-strings.mjs`: eine Tabelle `LEGACY_LANGUAGE`
+schreibt die drei Sprachcodes um, `resourceDir` benutzt sie. Aus
+`values-b+he` wird `values-b+iw`.
+
+Gegenmessung am Gerät, gleicher Ablauf:
+
+| Sprache | vorher                 | nachher                |
+| ------- | ---------------------- | ---------------------- |
+| `he`    | Insert test key        | הוספת מפתח בדיקה       |
+| `id`    | Insert test key        | Sisipkan kunci uji     |
+| `de`    | Testschlüssel einfügen | Testschlüssel einfügen |
+| `en`    | Insert test key        | Insert test key        |
+
+Und die Gegenprobe auf die kniffligen Codes, damit der Fix nichts anderes
+zerschlägt: `zh-Hans` und `zh-Hant` liefern unterschiedliche Sätze
+(密钥 gegen 密鑰), `pt-BR`, `pt-PT`, `ar` und `th` erscheinen übersetzt.
+
+Jiddisch ist heute nicht unter den 37; die Zeile steht trotzdem in der
+Tabelle, damit der stille Fehler nicht zurückkommt, wenn jemand die Sprache
+ergänzt.
+
+### Android Lint — von 7 Fehlern auf 0
+
+Lint war vorher nie gelaufen. `gradlew :app:lintRelease` meldete **7 Fehler,
+30 Warnungen**; danach **0 Fehler, 30 Warnungen**.
+
+| Befund                                                          | Bewertung                 | Was daraus wurde                                                  |
+| --------------------------------------------------------------- | ------------------------- | ----------------------------------------------------------------- |
+| `MissingClass` am Startup-Provider                              | mein eigener N17-Eingriff | `tools:ignore` samt Begründung — die Klasse kommt erst beim Merge |
+| `NewApi` ×2 (`windowLightNavigationBar` verlangt 27, minSdk 26) | echt, folgenlos           | `tools:targetApi="27"` in beiden Themes                           |
+| `LocalContextConfigurationRead` ×2                              | **echt und wirksam**      | siehe unten                                                       |
+| `NonObservableLocale`                                           | **echt und wirksam**      | siehe unten                                                       |
+| `BidiSpoofing` in `Settings.kt`                                 | Fehlalarm auf die LÖSUNG  | `@Suppress` mit Begründung                                        |
+| `DataExtractionRules`                                           | **echte Lücke**           | siehe unten                                                       |
+| `LocaleFolder` ×2                                               | **der Sprachfehler oben** | behoben                                                           |
+
+**Die Konfiguration wurde unbeobachtbar gelesen.** `Text.kt` holte die Sprache
+über `LocalContext.current.resources.configuration`, und eine Änderung der
+Konfiguration macht `LocalContext` NICHT ungültig. Weil `configChanges` im
+Manifest die Activity gar nicht neu erstellen lässt, wäre nach einem
+Sprachwechsel die alte Zahlengruppierung stehen geblieben (600,000 statt
+600 000). Jetzt `LocalLocale.current.platformLocale`; der Rückfall auf
+`Locale.getDefault()` ist ersatzlos weg, weil auch er an der Beobachtung
+vorbeiliest. Dieselbe Stelle noch einmal in `Vault.kt` — dort wurde die
+Sprache in einer Lambda gelesen, die den Wechsel erst recht nicht mitbekommen
+hätte.
+
+**`allowBackup="false"` deckt seit Android 12 nur noch die Cloud.** Lint sagt
+es wörtlich: „In Android 12 and higher, these attributes have been deprecated
+and will only apply to cloud backups." Die Geräte-zu-Geräte-Übertragung (Smart
+Switch und Verwandte) läuft daneben weiter — `vault.json` wäre beim
+Telefonwechsel mitgewandert, obwohl im Manifest seit 1.x das Gegenteil steht.
+Neu: `res/xml/data_extraction_rules.xml` schließt beide Wege an der Wurzel
+aus. Der Preis steht in der Datei: Wer das Telefon wechselt, nimmt den Tresor
+nicht mit.
+
+### Die neun Breiten-Punkte
+
+**1. Abhängigkeiten.** Elf direkte, **232 Einträge im transitiven Baum**
+(`gradlew :app:dependencies --configuration releaseRuntimeClasspath`). Keine
+bekannten CVEs: ZXings Meldungen betrafen die Android-Beispiel-App, nicht
+`core`; die Kotlin-CVEs (2022-24329, 2020-29582) liegen weit unter 2.4.10.
+
+Nach dem emoji2-Befund ist der Baum auf „was hat das hier zu suchen"
+durchgesehen. Auffällig ist eine Wurzel: **`androidx.appcompat` liegt für
+GENAU EINEN Aufruf im Baum** (`setApplicationLocales`) und zieht die halbe
+Legacy-View-Welt mit — `print`, `drawerlayout`, `viewpager`,
+`localbroadcastmanager`, `cursoradapter`, `loader`, `transition` — plus
+`emoji2`, den N17-Befund. Zweite Wurzel: `camera-view` zieht
+`camera-video` mit, also Videoaufnahme in einem Authenticator.
+
+Was davon das APK erreicht, ist gemessen statt vermutet (Grep über
+`classes.dex` des Release-APK):
+
+| Artefakt                                                                           | im Release-Dex      |
+| ---------------------------------------------------------------------------------- | ------------------- |
+| `androidx/camera/video`                                                            | **0** — R8 entfernt |
+| `kotlinx/serialization`                                                            | **0**               |
+| `androidx/autofill`, `print`, `drawerlayout`, `viewpager`, `localbroadcastmanager` | **0**               |
+| `androidx/emoji2`, `window`, `profileinstaller`, `appcompat`                       | vorhanden           |
+
+R8 räumt also auf; übrig bleibt, was wirklich referenziert wird. Der
+Architektur-Befund bleibt trotzdem stehen und ist ein Folgeposten wert.
+
+**2. Lint** — oben. **StrictMode** ist NICHT eingebaut: Es bräuchte
+Debug-Code im Auslieferungspfad, und was es fände (Platten-Zugriff auf dem
+Hauptfaden) ist hier statisch abzählbar — die App liest beim Start drei
+Dateien von wenigen hundert Byte.
+
+**3. Strings-Probe im Release-APK.** Sauber: `GEZDGNBVGY3TQOJQ` (der
+RFC-4226-Testschlüssel) steht **einmal** in `classes.dex` — das ist die
+bewusste Konstante `TEST_KEY`. `JBSWY3DPEHPK3PXP` steht 60-mal in
+`resources.arsc`, das ist der übersetzte Beispiel-Platzhalter. Keine
+Test-Passphrasen, keine Fixtures, kein RFC-Seed, keine Testfall-Namen.
+
+Nebenbei aufgefallen und benannt: `DebugProbesKt.bin` (1728 Byte, aus
+kotlinx-coroutines) und `kotlin-tooling-metadata.json` (626 Byte, nennt
+Gradle- und Plugin-Version) reisen im Release mit. Kein Geheimnis, aber
+totes Gewicht.
+
+APK-Zusammensetzung, entpackt: `classes.dex` 2.963.392 · `res` 1.238.424
+(Schriften) · `resources.arsc` 767.572 (37 Sprachen) · `lib` 202.236 (4 ABIs
+× 3 native Bibliotheken) · `assets` 5.782 (**das Baseline-Profil, F2**).
+
+**4. Zwischenablage.** `EXTRA_IS_SENSITIVE` wird ab API 33 gesetzt — im Code
+verifiziert. Am Gerät nachzumessen ging NICHT: `dumpsys clipboard` liefert
+seit Android 13 nichts mehr. Was messbar war: Nach dem Kopieren stand kein
+sechsstelliger Code in irgendeiner Systemeinblendung.
+
+**5. Prozesstod.** HOME → `am kill` (die pid war danach leer) → neu gestartet:
+Die App steht im **Leerzustand**, das Feld ist leer. Nichts im Klartext
+wiederhergestellt. Wichtig für die Wiederholung: `am kill` greift nur im
+HINTERGRUND — im Vordergrund passiert nichts, und der Test misst dann sich
+selbst.
+
+**6. Tastatur.** Zwei Befunde, beide gemessen:
+
+- `imeOptions=0xc2000000` = `FORCE_ASCII | NO_ENTER_ACTION | NO_FULLSCREEN`.
+  `IME_FLAG_NO_PERSONALIZED_LEARNING` (0x1000000) ist **nicht** gesetzt — die
+  seit N15 dokumentierte Grenze, jetzt mit Zahl.
+- `inputType=0x20001` = `TYPE_CLASS_TEXT | MULTI_LINE`. **`TYPE_TEXT_FLAG_NO_SUGGESTIONS`
+  fehlt**, obwohl `autoCorrectEnabled = false` im Code steht. Die Absicht kommt
+  also nicht bei der Tastatur an. Folgeposten.
+- **Autofill hängt am Secret-Feld.** `dumpsys autofill`:
+  `s=com.samsung.android.samsungpassautofill … b=Rect(180,1807-1260,2055)` —
+  genau die Grenzen des Feldes, dazu eine „augmented" Anfrage an
+  `com.samsung.android.smartsuggestions`. Ein Versuch,
+  `window.decorView.importantForAutofill = …NO_EXCLUDE_DESCENDANTS` zu setzen,
+  ist wieder ausgebaut: Er hat GEMESSEN nichts geändert, weil Compose seine
+  Felder über virtuelle View-Ids selbst anmeldet (`i=…:i110`) und die
+  Wichtigkeits-Regel der View-Hierarchie dort nicht greift. Folgeposten.
+
+**7. Cache-Reste.** Strukturell sauber, und das ist besser als aufgeräumt: Die
+App schreibt genau fünf Dateien, alle im `filesDir` (`vault.json`,
+`vault.json.tmp`, `vault-wrap.json`, `lock-settings.json`,
+`webview-import.json`). `cacheDir`, `externalCacheDir` und `createTempFile`
+kommen im ganzen Quellbaum **nicht vor**. Es gibt **kein `ImageCapture`** —
+die Kamera schreibt nie eine Datei, es laufen nur `Preview` und
+`ImageAnalysis`. Der Photo-Picker-Weg öffnet die `content://`-URI zweimal
+lesend und gibt die Bitmap mit `recycle()` zurück; kopiert wird nichts.
+
+**8. Härtetests.** RTL ist gemessen: Auf Arabisch erscheint die Oberfläche
+vollständig übersetzt, „RFC 6238" und „javax.crypto" bleiben lateinisch.
+Schriftskala 2.0 und der Monkey-Lauf sind NICHT gelaufen — der Emulator ließ
+sich zweimal nicht in einen brauchbaren Zustand bringen (Benachrichtigungs-
+schleier klemmte, danach hielt die alte Instanz die AVD-Sperre), und ein
+Monkey mit 5000 Ereignissen gehört ohnehin nicht auf Kevins Alltagstelefon.
+Offen, Rezept in den Folgeposten.
+
+**9. Barrierefreiheit — und zwei Fehler, die nur im Code zu sehen sind.**
+Die Abdeckung ist gut: Live-Regionen für Meldungen (`Assertive` bei Fehlern,
+`Polite` bei Status), `Role.Button`/`Switch`/`Tab`, `selected`,
+`clearAndSetSemantics` an den dekorativen Zeichen. Zwei Stellen sprachen
+jedoch **Englisch, in allen 37 Sprachen**:
+
+- `stateDescription = if (expanded) "expanded" else "collapsed"` an jeder
+  Fold-Zeile. Ersetzt durch die Standard-Aktionen `expand`/`collapse` — die
+  benennt die Plattform selbst, in der Sprache des Nutzers.
+- `stateLabel = if (checked) "on" else "off"` an jedem Schalter. Schlimmer als
+  nur unübersetzt: `stateDescription` ÜBERSCHREIBT die Ansage, die die
+  Plattform für `Role.Switch` von sich aus macht — und der Kommentar zwei
+  Zeilen darüber behauptete genau das Richtige („TalkBack sagt dann an/aus").
+  Ersetzt durch `toggleableState`, also die Angabe WAS der Zustand ist; die
+  Benennung bleibt bei dem, der die Sprache kennt.
+
+Eine Sprachausgabe sieht man auf keinem Bildschirmfoto. Gefunden hat das der
+Grep, nicht das Auge — genau Kevins Punkt.
+
+### Die kleinen Befunde F2–F7
+
+|         | Befund                                             | Ausgang                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **F2**  | ART-Baseline-Profile an, 1.x schaltet sie ab       | **Bleiben an.** Die 1.x-Begründung trägt hier nicht: Dort war die Java-Seite eine dünne Capacitor-Brücke, hier ist die ganze Oberfläche Kotlin und Compose — das Profil beschleunigt genau den teuren Kaltstart, und es kostet 5.782 Byte. Die Reproduzierbarkeit scheitert ohnehin an R8 unter fremdem JDK. Im Manifest-Kopf begründet.                                                                                                                                                                                                                                                                                        |
+| **F3**  | Zwischenablage wird nie geleert                    | **Geschlossen mit Begründung.** Seit Android 10 liest keine Hintergrund-App die Zwischenablage; `EXTRA_IS_SENSITIVE` hält den Inhalt aus der Vorschau und aus der Verlaufsliste der Tastatur; und ein TOTP-Code ist nach 30 s ohnehin wertlos. Eine App, die den systemweiten Puffer hinter dem Rücken des Nutzers leert, bricht sein Einfügen.                                                                                                                                                                                                                                                                                 |
+| **F4**  | Tapjacking                                         | **Drei Wege geprüft, keiner eigenmächtig gangbar.** `setHideOverlayWindows` (ab API 31) verlangt `HIDE_OVERLAY_WINDOWS` — gemessen, Lint bricht sonst ab — und damit eine neue Berechtigung im Block von F-Droid und Play; das ist Kevins Entscheidung. `filterTouchesWhenObscured` auf der Wurzel macht die App unter jedem Blaulichtfilter unbedienbar. Nur auf einzelnen Tasten ginge in Compose nicht ohne eigenes View-Gerüst. Entschärft ist es ohne unser Zutun: Seit Android 12 blockiert die Plattform Berührungen durch nicht vertrauenswürdige Overlays selbst. Die Abwägung steht ausgeschrieben in `MainActivity`. |
+| **F5**  | `taskAffinity`                                     | **Umgesetzt.** `android:taskAffinity=""` — eine fremde App kann sich nicht mehr in dieselbe Aufgabe stellen.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| **F6**  | Eingemischte Komponenten stehen in keinem Manifest | **Umgesetzt.** Der Manifest-Kopf führt sie jetzt einzeln auf: CameraX-MetadataHolder, Startup-Provider samt der zwei verbliebenen Initialisierer, der DUMP-geschützte `ProfileInstallReceiver`, die zwei `uses-library`-Einträge.                                                                                                                                                                                                                                                                                                                                                                                               |
+| **F7a** | Filtertext in `rememberSaveable`                   | **Umgesetzt**, jetzt `remember` — dieselbe Begründung wie beim Secret-Feld in P6, und derselbe Preis: null.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| **F7b** | Nachsichtige Hex-Ziffern                           | **Umgesetzt.** `PercentCodec` und `Json` nahmen über `Character.digit` bzw. `toIntOrNull(16)` auch arabisch-indische und vollbreite Ziffern und ein führendes Vorzeichen an; `decodeURIComponent` tut das nicht. Von Hand gerechnet, ein Test dazu.                                                                                                                                                                                                                                                                                                                                                                             |
+| **F7c** | Per-App-Sprache überlebt „Daten löschen"           | **Geschlossen.** Sie liegt ab API 33 in den Systemeinstellungen; das ist die Plattform-API, kein eigener Speicher. Kein Geheimnis.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| **F7d** | R8-Metadaten-Warnungen                             | **Geschlossen.** Kotlin 2.4.10 ist neuer als das R8 von AGP 8.13 — die dokumentierte Zange. Kostet Optimierung, nicht Korrektheit.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+
+### Ketten
+
+Kotlin **231 Tests**, null Fehler (223 + 7 aus N19 + 1 aus F7b).
+`gradlew :app:lintRelease` **0 Fehler**, 30 Warnungen (alle einzeln
+bewertet und begründet). `checkNoMaterial` grün. Web-Kette: typecheck,
+**560 Tests**, ESLint, Prettier, Build — und `dist/clockwork.html` trotz
+Änderung an `scripts/native-strings.mjs` **byte-identisch**: 801.401 Byte,
+SHA-256 `175f4a8e…584e`, vor und nach dem Bau gehasht.
+
+### Die Folgeposten aus diesem Lauf
+
+**G1 — Autofill am Secret-Feld abschalten.** Gemessen, versucht, nicht gelöst
+(siehe Punkt 6). Der Weg führt über die Compose-Semantik, nicht über
+`importantForAutofill`. Braucht eine eigene Runde samt Gegenmessung an
+`dumpsys autofill`.
+
+**G2 — `autoCorrectEnabled = false` kommt nicht bei der Tastatur an.**
+`TYPE_TEXT_FLAG_NO_SUGGESTIONS` fehlt im gemessenen `inputType`. Zu klären, ob
+das an der Compose-Fassung liegt oder an der Kombination mit
+`KeyboardType.Ascii`.
+
+**G3 — AppCompat ablösen.** Es liegt für einen einzigen Aufruf im Baum und hat
+den emoji2-Befund mitgebracht, dazu die halbe Legacy-View-Welt. Ab API 33
+trägt `LocaleManager` die per-App-Sprache selbst; unterhalb davon bräuchte es
+eine eigene, kleine Persistenz. Das ist Architektur, kein Fix.
+
+**G4 — Härtetests nachholen** (Schriftskala 2.0, Monkey mit 5000 Ereignissen,
+12 Konten). Gehört auf einen frischen Emulator, nicht auf Kevins Telefon.
+
+**G5 — Der Doze-Beweis für N19**, Rezept im N19-Abschnitt. Kevins
+Geräteabnahme.
+
+**G6 — `DebugProbesKt.bin` und `kotlin-tooling-metadata.json`** aus dem
+Release nehmen (`packaging { resources { excludes … } }`). Zwei Kilobyte und
+eine Angabe zur Bauumgebung weniger.

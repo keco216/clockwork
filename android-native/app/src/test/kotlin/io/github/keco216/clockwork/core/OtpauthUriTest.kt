@@ -45,6 +45,23 @@ class OtpauthUriTest {
     }
 
     @Test
+    fun `nimmt als Prozent-Gruppe nur lateinische Hex-Ziffern`() {
+        // F7b aus N17: `Character.digit` haette hier auch arabisch-indische
+        // und vollbreite Ziffern angenommen — `decodeURIComponent` im Browser
+        // tut das nicht. Eine Abweichung, die nur bei fremdsprachigen
+        // Eingaben aufgefallen waere.
+        for (kaputt in listOf("%٣٤", "%３４", "%+1", "%g0", "%0")) {
+            assertKey("err.uri.badLabel", kaputt) {
+                parseOtpauthUri("otpauth://totp/$kaputt?secret=JBSWY3DPEHPK3PXP")
+            }
+        }
+
+        // Die Gegenprobe: Gross- UND Kleinschreibung bleiben erlaubt.
+        assertEquals("A:", parseOtpauthUri("otpauth://totp/A%3a?secret=JBSWY3DPEHPK3PXP").issuer + ":")
+        assertEquals("kevin@x", parseOtpauthUri("otpauth://totp/kevin%40x?secret=JBSWY3DPEHPK3PXP").accountName)
+    }
+
+    @Test
     fun `Microsoft mit allen Parametern explizit`() {
         val parsed = parseOtpauthUri(
             "otpauth://totp/Microsoft:kevin%40outlook.com" +

@@ -66,9 +66,64 @@ class MainActivity : AppCompatActivity() {
            screencap` sperrt — ohne ihn gaebe es keine Abnahmebilder. */
         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
 
+        /* ── Tapjacking: hier steht ABSICHTLICH nichts (F4, N20) ─────────────
+           Der Angriff: Eine fremde App legt ein durchsichtiges Fenster ueber
+           unseres und faengt die Tipps ab, die der Nutzer fuer den
+           Aufsperren-Knopf haelt. Drei Wege wurden geprueft, keiner ist
+           eigenmaechtig zu gehen:
+
+           1. `Window.setHideOverlayWindows(true)` (ab API 31) blendet fremde
+              Overlays aus, solange unser Fenster sichtbar ist — und verlangt
+              dafuer `android.permission.HIDE_OVERLAY_WINDOWS`. Gemessen: Ohne
+              sie faellt `lintRelease` mit „Missing permissions required by
+              Window.setHideOverlayWindows" aus. Die Berechtigung ist
+              „normal", wird also beim Installieren erteilt und fragt nichts —
+              aber sie steht danach im Berechtigungsblock von F-Droid und
+              Play, und „CAMERA ist die einzige erfragte Berechtigung" ist
+              eine Zusage dieses Projekts nach aussen. Das ist Kevins
+              Entscheidung, nicht meine.
+           2. `View.filterTouchesWhenObscured` auf der Wurzel braucht keine
+              Berechtigung und wirkt ab API 26 — verwirft aber Beruehrungen,
+              sobald IRGENDEIN Fenster ueberlagert: Blaulichtfilter,
+              Bildschirmlupe, Samsungs eigene Einblendungen. Ein
+              Authenticator, der sich unter einem Nachtmodus nicht mehr
+              antippen laesst, ist schlimmer als die Luecke.
+           3. Dasselbe nur auf den sicherheitsrelevanten Tasten waere Kevins
+              Vorschlag und ginge in Compose nicht ohne eigenes View-Geruest —
+              die Flagge sitzt an einer View, und hier gibt es genau eine.
+
+           Was den Fall entschaerft, und zwar ohne unser Zutun: Seit Android 12
+           blockiert die Plattform SELBST Beruehrungen, die durch nicht
+           vertrauenswuerdige Overlays hindurchgehen. Genau ab der Fassung, ab
+           der auch Weg 1 erst gaebe. Offen bleibt damit API 26 bis 30 — und
+           dort hilft nur Weg 2 mit seinem Preis. */
+
         super.onCreate(savedInstanceState)
         setContent {
             ClockworkTheme { ClockworkApp() }
         }
+
+        /* ── Autofill: gemessen, versucht, NICHT geloest (N20, Folgeposten) ──
+           Am S24 gemessen: Ein Tipp ins Secret-Feld loest eine Autofill-Anfrage
+           aus, und `dumpsys autofill` nennt den Empfaenger beim Namen —
+           `s=com.samsung.android.samsungpassautofill … b=Rect(180,1807-1260,2055)`,
+           also genau die Grenzen des Feldes, dazu eine „augmented" Anfrage an
+           `com.samsung.android.smartsuggestions`.
+
+           Das ist die falsche Richtung fuer jedes Feld dieser App: Das
+           Secret-Feld haelt Schluesselmaterial, das Passphrasenfeld die
+           Passphrase, und ein Autofill-Dienst ist eine fremde App.
+
+           Hier stand kurzzeitig
+           `window.decorView.importantForAutofill = …NO_EXCLUDE_DESCENDANTS`.
+           Es ist wieder heraus, weil es GEMESSEN nichts geaendert hat: nach
+           dem Einbau kam dieselbe Anfrage erneut. Der Grund liegt eine Ebene
+           tiefer — Compose meldet seine Felder ueber VIRTUELLE View-Ids
+           (`i=1073741824:i110` im Protokoll) selbst an, und die Wichtigkeits-
+           Regel der View-Hierarchie greift dort nicht.
+
+           Eine Zeile, die aussieht wie ein Schutz und keiner ist, ist
+           schlimmer als keine. Der Weg fuehrt ueber die Compose-Semantik und
+           braucht eine eigene Runde samt Gegenmessung. */
     }
 }

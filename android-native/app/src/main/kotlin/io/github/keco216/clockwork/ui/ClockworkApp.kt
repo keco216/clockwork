@@ -193,11 +193,23 @@ fun ClockworkApp() {
     /* ── Sperren beim Verlassen der App ────────────────────────────────────
        Das native Gegenstueck zu `visibilitychange` im Web. `ON_STOP` und
        nicht `ON_PAUSE`: Pause kommt schon, wenn ein Dialog darueberliegt —
-       etwa die Biometrie-Abfrage, die den Tresor gerade aufsperren soll. */
+       etwa die Biometrie-Abfrage, die den Tresor gerade aufsperren soll.
+
+       ── Und die Gegenrichtung, seit N19 ─────────────────────────────────
+       `ON_START` prueft, ob die Zeitschaltung waehrend der Abwesenheit
+       abgelaufen ist. Das ist noetig, weil der Wecker im Tiefschlaf nicht
+       weiterlaeuft, die Frist aber schon — Einzelheiten in `IdleWindow`.
+       `ON_START` und nicht `ON_RESUME`, weil es VOR dem ersten Bild liegt:
+       Gesperrt werden muss, bevor jemand wieder etwas sieht, nicht
+       nachdem. */
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner, vault) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_STOP) vault.onStopped()
+            when (event) {
+                Lifecycle.Event.ON_START -> vault.onStarted()
+                Lifecycle.Event.ON_STOP -> vault.onStopped()
+                else -> Unit
+            }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
@@ -875,7 +887,20 @@ private fun WorkingStage(
     val colors = LocalColors.current
     val context = LocalContext.current
 
-    var filter by rememberSaveable { mutableStateOf("") }
+    /* `remember` und nicht `rememberSaveable` (F7a, N20).
+
+       Der Filtertext ist kein Secret, aber er ist der Name eines Kontos —
+       „bank", „arbeit", „github". `rememberSaveable` legt ihn in den
+       Instanzzustand der Activity, und den haelt das SYSTEM ueber einen
+       Speichermangel-Kill hinweg, ausserhalb unseres Datenverzeichnisses.
+       Das ist genau die Bequemlichkeit, die in P6 schon einmal ein Secret
+       ueberleben liess.
+
+       Der Preis ist derselbe wie dort: null. `configChanges` im Manifest
+       deckt Drehung, Schriftskala, Sprache, Dunkelmodus und Dichte ab, die
+       Activity wird dafuer gar nicht neu erstellt, und `remember` ueberlebt
+       das ohnehin. Verloren geht nur der Fall, den wir verlieren WOLLEN. */
+    var filter by remember { mutableStateOf("") }
 
     // Der Suchtext wird EINMAL je Eintrag gefaltet, nicht bei jedem
     // Tastendruck ueber die ganze Liste. Bei einer unlesbaren Zeile geht die

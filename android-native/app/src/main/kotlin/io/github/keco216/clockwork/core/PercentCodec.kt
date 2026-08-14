@@ -65,8 +65,27 @@ internal object PercentCodec {
         return String(out.toByteArray(), Charsets.UTF_8)
     }
 
+    /**
+     * Eine Hex-Ziffer — und zwar eine LATEINISCHE (F7b, N20).
+     *
+     * Hier stand `Character.digit(char, 16)`, und das ist Unicode-bewusst:
+     * Es nimmt auch ٣ (arabisch-indisch), ３ (Vollbreite) und ein Dutzend
+     * weiterer Ziffernsysteme an. `decodeURIComponent` im Browser tut das
+     * nicht — es kennt nur `0-9A-Fa-f` und wirft sonst. Aus `%٣٤` wurde hier
+     * also ein Byte und im Web ein Fehler.
+     *
+     * Folgen hatte das keine (dahinter stehen strenge Pruefungen), aber es
+     * war eine Abweichung von der Fassung, zu der dieser Port sich verpflichtet
+     * hat — und die stillste Sorte: eine, die nur bei fremdsprachigen Eingaben
+     * auffaellt. Von Hand gerechnet ist es ausserdem kuerzer als die Erklaerung.
+     */
     private fun hexValue(char: Char): Int {
-        val value = Character.digit(char, 16)
+        val value = when (char) {
+            in '0'..'9' -> char - '0'
+            in 'a'..'f' -> char - 'a' + 10
+            in 'A'..'F' -> char - 'A' + 10
+            else -> -1
+        }
         require(value >= 0) { "keine Hex-Ziffer: $char" }
         return value
     }

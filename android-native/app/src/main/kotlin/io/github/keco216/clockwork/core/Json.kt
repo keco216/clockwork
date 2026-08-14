@@ -198,6 +198,21 @@ internal object Json {
             }
         }
 
+        /** Genau vier lateinische Hex-Ziffern. `null`, wenn es keine sind. */
+        private fun hexQuad(hex: String): Int? {
+            var value = 0
+            for (char in hex) {
+                val digit = when (char) {
+                    in '0'..'9' -> char - '0'
+                    in 'a'..'f' -> char - 'a' + 10
+                    in 'A'..'F' -> char - 'A' + 10
+                    else -> return null
+                }
+                value = value * 16 + digit
+            }
+            return value
+        }
+
         private fun readEscape(): Char = when (val char = next()) {
             '"' -> '"'
             '\\' -> '\\'
@@ -214,7 +229,13 @@ internal object Json {
                 // Ein Surrogat bleibt hier ein einzelner Char und paart sich
                 // von selbst mit dem naechsten — genau so, wie ein String in
                 // der JVM ohnehin aufgebaut ist.
-                hex.toIntOrNull(16)?.toChar()
+                //
+                // Von Hand statt `toIntOrNull(16)` (F7b, N20): Kotlins Parser
+                // nimmt ein fuehrendes Vorzeichen an, `\u-123` waere damit ein
+                // gueltiges Escape geworden — und `toIntOrNull` akzeptiert
+                // ausserdem nicht-lateinische Ziffern. JSON kennt an dieser
+                // Stelle vier Zeichen aus `0-9A-Fa-f`, sonst nichts.
+                hexQuad(hex)?.toChar()
                     ?: throw IllegalArgumentException("keine Hex-Folge: $hex")
             }
 

@@ -120,24 +120,51 @@ function resourceName(key) {
  * fuer jedes Geraet, dessen Sprache nicht dabei ist. Genau wie im Web, wo `t()`
  * auf Englisch zurueckfaellt.
  */
+/**
+ * Sprachen, deren Ressourcenordner den ALT-Code tragen muss.
+ *
+ * ── Der Fehler, wegen dem es diese Tabelle gibt (N20) ──────────────────────
+ * Hier stand bis N20 nur `values-b+<code>` fuer alle, mit dem Kommentar, die
+ * Laufzeit bilde `iw`/`in` auf `he`/`id` ab. Das war eine ANNAHME mit dem
+ * Anschein einer Messung: Gezaehlt worden waren die 37 Konfigurationen im
+ * APK — die stimmten —, aber nie war nachgesehen worden, ob Hebraeisch auch
+ * hebraeisch ERSCHEINT. Es erschien englisch.
+ *
+ * Die Kette, am Geraet Stueck fuer Stueck gemessen:
+ *   1. Quelle       `values-b+he/strings.xml` — hebraeische Texte liegen da,
+ *   2. APK          `aapt2 dump resources` zeigt `(he) "הוספת מפתח בדיקה"`,
+ *   3. Laufzeit     `cmd locale set-app-locales … --locales he` setzt `he`,
+ *   4. Bildschirm   „Insert test key" — also Englisch.
+ *
+ * Der Grund ist `java.util.Locale`: Es schreibt die drei alten Codes bei
+ * JEDER Gelegenheit zurueck (`he`→`iw`, `id`→`in`, `yi`→`ji`), auch bei einem
+ * selbst gebauten Locale. Das Ressourcensystem fragt deshalb nach `iw`, im
+ * APK steht aber `he` — kein Treffer, Rueckfall auf die Basissprache. Android
+ * Lint warnt davor (`LocaleFolder`), und die Warnung war berechtigt.
+ *
+ * Jiddisch ist heute nicht dabei; die Zeile steht trotzdem da. Wer die
+ * Sprache spaeter ergaenzt, soll nicht denselben stillen Fehler bekommen.
+ */
+const LEGACY_LANGUAGE = new Map([
+  ['he', 'iw'],
+  ['id', 'in'],
+  ['yi', 'ji'],
+]);
+
 function resourceDir(code) {
   if (code === BASE_LOCALE) return 'values';
 
-  // Durchgehend die BCP-47-Schreibweise mit `b+`, auch bei einfachen Codes.
+  // Durchgehend die BCP-47-Schreibweise mit `b+`, auch bei einfachen Codes:
+  // Sie ist eindeutig, gibt es seit API 21 (die App verlangt 26), und sie
+  // traegt Schriftsysteme (`b+zh+Hans`) und Regionen (`b+pt+BR`) ohne eine
+  // zweite Schreibweise daneben.
   //
-  // Der Grund sind Sprachen mit Alt-Codes: Hebraeisch hiess frueher `iw`,
-  // Indonesisch `in`, Jiddisch `ji`. Die `b+`-Form ist ausdruecklich BCP-47 und
-  // damit eindeutig — sie gibt es seit API 21, die App verlangt 26.
-  // Einheitlich statt nur dort, wo es noetig waere: Eine Regel mit drei
-  // Ausnahmen ist eine Regel, die jemand falsch anwendet.
-  //
-  // NACHGEMESSEN am gebauten APK (`aapt2 dump resources`): aapt2 normalisiert
-  // die Qualifier selbst — aus `b+he` wird `he`, aus `b+id` wird `id`, aus
-  // `b+pt+BR` wird `pt-rBR`, und `b+zh+Hans` bleibt stehen. Die Ressourcen
-  // liegen danach unter den modernen Codes, und die Laufzeit bildet `iw`/`in`
-  // darauf ab. Gezaehlt wurden 37 Konfigurationen fuer `string/zone_input`:
-  // eine ohne Qualifier (Englisch) plus 36.
-  return `values-b+${code.replace('-', '+')}`;
+  // Umgeschrieben wird nur die SPRACHE, nicht die Region — und nur fuer die
+  // drei Alt-Codes oben. Nachgemessen am APK: Der Ordner `values-b+iw`
+  // erscheint dort als Konfiguration `iw`, und genau danach fragt die
+  // Laufzeit.
+  const [language, ...rest] = code.split('-');
+  return `values-b+${[LEGACY_LANGUAGE.get(language) ?? language, ...rest].join('+')}`;
 }
 
 /* ── Die Locale-Dateien lesen ───────────────────────────────────────────── */
@@ -410,6 +437,19 @@ for (const code of codes) {
  * Die Liste fuer die per-App-Sprachwahl. Ab API 33 liest das System sie und
  * bietet die Sprachen in den Einstellungen an; darunter benutzt AppCompat
  * dieselbe Datei.
+ *
+ * ── Hier stehen die MODERNEN Codes, und das ist Absicht (N20) ─────────────
+ * Die Ressourcenordner tragen seit N20 fuer drei Sprachen den ALT-Code
+ * (`values-b+iw` statt `b+he`), weil `java.util.Locale` sie erzwingt — siehe
+ * [LEGACY_LANGUAGE]. Diese Datei folgt dem NICHT: `locale-config` ist nach
+ * Spezifikation eine Liste von BCP-47-Tags, und dort heisst Hebraeisch `he`.
+ *
+ * Android Lint beanstandet die Ungleichheit (`UnusedTranslation`, zwei
+ * Warnungen). Sie ist trotzdem richtig so: Die zwei Angaben leben in
+ * verschiedenen Namensraeumen, und das System bildet sie aufeinander ab. Am
+ * Geraet gemessen — `cmd locale set-app-locales … --locales he` speichert
+ * `he` und die App erscheint danach auf Hebraeisch. Wer die Warnung
+ * abstellen will, muesste eine der beiden Angaben falsch machen.
  */
 const localeConfig = [
   '<?xml version="1.0" encoding="utf-8"?>',

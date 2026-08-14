@@ -238,6 +238,20 @@ private fun SectionLabel(label: String) {
  * Aufgabe waere. Der PackageManager weiss es ohnehin, und er weiss es
  * richtig — auch dann, wenn jemand das APK umsigniert.
  */
+/*
+ * `BidiSpoofing` ist hier ein Fehlalarm, und zwar auf die LOESUNG (N20).
+ *
+ * Lint beanstandet jede Zeichenkette mit Bidi-Steuerzeichen, weil sich damit
+ * Text tarnen laesst — ein Dateiname, der rueckwaerts gelesen harmlos aussieht.
+ * Die zwei Zeichen unten tun das Gegenteil: U+2068/U+2069 KLAMMERN die
+ * Versionsangabe ein, damit der Bidi-Algorithmus sie auf Arabisch nicht
+ * umstellt (aus „2.0.0-dev-debug (20000)" wurde sonst „dev-debug (20000)-2.0.0",
+ * eine Versionsnummer, die es nicht gibt — der Befund aus N11).
+ *
+ * Sie stehen also genau deshalb da, wovor die Regel warnt: damit niemand
+ * getaeuscht wird. Unterdrueckt statt entfernt, mit der Begruendung daneben.
+ */
+@Suppress("BidiSpoofing")
 private fun versionLine(context: Context): String = try {
     val info = context.packageManager.getPackageInfo(context.packageName, 0)
     val code = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

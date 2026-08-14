@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Nichts verlaesst dieses Geraet — auch nicht auf das naechste (N20).
+
+  ── Warum diese Datei noetig ist, obwohl allowBackup="false" dasteht ────────
+  Bis Android 11 hat `android:allowBackup="false"` JEDE Form der Sicherung
+  abgeschaltet. Seit Android 12 gilt es nur noch fuer die CLOUD-Sicherung; die
+  Geraete-zu-Geraete-Uebertragung (Smart Switch und Verwandte) laeuft daneben
+  weiter und wird ausschliesslich hier geregelt. Genau darauf weist auch
+  Android Lint hin (`DataExtractionRules`), und der Befund ist berechtigt: Ohne
+  diese Datei waere `vault.json` beim Umzug auf ein neues Telefon
+  mitgewandert.
+
+  Der Umschlag ist verschluesselt, ein Mitwandern waere also kein Bruch der
+  Vertraulichkeit. Es waere aber ein Bruch der ZUSAGE: Im Manifest steht seit
+  1.x, dass der Tresor das Geraet nicht Richtung Sicherung verlaesst. Eine
+  Zusage, die eine Plattform-Aenderung still aushebelt, ist keine — dieselbe
+  Lehre wie bei den Berechtigungen, die eine Abhaengigkeit hineinmischt.
+
+  ── Der Preis, ausdruecklich benannt ───────────────────────────────────────
+  Wer das Telefon wechselt, nimmt seinen Tresor NICHT mit. Das ist die Folge
+  derselben Entscheidung, die schon `allowBackup="false"` getroffen hat, und
+  sie steht in beiden READMEs: Der Tresor haengt an diesem Geraet und an der
+  Passphrase. Wer umzieht, legt ihn auf dem neuen Geraet neu an — die Secrets
+  hat er, sonst waere der Tresor leer.
+
+  ── Warum ueberall `domain="root"` und nicht einzelne Pfade ────────────────
+  Eine Ausschlussliste, die Pfade aufzaehlt, vergisst den naechsten. `root`
+  deckt das ganze Datenverzeichnis der App ab; was spaeter dazukommt, ist
+  automatisch mit ausgeschlossen. Die Voreinstellung ist hier "alles", also
+  muss das Ausschliessen die Wurzel treffen.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude
+            domain="root"
+            path="." />
+    </cloud-backup>
+    <device-transfer>
+        <exclude
+            domain="root"
+            path="." />
+    </device-transfer>
+</data-extraction-rules>

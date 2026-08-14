@@ -55,7 +55,10 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.collapse
+import androidx.compose.ui.semantics.expand
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -506,7 +509,7 @@ fun Switch(
         // `Switch` und nicht `Checkbox`: TalkBack sagt dann „an"/„aus"
         // statt „angehakt", und genau das ist dieses Bauteil.
         role = Role.Switch,
-        stateLabel = if (checked) "on" else "off",
+        toggled = checked,
         onClick = {
             onCheckedChange(!checked)
             // Zwei Richtungen, zwei Wirkungen — das Konzept steht in Haptics.kt.
@@ -578,7 +581,8 @@ val ListPanelPadding: PaddingValues = PaddingValues(vertical = Dimens.sp2)
  * Fold-Zeile und Navigationsposten (N14).
  *
  * @param value Der aktuelle Wert, rechts vor dem Bedienelement.
- * @param stateLabel Was ein Screenreader als Zustand hoeren soll.
+ * @param toggled Der Schaltzustand, wenn die Zeile einen traegt. Gesetzt sagt
+ *   eine Sprachausgabe „an"/„aus" — und zwar in IHRER Sprache; siehe unten.
  * @param interaction Von aussen, wenn das Bedienelement im [trailing]-Fach den
  *   Fokus des Zeilen-Knopfes anzeigen muss (so macht es der [Switch]).
  */
@@ -591,7 +595,7 @@ fun ListRow(
     labelColour: Color? = null,
     enabled: Boolean = true,
     role: Role = Role.Button,
-    stateLabel: String? = null,
+    toggled: Boolean? = null,
     interaction: MutableInteractionSource? = null,
     onClick: (() -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
@@ -622,8 +626,25 @@ fun ListRow(
                             role = role,
                             onClick = onClick,
                         )
+                        /* Der Schaltzustand als ZUSTAND, nicht als Satz (N20).
+
+                           Hier stand `stateDescription = stateLabel`, und der
+                           einzige Aufrufer schob `"on"` bzw. `"off"` hinein —
+                           zwei englische Literale, die eine Sprachausgabe in
+                           36 der 37 Sprachen falsch vorgelesen haette. Schlimmer
+                           noch: `stateDescription` UEBERSCHREIBT die Ansage, die
+                           die Plattform fuer `Role.Switch` von sich aus macht,
+                           und die ist uebersetzt. Der Kommentar am Schalter
+                           behauptete genau das Richtige („TalkBack sagt dann
+                           an/aus") — die Zeile darunter nahm es ihm weg.
+
+                           `toggleableState` ist die richtige Angabe: Sie sagt
+                           WAS der Zustand ist, und die Benennung bleibt bei
+                           dem, der die Sprache des Nutzers kennt. */
                         .semantics {
-                            if (stateLabel != null) stateDescription = stateLabel
+                            if (toggled != null) {
+                                toggleableState = ToggleableState(toggled)
+                            }
                         }
                 },
             )
@@ -736,7 +757,7 @@ private fun Chevron(expanded: Boolean, colour: Color, modifier: Modifier = Modif
  * Touch-Sprosse der Hoehenleiter und nicht verhandelbar — sie wird mit dem
  * Daumen getroffen.
  *
- * `Role.Button` und `stateDescription` stehen hier, weil Foundation nichts
+ * `Role.Button` und die Aufklapp-Aktionen stehen hier, weil Foundation nichts
  * davon mitbringt. Ohne sie waere die Zeile fuer TalkBack ein Stueck Text,
  * das sich auf Antippen unerklaerlich veraendert — das Gegenstueck zu
  * `aria-expanded` im Web.
@@ -797,8 +818,27 @@ fun FoldRow(
                 role = Role.Button,
                 onClick = onToggle,
             )
+            /* Der Zustand als AKTION, nicht als Satz (N20).
+
+               Hier stand `stateDescription = if (expanded) "expanded" else
+               "collapsed"` — zwei englische Literale mitten in `ui/`, also ein
+               Verstoss gegen die Hausregel „kein Text in der Oberflaeche" und,
+               schlimmer, zwei Woerter, die eine Sprachausgabe in ALLEN 37
+               Sprachen auf Englisch vorliest. Aufgefallen ist es beim
+               Durchsehen des Quelltexts, nicht am Geraet — eine Sprachausgabe
+               sieht man auf keinem Bildschirmfoto.
+
+               Die Standard-Aktionen `expand`/`collapse` sind der richtige
+               Griff: Die Plattform benennt sie SELBST, in der Sprache des
+               Nutzers, und sie sagen den Zustand mit — wer „zuklappen"
+               angeboten bekommt, weiss, dass es offen ist. Kein neuer
+               Katalog-Schluessel, keine 37 Uebersetzungen. */
             .semantics {
-                stateDescription = if (expanded) "expanded" else "collapsed"
+                if (expanded) {
+                    collapse { onToggle(); true }
+                } else {
+                    expand { onToggle(); true }
+                }
             }
             .defaultMinSize(minHeight = Dimens.touchMin)
             .padding(vertical = Dimens.sp2),
