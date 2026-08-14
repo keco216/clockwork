@@ -31,10 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -70,7 +67,13 @@ import io.github.keco216.clockwork.ui.theme.TextStyles
  * nach.
  */
 
-/** Der Winkel am Auswahlfeld — 150 ms, nicht 250 wie am Aufklapper. */
+/**
+ * Der Winkel am Auswahlfeld — 150 ms, nicht 250 wie am Aufklapper.
+ *
+ * Die Form kommt seit N12 aus `Icons.kt`; verschieden bleibt nur die Zeit.
+ * Zwei Bauteile der Referenz, zwei Dauern — `.select__indicator` traegt
+ * `duration-150`, `.disclosure__indicator` 250.
+ */
 @Composable
 private fun SelectChevron(open: Boolean, colour: Color, modifier: Modifier = Modifier) {
     val turn = remember { Animatable(0f) }
@@ -78,55 +81,7 @@ private fun SelectChevron(open: Boolean, colour: Color, modifier: Modifier = Mod
         turn.animateTo(if (open) 180f else 0f, tween(Motion.quick, easing = Motion.spring))
     }
 
-    androidx.compose.foundation.Canvas(modifier = modifier.size(16.dp)) {
-        rotate(turn.value) {
-            drawLine(
-                color = colour,
-                start = Offset(size.width * 0.25f, size.height * 0.4f),
-                end = Offset(size.width * 0.5f, size.height * 0.65f),
-                strokeWidth = 1.5.dp.toPx(),
-                cap = StrokeCap.Butt,
-            )
-            drawLine(
-                color = colour,
-                start = Offset(size.width * 0.5f, size.height * 0.65f),
-                end = Offset(size.width * 0.75f, size.height * 0.4f),
-                strokeWidth = 1.5.dp.toPx(),
-                cap = StrokeCap.Butt,
-            )
-        }
-    }
-}
-
-/**
- * Das Haekchen der ausgewaehlten Zeile.
- *
- * Es TRITT EIN — 250 ms aus `scale(.7)`, das Muster der Referenz. Ein
- * Haekchen, das einfach dasteht, sagt „ist ausgewaehlt"; eines, das eintritt,
- * sagt „wurde gerade ausgewaehlt". Beim Oeffnen der Liste ist das der
- * Unterschied zwischen einer Anzeige und einer Rueckmeldung.
- */
-@Composable
-private fun Check(colour: Color, modifier: Modifier = Modifier) {
-    val grow = remember { Animatable(0.7f) }
-    LaunchedEffect(Unit) { grow.animateTo(1f, tween(Motion.calm, easing = Motion.spring)) }
-
-    androidx.compose.foundation.Canvas(modifier = modifier.size(10.dp).scale(grow.value)) {
-        drawLine(
-            color = colour,
-            start = Offset(0f, size.height * 0.55f),
-            end = Offset(size.width * 0.38f, size.height),
-            strokeWidth = 1.5.dp.toPx(),
-            cap = StrokeCap.Butt,
-        )
-        drawLine(
-            color = colour,
-            start = Offset(size.width * 0.38f, size.height),
-            end = Offset(size.width, 0f),
-            strokeWidth = 1.5.dp.toPx(),
-            cap = StrokeCap.Butt,
-        )
-    }
+    ChevronGlyph(tint = colour, turn = turn.value, modifier = modifier)
 }
 
 /** Eine Zeile im Popover. */
@@ -172,7 +127,7 @@ private fun ListboxRow(
         // Das Haekchen entsteht NEU, wenn die Zeile ausgewaehlt ist — genau
         // deshalb laeuft seine Eintrittsfahrt. Stuende es immer da und waere
         // nur unsichtbar, gaebe es nichts einzutreten.
-        if (selected) Check(colour = colors.signal)
+        if (selected) CheckGlyph(tint = colors.signal)
     }
 }
 

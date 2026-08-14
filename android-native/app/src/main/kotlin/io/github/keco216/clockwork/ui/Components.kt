@@ -3,7 +3,6 @@ package io.github.keco216.clockwork.ui
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,15 +33,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -411,13 +406,14 @@ fun Modifier.touchTarget(): Modifier = this.defaultMinSize(minHeight = Dimens.to
 /* ── Aufklapper: Fold-Zeile und Schublade (V10) ─────────────────────────── */
 
 /**
- * Der Winkel am Aufklapper — gezeichnet, nicht aus einer Icon-Bibliothek.
+ * Der Winkel am Aufklapper.
  *
- * Zwei Striche mit stumpfen Enden, 1,5 dp stark, in 250 ms um 180 Grad
- * gedreht. Die Zeit ist die der Referenz (`.disclosure__indicator`), und sie
- * ist bewusst dieselbe wie die der Schublade darunter: Zwei ineinander
- * geschachtelte Winkel mit verschiedenem Tempo sahen im Web aus wie zwei
- * Bauteile aus zwei Systemen — das war ein gemessener V11-Befund.
+ * Die FORM steht seit N12 in `Icons.kt` — ein Raster, ein Strichgewicht fuer
+ * die ganze App. Hier bleibt nur die ZEIT: 250 ms, die der Referenz
+ * (`.disclosure__indicator`), und bewusst dieselbe wie die der Schublade
+ * darunter. Zwei ineinander geschachtelte Winkel mit verschiedenem Tempo
+ * sahen im Web aus wie zwei Bauteile aus zwei Systemen — das war ein
+ * gemessener V11-Befund.
  */
 @Composable
 private fun Chevron(expanded: Boolean, colour: Color, modifier: Modifier = Modifier) {
@@ -427,28 +423,7 @@ private fun Chevron(expanded: Boolean, colour: Color, modifier: Modifier = Modif
         label = "chevron",
     )
 
-    Canvas(modifier = modifier.size(16.dp)) {
-        rotate(turn) {
-            val w = size.width
-            val h = size.height
-            // Die Spitze zeigt nach unten: von links oben zur Mitte unten und
-            // wieder hinauf. Stumpfe Enden, wie jede Marke dieses Geraets.
-            drawLine(
-                color = colour,
-                start = Offset(w * 0.25f, h * 0.4f),
-                end = Offset(w * 0.5f, h * 0.65f),
-                strokeWidth = 1.5.dp.toPx(),
-                cap = StrokeCap.Butt,
-            )
-            drawLine(
-                color = colour,
-                start = Offset(w * 0.5f, h * 0.65f),
-                end = Offset(w * 0.75f, h * 0.4f),
-                strokeWidth = 1.5.dp.toPx(),
-                cap = StrokeCap.Butt,
-            )
-        }
-    }
+    ChevronGlyph(tint = colour, turn = turn, modifier = modifier)
 }
 
 /**
@@ -473,11 +448,11 @@ fun FoldRow(
     /**
      * Die Betriebsleuchte vor der Beschriftung — nur der Tresor traegt eine.
      *
-     * Sie ist 6 dp gross und liegt auf der Mitte der Kleinbuchstaben, nicht
-     * auf der Grundlinie: Eine Leuchte auf der Grundlinie sieht aus wie ein
-     * Punkt am Satzende. Im Web macht das `vertical-align: 0.26em`; hier
-     * genuegt die Zentrierung der Zeile, weil die Leuchte ein eigenes
-     * Rechteck ist und keinen Schriftzug tragen muss.
+     * Sie liegt auf der Mitte der Kleinbuchstaben, nicht auf der Grundlinie:
+     * Eine Leuchte auf der Grundlinie sieht aus wie ein Punkt am Satzende. Im
+     * Web macht das `vertical-align: 0.26em`; hier genuegt die Zentrierung der
+     * Zeile, weil die Leuchte ein eigenes Rechteck ist und keinen Schriftzug
+     * tragen muss. Ihr Mass steht seit N12 als `Glyph.dot` an einer Stelle.
      */
     lamp: Color? = null,
 ) {
@@ -508,12 +483,7 @@ fun FoldRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (lamp != null) {
-                Box(
-                    modifier = Modifier
-                        .size(6.dp)
-                        .clip(CircleShape)
-                        .background(lamp),
-                )
+                Lamp(colour = lamp)
             }
             BasicText(
                 text = label,

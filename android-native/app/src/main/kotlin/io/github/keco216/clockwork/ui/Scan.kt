@@ -45,8 +45,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -433,10 +431,11 @@ private fun Viewfinder(
 /**
  * Die vier Eckwinkel — kein Zierrat: Sie zeigen, wohin der QR-Code gehoert.
  *
- * Masse aus `panels.css`: 18 dp Schenkel, 2 dp Strich, 16 dp (`--sp-4`) vom
- * Rand. Stumpfe Enden wie jede Marke dieses Geraets. Gezeichnet statt aus
- * einer Icon-Bibliothek, und ohne Semantik — im Web sind die vier Spans
- * `aria-hidden`.
+ * Masse aus `panels.css`: 18 dp Schenkel, 16 dp (`--sp-4`) vom Rand. Strich
+ * und Rundung kommen seit N12 aus dem Zeichensatz (`Glyph.stroke`, runde
+ * Kappen, gerundete Ecke) — sie sind damit dieselben wie am Winkel und am
+ * Zifferblatt. Gezeichnet statt aus einer Icon-Bibliothek, und ohne Semantik:
+ * Im Web sind die vier Spans `aria-hidden`.
  */
 @Composable
 private fun ViewfinderMarks(modifier: Modifier = Modifier) {
@@ -445,37 +444,13 @@ private fun ViewfinderMarks(modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) {
         val inset = Dimens.sp4.toPx()
         val leg = 18.dp.toPx()
-        val stroke = 2.dp.toPx()
-        val half = stroke / 2
         val w = size.width
         val h = size.height
 
-        fun corner(x: Float, y: Float, toRight: Boolean, toBottom: Boolean) {
-            val dx = if (toRight) 1f else -1f
-            val dy = if (toBottom) 1f else -1f
-            // Der waagerechte und der senkrechte Schenkel, jeweils auf der
-            // Mitte des 2-dp-Strichs verankert, damit die Aussenkante genau
-            // auf dem Einzug liegt.
-            drawLine(
-                color = colors.signal,
-                start = Offset(x, y + dy * half),
-                end = Offset(x + dx * leg, y + dy * half),
-                strokeWidth = stroke,
-                cap = StrokeCap.Butt,
-            )
-            drawLine(
-                color = colors.signal,
-                start = Offset(x + dx * half, y),
-                end = Offset(x + dx * half, y + dy * leg),
-                strokeWidth = stroke,
-                cap = StrokeCap.Butt,
-            )
-        }
-
-        corner(inset, inset, toRight = true, toBottom = true)
-        corner(w - inset, inset, toRight = false, toBottom = true)
-        corner(inset, h - inset, toRight = true, toBottom = false)
-        corner(w - inset, h - inset, toRight = false, toBottom = false)
+        drawViewfinderCorner(inset, inset, true, true, leg, colors.signal)
+        drawViewfinderCorner(w - inset, inset, false, true, leg, colors.signal)
+        drawViewfinderCorner(inset, h - inset, true, false, leg, colors.signal)
+        drawViewfinderCorner(w - inset, h - inset, false, false, leg, colors.signal)
     }
 }
 

@@ -53,7 +53,10 @@ fun SettingsPage(
             .padding(
                 start = Dimens.gapGroup,
                 end = Dimens.gapGroup,
-                bottom = Dimens.gapGroup,
+                // Wie auf der Startseite: Leistenhoehe plus Gruppenfuge,
+                // damit die Ueber-Karte vollstaendig ueber die schwebende
+                // Leiste hinausgescrollt werden kann (N12).
+                bottom = Dimens.gapGroup + navOverlayHeight,
             )
             .padding(top = topInset),
         verticalArrangement = Arrangement.spacedBy(Dimens.gapGroup),

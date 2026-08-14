@@ -1,9 +1,10 @@
 package io.github.keco216.clockwork.ui
 
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -15,12 +16,12 @@ import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,15 +29,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
@@ -47,7 +44,7 @@ import io.github.keco216.clockwork.ui.theme.Dimens
 import io.github.keco216.clockwork.ui.theme.LocalColors
 import io.github.keco216.clockwork.ui.theme.Motion
 import io.github.keco216.clockwork.ui.theme.TextStyles
-import androidx.compose.foundation.Canvas as FoundationCanvas
+import kotlinx.coroutines.launch
 
 /**
  * Die zwei Seiten der App.
@@ -69,25 +66,46 @@ enum class Page {
 }
 
 /**
- * Die untere Navigationsleiste.
+ * Die untere Navigation als SCHWEBENDE Pillen-Karte (N12).
  *
- * ── Der wandernde Indikator ───────────────────────────────────────────────
- * HeroUI zeichnet unter seinen Tabs einen „Cursor", der beim Wechsel an seine
- * neue Stelle FAEHRT statt zu springen (250 ms, Federkurve). Die V11-Analyse
- * hatte das Muster als „keine Tabs" verworfen — jetzt gibt es Tabs, jetzt
- * gilt es.
+ * ── Was an der N11-Fassung falsch war ─────────────────────────────────────
+ * Sie war ein randbuendiger Balken mit einer Fuge nach oben und einer
+ * Aktiv-Flaeche, die schmaler war als ihr Posten. Kevins Urteil am S24: „wirkt
+ * billig". Er hat recht, und der Grund ist benennbar — drei Fehler auf einmal:
  *
- * Er faehrt in Ort UND Breite, obwohl beide Posten hier gleich breit sind:
- * Die Breite kommt aus der GEMESSENEN Lage der Posten
- * (`onGloballyPositioned`), nicht aus einer Rechnung „halbe Leiste". Eine
- * dritte Seite oder eine laengere Uebersetzung wuerde die Rechnung still
- * falsch machen, die Messung nicht.
+ * 1. Ein Balken, der die Fensterkante beruehrt, ist ein Stueck FENSTER. Eine
+ *    Karte mit Abstand ist ein Stueck GERAET. Dieses Projekt baut ein
+ *    Instrument; seine Navigation gehoert auf das Gehaeuse gelegt, nicht in
+ *    den Rahmen geklebt.
+ * 2. Die Fuge nach oben war eine Behauptung, die die Flaeche nicht einloest:
+ *    Ein Strich trennt zwei Ebenen, die aneinanderstossen. Etwas, das
+ *    SCHWEBT, trennt sich durch seinen Schatten (hell) beziehungsweise seine
+ *    Lichtkante (dunkel) — genau das, was `--elev-2` fuer Overlays vorsieht.
+ * 3. Die Aktiv-Flaeche sass nicht auf ihrem Posten, sondern irgendwo darin.
+ *    Jetzt deckt die Pille GENAU das Segment: gemessen, nicht gerechnet.
+ *
+ * ── Warum die Radien ineinander passen ────────────────────────────────────
+ * Karte und Pille tragen beide `--radius-key`, und der klemmt auf die halbe
+ * Hoehe: aussen 64 / 2 = 32, innen 48 / 2 = 24. Die Differenz ist genau das
+ * Polster der Karte (8). Damit sind beide Rundungen KONZENTRISCH — die Regel,
+ * an der man eine gebaute Form von einer gestapelten unterscheidet.
+ *
+ * ── Der gleitende Cursor ──────────────────────────────────────────────────
+ * HeroUI zieht unter seinen Tabs einen Cursor, der beim Wechsel an seine neue
+ * Stelle FAEHRT (250 ms, Federkurve). Er faehrt in Ort UND Breite, obwohl
+ * beide Posten hier gleich breit sind: Die Werte kommen aus der GEMESSENEN
+ * Lage (`onGloballyPositioned`) und nicht aus einer Rechnung „halbe Leiste".
+ * Eine dritte Seite wuerde die Rechnung still falsch machen, die Messung
+ * nicht.
+ *
+ * Beim ERSTEN Mal springt er trotzdem: Wer die App auf der Einstellungen-Seite
+ * verlaesst und wieder oeffnet, saehe sonst eine Fahrt, die nichts erklaert —
+ * es hat ja niemand umgeschaltet. Deshalb `snapTo` vor der ersten Fahrt.
  *
  * ── Reduzierte Bewegung ───────────────────────────────────────────────────
- * Ohne eigene Abfrage: `animateDpAsState` haengt an der Animator-Skala des
- * Systems. Steht sie auf 0, springt der Cursor — genau das, was
- * `prefers-reduced-motion` im Web verlangt. Dieselbe Mechanik wie beim
- * Tastendruck in [Key].
+ * Ohne eigene Abfrage: `Animatable.animateTo` haengt an der Animator-Skala des
+ * Systems (`MotionDurationScale`). Steht sie auf 0, springt der Cursor — genau
+ * das, was `prefers-reduced-motion` im Web verlangt.
  *
  * ── Was NICHT wartet ──────────────────────────────────────────────────────
  * Der Seiteninhalt wechselt SOFORT. Nur der Cursor faehrt. „Tippen darf nicht
@@ -101,133 +119,155 @@ fun BottomNav(
 ) {
     val colors = LocalColors.current
     val density = LocalDensity.current
+    val cardShape = RoundedCornerShape(Dimens.radiusKey)
+    val segmentShape = RoundedCornerShape(Dimens.radiusKey)
 
-    /* Die gemessene Lage der Posten, in Pixeln der Leiste. Sie steht hier und
-       nicht im Posten selbst, weil der Cursor sie braucht — und der liegt
+    /* Die gemessene Lage der Posten, in Pixeln der Karte. Sie steht hier und
+       nicht im Posten selbst, weil die Pille sie braucht — und die liegt
        HINTER beiden. */
     var slots by remember { mutableStateOf(mapOf<Page, Pair<Float, Float>>()) }
     val slot = slots[current]
 
-    val cursorX by animateDpAsState(
-        targetValue = with(density) { (slot?.first ?: 0f).toDp() },
-        animationSpec = tween(Motion.calm, easing = Motion.spring),
-        label = "nav-cursor-x",
-    )
-    val cursorWidth by animateDpAsState(
-        targetValue = with(density) { (slot?.second ?: 0f).toDp() },
-        animationSpec = tween(Motion.calm, easing = Motion.spring),
-        label = "nav-cursor-width",
-    )
+    val cursorX = remember { Animatable(0f) }
+    val cursorWidth = remember { Animatable(0f) }
+    var placed by remember { mutableStateOf(false) }
 
-    Column(
+    LaunchedEffect(slot) {
+        val target = slot ?: return@LaunchedEffect
+        if (!placed) {
+            placed = true
+            cursorX.snapTo(target.first)
+            cursorWidth.snapTo(target.second)
+            return@LaunchedEffect
+        }
+        // Zwei Spuren, eine Fahrt: `launch` startet beide im selben Rahmen,
+        // sonst liefe die Breite der Stelle hinterher.
+        launch { cursorX.animateTo(target.first, tween(Motion.calm, easing = Motion.spring)) }
+        launch {
+            cursorWidth.animateTo(target.second, tween(Motion.calm, easing = Motion.spring))
+        }
+    }
+
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            /* Erhebung nur im Hellen — dieselbe Begruendung wie beim klebenden
-               Kopf: Im Dunkeln traegt die Fuge allein, ein Schatten auf Nacht
-               hat keinen Platz mehr. Die Fuge zeigt nach OBEN, deshalb steht
-               sie als erstes Kind. */
+            /* Seitlich `--sp-4`, unten `--sp-3`. Die Safe-Area kommt NICHT von
+               hier: `ClockworkApp` legt `systemBarsPadding()` um alles, die
+               Karte sitzt also schon ueber der Gestenleiste. Es hier noch
+               einmal zu setzen ergaebe die doppelte Fuge. */
+            .padding(start = Dimens.sp4, end = Dimens.sp4, bottom = Dimens.sp3)
+            /* `--elev-2`, die Overlay-Ebene: Sie schwebt UEBER dem Inhalt, der
+               unter ihr durchlaeuft. Hell ist das der Schatten der Referenz,
+               dunkel ihre 1-px-Innenlichtkante (`inset 0 0 1px rgb(255 255 255
+               / 30%)`) — auf Fast-Schwarz haette ein Schatten nichts, worauf
+               er fiele.
+
+               Die drei Lagen der CSS-Fassung (2/8, -6/12 und 14/28 px bei 6,
+               3 und 8 %) kann Compose nicht stapeln; genommen ist die
+               dominante dritte. Das ist eine ANNAEHERUNG und steht hier als
+               solche — wie schon bei `--elev-1` am Panel. */
             .then(
                 if (colors.isDark) {
                     Modifier
                 } else {
                     Modifier.shadow(
-                        elevation = 2.dp,
-                        shape = RectangleShape,
-                        clip = false,
+                        elevation = 12.dp,
+                        shape = cardShape,
                         ambientColor = Color.Black.copy(alpha = 0.08f),
                         spotColor = Color.Black.copy(alpha = 0.08f),
                     )
                 },
             )
-            .background(colors.surface),
+            .clip(cardShape)
+            .background(colors.surface)
+            .then(
+                if (colors.isDark) {
+                    Modifier.border(1.dp, Color.White.copy(alpha = 0.30f), cardShape)
+                } else {
+                    Modifier
+                },
+            )
+            .padding(NAV_CARD_PADDING),
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(colors.rule),
-        )
+        // Die Pille liegt HINTER den Posten — sie ist Hintergrund, kein
+        // Aufsatz. Deshalb steht sie vor der Reihe im Baum.
+        if (placed) {
+            Box(
+                modifier = Modifier
+                    /* ABSOLUT und nicht logisch — beides, die Ausrichtung und
+                       der Versatz.
 
-        Box(modifier = Modifier.fillMaxWidth()) {
-            // Der Cursor liegt HINTER den Posten — er ist Hintergrund, kein
-            // Aufsatz. Deshalb steht er vor der Reihe im Baum.
-            if (slot != null) {
-                Box(
-                    modifier = Modifier
-                        /* ABSOLUT und nicht logisch — beides, die Ausrichtung
-                           und der Versatz.
+                       Gemessen wird mit `positionInParent().x`, und das ist
+                       eine PHYSISCHE Koordinate: linke Kante, von links
+                       gezaehlt, in jeder Schreibrichtung. `offset` und
+                       `Alignment.CenterStart` sind dagegen LOGISCH — auf
+                       Arabisch zaehlen sie von rechts. Wer das eine misst und
+                       das andere setzt, bekommt eine Pille, die auf Deutsch
+                       stimmt und auf Arabisch unter dem falschen Posten steht.
+                       Genau so gemessen, bevor diese Zeilen `absolute`
+                       hiessen. */
+                    .absoluteOffset(x = with(density) { cursorX.value.toDp() })
+                    .width(with(density) { cursorWidth.value.toDp() })
+                    .height(NAV_SEGMENT_HEIGHT)
+                    .align(AbsoluteAlignment.CenterLeft)
+                    .background(colors.signalSoft, segmentShape),
+            )
+        }
 
-                           Gemessen wird mit `positionInParent().x`, und das
-                           ist eine PHYSISCHE Koordinate: linke Kante, von
-                           links gezaehlt, in jeder Schreibrichtung. `offset`
-                           und `Alignment.CenterStart` sind dagegen LOGISCH —
-                           auf Arabisch zaehlen sie von rechts. Wer das eine
-                           misst und das andere setzt, bekommt einen Cursor,
-                           der auf Deutsch stimmt und auf Arabisch unter dem
-                           falschen Posten steht. Genau so gemessen, bevor
-                           diese Zeilen `absolute` hiessen.
-
-                           Dieselbe Trennung wie im Web, nur andersherum
-                           angewandt: Position logisch, Geometrie physisch —
-                           hier ist die Position aus der Messung physisch, also
-                           muss die Platzierung es auch sein. */
-                        .absoluteOffset(x = cursorX)
-                        .width(cursorWidth)
-                        .height(Dimens.controlHLg)
-                        .padding(horizontal = Dimens.gapPair)
-                        .align(AbsoluteAlignment.CenterLeft)
-                        .background(colors.fillSoft, RoundedCornerShape(Dimens.radiusItem)),
-                )
-            }
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-                NavItem(
-                    label = text("native.nav.home"),
-                    selected = current == Page.Home,
-                    onSelect = { onSelect(Page.Home) },
-                    modifier = Modifier
-                        .weight(1f)
-                        .onGloballyPositioned { layout ->
-                            slots = slots + (
-                                Page.Home to (
-                                    layout.positionInParent().x to layout.size.width.toFloat()
-                                    )
+        Row(modifier = Modifier.fillMaxWidth()) {
+            NavItem(
+                label = text("native.nav.home"),
+                selected = current == Page.Home,
+                onSelect = { onSelect(Page.Home) },
+                shape = segmentShape,
+                modifier = Modifier
+                    .weight(1f)
+                    .onGloballyPositioned { layout ->
+                        slots = slots + (
+                            Page.Home to (
+                                layout.positionInParent().x to layout.size.width.toFloat()
                                 )
-                        },
-                ) { tint -> DialGlyph(tint) }
+                            )
+                    },
+            ) { tint -> DialGlyph(tint) }
 
-                NavItem(
-                    label = text("native.nav.settings"),
-                    selected = current == Page.Settings,
-                    onSelect = { onSelect(Page.Settings) },
-                    modifier = Modifier
-                        .weight(1f)
-                        .onGloballyPositioned { layout ->
-                            slots = slots + (
-                                Page.Settings to (
-                                    layout.positionInParent().x to layout.size.width.toFloat()
-                                    )
+            NavItem(
+                label = text("native.nav.settings"),
+                selected = current == Page.Settings,
+                onSelect = { onSelect(Page.Settings) },
+                shape = segmentShape,
+                modifier = Modifier
+                    .weight(1f)
+                    .onGloballyPositioned { layout ->
+                        slots = slots + (
+                            Page.Settings to (
+                                layout.positionInParent().x to layout.size.width.toFloat()
                                 )
-                        },
-                ) { tint -> GearGlyph(tint) }
-            }
+                            )
+                    },
+            ) { tint -> GearGlyph(tint) }
         }
     }
 }
 
 /**
- * Ein Posten der Leiste: Zeichen oben, Beschriftung darunter.
+ * Ein Segment der Leiste: Zeichen oben, Beschriftung darunter.
  *
- * `selectable` und nicht `clickable`: Damit meldet der Posten der
- * Bedienungshilfe seine Rolle (Tab) UND ob er der gewaehlte ist. Ein Knopf,
+ * `selectable` und nicht `clickable`: Damit meldet das Segment der
+ * Bedienungshilfe seine Rolle (Tab) UND ob es das gewaehlte ist. Ein Knopf,
  * der nur „angetippt werden kann", laesst einen Screenreader raten, wo man
  * gerade steht.
+ *
+ * Die beiden Segmente sind ueber `weight(1f)` EXAKT gleich breit — auch dann,
+ * wenn eine Uebersetzung laenger ist als die andere. Das ist der Unterschied
+ * zwischen einer Leiste und zwei nebeneinander stehenden Knoepfen.
  */
 @Composable
 private fun NavItem(
     label: String,
     selected: Boolean,
     onSelect: () -> Unit,
+    shape: Shape,
     modifier: Modifier = Modifier,
     glyph: @Composable (Color) -> Unit,
 ) {
@@ -244,12 +284,11 @@ private fun NavItem(
     )
 
     val tint = if (selected) colors.signalText else colors.ink3
-    val shape = RoundedCornerShape(Dimens.radiusItem)
 
     Column(
         modifier = modifier
+            .height(NAV_SEGMENT_HEIGHT)
             .scale(scale)
-            .padding(horizontal = Dimens.gapPair)
             .focusRing(focused, colors.signal, shape, 2.dp)
             .selectable(
                 selected = selected,
@@ -258,15 +297,11 @@ private fun NavItem(
                 role = Role.Tab,
                 onClick = onSelect,
             )
-            // Trefferflaeche: Die Leiste ist hoeher als 44 dp, der Posten
-            // fuellt sie ganz aus — Zeichen und Beschriftung zusammen sind
-            // EIN Ziel, nicht zwei.
-            .height(NAV_HEIGHT)
-            .padding(vertical = Dimens.gapPair),
+            .padding(horizontal = Dimens.sp2),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically),
     ) {
-        Box(modifier = Modifier.size(GLYPH_SIZE)) { glyph(tint) }
+        glyph(tint)
 
         BasicText(
             text = label,
@@ -277,90 +312,25 @@ private fun NavItem(
 }
 
 /**
- * Das Zifferblatt, vereinfacht.
+ * Die Hoehe eines Segments.
  *
- * Die Marke traegt eine 30er-Teilung — bei 22 dp verschmieren dreissig Striche
- * zu einem grauen Ring. Gezeichnet ist deshalb JEDER FUENFTE Strich, also die
- * sechs Positionen, die auch ein Zifferblatt aus Zahlen zeigen wuerde, plus
- * der Zeiger. Es ist dieselbe Geometrie, nur grober aufgeloest: eine
- * Vereinfachung, keine zweite Form.
+ * 48 dp traegt Zeichen (24) und Beschriftung (12 sp) uebereinander und liegt
+ * ueber der 44-dp-Trefferflaeche des Hauses. Es ist zugleich die Sprosse der
+ * Hoehenleiter, die die Web-Fassung fuer die EINE Haupthandlung eines Panels
+ * vorsieht — und genau das ist ein Navigationsposten.
  */
-@Composable
-private fun DialGlyph(tint: Color) {
-    FoundationCanvas(modifier = Modifier.size(GLYPH_SIZE)) {
-        val radius = size.minDimension / 2f
-        val stroke = radius * 0.13f
-        val tickOuter = radius * 0.96f
-        val tickInner = radius * 0.62f
+private val NAV_SEGMENT_HEIGHT: Dp = 48.dp
 
-        for (index in 0 until 6) {
-            rotate(degrees = index * 60f) {
-                drawLine(
-                    color = tint,
-                    start = Offset(center.x, center.y - tickOuter),
-                    end = Offset(center.x, center.y - tickInner),
-                    strokeWidth = stroke,
-                    cap = StrokeCap.Round,
-                )
-            }
-        }
-
-        // Der Zeiger steht auf zwoelf — die Ruhelage des Emblems.
-        drawLine(
-            color = tint,
-            start = center,
-            end = Offset(center.x, center.y - radius * 0.44f),
-            strokeWidth = stroke,
-            cap = StrokeCap.Round,
-        )
-    }
-}
+/** Das Polster der Karte um ihre Segmente. */
+private val NAV_CARD_PADDING: Dp = Dimens.sp2
 
 /**
- * Das Zahnrad.
+ * Wie weit die Leiste in den Inhalt hineinragt: Kartenhoehe plus ihr Abstand
+ * nach unten.
  *
- * Bei einer Uhrwerks-Marke ist das Zahnrad kein Klischee, sondern das Motiv —
- * Kevins Begruendung, und sie stimmt: Was ein Uhrwerk antreibt, darf die
- * Einstellungen bezeichnen. Acht Zaehne, weil sechs zu grob und zwoelf bei
- * 22 dp wieder ein Ring waeren.
+ * Die Buehnen rechnen ihr unteres Polster daraus, damit die letzte Karte und
+ * der Fuss vollstaendig ueber die Leiste hinausgescrollt werden koennen. Die
+ * Zahl steht deshalb HIER und nicht dort: Wer die Leiste hoeher macht, soll
+ * nicht in drei Dateien nachziehen muessen.
  */
-@Composable
-private fun GearGlyph(tint: Color) {
-    FoundationCanvas(modifier = Modifier.size(GLYPH_SIZE)) {
-        val radius = size.minDimension / 2f
-        val stroke = radius * 0.15f
-
-        for (index in 0 until 8) {
-            rotate(degrees = index * 45f) {
-                drawLine(
-                    color = tint,
-                    start = Offset(center.x, center.y - radius * 0.98f),
-                    end = Offset(center.x, center.y - radius * 0.66f),
-                    strokeWidth = stroke,
-                    cap = StrokeCap.Round,
-                )
-            }
-        }
-
-        drawRing(tint, radius * 0.62f, stroke)
-        drawRing(tint, radius * 0.24f, stroke)
-    }
-}
-
-private fun DrawScope.drawRing(tint: Color, radius: Float, stroke: Float) {
-    drawCircle(color = tint, radius = radius, style = Stroke(width = stroke))
-}
-
-/**
- * Die Hoehe der Leiste.
- *
- * 56 dp traegt Zeichen und Beschriftung uebereinander und liegt ueber der
- * 44-dp-Trefferflaeche des Hauses. Das Polster zu den Systemleisten kommt
- * NICHT von hier: `ClockworkApp` legt `systemBarsPadding()` um alles, die
- * Leiste sitzt also schon ueber der Gestenleiste. Es hier noch einmal zu
- * setzen ergaebe die doppelte Fuge.
- */
-private val NAV_HEIGHT: Dp = 56.dp
-
-/** Die Kantenlaenge der Zeichen. */
-private val GLYPH_SIZE: Dp = 22.dp
+val navOverlayHeight: Dp = NAV_SEGMENT_HEIGHT + NAV_CARD_PADDING * 2 + Dimens.sp3

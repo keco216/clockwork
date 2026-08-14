@@ -275,106 +275,92 @@ fun ClockworkApp() {
     )
     val topInset = with(density) { mastheadHeight.toDp() }
 
-    Column(
+    /* ── Die Buehne liegt UNTER der Leiste (N12) ───────────────────────────
+       Bis N11 war das hier eine Spalte: Buehne, Fusszeile, Leiste — jede mit
+       ihrem eigenen Platz. Seit die Leiste SCHWEBT, gibt es diesen Platz
+       nicht mehr; sie liegt als Overlay ueber dem Inhalt, und der laeuft
+       unter ihr durch. Deshalb eine Box mit drei Lagen: Buehne, Kopf,
+       Leiste. */
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.ground)
-            .systemBarsPadding(),
-    ) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                /* Die Zeitschaltung des Tresors haengt an der Benutzung. Im
-                   Web sind das `pointerdown`, `keydown` und `focusin` am
-                   DOKUMENT — hier die INITIAL-Phase der Zeigerereignisse an
-                   der Wurzel, also bevor ein Kind sie verbraucht. Das ist die
-                   woertliche Entsprechung zum Mitschneiden im Web; verbraucht
-                   wird hier nichts. Getipptes deckt `onFieldChange` ab. */
-                .pointerInput(vault) {
-                    awaitPointerEventScope {
-                        while (true) {
-                            awaitPointerEvent(PointerEventPass.Initial)
-                            vault.resetIdleTimer()
-                        }
+            .systemBarsPadding()
+            /* Die Zeitschaltung des Tresors haengt an der Benutzung. Im Web
+               sind das `pointerdown`, `keydown` und `focusin` am DOKUMENT —
+               hier die INITIAL-Phase der Zeigerereignisse an der Wurzel, also
+               bevor ein Kind sie verbraucht. Das ist die woertliche
+               Entsprechung zum Mitschneiden im Web; verbraucht wird hier
+               nichts. Getipptes deckt `onFieldChange` ab. */
+            .pointerInput(vault) {
+                awaitPointerEventScope {
+                    while (true) {
+                        awaitPointerEvent(PointerEventPass.Initial)
+                        vault.resetIdleTimer()
                     }
-                },
-        ) {
-            if (page == Page.Settings) {
-                SettingsPage(vault = vault, scroll = settingsScroll, topInset = topInset)
-            } else if (vacant) {
-                VacantStage(
-                    field = field,
-                    onFieldChange = { field = it; vault.resetIdleTimer() },
-                    onFocusChange = { fieldFocused = it },
-                    onTestKey = { field = TextFieldValue(TEST_KEY) },
-                    note = note,
-                    onScan = ::handleScan,
-                    onNote = ::setNote,
-                    vault = vault,
-                    vaultOpen = vaultOpen,
-                    onVaultOpenChange = { vaultOpen = it },
-                    scroll = scroll,
-                    topInset = topInset,
-                )
-            } else {
-                WorkingStage(
-                    field = field,
-                    onFieldChange = { field = it; vault.resetIdleTimer() },
-                    onFocusChange = { fieldFocused = it },
-                    entries = entries,
-                    unixSeconds = unixSeconds,
-                    inputOpen = inputOpen,
-                    onToggleInput = { inputOpen = !inputOpen },
-                    onCopy = { code -> context.copySensitive(code) },
-                    note = note,
-                    onScan = ::handleScan,
-                    onNote = ::setNote,
-                    vault = vault,
-                    vaultOpen = vaultOpen,
-                    onVaultOpenChange = { vaultOpen = it },
-                    scroll = scroll,
-                    topInset = topInset,
-                )
-            }
-
-            // Der Kopf liegt UEBER der Buehne und ist deckend — genau wie
-            // `position: sticky` im Web, wo der Inhalt unter ihm durchlaeuft.
-            // Deshalb steht er hier als letztes Kind der Box.
-            Masthead(
-                vaultState = vault.state,
-                lifted = scroll.value > 0,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .onSizeChanged { mastheadHeight = it.height }
-                    // Bewegt wird ausschliesslich `transform` — kein Layout,
-                    // keine Hoehenaenderung. Die Lambda-Form von `offset`
-                    // laeuft in der Platzierungsphase und loest keine
-                    // Neuzusammensetzung aus.
-                    .offset { IntOffset(0, -(mastheadHeight * stow).roundToInt()) },
+                }
+            },
+    ) {
+        if (page == Page.Settings) {
+            SettingsPage(vault = vault, scroll = settingsScroll, topInset = topInset)
+        } else if (vacant) {
+            VacantStage(
+                field = field,
+                onFieldChange = { field = it; vault.resetIdleTimer() },
+                onFocusChange = { fieldFocused = it },
+                onTestKey = { field = TextFieldValue(TEST_KEY) },
+                note = note,
+                onScan = ::handleScan,
+                onNote = ::setNote,
+                vault = vault,
+                vaultOpen = vaultOpen,
+                onVaultOpenChange = { vaultOpen = it },
+                scroll = scroll,
+                topInset = topInset,
+            )
+        } else {
+            WorkingStage(
+                field = field,
+                onFieldChange = { field = it; vault.resetIdleTimer() },
+                onFocusChange = { fieldFocused = it },
+                entries = entries,
+                unixSeconds = unixSeconds,
+                inputOpen = inputOpen,
+                onToggleInput = { inputOpen = !inputOpen },
+                onCopy = { code -> context.copySensitive(code) },
+                note = note,
+                onScan = ::handleScan,
+                onNote = ::setNote,
+                vault = vault,
+                vaultOpen = vaultOpen,
+                onVaultOpenChange = { vaultOpen = it },
+                scroll = scroll,
+                topInset = topInset,
             )
         }
 
-        /* Die Zusagen-Zeile bleibt auf der STARTSEITE (N11b) — und sie steht
-           hier fest statt am Ende des Scrollbereichs.
+        // Der Kopf liegt UEBER der Buehne und ist deckend — genau wie
+        // `position: sticky` im Web, wo der Inhalt unter ihm durchlaeuft.
+        // Deshalb steht er hier als vorletztes Kind der Box; nach ihm kommt
+        // nur noch die Leiste, die ueber allem liegt.
+        Masthead(
+            vaultState = vault.state,
+            lifted = scroll.value > 0,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .onSizeChanged { mastheadHeight = it.height }
+                // Bewegt wird ausschliesslich `transform` — kein Layout,
+                // keine Hoehenaenderung. Die Lambda-Form von `offset`
+                // laeuft in der Platzierungsphase und loest keine
+                // Neuzusammensetzung aus.
+                .offset { IntOffset(0, -(mastheadHeight * stow).roundToInt()) },
+        )
 
-           Das ist eine bewusste Abweichung von der Web-Fassung, wo sie unten
-           am Dokument haengt: Eine Vertrauenszeile, die man erst erscrollen
-           muss, wirkt genau dann nicht, wenn sie gebraucht wird — beim ersten
-           Blick. Sie kostet zwoelf Punkt Hoehe, und die sind es wert.
-
-           Auf der Einstellungen-Seite steht sie nicht: Dort sagt die
-           Ueber-Seite dasselbe ausfuehrlich, und zweimal derselbe Satz auf
-           einem Schirm ist einer zu viel. */
-        if (page == Page.Home) {
-            ColophonLine(
-                modifier = Modifier.padding(
-                    horizontal = Dimens.gapGroup,
-                    vertical = Dimens.gapPair,
-                ),
-            )
-        }
-
-        BottomNav(current = page, onSelect = { page = it })
+        BottomNav(
+            current = page,
+            onSelect = { page = it },
+            modifier = Modifier.align(Alignment.BottomCenter),
+        )
     }
 }
 
@@ -389,6 +375,23 @@ fun ClockworkApp() {
  * Der Sprachumschalter stand hier bis N11 daneben — er ist jetzt auf der
  * Einstellungen-Seite. Ein Auswahlfeld im Fuss ist die Handschrift einer
  * Webseite, nicht die einer App.
+ *
+ * ── Sie SCROLLT wieder, und das ist die Ruecknahme einer N11-Entscheidung ──
+ * N11 hatte sie aus dem Scrollbereich geholt und fest ueber die Leiste
+ * gestellt, mit dem Argument: Eine Vertrauenszeile, die man erst erscrollen
+ * muss, wirkt nicht beim ersten Blick. Das Argument stimmt weiter, die
+ * Umsetzung ist mit N12 unmoeglich geworden — und zwar nicht aus Bequemlichkeit:
+ *
+ * Die Leiste schwebt jetzt, der Inhalt laeuft UNTER ihr durch. Eine feste
+ * Zeile ohne eigene Flaeche stuende damit im Weg des durchlaufenden Inhalts —
+ * Text ueber Text. Sie mit einer deckenden Flaeche zu hinterlegen, hiesse
+ * einen Riegel ueber die volle Breite einzuziehen, und genau den hat N12
+ * abgeschafft.
+ *
+ * Sie steht deshalb wieder am Ende der Buehne. Der Preis ist benannt: Auf der
+ * Arbeitsbuehne sieht man sie erst nach dem Scrollen. Im Leerzustand — dem
+ * ersten Bild jeder frischen Installation — steht sie weiter im Blick, weil
+ * die Buehne dort zentriert.
  */
 @Composable
 private fun ColophonLine(modifier: Modifier = Modifier) {
@@ -437,14 +440,18 @@ private fun VacantStage(
        Zwischenraum: Bei zentrierter Anordnung wuerde ein fuehrender
        Abstandhalter mitzentriert und schoebe den Inhalt nur halb so weit
        hinunter. Als Polster verkleinert er den Raum, in dem zentriert wird —
-       und genau das ist gemeint. */
+       und genau das ist gemeint.
+
+       Unten steht seit N12 dasselbe fuer die schwebende Leiste: Der Inhalt
+       laeuft unter ihr durch, also zentriert er zwischen Kopf und Leiste und
+       nicht zwischen Kopf und Fensterkante. */
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scroll)
             .padding(
                 top = topInset,
-                bottom = Dimens.gapGroup,
+                bottom = Dimens.gapGroup + navOverlayHeight,
                 start = Dimens.gapGroup,
                 end = Dimens.gapGroup,
             ),
@@ -524,6 +531,9 @@ private fun VacantStage(
                 modifier = Modifier.fillMaxWidth(),
             )
         }
+
+        Spacer(Modifier.height(Dimens.gapGroup))
+        ColophonLine()
     }
 }
 
@@ -585,7 +595,10 @@ private fun WorkingStage(
             .verticalScroll(scroll)
             .padding(
                 top = topInset,
-                bottom = Dimens.gapGroup,
+                // Leistenhoehe plus Gruppenfuge: So laesst sich die letzte
+                // Karte vollstaendig ueber die schwebende Leiste hinaus
+                // scrollen, und darunter bleiben sichtbare 24 dp Luft.
+                bottom = Dimens.gapGroup + navOverlayHeight,
                 start = Dimens.gapGroup,
                 end = Dimens.gapGroup,
             ),
@@ -729,6 +742,8 @@ private fun WorkingStage(
             onExpandedChange = onVaultOpenChange,
             modifier = Modifier.fillMaxWidth(),
         )
+
+        ColophonLine()
     }
 }
 

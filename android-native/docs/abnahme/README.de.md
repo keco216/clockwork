@@ -707,3 +707,173 @@ in CLAUDE.md als Fallen notiert:
 - **FLAG_SECURE macht jede Aufnahme schwarz**, und wer dann blind weitertippt,
   landet in der Benachrichtigungsleiste und deutet den Unsinn als App-Fehler.
   Erst Sicht herstellen, dann treiben.
+
+## N12 — Feinschliff 1: Die Leiste schwebt, die Icons tragen die Marke
+
+Kevins Urteil zur N11-Fassung, am Bild bestätigt: Die Leiste wirkt billig, und
+das Start-Icon liest sich als Stern. Beides ist in einem Lauf behoben. Alle
+Zahlen unten sind an den Pixeln der Aufnahmen gemessen (Emulator
+`clockwork-test`, 1080 × 2400, **Dichte 420 — 1 dp = 2,625 px**), nicht aus dem
+Quelltext abgeschrieben.
+
+### Die schwebende Karte, nachgemessen
+
+| Was                            | Soll                      | Gemessen (px)                      | dp        |
+| ------------------------------ | ------------------------- | ---------------------------------- | --------- |
+| Abstand links                  | `--sp-4` = 16             | Karte beginnt bei x = 42           | **16,0**  |
+| Abstand rechts                 | `--sp-4` = 16             | Karte endet bei x = 1037           | **16,0**  |
+| Abstand unten                  | `--sp-3` = 12 + Safe-Area | 2304 → 2400, davon 63 Gestenleiste | **12,2**  |
+| Kartenhöhe                     | 48 + 2 × 8 = 64           | 2137 … 2304 = 168                  | **64,0**  |
+| Segmenthöhe (Pille)            | 48                        | 2158 … 2283 = 126                  | **48,0**  |
+| Polster der Karte              | `--sp-2` = 8              | 2137 → 2158 = 21                   | **8,0**   |
+| Segmentbreite, beide           | exakt gleich              | je 477                             | **181,7** |
+| Pille über dem aktiven Segment | deckt es GENAU            | 63 … 539 = 477                     | **181,7** |
+
+Die letzte Zeile ist der Punkt, an dem die N11-Fassung scheiterte: Dort war die
+Aktiv-Fläche schmaler als ihr Posten und saß nicht mittig darin. Jetzt sind
+Segment und Pille dieselbe Strecke — gemessen, nicht gerechnet.
+
+**Die Radien sind konzentrisch.** Karte und Pille tragen beide `--radius-key`,
+und der klemmt auf die halbe Höhe: außen 64 / 2 = 32, innen 48 / 2 = 24. Die
+Differenz ist genau das Polster (8).
+
+`n12-start-hell.png` · `n12-start-dunkel.png` · `n12-einstellungen-hell.png` ·
+`n12-einstellungen-dunkel.png` — beide Seiten, beide Themes. Hell trägt die
+Karte den Overlay-Schatten, dunkel die 1-px-Innenlichtkante; die Fuge nach oben
+ist ersatzlos entfallen.
+
+### Der Inhalt läuft unter der Leiste durch
+
+`n12-einstellungen-hell.png` zeigt es am deutlichsten: Der Text der Über-Karte
+verschwindet unter der Karte, statt an ihr zu enden.
+
+Damit trotzdem alles erreichbar bleibt, tragen die Bühnen unten ein Polster von
+`navOverlayHeight` (64 + 12 = 76 dp) **plus** einer Gruppenfuge. Am Scrollende
+gemessen (`n12-unterlauf-hell.png`):
+
+| Strecke                                    | Gemessen (px)     | dp       |
+| ------------------------------------------ | ----------------- | -------- |
+| Unterkante der letzten Karte → Leistenkopf | 1962 → 2137 = 175 | **66,7** |
+| Unterkante der Fußzeile → Leistenkopf      | 2074 → 2137 = 63  | **24,0** |
+
+Die 24,0 dp sind `--gap-group` — der „sichtbare Abstand zur Leiste", den N12
+verlangt. Die Fußzeile SCROLLT dafür wieder mit, statt fest über der Leiste zu
+stehen; die Begründung dieser Rücknahme steht im Quelltext bei `ColophonLine`.
+
+### Die Pille fährt — und der Inhalt wartet nicht
+
+Gemessen wurde die linke Kante der Pille (63 = linkes Segment, 540 = rechtes),
+mit derselben Abtastung wie bei N11:
+
+| Lauf  | `animator_duration_scale` | Tipp                       | sofort gemessen     | Befund                       |
+| ----- | ------------------------- | -------------------------- | ------------------- | ---------------------------- |
+| m1    | **0**                     | → Einstellungen            | **540**             | sofort am Ziel — sie springt |
+| m2    | **10**                    | → Start                    | **540**             | noch am Start — sie fährt    |
+| m3    | 10                        | dieselbe Fahrt, 7 s später | **63**              | angekommen                   |
+| s1–s3 | 10                        | drei Proben in Folge       | **540 → 422 → 250** | unterwegs                    |
+
+Gleiche Abtastung, gegenteiliges Ergebnis: `animator_duration_scale = 0` ist die
+Systemeinstellung „Animationen entfernen", und dass die Pille ihr folgt, ist die
+native Entsprechung von `prefers-reduced-motion` — ohne eine eigene Abfrage.
+
+**`n12-pille-unterwegs.png` zeigt die Hausregel „Tippen darf nicht warten" in
+einem Bild:** Der Inhalt ist schon die Startseite (Code-Karte mit „Kopieren"),
+Zeichen und Beschriftung „Start" sind schon in `--signal-text` — und die Pille
+steht noch zwischen den Segmenten.
+
+### Die Icon-Inventur
+
+Ein Raster (24 dp), ein Strichgewicht (2 dp), runde Kappen und Ecken. Alle
+Zeichen stehen seit N12 in `ui/Icons.kt`; die Aufrufer bestimmen nur noch Farbe
+und Zeitverhalten.
+
+| Zeichen                 | Vorher                        | Jetzt (Raster-Soll)              | Gemessene Tinte                 |
+| ----------------------- | ----------------------------- | -------------------------------- | ------------------------------- |
+| Zifferblatt (Leiste)    | 6 lange Striche, 1,4 dp, 22er | 12 Marken, Zeiger, Nabe; Ø 22 dp | **59 × 59 px = 22,5 dp**        |
+| Zahnrad (Leiste)        | 8 Zähne, 1,65 dp, 22er        | 8 Zähne, Ring, Nabe; Ø 20,8 dp   | **55 × 55 px = 21,0 dp**        |
+| Winkel (Fold-Zeile)     | 1,5 dp, stumpf, 16er          | 12 × 6 dp + Strich = 14 × 8 dp   | **37 × 21 px = 14,1 × 8,0 dp**  |
+| Winkel (Auswahlfeld)    | 1,5 dp, stumpf, 16er          | dasselbe Zeichen                 | **39 × 22 px = 14,9 × 8,4 dp**  |
+| Häkchen (Listbox)       | 1,5 dp, stumpf, 10er          | 12 × 9 dp + Strich = 14 × 11 dp  | **37 × 29 px = 14,1 × 11,0 dp** |
+| Statuspunkt (2 Stellen) | zweimal 6 dp von Hand         | `Glyph.dot` = 6 dp, eine Stelle  | **16 × 16 px = 6,1 dp**         |
+| Sucherwinkel            | 2 dp, stumpf, harte Ecke      | 2 dp, rund, Ecke als Bogen       | Schenkel 18 dp (unverändert)    |
+| Zifferblatt am Code     | Marke, 30er-Teilung, stumpf   | **unverändert**                  | —                               |
+| Wortmarke (beide O)     | Marke, exakte Geometrie       | **unverändert**                  | —                               |
+
+Die letzten zwei Zeilen sind die Grenze des Systems: Das Zifferblatt neben dem
+Code und die Wortmarke sind keine Zeichen, sondern die MARKE in Betrieb. Sie
+behalten stumpfe Enden und die exakte Teilung — ein abgerundeter Strich auf
+einer Skala ist eine ungenaue Angabe. Die Grenze läuft also zwischen ABLESEN
+und BEZEICHNEN, nicht zwischen groß und klein.
+
+**`n12-icons-100prozent.png`** zeigt jedes Zeichen bei 100 % und vierfach.
+
+#### Warum das Start-Icon neu geschnitten werden musste
+
+Vor dem Bauen sind acht Entwürfe bei 63 px (24 dp bei Dichte 420) und 90 px
+(Dichte 600) gerendert und ANGESEHEN worden — die Frage „liest sich das als
+Uhr?" beantwortet kein Quelltext. Der Befund war eindeutig:
+
+- Lange radiale Striche werden klein IMMER zum Stern. Das war der Fehler der
+  N11-Fassung (Strichlänge ein Drittel des Radius) und blieb es auch bei zwölf
+  statt sechs Strichen.
+- Ein blanker Ring liest sich als Uhr, verliert aber die Teilung der Marke.
+- Zwölf KURZE Marken schließen sich im Auge zum Kreis und behalten die Teilung.
+
+Geändert ist deshalb die ANZAHL (30 → 12), nicht die Proportion: Die Tinte
+eines Strichs misst weiter 0,2 R wie `Dial.TICK_LENGTH` am großen Blatt. Dass
+die gezeichnete Linie dabei nur 0,2 Raster-Einheiten lang ist, liegt an der
+runden Kappe — sie trägt an jedem Ende eine halbe Strichbreite bei.
+
+#### Warum das Zahnrad kleiner ist als das Zifferblatt
+
+Weil es sonst größer WIRKT. Gemessen an der gedeckten Fläche des 24-dp-Kastens:
+**Zifferblatt 10,1 %, Zahnrad 22,1 %** — ein Ring plus acht Zähne tragen doppelt
+so viel Tinte wie zwölf Marken plus Zeiger. Der Außenkreis der Zähne endet
+deshalb bei 10,4 statt 11,0 Einheiten, also 5 % enger. Am Gerät bestätigt sich
+die Absicht: 22,5 dp gegen 21,0 dp.
+
+Die Innengeometrie des Zahnrads ist ebenfalls nachgemessen (Spalte durch die
+Mitte, x = 778): 15 px Zahn und Ring am Stück — die Zähne SITZEN auf dem Rand,
+wie bei einem Zahnrad —, 9 px Luft, 7 px Nabe. Soll: 5,4 dp / 9,9 px / 2,4 dp.
+
+### RTL
+
+`n12-rtl-einstellungen.png`: Die Leiste spiegelt (Startseite rechts,
+Einstellungen links), und die Pille steht unter dem RICHTIGEN Posten — die
+N11-Lehre („physisch messen, physisch setzen") trägt auch die neue Geometrie.
+Die Versionszeile steht weiter in Bidi-Isolation und liest sich als
+`2.0.0-dev-debug (20000)`.
+
+### Ketten
+
+| Kette                                            | Ergebnis                                                   |
+| ------------------------------------------------ | ---------------------------------------------------------- |
+| `gradlew testDebugUnitTest`                      | **221 Tests, 0 Fehler** (unverändert)                      |
+| `gradlew checkNoMaterial`                        | grün                                                       |
+| Web: typecheck · Tests · Lint · Prettier · Build | grün, **560 Tests**                                        |
+| `dist/clockwork.html`                            | **801.401 Byte, SHA-256 `175f4a8e…584e`** — byte-identisch |
+
+**N12 bringt keine neuen Unit-Tests, und das ist keine Auslassung.** Was dieser
+Posten ändert, ist Zeichengeometrie und Layout; beides prüft man am gezeichneten
+Pixel, nicht auf der JVM (eine Compose-UI-Testkette gibt es in diesem Projekt
+bewusst nicht). Der Beweis sind die gemessenen Aufnahmen oben.
+
+Die Bündel-Prüfsumme ist trotzdem gelaufen, obwohl N12 keinen einzigen String
+anfasst: Eine Zusage, die man nur prüft, wenn man mit einer Änderung rechnet,
+ist keine.
+
+### Ein Befund, der offen bleibt
+
+Während des blinden Antreibens über `adb` ist die Tresordatei der **dev**-App
+verschwunden (`files/vault.json`, zwischen zwei Starts). Nicht reproduziert und
+nicht erklärt:
+
+- Die einzige Löschstelle im Code ist `VaultController.wipe()`, und die hängt
+  allein an der Gefahrenzone der Einstellungen-Seite — die zu diesem Zeitpunkt
+  nicht offen war. Laden und Übernahme löschen nie.
+- Der Lauf hat nachweislich Fehltreffer produziert: Im Protokoll steht ein
+  Kamera-Client, den niemand geöffnet hat.
+
+Hier steht deshalb keine Erklärung, sondern die Beobachtung. **Vor P9 gehört das
+nachgestellt** — mit einem echten Tresor, kontrollierten Tipps und einem Blick
+auf `files/` nach jedem Schritt.
