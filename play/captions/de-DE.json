@@ -1,0 +1,34 @@
+{
+  "1": {
+    "headline": "Codes, die dein Gerät nie verlassen.",
+    "subline": "Kein Netzwerk. Keine Konten. Kein Tracking."
+  },
+  "2": {
+    "headline": "Kein Netzwerk. Nicht mal die Berechtigung.",
+    "subline": "Die App kann keine Verbindung öffnen."
+  },
+  "3": {
+    "headline": "Dein Tresor. Deine Passphrase.",
+    "subline": "AES-256-GCM · Schlüssel aus PBKDF2"
+  },
+  "4": {
+    "headline": "Aufsperren per Fingerabdruck.",
+    "subline": "Biometrie als Komfort — die Passphrase bleibt deine."
+  },
+  "5": {
+    "headline": "QR scannen oder einfügen — fertig.",
+    "subline": "Gelesen wird im Gerät, nicht in einer Cloud."
+  },
+  "6": {
+    "headline": "Spricht 37 Sprachen.",
+    "subline": "Alle an Bord — nichts wird nachgeladen."
+  },
+  "7": {
+    "headline": "Dunkel wie hell.",
+    "subline": ""
+  },
+  "feature": {
+    "headline": "CLOCKWORK",
+    "subline": "TOTP Authenticator · RFC 6238 · komplett offline"
+  }
+}

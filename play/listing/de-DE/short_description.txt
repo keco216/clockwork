@@ -1,1 +1,1 @@
-TOTP-Codes ohne Netzwerk-Berechtigung. Offline per Bauart, nichts gespeichert.
+Offline-2FA-Authenticator: TOTP-Codes ohne Netzwerk-Berechtigung, ohne Konto.

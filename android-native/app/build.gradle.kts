@@ -23,6 +23,23 @@ val keystoreProps: Properties? = System.getenv("CLOCKWORK_KEYSTORE")
     ?.takeIf { it.exists() }
     ?.let { propsFile -> Properties().apply { propsFile.inputStream().use { load(it) } } }
 
+/* ── Der Schalter fuer die Store-Bilder (N18) ───────────────────────────────
+   Die Ueber-Karte zeigt die Version, die der PackageManager meldet — im
+   Debug-Bau also „2.0.0-dev-debug (20000)". Auf einem Play-Bild waere das
+   falsch: Ausgeliefert wird 2.0.0 (20000), und ein Store-Bild soll zeigen, was
+   ankommt, nicht die Werkstattmarkierung.
+
+   Deshalb NICHT den Versionsnamen im Bild nachtraeglich uebermalen (das waere
+   die erfundene UI, die N18 ausdruecklich verbietet) und auch nicht `-dev`
+   dauerhaft entfernen (das ist eine Release-Entscheidung, siehe
+   Release-Checkliste in CLAUDE.md). Stattdessen ein ausdruecklicher, opt-in
+   Schalter: `-Pclockwork.storeShot` nimmt fuer diesen einen Bau die
+   Werkstattmarkierungen aus dem Versionsnamen — und nur die. Die
+   applicationId behaelt ihr `.dev`, der Bau bleibt also neben einer
+   installierten 1.x gefahrlos, und in der Oberflaeche ist davon nichts zu
+   sehen. `scripts/store-shots.mjs` setzt den Schalter und sagt es im Lauf an. */
+val storeShot = providers.gradleProperty("clockwork.storeShot").isPresent
+
 android {
     namespace = "io.github.keco216.clockwork"
 
@@ -52,7 +69,7 @@ android {
            Fassung kann die WebView-Fassung also spaeter als Update abloesen,
            was P8 (Tresor-Uebernahme) ueberhaupt erst moeglich macht. */
         versionCode = 20000
-        versionName = "2.0.0-dev"
+        versionName = if (storeShot) "2.0.0" else "2.0.0-dev"
     }
 
     signingConfigs {
@@ -75,7 +92,7 @@ android {
                Migrationsbeweis in P8 braucht zwingend einen Release-Build mit
                derselben Signatur. */
             applicationIdSuffix = ".dev"
-            versionNameSuffix = "-debug"
+            versionNameSuffix = if (storeShot) null else "-debug"
         }
         release {
             isMinifyEnabled = true

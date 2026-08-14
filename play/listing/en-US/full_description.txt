@@ -1,19 +1,27 @@
-Clockwork generates two-factor codes (TOTP, RFC 6238) entirely on your device. The app declares no INTERNET permission — it cannot go online, and you can check that claim yourself in the manifest.
+Clockwork is a two-factor authenticator (2FA) that generates TOTP codes entirely on your device. It declares no INTERNET permission at all — the app cannot open a connection, and you can check that in the manifest before you believe a word of this.
 
-Under the hood it is the project's single-file web build carried by a system WebView: the same page that runs at clockwork-sage.vercel.app, packaged as an app. Nothing is fetched at runtime, because there is nothing to fetch.
+That is the difference. Most authenticator apps hold network access for sync, service icons or update checks. Clockwork does not have the permission, so the question never comes up.
 
-What it does:
+WHAT IT DOES
+• Generates TOTP codes (RFC 6238) — SHA-1, SHA-256 or SHA-512, 6 to 8 digits, any period.
+• Add accounts the way you happen to have them: scan a QR code, import a QR image, paste an otpauth:// link, or type a Base32 secret. A full Google Authenticator export is converted automatically.
+• A dial with 30 marks and a moving hand shows the time left — a position you read at a glance, not a shrinking bar.
+• One tap copies the code, and the next one is on screen before it becomes valid.
+• Broken input is explained line by line, never silently swallowed.
 
-• Generates TOTP codes — SHA-1, SHA-256 or SHA-512, 6 to 8 digits, any period. The countdown is a 30-mark dial with a rotating hand, not a progress ring, because a hand on a scale gives you a readable position.
-• Takes input in every shape you are likely to have it: raw Base32, otpauth:// URIs, a whole Google Authenticator export, or a QR code from the camera or an image.
-• Explains broken lines instead of failing silently.
-• Optionally remembers your secrets behind a passphrase — strictly opt-in, AES-256-GCM over PBKDF2-SHA-256 with 600,000 iterations, with an auto-lock. Without the vault, nothing is stored at all.
-• Speaks 37 languages, all bundled, including right-to-left layouts.
+YOUR SECRETS STAY YOURS
+• By default nothing is stored at all. Close the app and the secrets are gone.
+• Switch the vault on and they stay here, encrypted with your passphrase: AES-256-GCM, key derived by PBKDF2-SHA-256 with 600,000 iterations. Only the sealed envelope is written to disk — never the plaintext, never the passphrase, never the derived key.
+• Unlock with your fingerprint if you want to. The passphrase stays the only way back in.
+• Locks automatically after a time you choose and when you leave the app. Screenshots and preview images can be blocked.
+• Android backup is switched off, so the encrypted vault never leaves the device.
 
-Privacy, in one line: nothing is collected, because there is nowhere for it to go. No analytics, no telemetry, no update pings, no advertising identifiers, no accounts.
+PRIVACY
+Nothing is collected, because there is nowhere for it to go. No analytics, no telemetry, no update pings, no advertising identifiers, no accounts, no ads. The camera permission serves the QR scanner alone and is declared optional hardware — importing a QR image works without it.
 
-The camera permission exists solely for the QR scanner and is declared optional hardware; importing a QR code from an image works without it. Auto-backup is disabled, so the encrypted vault never leaves the device.
+BUILT TO BE CHECKED
+Open source under the MIT licence. The OTP algorithms are written from scratch against the RFC test vectors — no OTP library. Source code, test suite and the measurement scripts behind every claim above are public at github.com/keco216/clockwork.
 
-Open source under the MIT licence. The OTP algorithms are implemented from scratch against the RFC test vectors — no OTP library; the only borrowed crypto primitive is the Web Crypto API. The full source, the test suite and the measurement scripts are public at github.com/keco216/clockwork, so every claim above can be checked rather than believed.
+Speaks 37 languages, all bundled, including right-to-left layouts.
 
-Important, independent of this app: set up backup codes with every provider before relying on any authenticator. They are the only thing that gets you back in when the secret is gone.
+One thing, independent of this app: set up backup codes with every provider before you rely on any authenticator. They are the only thing that gets you back in when a secret is gone.

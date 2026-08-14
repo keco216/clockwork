@@ -1,1 +1,1 @@
-TOTP codes without a network permission. Offline by design, nothing stored.
+Offline 2FA authenticator: TOTP codes, no network permission, no accounts.

@@ -63,6 +63,11 @@ export default tseslint.config(
       'scripts/shoot-grid.mjs',
       'scripts/shoot-mobile.mjs',
       'scripts/shoot-play.mjs',
+      // `store-frames.mjs` zeichnet die Store-Bilder in einem Canvas IM
+      // Browser — `document`, `Image` und `FontFace` stehen dort, nicht in
+      // Node. `store-shots.mjs` dagegen redet nur mit adb und bekommt sie
+      // deshalb nicht.
+      'scripts/store-frames.mjs',
     ],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
   },

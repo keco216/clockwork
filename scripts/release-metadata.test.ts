@@ -113,11 +113,27 @@ describe('Release-Metadaten', () => {
   it('nennt keinen Changelog für einen versionCode, den es nicht gibt', async () => {
     /* Ein Changelog für 10600, während build.gradle auf 10504 steht, ist ein
        halb durchgeführtes Release — entweder wurde die Version vergessen oder
-       der Changelog zu früh geschrieben. */
+       der Changelog zu früh geschrieben.
+
+       Seit dem Kotlin-Zweig gibt es ZWEI Fassungen, die dasselbe Paket
+       ausliefern: die WebView-Hülle in `android/` (1.5.4 = 10504) und die
+       native App in `android-native/` (2.0.0 = 20000). Beide schreiben in
+       denselben fastlane-Baum, weil F-Droid und Play die App an ihrer ID
+       kennen und nicht an ihrem Bauplatz. Die Obergrenze ist deshalb der
+       HÖCHSTE der beiden versionCodes — und `android-native/` wird nur
+       mitgezählt, wenn es den Ordner gibt: Auf `main` liegt er nicht, und
+       dort soll dieselbe Prüfung weiter gegen 10504 laufen. */
+    const nativeGradle = await readFile(
+      wurzel('android-native/app/build.gradle.kts'),
+      'utf8',
+    ).catch(() => '');
+    const nativeCode = Number(nativeGradle.match(/^\s*versionCode\s*=\s*(\d+)/m)?.[1] ?? 0);
+    const grenze = Math.max(versionCode, nativeCode);
+
     const dateien = await readdir(wurzel('fastlane/metadata/android/en-US/changelogs'));
     const codes = dateien.map((d) => Number(d.replace('.txt', '')));
 
     expect(codes.every(Number.isInteger)).toBe(true);
-    expect(Math.max(...codes)).toBeLessThanOrEqual(versionCode);
+    expect(Math.max(...codes)).toBeLessThanOrEqual(grenze);
   });
 });
