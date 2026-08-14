@@ -81,9 +81,7 @@
         <item quantity="many">%1$s minutos</item>
         <item quantity="other">%1$s minutos</item>
     </plurals>
-    <string name="vault_lockOnHide">e ao sair da aba</string>
     <string name="vault_error_nothingToStore">Não há nada para salvar — o campo de texto está vazio.</string>
-    <string name="vault_error_storageBlocked">O navegador não permite salvar (modo privado?).</string>
     <string name="vault_error_noVault">Não há nenhum cofre salvo.</string>
     <string name="vault_error_noPassphrase">Sem frase secreta não há chave.</string>
     <string name="vault_error_sealFailed">Não foi possível salvar.</string>
@@ -99,7 +97,6 @@
         <item quantity="many">Trancado depois de %1$s minutos sem entradas.</item>
         <item quantity="other">Trancado depois de %1$s minutos sem entradas.</item>
     </plurals>
-    <string name="vault_locked_hidden">Trancado ao sair da aba.</string>
     <string name="scan_noQr">Na imagem não dá para reconhecer nenhum código QR.</string>
     <string name="scan_unreadable">Não foi possível ler a imagem — é mesmo uma imagem?</string>
     <string name="scan_done">Código QR lido e inserido.</string>
@@ -152,4 +149,14 @@
     <string name="colophon_note">Sem rede · sem armazenamento · HMAC por javax.crypto</string>
     <string name="scan_camera_unavailable">Este dispositivo não libera nenhuma câmera — “QR a partir de imagem” sempre funciona.</string>
     <string name="scan_camera_denied">A câmera foi negada. Conceda a permissão nas configurações do aplicativo no sistema — ou use “QR a partir de imagem”.</string>
+    <string name="vault_lockOnHide">e ao sair do aplicativo</string>
+    <string name="vault_locked_hidden">Trancado ao sair do aplicativo.</string>
+    <string name="vault_error_storageBlocked">Não foi possível gravar o cofre — o armazenamento está cheio?</string>
+    <string name="vault_biometric_label">Desbloquear com biometria</string>
+    <string name="vault_biometric_note">Um atalho, não uma segunda chave: a frase secreta continua sendo o único caminho de volta.</string>
+    <string name="vault_biometric_cancel">Usar a frase secreta</string>
+    <string name="vault_biometric_unavailable">Este dispositivo não tem biometria forte configurada.</string>
+    <string name="vault_biometric_invalidated">Uma nova biometria foi cadastrada, então o atalho sumiu. Destranque com a frase secreta e ative-o de novo.</string>
+    <string name="vault_biometric_failed">O desbloqueio por biometria não funcionou — use a frase secreta.</string>
+    <string name="vault_screenshots_label">Bloquear capturas de tela e prévias</string>
 </resources>

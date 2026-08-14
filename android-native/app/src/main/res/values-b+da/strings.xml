@@ -77,9 +77,7 @@
         <item quantity="one">%1$s minut</item>
         <item quantity="other">%1$s minutter</item>
     </plurals>
-    <string name="vault_lockOnHide">og når fanen forlades</string>
     <string name="vault_error_nothingToStore">Der er ikke noget at gemme — tekstfeltet er tomt.</string>
-    <string name="vault_error_storageBlocked">Browseren tillader ikke at gemme (privat tilstand?).</string>
     <string name="vault_error_noVault">Der er ingen boks gemt.</string>
     <string name="vault_error_noPassphrase">Uden adgangssætning er der ingen nøgle.</string>
     <string name="vault_error_sealFailed">Det lykkedes ikke at gemme.</string>
@@ -94,7 +92,6 @@
         <item quantity="one">Låst efter %1$s minut uden indtastning.</item>
         <item quantity="other">Låst efter %1$s minutter uden indtastning.</item>
     </plurals>
-    <string name="vault_locked_hidden">Låst, da fanen blev forladt.</string>
     <string name="scan_noQr">Der var ingen QR-kode at se på billedet.</string>
     <string name="scan_unreadable">Billedet kunne ikke læses — er det virkelig et billede?</string>
     <string name="scan_done">QR-koden læst og indsat.</string>
@@ -146,4 +143,14 @@
     <string name="colophon_note">Intet netværk · intet lager · HMAC via javax.crypto</string>
     <string name="scan_camera_unavailable">Denne enhed giver ikke adgang til noget kamera — »QR fra billede« virker altid.</string>
     <string name="scan_camera_denied">Kameraet blev afvist. Giv tilladelsen i systemets app-indstillinger — eller brug »QR fra billede«.</string>
+    <string name="vault_lockOnHide">og når appen forlades</string>
+    <string name="vault_locked_hidden">Låst, da appen blev forladt.</string>
+    <string name="vault_error_storageBlocked">Boksen kunne ikke skrives — er lagerpladsen fuld?</string>
+    <string name="vault_biometric_label">Lås op med biometri</string>
+    <string name="vault_biometric_note">En genvej, ikke en ekstra nøgle: adgangssætningen er stadig den eneste vej tilbage.</string>
+    <string name="vault_biometric_cancel">Brug adgangssætning</string>
+    <string name="vault_biometric_unavailable">Denne enhed har ingen stærk biometri sat op.</string>
+    <string name="vault_biometric_invalidated">Der blev registreret ny biometri, så genvejen er væk. Lås op med adgangssætningen, og slå den til igen.</string>
+    <string name="vault_biometric_failed">Oplåsning med biometri virkede ikke — brug adgangssætningen.</string>
+    <string name="vault_screenshots_label">Bloker skærmbilleder og forhåndsvisninger</string>
 </resources>

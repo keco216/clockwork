@@ -217,4 +217,18 @@ export default {
     'Cet appareil ne donne pas accès à une caméra — « QR depuis une image » fonctionne toujours.',
   'native.scan.camera.denied':
     'La caméra a été refusée. Accordez l’autorisation dans les paramètres système de l’application — ou utilisez « QR depuis une image ».',
+  'native.vault.lockOnHide': 'et en quittant l’application',
+  'native.vault.locked.hidden': 'Verrouillé en quittant l’application.',
+  'native.vault.error.storageBlocked':
+    'Le coffre n’a pas pu être écrit — le stockage est-il plein ?',
+  'native.vault.biometric.label': 'Déverrouiller par biométrie',
+  'native.vault.biometric.note':
+    'Un raccourci, pas une seconde clé : la phrase secrète reste le seul retour possible.',
+  'native.vault.biometric.cancel': 'Utiliser la phrase secrète',
+  'native.vault.biometric.unavailable': 'Cet appareil n’a pas de biométrie forte configurée.',
+  'native.vault.biometric.invalidated':
+    'Une nouvelle biométrie a été enregistrée, le raccourci a donc disparu. Déverrouillez avec la phrase secrète et réactivez-le.',
+  'native.vault.biometric.failed':
+    'Le déverrouillage biométrique n’a pas fonctionné — utilisez la phrase secrète.',
+  'native.vault.screenshots.label': 'Bloquer les captures d’écran et les aperçus',
 } satisfies Strings;

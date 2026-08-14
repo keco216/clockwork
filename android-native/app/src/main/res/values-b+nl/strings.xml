@@ -77,9 +77,7 @@
         <item quantity="one">%1$s minuut</item>
         <item quantity="other">%1$s minuten</item>
     </plurals>
-    <string name="vault_lockOnHide">en bij het verlaten van het tabblad</string>
     <string name="vault_error_nothingToStore">Er is niets te bewaren — het tekstveld is leeg.</string>
-    <string name="vault_error_storageBlocked">De browser staat bewaren niet toe (privémodus?).</string>
     <string name="vault_error_noVault">Er is geen kluis bewaard.</string>
     <string name="vault_error_noPassphrase">Zonder wachtwoordzin is er geen sleutel.</string>
     <string name="vault_error_sealFailed">Bewaren is mislukt.</string>
@@ -94,7 +92,6 @@
         <item quantity="one">Na %1$s minuut zonder invoer op slot gegaan.</item>
         <item quantity="other">Na %1$s minuten zonder invoer op slot gegaan.</item>
     </plurals>
-    <string name="vault_locked_hidden">Op slot gegaan bij het verlaten van het tabblad.</string>
     <string name="scan_noQr">In de afbeelding was geen QR-code te herkennen.</string>
     <string name="scan_unreadable">De afbeelding kon niet worden gelezen — is het echt een afbeelding?</string>
     <string name="scan_done">QR-code gelezen en ingevoegd.</string>
@@ -146,4 +143,14 @@
     <string name="colophon_note">Geen netwerk · geen opslag · HMAC via javax.crypto</string>
     <string name="scan_camera_unavailable">Dit apparaat geeft geen camera vrij — ‘QR uit afbeelding’ werkt altijd.</string>
     <string name="scan_camera_denied">De camera is geweigerd. Geef de toestemming in de app-instellingen van het systeem — of gebruik ‘QR uit afbeelding’.</string>
+    <string name="vault_lockOnHide">en bij het verlaten van de app</string>
+    <string name="vault_locked_hidden">Op slot gegaan bij het verlaten van de app.</string>
+    <string name="vault_error_storageBlocked">De kluis kon niet worden weggeschreven — is de opslag vol?</string>
+    <string name="vault_biometric_label">Ontgrendelen met biometrie</string>
+    <string name="vault_biometric_note">Een sluiproute, geen tweede sleutel: de wachtwoordzin blijft de enige weg terug.</string>
+    <string name="vault_biometric_cancel">Wachtwoordzin gebruiken</string>
+    <string name="vault_biometric_unavailable">Op dit apparaat is geen sterke biometrie ingesteld.</string>
+    <string name="vault_biometric_invalidated">Er is nieuwe biometrie geregistreerd, dus de sluiproute is weg. Ontgrendel met de wachtwoordzin en zet hem opnieuw aan.</string>
+    <string name="vault_biometric_failed">Ontgrendelen met biometrie lukte niet — gebruik de wachtwoordzin.</string>
+    <string name="vault_screenshots_label">Schermafbeeldingen en voorbeelden blokkeren</string>
 </resources>

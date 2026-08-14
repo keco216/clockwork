@@ -225,4 +225,16 @@ export default {
     'Toto zariadenie kameru neuvoľní — „QR z obrázka“ funguje vždy.',
   'native.scan.camera.denied':
     'Kamera bola odmietnutá. Povoľte ju v systémových nastaveniach aplikácie — alebo použite „QR z obrázka“.',
+  'native.vault.lockOnHide': 'a pri opustení aplikácie',
+  'native.vault.locked.hidden': 'Zamknuté pri opustení aplikácie.',
+  'native.vault.error.storageBlocked': 'Trezor sa nepodarilo zapísať — nie je úložisko plné?',
+  'native.vault.biometric.label': 'Odomknúť biometriou',
+  'native.vault.biometric.note':
+    'Skratka, nie druhý kľúč: heslová fráza zostáva jedinou cestou späť.',
+  'native.vault.biometric.cancel': 'Použiť heslovú frázu',
+  'native.vault.biometric.unavailable': 'Na tomto zariadení nie je nastavená silná biometria.',
+  'native.vault.biometric.invalidated':
+    'Zaregistrovala sa nová biometria, takže skratka zmizla. Odomknite heslovou frázou a znova ju zapnite.',
+  'native.vault.biometric.failed': 'Odomknutie biometriou zlyhalo — použite heslovú frázu.',
+  'native.vault.screenshots.label': 'Blokovať snímky obrazovky a náhľady',
 } satisfies Strings;

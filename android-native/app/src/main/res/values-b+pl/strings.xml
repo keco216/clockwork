@@ -85,9 +85,7 @@
         <item quantity="many">%1$s minutach</item>
         <item quantity="other">%1$s minuty</item>
     </plurals>
-    <string name="vault_lockOnHide">oraz przy opuszczeniu karty</string>
     <string name="vault_error_nothingToStore">Nie ma czego zapisać — pole tekstowe jest puste.</string>
-    <string name="vault_error_storageBlocked">Przeglądarka nie pozwala zapisywać (tryb prywatny?).</string>
     <string name="vault_error_noVault">Żaden sejf nie jest zapisany.</string>
     <string name="vault_error_noPassphrase">Bez hasła nie ma klucza.</string>
     <string name="vault_error_sealFailed">Zapis się nie powiódł.</string>
@@ -104,7 +102,6 @@
         <item quantity="many">Zamknięty po %1$s minutach bez wpisywania.</item>
         <item quantity="other">Zamknięty po %1$s minuty bez wpisywania.</item>
     </plurals>
-    <string name="vault_locked_hidden">Zamknięty przy opuszczeniu karty.</string>
     <string name="scan_noQr">Na obrazie nie udało się rozpoznać żadnego kodu QR.</string>
     <string name="scan_unreadable">Nie udało się odczytać obrazu — czy to na pewno obraz?</string>
     <string name="scan_done">Kod QR odczytany i wstawiony.</string>
@@ -158,4 +155,14 @@
     <string name="colophon_note">Bez sieci · bez zapisu · HMAC przez javax.crypto</string>
     <string name="scan_camera_unavailable">To urządzenie nie udostępnia kamery — „QR z obrazu” działa zawsze.</string>
     <string name="scan_camera_denied">Odmówiono dostępu do kamery. Przyznaj uprawnienie w ustawieniach aplikacji w systemie — albo użyj „QR z obrazu”.</string>
+    <string name="vault_lockOnHide">oraz przy opuszczeniu aplikacji</string>
+    <string name="vault_locked_hidden">Zamknięty przy opuszczeniu aplikacji.</string>
+    <string name="vault_error_storageBlocked">Nie udało się zapisać sejfu — czy pamięć jest pełna?</string>
+    <string name="vault_biometric_label">Odblokuj biometrią</string>
+    <string name="vault_biometric_note">Skrót, nie drugi klucz: hasło pozostaje jedyną drogą powrotną.</string>
+    <string name="vault_biometric_cancel">Użyj hasła</string>
+    <string name="vault_biometric_unavailable">Na tym urządzeniu nie skonfigurowano silnej biometrii.</string>
+    <string name="vault_biometric_invalidated">Zarejestrowano nową biometrię, więc skrót zniknął. Odblokuj hasłem i włącz go ponownie.</string>
+    <string name="vault_biometric_failed">Odblokowanie biometrią się nie powiodło — użyj hasła.</string>
+    <string name="vault_screenshots_label">Blokuj zrzuty ekranu i podglądy</string>
 </resources>

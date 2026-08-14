@@ -165,14 +165,14 @@ mit `Reset_position`. Das AVD steht dafür seit P6 auf
 übersteuert die config.ini NICHT — gemessen, es kam weiter das alte
 Testmuster).
 
-| Datei                        | Was es zeigt                                                                                                          |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `p6-leerzustand-tasten.png`  | Leerbühne mit dem V10-Zweiergitter „QR aus Bild" / „Kamera" unter dem Testschlüssel                                   |
-| `p6-berechtigung-dialog.png` | Der System-Berechtigungsdialog nach dem ersten Kamera-Tipp                                                            |
-| `p6-kamera-abgelehnt.png`    | Nach „Don't allow": die Meldungszeile mit dem NATIVEN Satz — Wegweiser auf die App-Einstellungen, kein Browser-Text   |
-| `p6-sucher-virtualscene.png` | Der Sucher: vier Signal-Winkel (18 dp, 2 dp Strich, 16 dp Einzug) über dem echten Kamerabild des Virtual-Scene-Zimmers |
+| Datei                        | Was es zeigt                                                                                                                |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `p6-leerzustand-tasten.png`  | Leerbühne mit dem V10-Zweiergitter „QR aus Bild" / „Kamera" unter dem Testschlüssel                                         |
+| `p6-berechtigung-dialog.png` | Der System-Berechtigungsdialog nach dem ersten Kamera-Tipp                                                                  |
+| `p6-kamera-abgelehnt.png`    | Nach „Don't allow": die Meldungszeile mit dem NATIVEN Satz — Wegweiser auf die App-Einstellungen, kein Browser-Text         |
+| `p6-sucher-virtualscene.png` | Der Sucher: vier Signal-Winkel (18 dp, 2 dp Strich, 16 dp Einzug) über dem echten Kamerabild des Virtual-Scene-Zimmers      |
 | `p6-scan-treffer.png`        | Nach dem Makro-Gang zur Posterwand: Scan ausgelöst, Kanalzug „Clockwork / proof", Meldung „QR-Code gelesen und eingesetzt." |
-| `p6-scan-uri-im-feld.png`    | Die Schublade danach: die gescannte otpauth-URI steht WÖRTLICH im Textfeld — kein stilles Konten-Anlegen              |
+| `p6-scan-uri-im-feld.png`    | Die Schublade danach: die gescannte otpauth-URI steht WÖRTLICH im Textfeld — kein stilles Konten-Anlegen                    |
 
 Der gescannte Code ist unabhängig nachgerechnet (RFC-4226-Testschlüssel im
 Poster-QR, Gerätezeit per `adb shell date +%s`):
@@ -183,9 +183,9 @@ Poster-QR, Gerätezeit per `adb shell date +%s`):
 
 ### Der Bild-Weg: Photo Picker und Migration
 
-| Datei                      | Was es zeigt                                                                                                      |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `p6-photo-picker.png`      | Der System-Picker über der App: „Clockwork will only have access to the photos you select" — keine Speicher-Berechtigung |
+| Datei                      | Was es zeigt                                                                                                                         |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `p6-photo-picker.png`      | Der System-Picker über der App: „Clockwork will only have access to the photos you select" — keine Speicher-Berechtigung             |
 | `p6-import-expandiert.png` | Nach der Wahl des Migrations-QR: Kanalzug „Example / alice@google.com", Meldung „1 Konto aus Google-Authenticator-Export übernommen" |
 
 Das gewählte Bild ist der dokumentierte Google-Authenticator-Beispiel-Export
@@ -199,10 +199,10 @@ Zeile teilt). Auch hier ist der Code nachgerechnet:
 
 ### Das S24, nebenbei: Dunkelmodus und eine Sprachstichprobe
 
-| Datei                           | Was es zeigt                                                                                                 |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `p6-s24-leerzustand-dunkel.png` | Die Leerbühne auf dem Galaxy S24 Ultra: Dunkelmodus, Deutsch, das Zweiergitter — der echte Prüfstand         |
-| `p6-s24-daenische-ableitung.png`| Die Listbox nach einem Fehltipp auf „Dansk": der abgeleitete dänische Leersatz („… intet af det forlader denne enhed") sitzt |
+| Datei                            | Was es zeigt                                                                                                                 |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `p6-s24-leerzustand-dunkel.png`  | Die Leerbühne auf dem Galaxy S24 Ultra: Dunkelmodus, Deutsch, das Zweiergitter — der echte Prüfstand                         |
+| `p6-s24-daenische-ableitung.png` | Die Listbox nach einem Fehltipp auf „Dansk": der abgeleitete dänische Leersatz („… intet af det forlader denne enhed") sitzt |
 
 ### Was benannt bleibt statt behauptet
 
@@ -217,3 +217,170 @@ Zeile teilt). Auch hier ist der Code nachgerechnet:
   der Sucher erscheint ohne Fahrt (wie im Web, wo er ein `hidden`-Umschalter
   ist), und die Meldungszeilen benutzen den in P5 mit Gegenprobe gemessenen
   Live-Region-Mechanismus. Es gibt hier nichts Neues zu messen.
+
+## P7 — Tresor, Biometrie, FLAG_SECURE und der Kopf (N10)
+
+Alle Werte auf dem AVD `clockwork-test` gemessen: Android 16 (API 36),
+1080 × 2400 bei Dichte 420, also **411 dp** Fensterbreite — unter der
+420-dp-Schwelle, die Karte trägt also das Kompaktraster.
+
+### Der Kopf (N10) — er war nie da, jetzt ist er es
+
+| Datei                  | Was es zeigt                                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `p7-kopf-oben.png`     | Am Seitenanfang: Wortmarke mit Signal-Index auf dem ersten O, `brand.tagline`, Zustandszeile samt Leuchte          |
+| `p7-kopf-verstaut.png` | Nach dem Runterscrollen: Der Kopf ist weg, unten steht die volle Tresor-Zone samt Sperrmeldung                     |
+| `p7-arbeit-hell.png`   | Arbeitszustand mit offenem Tresor — die Leuchte im Kopf ist **Signal-Orange**, die Zustandszeile sagt „vault open" |
+| `p7-arbeit-dunkel.png` | Dasselbe im Dunkelmodus                                                                                            |
+
+**Das M1-Stauverhalten ist gemessen, nicht behauptet.** Gemessen wurde die
+Oberkante der Wortmarke (`content-desc="Clockwork"`) gegen einen Fühler im
+Inhalt (der Testschlüssel-Knopf); der Abstand zweier Fühlerstände ist der
+gescrollte Weg. Dichte 420 heißt 1 dp = 2,625 px.
+
+| Schritt                    | Scroll-Weg         | Kopf                 |
+| -------------------------- | ------------------ | -------------------- |
+| ganz oben                  | —                  | sichtbar (y = 105)   |
+| 627 px abwärts (239 dp)    | weit über Kopfhöhe | **verstaut**         |
+| 93 px aufwärts (35 dp)     | > 12 dp            | **zurück** (y = 105) |
+| 37 px abwärts (14 dp)      | **< 24 dp**        | **bleibt** (y = 105) |
+| weitere 56 px (zus. 35 dp) | > 24 dp            | **verstaut**         |
+
+Die vierte Zeile ist der eigentliche Beweis: Ein kleiner Weg nach unten
+verstaut den Kopf NICHT. Die drei Hysterese-Beträge aus `ui/masthead.ts`
+(24 / 12 / 8 dp) sind wörtlich übernommen und wirken hier gemessen
+unterschiedlich — verstauen ist teuer, zurückholen billig.
+
+Die Kopfhöhe ist keine Annahme: Der Riegel misst laut Knotenbaum
+`[0,63][1080,346]`, also 283 px = **108 dp**.
+
+### Der Tresor — der Rundlauf
+
+| Schritt                     | Ergebnis                                                                                  |
+| --------------------------- | ----------------------------------------------------------------------------------------- |
+| Versiegeln                  | „Open — secrets are in the text field", Meldung „Vault stored encrypted."                 |
+| Kopf danach                 | „Offline · **vault open**", Leuchte in Signal-Orange                                      |
+| Aufklapper nach dem Vorgang | fällt zu — die `paintedState`-Regel aus `vault-panel.ts`                                  |
+| Zusperren                   | Feld geleert, Leerbühne zurück, Tresor-Zone bleibt sichtbar, Aufklapper öffnet von selbst |
+| Falsche Passphrase          | „The vault would not open. Wrong passphrase — or the stored data was altered."            |
+| Markierung danach           | Feld ist blau markiert; der nächste Tastendruck ERSETZT es (7 Zeichen → 6 nach „geheim")  |
+| Verlassen der App           | „Locked — passphrase required", Meldung „**Locked on leaving the app.**"                  |
+| Zeitschaltung (1 min)       | 12:05:50 offen → 12:07:03 gesperrt, Meldung „**Locked after 1 minute without input.**"    |
+| Zweistufiges Löschen        | 1. Tipp: Knopf sagt „Really delete?", **nichts gelöscht**. 2. Tipp: `vault.json` weg      |
+| Kopf danach                 | „Offline · **nothing stored**", Tresor-Zone im Leerzustand wieder unsichtbar              |
+
+**Der stärkste Beweis ist der über die Datei, nicht über den Bildschirm.**
+Die App hat versiegelt, die Datei wurde vom Gerät geholt und mit **Nodes Web
+Crypto API** geöffnet — also mit genau dem Code-Pfad der Web-Fassung:
+
+```
+{"v":1,"kdf":"PBKDF2-SHA-256","iterations":600000,
+ "salt":"53CyD2fo+KW7ZTBTw6/efw==","iv":"0nHL2r/WhLHSpV00","data":"PaBv9BNO…"}
+
+Iterationen: 600000
+Klartext:    GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ
+```
+
+Damit ist dreierlei belegt: Der Weg über die Oberfläche versiegelt richtig,
+die Passphrase kam unverstümmelt an (die `input text`-Falle aus P5), und das
+Format ist byte-kompatibel zum Web — die Voraussetzung für P8.
+
+Der angezeigte Code ist wie immer gegengerechnet: Gerätezeit 1786702220,
+Zähler 59556740, App `156 836 · folgt 266 795 · 9 s`, Node
+`156836 / 266795 / 10 s`. Nebenbei ein zweiter Beweis derselben Sache: Das
+„folgt 156 836" aus dem Bild eine Minute davor war dann der laufende Code.
+
+### Biometrie — Komfortweg, und was passiert, wenn er wegfällt
+
+| Datei                              | Was es zeigt                                                                                                   |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `p7-tresor-gesperrt-biometrie.png` | Gesperrter Tresor mit dem Knopf „Unlock with biometrics" — er steht nur da, wenn wirklich ein Wickel existiert |
+| `p7-biometrie-invalidiert.png`     | Nach einer NEUEN Fingerabdruck-Registrierung: der Wickel ist weg, die Meldung erklärt warum                    |
+
+**Ohne Biometrie am Gerät** trägt der Schalter den Satz „This device has no
+strong biometrics set up." und ist gesperrt. Nach dem Registrieren eines
+Fingerabdrucks wechselt er auf „A shortcut, not a second key: the passphrase
+stays the only way back." — die Abfrage `BiometricManager.canAuthenticate
+(BIOMETRIC_STRONG)` arbeitet also.
+
+**Einschalten** öffnet die System-Abfrage (Titel „Unlock with biometrics",
+Abbruchknopf „Use passphrase"). Nach `adb -e emu finger touch 1` liegt der
+Wickel auf der Platte:
+
+```
+vault-wrap.json  {"iv":"jhlf3ZxYhdyVgnJe","data":"UkGN5Xyh…","salt":"53CyD2fo+KW7ZTBTw6/efw=="}
+lock-settings.json  {"timeoutMs":300000,"lockOnHide":true,"biometric":true,…}
+```
+
+Das `salt` ist dasselbe wie in `vault.json` — daran erkennt die App einen
+veralteten Wickel, bevor sie ihn benutzt.
+
+**Aufsperren per Biometrie** (ohne jede Passphrase): Knopf → Abfrage →
+`finger touch 1` → „Open — secrets are in the text field", „Vault unlocked.",
+Kopf auf „vault open", Konto wieder da.
+
+**Die Invalidierung ist einmal wirklich durchgespielt worden**, und das ist
+der Punkt, an dem `setInvalidatedByBiometricEnrollment(true)` seinen Wert
+zeigt: Ein ZWEITER Fingerabdruck wurde in den Systemeinstellungen
+registriert. Danach:
+
+| Vorher                                  | Nachher                                                                                                     |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `vault-wrap.json` liegt da              | **gelöscht**                                                                                                |
+| `"biometric":true`                      | **`"biometric":false`**                                                                                     |
+| Knopf „Unlock with biometrics" sichtbar | **weg**                                                                                                     |
+| —                                       | „New biometrics were enrolled, so the shortcut is gone. Unlock with the passphrase and switch it on again." |
+
+Wer sich einen Finger auf ein fremdes entsperrtes Gerät legt, öffnet damit
+also KEINEN fremden Tresor. Der Tresor selbst ist unberührt — er hängt am
+Umschlag und an der Passphrase, und genau das sagt der Satz neben dem
+Schalter.
+
+### FLAG_SECURE — mit Gegenprobe
+
+| Datei                   | Einstellung  | Aufnahme                                      | Fensterflagge |
+| ----------------------- | ------------ | --------------------------------------------- | ------------- |
+| `p7-flagsecure-an.png`  | an (Vorgabe) | **1 Farbe**: rgb(0,0,0), 53.165/53.165 Punkte | `SECURE`      |
+| `p7-flagsecure-aus.png` | aus          | **313 Farben**, dominant rgb(245,245,245)     | keine         |
+
+Die Gegenprobe ist der eigentliche Beweis: Sie zeigt, dass die Messung einen
+Unterschied überhaupt SEHEN kann — dieselbe Vorsichtsmaßnahme, mit der
+`check-contrast.mjs` seit V7 arbeitet. Ausgelöst wurde der Wechsel über den
+Schalter in der App, nicht über eine handgeschriebene Datei: Danach steht
+`"blockScreenshots":false` in `lock-settings.json`, die Flagge ist aus dem
+Fenster verschwunden, und die Aufnahme zeigt wieder Inhalt.
+
+Deshalb gibt es den Abschalter überhaupt: **FLAG_SECURE sperrt auch
+`adb shell screencap`** — ohne ihn gäbe es keine Abnahmebilder.
+
+### Zwei Befunde, die dieser Posten nebenbei gefunden hat
+
+**1. Das Textfeld überlebte den Prozesstod.** `rememberSaveable` legt seinen
+Wert in den Instanzzustand der Activity, und den hält das System über einen
+Speichermangel-Kill hinweg. Gemessen, mit Gegenprobe:
+
+| Ablauf                                             | vorher (`rememberSaveable`) | nachher (`remember`)  |
+| -------------------------------------------------- | --------------------------- | --------------------- |
+| Testschlüssel → HOME → `am kill` (pidof = 0) → App | **„Input · 1 account"**     | **„Insert test key"** |
+
+Das verletzte die Zusage „ohne Tresor wird nichts gespeichert" — nicht durch
+eine Datei, die die App schreibt, sondern durch eine, die das System für sie
+aufhebt. Der Preis des Fixes ist null: `configChanges` deckt Drehung,
+Schriftskala, Sprache, Dunkelmodus und Dichte ab, die Activity wird dafür gar
+nicht neu erstellt.
+
+**2. Die Biometrie-Bibliothek bringt zwei Berechtigungen mit.**
+`androidx.biometric` mischt `USE_BIOMETRIC` und `USE_FINGERPRINT` über den
+Manifest-Merge ins Paket. Beide stehen jetzt AUSGESCHRIEBEN im eigenen
+Manifest, `USE_FINGERPRINT` mit `maxSdkVersion="27"` — sonst hätte eine
+Abhängigkeit still eine Zusage geändert, die im Kopf der Datei stand. Am APK
+nachgemessen:
+
+```
+uses-permission: android.permission.CAMERA
+uses-permission: android.permission.USE_BIOMETRIC
+uses-permission: android.permission.USE_FINGERPRINT maxSdkVersion='27'
+uses-feature-not-required: android.hardware.camera
+uses-feature-not-required: android.hardware.camera.any
+INTERNET-Treffer: 0
+```

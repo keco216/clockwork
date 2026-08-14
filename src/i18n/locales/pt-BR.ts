@@ -206,4 +206,18 @@ export default {
     'Este dispositivo não libera nenhuma câmera — “QR a partir de imagem” sempre funciona.',
   'native.scan.camera.denied':
     'A câmera foi negada. Conceda a permissão nas configurações do aplicativo no sistema — ou use “QR a partir de imagem”.',
+  'native.vault.lockOnHide': 'e ao sair do aplicativo',
+  'native.vault.locked.hidden': 'Trancado ao sair do aplicativo.',
+  'native.vault.error.storageBlocked':
+    'Não foi possível gravar o cofre — o armazenamento está cheio?',
+  'native.vault.biometric.label': 'Desbloquear com biometria',
+  'native.vault.biometric.note':
+    'Um atalho, não uma segunda chave: a frase secreta continua sendo o único caminho de volta.',
+  'native.vault.biometric.cancel': 'Usar a frase secreta',
+  'native.vault.biometric.unavailable': 'Este dispositivo não tem biometria forte configurada.',
+  'native.vault.biometric.invalidated':
+    'Uma nova biometria foi cadastrada, então o atalho sumiu. Destranque com a frase secreta e ative-o de novo.',
+  'native.vault.biometric.failed':
+    'O desbloqueio por biometria não funcionou — use a frase secreta.',
+  'native.vault.screenshots.label': 'Bloquear capturas de tela e prévias',
 } satisfies Strings;

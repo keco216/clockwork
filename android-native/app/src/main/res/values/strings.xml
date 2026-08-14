@@ -77,9 +77,7 @@
         <item quantity="one">%1$s minute</item>
         <item quantity="other">%1$s minutes</item>
     </plurals>
-    <string name="vault_lockOnHide">and when the tab is left</string>
     <string name="vault_error_nothingToStore">There is nothing to store — the text field is empty.</string>
-    <string name="vault_error_storageBlocked">The browser does not allow storing (private mode?).</string>
     <string name="vault_error_noVault">No vault is stored.</string>
     <string name="vault_error_noPassphrase">Without a passphrase there is no key.</string>
     <string name="vault_error_sealFailed">Storing failed.</string>
@@ -94,7 +92,6 @@
         <item quantity="one">Locked after %1$s minute without input.</item>
         <item quantity="other">Locked after %1$s minutes without input.</item>
     </plurals>
-    <string name="vault_locked_hidden">Locked on leaving the tab.</string>
     <string name="scan_noQr">No QR code could be made out in the image.</string>
     <string name="scan_unreadable">The image could not be read — is it really an image?</string>
     <string name="scan_done">QR code read and inserted.</string>
@@ -146,4 +143,14 @@
     <string name="colophon_note">No network · no storage · HMAC via javax.crypto</string>
     <string name="scan_camera_unavailable">This device does not hand out a camera — “QR from image” always works.</string>
     <string name="scan_camera_denied">The camera was denied. Allow it in the system’s app settings — or use “QR from image”.</string>
+    <string name="vault_lockOnHide">and when the app is left</string>
+    <string name="vault_locked_hidden">Locked on leaving the app.</string>
+    <string name="vault_error_storageBlocked">The vault could not be written — is the storage full?</string>
+    <string name="vault_biometric_label">Unlock with biometrics</string>
+    <string name="vault_biometric_note">A shortcut, not a second key: the passphrase stays the only way back.</string>
+    <string name="vault_biometric_cancel">Use passphrase</string>
+    <string name="vault_biometric_unavailable">This device has no strong biometrics set up.</string>
+    <string name="vault_biometric_invalidated">New biometrics were enrolled, so the shortcut is gone. Unlock with the passphrase and switch it on again.</string>
+    <string name="vault_biometric_failed">Biometric unlocking did not work — use the passphrase.</string>
+    <string name="vault_screenshots_label">Block screenshots and previews</string>
 </resources>

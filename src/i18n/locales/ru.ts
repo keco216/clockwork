@@ -225,4 +225,16 @@ export default {
     'Это устройство не выдаёт камеру — «QR из изображения» работает всегда.',
   'native.scan.camera.denied':
     'В камере отказано. Выдайте разрешение в системных настройках приложения — или возьмите «QR из изображения».',
+  'native.vault.lockOnHide': 'и при выходе из приложения',
+  'native.vault.locked.hidden': 'Заперт при выходе из приложения.',
+  'native.vault.error.storageBlocked': 'Сейф не удалось записать — не заполнена ли память?',
+  'native.vault.biometric.label': 'Отпирать биометрией',
+  'native.vault.biometric.note':
+    'Это короткий путь, а не второй ключ: парольная фраза остаётся единственной дорогой назад.',
+  'native.vault.biometric.cancel': 'Взять парольную фразу',
+  'native.vault.biometric.unavailable': 'На этом устройстве не настроена сильная биометрия.',
+  'native.vault.biometric.invalidated':
+    'Зарегистрирована новая биометрия, поэтому короткого пути больше нет. Отоприте парольной фразой и включите его заново.',
+  'native.vault.biometric.failed': 'Отпереть биометрией не вышло — возьмите парольную фразу.',
+  'native.vault.screenshots.label': 'Запрещать снимки экрана и предпросмотр',
 } satisfies Strings;

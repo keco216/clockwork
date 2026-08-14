@@ -6,7 +6,11 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
 import android.os.PersistableBundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -24,23 +29,37 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.core.os.LocaleListCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.foundation.shape.RoundedCornerShape
+import io.github.keco216.clockwork.ui.theme.Motion
+import kotlin.math.roundToInt
 import io.github.keco216.clockwork.core.ClockworkError
 import io.github.keco216.clockwork.core.MigrationError
 import io.github.keco216.clockwork.core.ParsedEntry
@@ -87,11 +106,34 @@ private const val TEST_KEY = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"
 fun ClockworkApp() {
     val colors = LocalColors.current
     val context = LocalContext.current
+    val density = LocalDensity.current
+    val scope = rememberCoroutineScope()
     val unixSeconds by rememberUnixSeconds()
 
-    var field by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(""))
-    }
+    /* ── Das Textfeld: `remember` und AUSDRUECKLICH NICHT `rememberSaveable`
+       ─────────────────────────────────────────────────────────────────────
+       Bis P6 stand hier `rememberSaveable`, und das war ein Fehler. Gemessen
+       am Emulator (P7): Testschluessel einfuegen, HOME, `am kill` — der
+       Prozess ist weg (pidof = 0) —, App wieder oeffnen: Das Secret steht
+       wieder im Feld.
+
+       Der Weg dorthin ist der Instanzzustand der Activity. Den haelt das
+       System fuer genau diesen Fall bereit, damit eine App nach einem
+       Speichermangel-Kill dort weitermacht, wo sie war. Fuer ein Secret ist
+       das die falsche Bequemlichkeit: Die Zusage dieser App lautet, dass
+       ohne Tresor NICHTS gespeichert wird, und ein Zustand, den das System
+       ueber den Prozesstod hinweg aufhebt, ist gespeichert — auch wenn die
+       App die Datei nicht selbst schreibt.
+
+       Der Preis ist gemessen null: `configChanges` im Manifest deckt
+       Drehung, Schriftskala, Sprache, Dunkelmodus und Dichte ab, die
+       Activity wird dafuer also gar nicht neu erstellt, und `remember`
+       ueberlebt all das ohnehin. Verloren geht nur der Fall, den wir
+       verlieren WOLLEN.
+
+       Die Gegenprobe steht in android-native/docs/abnahme: derselbe Ablauf,
+       einmal mit und einmal ohne diese Zeile. */
+    var field by remember { mutableStateOf(TextFieldValue("")) }
 
     // Neu ausgewertet wird nur, wenn sich der TEXT geaendert hat — nicht bei
     // jedem Bild. Die Uhr tickt sechzigmal je Sekunde; `parseEntries` bei
@@ -99,6 +141,49 @@ fun ClockworkApp() {
     // decodieren.
     val entries = remember(field.text) { parseEntries(field.text) }
     val vacant = entries.isEmpty()
+
+    /* ── Der Tresor ────────────────────────────────────────────────────────
+       Der Zustandshalter lebt ueber Neuzeichnungen hinweg, weil die
+       Zeitschaltung und die `onStop`-Sperre auch dann greifen muessen, wenn
+       gerade niemand die Zone ansieht. */
+    val vault = remember(context, scope) { VaultController(context.filesDir, scope) }
+    LaunchedEffect(vault) { vault.load() }
+
+    // Die zwei Lambdas werden bei JEDER Komposition frisch gesetzt: Ein
+    // festgehaltenes `field` waere nach dem naechsten Tastendruck veraltet,
+    // und der Tresor speicherte dann den vorletzten Stand.
+    vault.readSecrets = { field.text }
+    vault.writeSecrets = { text -> field = TextFieldValue(text, TextRange(text.length)) }
+
+    var vaultOpen by rememberSaveable { mutableStateOf(false) }
+
+    /* ── Sperren beim Verlassen der App ────────────────────────────────────
+       Das native Gegenstueck zu `visibilitychange` im Web. `ON_STOP` und
+       nicht `ON_PAUSE`: Pause kommt schon, wenn ein Dialog darueberliegt —
+       etwa die Biometrie-Abfrage, die den Tresor gerade aufsperren soll. */
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner, vault) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) vault.onStopped()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    /* ── FLAG_SECURE ───────────────────────────────────────────────────────
+       Voreinstellung AN — und zwar schon in `MainActivity.onCreate`, damit
+       zwischen dem ersten Bild und dem Lesen der Einstellungen kein Fenster
+       ohne Schutz liegt. Hier wird nur noch nachgezogen, was der Nutzer
+       gewaehlt hat. */
+    val activity = context.findActivity()
+    LaunchedEffect(activity, vault.settings.blockScreenshots) {
+        val window = activity?.window ?: return@LaunchedEffect
+        if (vault.settings.blockScreenshots) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
+    }
 
     // ── Der Zustand der Eingabe-Schublade ──────────────────────────────────
     // Voreinstellung ZU: Wer seine Codes will, soll nicht an der Bedienung
@@ -152,29 +237,64 @@ fun ClockworkApp() {
         setNote(if (isMigrationUri(line)) migrationNote else context.text("scan.done"))
     }
 
+    /* ── Der Kopf und das Scrollen ─────────────────────────────────────────
+       EIN Scroll-Zustand fuer beide Buehnen: Der Kopf haengt daran, und zwei
+       Zustaende hiessen zwei Wahrheiten darueber, wie weit die Seite gerollt
+       ist. Die Kopfhoehe wird gemessen, nicht angenommen — sie haengt an der
+       Schriftskala und an der Uebersetzung. */
+    val scroll = rememberScrollState()
+    var mastheadHeight by remember { mutableIntStateOf(0) }
+    val stowed = rememberStowed(scroll, mastheadHeight)
+    val stow by animateFloatAsState(
+        targetValue = if (stowed) 1f else 0f,
+        animationSpec = tween(Motion.calm, easing = Motion.spring),
+        label = "masthead-stow",
+    )
+    val topInset = with(density) { mastheadHeight.toDp() }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.ground)
-            .systemBarsPadding()
-            .padding(Dimens.gapGroup),
-        verticalArrangement = Arrangement.spacedBy(Dimens.gapGroup),
+            .systemBarsPadding(),
     ) {
-        Box(modifier = Modifier.weight(1f)) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                /* Die Zeitschaltung des Tresors haengt an der Benutzung. Im
+                   Web sind das `pointerdown`, `keydown` und `focusin` am
+                   DOKUMENT — hier die INITIAL-Phase der Zeigerereignisse an
+                   der Wurzel, also bevor ein Kind sie verbraucht. Das ist die
+                   woertliche Entsprechung zum Mitschneiden im Web; verbraucht
+                   wird hier nichts. Getipptes deckt `onFieldChange` ab. */
+                .pointerInput(vault) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            awaitPointerEvent(PointerEventPass.Initial)
+                            vault.resetIdleTimer()
+                        }
+                    }
+                },
+        ) {
             if (vacant) {
                 VacantStage(
                     field = field,
-                    onFieldChange = { field = it },
+                    onFieldChange = { field = it; vault.resetIdleTimer() },
                     onFocusChange = { fieldFocused = it },
                     onTestKey = { field = TextFieldValue(TEST_KEY) },
                     note = note,
                     onScan = ::handleScan,
                     onNote = ::setNote,
+                    vault = vault,
+                    vaultOpen = vaultOpen,
+                    onVaultOpenChange = { vaultOpen = it },
+                    scroll = scroll,
+                    topInset = topInset,
                 )
             } else {
                 WorkingStage(
                     field = field,
-                    onFieldChange = { field = it },
+                    onFieldChange = { field = it; vault.resetIdleTimer() },
                     onFocusChange = { fieldFocused = it },
                     entries = entries,
                     unixSeconds = unixSeconds,
@@ -184,11 +304,39 @@ fun ClockworkApp() {
                     note = note,
                     onScan = ::handleScan,
                     onNote = ::setNote,
+                    vault = vault,
+                    vaultOpen = vaultOpen,
+                    onVaultOpenChange = { vaultOpen = it },
+                    scroll = scroll,
+                    topInset = topInset,
                 )
             }
+
+            // Der Kopf liegt UEBER der Buehne und ist deckend — genau wie
+            // `position: sticky` im Web, wo der Inhalt unter ihm durchlaeuft.
+            // Deshalb steht er hier als letztes Kind der Box.
+            Masthead(
+                vaultState = vault.state,
+                lifted = scroll.value > 0,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .onSizeChanged { mastheadHeight = it.height }
+                    // Bewegt wird ausschliesslich `transform` — kein Layout,
+                    // keine Hoehenaenderung. Die Lambda-Form von `offset`
+                    // laeuft in der Platzierungsphase und loest keine
+                    // Neuzusammensetzung aus.
+                    .offset { IntOffset(0, -(mastheadHeight * stow).roundToInt()) },
+            )
         }
 
-        Colophon()
+        Colophon(
+            modifier = Modifier.padding(
+                start = Dimens.gapGroup,
+                end = Dimens.gapGroup,
+                bottom = Dimens.gapGroup,
+                top = Dimens.gapGroup,
+            ),
+        )
     }
 }
 
@@ -201,7 +349,7 @@ fun ClockworkApp() {
  * zusammenfasst, darf nicht die falsche nennen.
  */
 @Composable
-private fun Colophon() {
+private fun Colophon(modifier: Modifier = Modifier) {
     val colors = LocalColors.current
     val context = LocalContext.current
 
@@ -216,7 +364,10 @@ private fun Colophon() {
     }
     val current = resolveLocaleCode(tags)
 
-    Column(verticalArrangement = Arrangement.spacedBy(Dimens.gapPair)) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(Dimens.gapPair),
+    ) {
         BasicText(
             text = text("native.colophon.note"),
             style = TextStyles.micro.copy(color = colors.ink3),
@@ -251,6 +402,11 @@ private fun VacantStage(
     note: String,
     onScan: (String) -> Unit,
     onNote: (String) -> Unit,
+    vault: VaultController,
+    vaultOpen: Boolean,
+    onVaultOpenChange: (Boolean) -> Unit,
+    scroll: ScrollState,
+    topInset: Dp,
 ) {
     val colors = LocalColors.current
 
@@ -261,11 +417,23 @@ private fun VacantStage(
        Emulator 28 statt 40 dp, die „Kamera aus"-Zeile ganz verschluckt).
        Mit Scroll behaelt jedes Kind sein Mass, und die Zentrierung wirkt
        weiter, solange der Inhalt kleiner als der Schirm ist — genau das
-       Verhalten der Web-Buehne. */
+       Verhalten der Web-Buehne.
+
+       `topInset` ist die gemessene Kopfhoehe. Als PADDING und nicht als
+       Zwischenraum: Bei zentrierter Anordnung wuerde ein fuehrender
+       Abstandhalter mitzentriert und schoebe den Inhalt nur halb so weit
+       hinunter. Als Polster verkleinert er den Raum, in dem zentriert wird —
+       und genau das ist gemeint. */
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(scroll)
+            .padding(
+                top = topInset,
+                bottom = Dimens.gapGroup,
+                start = Dimens.gapGroup,
+                end = Dimens.gapGroup,
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -323,6 +491,25 @@ private fun VacantStage(
             tone = MessageTone.Status,
             modifier = Modifier.fillMaxWidth(),
         )
+
+        /* ── Der Tresor im Leerzustand ─────────────────────────────────────
+           Weg — er ist erst relevant, wenn es etwas zu speichern gibt.
+
+           Mit einer Ausnahme, und die ist keine Feinheit: Ist bereits ein
+           Tresor GESPERRT, dann ist das Feld beim Start leer, und zwar genau
+           deshalb, weil der Inhalt im Tresor liegt. Wuerde die Zone dann
+           verschwinden, waere das Passphrasenfeld unerreichbar und der Tresor
+           faktisch nicht mehr zu oeffnen. Der Leerzustand versteckt also nur
+           einen Tresor, der AUS ist — wortgleich `paintVaultZone` im Web. */
+        if (vault.state != VaultState.Off) {
+            Spacer(Modifier.height(Dimens.gapGroup))
+            VaultZone(
+                controller = vault,
+                expanded = vaultOpen,
+                onExpandedChange = onVaultOpenChange,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }
 
@@ -346,6 +533,11 @@ private fun WorkingStage(
     note: String,
     onScan: (String) -> Unit,
     onNote: (String) -> Unit,
+    vault: VaultController,
+    vaultOpen: Boolean,
+    onVaultOpenChange: (Boolean) -> Unit,
+    scroll: ScrollState,
+    topInset: Dp,
 ) {
     val colors = LocalColors.current
     val context = LocalContext.current
@@ -376,7 +568,13 @@ private fun WorkingStage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(scroll)
+            .padding(
+                top = topInset,
+                bottom = Dimens.gapGroup,
+                start = Dimens.gapGroup,
+                end = Dimens.gapGroup,
+            ),
         verticalArrangement = Arrangement.spacedBy(Dimens.gapGroup),
     ) {
         Panel(modifier = Modifier.fillMaxWidth()) {
@@ -507,6 +705,16 @@ private fun WorkingStage(
                 )
             }
         }
+
+        // Die zweite zugeklappte Zeile der V10-Struktur. Sie steht NACH der
+        // Eingabe, weil die Reihenfolge im Web dieselbe ist: erst ablesen,
+        // dann einstellen, und der Tresor ist das, was man einmal einrichtet.
+        VaultZone(
+            controller = vault,
+            expanded = vaultOpen,
+            onExpandedChange = onVaultOpenChange,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 

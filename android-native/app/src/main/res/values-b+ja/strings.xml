@@ -73,9 +73,7 @@
     <plurals name="vault_timeout_minutes">
         <item quantity="other">%1$s 分</item>
     </plurals>
-    <string name="vault_lockOnHide">タブを離れたときも施錠する</string>
     <string name="vault_error_nothingToStore">保存するものがない — テキスト欄が空。</string>
-    <string name="vault_error_storageBlocked">ブラウザーが保存を許さない (プライベートモード?)。</string>
     <string name="vault_error_noVault">金庫は保存されていない。</string>
     <string name="vault_error_noPassphrase">パスフレーズがなければ鍵もない。</string>
     <string name="vault_error_sealFailed">保存に失敗した。</string>
@@ -89,7 +87,6 @@
     <plurals name="vault_locked_idle">
         <item quantity="other">%1$s 分間の無操作で施錠した。</item>
     </plurals>
-    <string name="vault_locked_hidden">タブを離れたので施錠した。</string>
     <string name="scan_noQr">画像から QR コードを読み取れなかった。</string>
     <string name="scan_unreadable">画像を読み込めなかった — 本当に画像?</string>
     <string name="scan_done">QR コードを読み取って挿入した。</string>
@@ -140,4 +137,14 @@
     <string name="colophon_note">ネットワークなし · 保存なし · HMAC は javax.crypto 経由</string>
     <string name="scan_camera_unavailable">この端末ではカメラを使えない — 「画像から QR」なら必ず動く。</string>
     <string name="scan_camera_denied">カメラが拒否された。システムのアプリ設定で許可するか、「画像から QR」を使ってほしい。</string>
+    <string name="vault_lockOnHide">アプリを離れたときも施錠する</string>
+    <string name="vault_locked_hidden">アプリを離れたので施錠した。</string>
+    <string name="vault_error_storageBlocked">金庫を書き込めなかった — 空き容量が足りない?</string>
+    <string name="vault_biometric_label">生体認証で解錠する</string>
+    <string name="vault_biometric_note">近道であって二本目の鍵ではない。戻る道はパスフレーズだけ。</string>
+    <string name="vault_biometric_cancel">パスフレーズを使う</string>
+    <string name="vault_biometric_unavailable">この端末には強い生体認証が設定されていない。</string>
+    <string name="vault_biometric_invalidated">生体認証が新しく登録されたので近道は消えた。パスフレーズで解錠して、もう一度入れてほしい。</string>
+    <string name="vault_biometric_failed">生体認証での解錠がうまくいかなかった — パスフレーズを使ってほしい。</string>
+    <string name="vault_screenshots_label">スクリーンショットとプレビューを禁じる</string>
 </resources>

@@ -199,4 +199,17 @@ export default {
   'native.scan.camera.unavailable': 'Bu cihaz kamera vermiyor — “Görselden QR” her zaman çalışır.',
   'native.scan.camera.denied':
     'Kameraya izin verilmedi. İzni sistemin uygulama ayarlarından verin — ya da “Görselden QR” kullanın.',
+  'native.vault.lockOnHide': 've uygulamadan ayrılınca',
+  'native.vault.locked.hidden': 'Uygulamadan ayrılınca kilitlendi.',
+  'native.vault.error.storageBlocked': 'Kasa yazılamadı — depolama dolu mu?',
+  'native.vault.biometric.label': 'Biyometriyle kilidi aç',
+  'native.vault.biometric.note':
+    'Bir kısayol, ikinci bir anahtar değil: geri dönüşün tek yolu parola cümlesi olarak kalır.',
+  'native.vault.biometric.cancel': 'Parola cümlesini kullan',
+  'native.vault.biometric.unavailable': 'Bu cihazda güçlü biyometri kurulu değil.',
+  'native.vault.biometric.invalidated':
+    'Yeni biyometri kaydedildi, bu yüzden kısayol gitti. Parola cümlesiyle açın ve yeniden etkinleştirin.',
+  'native.vault.biometric.failed':
+    'Biyometriyle kilit açma işe yaramadı — parola cümlesini kullanın.',
+  'native.vault.screenshots.label': 'Ekran görüntülerini ve önizlemeleri engelle',
 } satisfies Strings;

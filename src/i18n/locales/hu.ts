@@ -200,4 +200,16 @@ export default {
   'native.scan.camera.unavailable': 'Ez az eszköz nem ad kamerát — a „QR képből” mindig működik.',
   'native.scan.camera.denied':
     'A kamera elutasítva. Engedélyezze a rendszer alkalmazásbeállításaiban — vagy használja a „QR képből” gombot.',
+  'native.vault.lockOnHide': 'és az alkalmazás elhagyásakor',
+  'native.vault.locked.hidden': 'Az alkalmazás elhagyásakor bezárt.',
+  'native.vault.error.storageBlocked': 'A széfet nem sikerült kiírni — megtelt a tárhely?',
+  'native.vault.biometric.label': 'Feloldás biometriával',
+  'native.vault.biometric.note':
+    'Rövidítés, nem második kulcs: a jelmondat marad az egyetlen visszaút.',
+  'native.vault.biometric.cancel': 'Jelmondat használata',
+  'native.vault.biometric.unavailable': 'Ezen az eszközön nincs beállítva erős biometria.',
+  'native.vault.biometric.invalidated':
+    'Új biometria lett regisztrálva, így a rövidítés eltűnt. Oldja fel a jelmondattal, és kapcsolja be újra.',
+  'native.vault.biometric.failed': 'A biometrikus feloldás nem sikerült — használja a jelmondatot.',
+  'native.vault.screenshots.label': 'Képernyőképek és előnézetek tiltása',
 } satisfies Strings;

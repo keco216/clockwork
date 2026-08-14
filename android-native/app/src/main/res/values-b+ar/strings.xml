@@ -93,9 +93,7 @@
         <item quantity="many">%1$s دقيقة</item>
         <item quantity="other">%1$s دقيقة</item>
     </plurals>
-    <string name="vault_lockOnHide">وعند مغادرة اللسان</string>
     <string name="vault_error_nothingToStore">لا شيء يُحفظ — حقل النص فارغ.</string>
-    <string name="vault_error_storageBlocked">المتصفح لا يسمح بالحفظ (وضع التصفح الخاص؟).</string>
     <string name="vault_error_noVault">لا خزنة محفوظة.</string>
     <string name="vault_error_noPassphrase">بغير عبارة مرور لا مفتاح.</string>
     <string name="vault_error_sealFailed">أخفق الحفظ.</string>
@@ -114,7 +112,6 @@
         <item quantity="many">أُقفلت بعد %1$s دقيقة دون إدخال.</item>
         <item quantity="other">أُقفلت بعد %1$s دقيقة دون إدخال.</item>
     </plurals>
-    <string name="vault_locked_hidden">أُقفلت عند مغادرة اللسان.</string>
     <string name="scan_noQr">لم يُميَّز أي رمز QR في الصورة.</string>
     <string name="scan_unreadable">تعذّرت قراءة الصورة — أهي صورة حقًا؟</string>
     <string name="scan_done">قُرئ رمز QR وأُدرج.</string>
@@ -170,4 +167,14 @@
     <string name="colophon_note">لا شبكة · لا تخزين · HMAC عبر javax.crypto</string>
     <string name="scan_camera_unavailable">هذا الجهاز لا يتيح كاميرا — أما «QR من صورة» فيعمل دائمًا.</string>
     <string name="scan_camera_denied">رُفضت الكاميرا. امنح الإذن من إعدادات التطبيق في النظام — أو استعمل «QR من صورة».</string>
+    <string name="vault_lockOnHide">وعند مغادرة التطبيق</string>
+    <string name="vault_locked_hidden">أُقفلت عند مغادرة التطبيق.</string>
+    <string name="vault_error_storageBlocked">تعذّرت كتابة الخزنة — أالتخزين ممتلئ؟</string>
+    <string name="vault_biometric_label">الفتح بالسمات الحيوية</string>
+    <string name="vault_biometric_note">اختصار لا مفتاح ثانٍ: عبارة المرور تبقى الطريق الوحيد للعودة.</string>
+    <string name="vault_biometric_cancel">استعمال عبارة المرور</string>
+    <string name="vault_biometric_unavailable">لا سمات حيوية قوية مُعدّة على هذا الجهاز.</string>
+    <string name="vault_biometric_invalidated">سُجّلت سمات حيوية جديدة، فذهب الاختصار. افتح بعبارة المرور وشغّله من جديد.</string>
+    <string name="vault_biometric_failed">لم ينجح الفتح بالسمات الحيوية — استعمل عبارة المرور.</string>
+    <string name="vault_screenshots_label">منع لقطات الشاشة والمعاينات</string>
 </resources>

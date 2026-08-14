@@ -77,9 +77,7 @@
         <item quantity="one">%1$s minutt</item>
         <item quantity="other">%1$s minutter</item>
     </plurals>
-    <string name="vault_lockOnHide">og når fanen forlates</string>
     <string name="vault_error_nothingToStore">Det er ingenting å lagre — tekstfeltet er tomt.</string>
-    <string name="vault_error_storageBlocked">Nettleseren tillater ikke lagring (privat modus?).</string>
     <string name="vault_error_noVault">Ingen safe er lagret.</string>
     <string name="vault_error_noPassphrase">Uten passordfrase finnes ingen nøkkel.</string>
     <string name="vault_error_sealFailed">Lagringen mislyktes.</string>
@@ -94,7 +92,6 @@
         <item quantity="one">Låst etter %1$s minutt uten inndata.</item>
         <item quantity="other">Låst etter %1$s minutter uten inndata.</item>
     </plurals>
-    <string name="vault_locked_hidden">Låst da fanen ble forlatt.</string>
     <string name="scan_noQr">Det var ingen QR-kode å se på bildet.</string>
     <string name="scan_unreadable">Bildet kunne ikke leses — er det virkelig et bilde?</string>
     <string name="scan_done">QR-koden lest og satt inn.</string>
@@ -146,4 +143,14 @@
     <string name="colophon_note">Ikke noe nettverk · ingen lagring · HMAC via javax.crypto</string>
     <string name="scan_camera_unavailable">Denne enheten gir ikke tilgang til noe kamera — «QR fra bilde» virker alltid.</string>
     <string name="scan_camera_denied">Kameraet ble avvist. Gi tillatelsen i systemets appinnstillinger — eller bruk «QR fra bilde».</string>
+    <string name="vault_lockOnHide">og når appen forlates</string>
+    <string name="vault_locked_hidden">Låst da appen ble forlatt.</string>
+    <string name="vault_error_storageBlocked">Safen kunne ikke skrives — er lagringen full?</string>
+    <string name="vault_biometric_label">Lås opp med biometri</string>
+    <string name="vault_biometric_note">En snarvei, ikke en ekstra nøkkel: passordfrasen er fortsatt den eneste veien tilbake.</string>
+    <string name="vault_biometric_cancel">Bruk passordfrase</string>
+    <string name="vault_biometric_unavailable">Denne enheten har ingen sterk biometri satt opp.</string>
+    <string name="vault_biometric_invalidated">Ny biometri ble registrert, så snarveien er borte. Lås opp med passordfrasen og slå den på igjen.</string>
+    <string name="vault_biometric_failed">Opplåsing med biometri virket ikke — bruk passordfrasen.</string>
+    <string name="vault_screenshots_label">Blokker skjermbilder og forhåndsvisninger</string>
 </resources>

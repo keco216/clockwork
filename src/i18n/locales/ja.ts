@@ -193,4 +193,16 @@ export default {
   'native.scan.camera.unavailable': 'この端末ではカメラを使えない — 「画像から QR」なら必ず動く。',
   'native.scan.camera.denied':
     'カメラが拒否された。システムのアプリ設定で許可するか、「画像から QR」を使ってほしい。',
+  'native.vault.lockOnHide': 'アプリを離れたときも施錠する',
+  'native.vault.locked.hidden': 'アプリを離れたので施錠した。',
+  'native.vault.error.storageBlocked': '金庫を書き込めなかった — 空き容量が足りない?',
+  'native.vault.biometric.label': '生体認証で解錠する',
+  'native.vault.biometric.note': '近道であって二本目の鍵ではない。戻る道はパスフレーズだけ。',
+  'native.vault.biometric.cancel': 'パスフレーズを使う',
+  'native.vault.biometric.unavailable': 'この端末には強い生体認証が設定されていない。',
+  'native.vault.biometric.invalidated':
+    '生体認証が新しく登録されたので近道は消えた。パスフレーズで解錠して、もう一度入れてほしい。',
+  'native.vault.biometric.failed':
+    '生体認証での解錠がうまくいかなかった — パスフレーズを使ってほしい。',
+  'native.vault.screenshots.label': 'スクリーンショットとプレビューを禁じる',
 } satisfies Strings;

@@ -81,9 +81,7 @@
         <item quantity="many">%1$s minutes</item>
         <item quantity="other">%1$s minutes</item>
     </plurals>
-    <string name="vault_lockOnHide">et en quittant l’onglet</string>
     <string name="vault_error_nothingToStore">Il n’y a rien à enregistrer — le champ de texte est vide.</string>
-    <string name="vault_error_storageBlocked">Le navigateur n’autorise pas l’enregistrement (navigation privée ?).</string>
     <string name="vault_error_noVault">Aucun coffre n’est enregistré.</string>
     <string name="vault_error_noPassphrase">Sans phrase secrète, il n’y a pas de clé.</string>
     <string name="vault_error_sealFailed">L’enregistrement a échoué.</string>
@@ -99,7 +97,6 @@
         <item quantity="many">Verrouillé après %1$s minutes sans saisie.</item>
         <item quantity="other">Verrouillé après %1$s minutes sans saisie.</item>
     </plurals>
-    <string name="vault_locked_hidden">Verrouillé en quittant l’onglet.</string>
     <string name="scan_noQr">Aucun QR code n’a pu être reconnu dans l’image.</string>
     <string name="scan_unreadable">L’image n’a pas pu être lue — est-ce bien une image ?</string>
     <string name="scan_done">QR code lu et inséré.</string>
@@ -152,4 +149,14 @@
     <string name="colophon_note">Pas de réseau · pas de stockage · HMAC via javax.crypto</string>
     <string name="scan_camera_unavailable">Cet appareil ne donne pas accès à une caméra — « QR depuis une image » fonctionne toujours.</string>
     <string name="scan_camera_denied">La caméra a été refusée. Accordez l’autorisation dans les paramètres système de l’application — ou utilisez « QR depuis une image ».</string>
+    <string name="vault_lockOnHide">et en quittant l’application</string>
+    <string name="vault_locked_hidden">Verrouillé en quittant l’application.</string>
+    <string name="vault_error_storageBlocked">Le coffre n’a pas pu être écrit — le stockage est-il plein ?</string>
+    <string name="vault_biometric_label">Déverrouiller par biométrie</string>
+    <string name="vault_biometric_note">Un raccourci, pas une seconde clé : la phrase secrète reste le seul retour possible.</string>
+    <string name="vault_biometric_cancel">Utiliser la phrase secrète</string>
+    <string name="vault_biometric_unavailable">Cet appareil n’a pas de biométrie forte configurée.</string>
+    <string name="vault_biometric_invalidated">Une nouvelle biométrie a été enregistrée, le raccourci a donc disparu. Déverrouillez avec la phrase secrète et réactivez-le.</string>
+    <string name="vault_biometric_failed">Le déverrouillage biométrique n’a pas fonctionné — utilisez la phrase secrète.</string>
+    <string name="vault_screenshots_label">Bloquer les captures d’écran et les aperçus</string>
 </resources>

@@ -208,4 +208,18 @@ export default {
   'native.scan.camera.denied':
     'Die Kamera wurde abgelehnt. Erlaubnis in den App-Einstellungen des Systems erteilen — ' +
     'oder „QR aus Bild“ nehmen.',
+  'native.vault.lockOnHide': 'auch beim Verlassen der App',
+  'native.vault.locked.hidden': 'Beim Verlassen der App zugesperrt.',
+  'native.vault.error.storageBlocked':
+    'Der Tresor ließ sich nicht schreiben — ist der Speicher voll?',
+  'native.vault.biometric.label': 'Mit Biometrie entsperren',
+  'native.vault.biometric.note':
+    'Eine Abkürzung, kein zweiter Schlüssel: Die Passphrase bleibt der einzige Weg zurück.',
+  'native.vault.biometric.cancel': 'Passphrase nehmen',
+  'native.vault.biometric.unavailable': 'Auf diesem Gerät ist keine starke Biometrie eingerichtet.',
+  'native.vault.biometric.invalidated':
+    'Es wurde neue Biometrie registriert, damit ist die Abkürzung weg. Mit der Passphrase aufsperren und sie neu einschalten.',
+  'native.vault.biometric.failed':
+    'Das Entsperren per Biometrie hat nicht geklappt — nimm die Passphrase.',
+  'native.vault.screenshots.label': 'Bildschirmfotos und Vorschaubilder sperren',
 } satisfies Strings;

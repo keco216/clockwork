@@ -200,4 +200,15 @@ export default {
     'Tämä laite ei anna kameraa käyttöön — ”QR kuvasta” toimii aina.',
   'native.scan.camera.denied':
     'Kamerasta kieltäydyttiin. Myönnä lupa järjestelmän sovellusasetuksissa — tai käytä toimintoa ”QR kuvasta”.',
+  'native.vault.lockOnHide': 'ja sovelluksesta poistuttaessa',
+  'native.vault.locked.hidden': 'Lukittui sovelluksesta poistuttaessa.',
+  'native.vault.error.storageBlocked': 'Holvia ei voitu kirjoittaa — onko tallennustila täynnä?',
+  'native.vault.biometric.label': 'Avaa biometrialla',
+  'native.vault.biometric.note': 'Oikotie, ei toinen avain: salauslause pysyy ainoana paluutienä.',
+  'native.vault.biometric.cancel': 'Käytä salauslausetta',
+  'native.vault.biometric.unavailable': 'Tässä laitteessa ei ole vahvaa biometriaa käytössä.',
+  'native.vault.biometric.invalidated':
+    'Uusi biometria rekisteröitiin, joten oikotie on poissa. Avaa salauslauseella ja kytke se uudelleen päälle.',
+  'native.vault.biometric.failed': 'Biometrinen avaus ei onnistunut — käytä salauslausetta.',
+  'native.vault.screenshots.label': 'Estä kuvakaappaukset ja esikatselut',
 } satisfies Strings;

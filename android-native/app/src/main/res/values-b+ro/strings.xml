@@ -81,9 +81,7 @@
         <item quantity="few">%1$s minute</item>
         <item quantity="other">%1$s de minute</item>
     </plurals>
-    <string name="vault_lockOnHide">și la părăsirea filei</string>
     <string name="vault_error_nothingToStore">Nu este nimic de salvat — câmpul de text este gol.</string>
-    <string name="vault_error_storageBlocked">Navigatorul nu permite salvarea (mod privat?).</string>
     <string name="vault_error_noVault">Niciun seif nu este salvat.</string>
     <string name="vault_error_noPassphrase">Fără frază de acces nu există cheie.</string>
     <string name="vault_error_sealFailed">Salvarea a eșuat.</string>
@@ -99,7 +97,6 @@
         <item quantity="few">Încuiat după %1$s minute fără intrări.</item>
         <item quantity="other">Încuiat după %1$s de minute fără intrări.</item>
     </plurals>
-    <string name="vault_locked_hidden">Încuiat la părăsirea filei.</string>
     <string name="scan_noQr">În imagine nu s-a putut recunoaște niciun cod QR.</string>
     <string name="scan_unreadable">Imaginea nu a putut fi citită — chiar este o imagine?</string>
     <string name="scan_done">Cod QR citit și inserat.</string>
@@ -152,4 +149,14 @@
     <string name="colophon_note">Fără rețea · fără stocare · HMAC prin javax.crypto</string>
     <string name="scan_camera_unavailable">Acest dispozitiv nu pune la dispoziție nicio cameră — „QR din imagine” funcționează întotdeauna.</string>
     <string name="scan_camera_denied">Camera a fost refuzată. Acordați permisiunea în setările aplicației din sistem — sau folosiți „QR din imagine”.</string>
+    <string name="vault_lockOnHide">și la părăsirea aplicației</string>
+    <string name="vault_locked_hidden">Încuiat la părăsirea aplicației.</string>
+    <string name="vault_error_storageBlocked">Seiful nu a putut fi scris — este plină memoria?</string>
+    <string name="vault_biometric_label">Deblocare cu biometrie</string>
+    <string name="vault_biometric_note">O scurtătură, nu o a doua cheie: fraza de acces rămâne singurul drum înapoi.</string>
+    <string name="vault_biometric_cancel">Folosiți fraza de acces</string>
+    <string name="vault_biometric_unavailable">Pe acest dispozitiv nu este configurată o biometrie puternică.</string>
+    <string name="vault_biometric_invalidated">A fost înregistrată o biometrie nouă, așa că scurtătura a dispărut. Deblocați cu fraza de acces și porniți-o din nou.</string>
+    <string name="vault_biometric_failed">Deblocarea cu biometrie nu a funcționat — folosiți fraza de acces.</string>
+    <string name="vault_screenshots_label">Blocarea capturilor de ecran și a previzualizărilor</string>
 </resources>

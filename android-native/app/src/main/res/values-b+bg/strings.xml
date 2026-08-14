@@ -77,9 +77,7 @@
         <item quantity="one">%1$s минута</item>
         <item quantity="other">%1$s минути</item>
     </plurals>
-    <string name="vault_lockOnHide">и при напускане на раздела</string>
     <string name="vault_error_nothingToStore">Няма какво да се запази — текстовото поле е празно.</string>
-    <string name="vault_error_storageBlocked">Браузърът не позволява запазване (частен режим?).</string>
     <string name="vault_error_noVault">Няма запазен сейф.</string>
     <string name="vault_error_noPassphrase">Без парола-фраза няма ключ.</string>
     <string name="vault_error_sealFailed">Запазването се провали.</string>
@@ -94,7 +92,6 @@
         <item quantity="one">Заключен след %1$s минута без въвеждане.</item>
         <item quantity="other">Заключен след %1$s минути без въвеждане.</item>
     </plurals>
-    <string name="vault_locked_hidden">Заключен при напускане на раздела.</string>
     <string name="scan_noQr">В изображението не се разпозна никакъв QR код.</string>
     <string name="scan_unreadable">Изображението не можа да бъде прочетено — наистина ли е изображение?</string>
     <string name="scan_done">QR кодът е прочетен и вмъкнат.</string>
@@ -146,4 +143,14 @@
     <string name="colophon_note">Без мрежа · без хранилище · HMAC през javax.crypto</string>
     <string name="scan_camera_unavailable">Това устройство не предоставя камера — „QR от изображение“ работи винаги.</string>
     <string name="scan_camera_denied">Камерата беше отказана. Разрешете я в системните настройки на приложението — или използвайте „QR от изображение“.</string>
+    <string name="vault_lockOnHide">и при напускане на приложението</string>
+    <string name="vault_locked_hidden">Заключен при напускане на приложението.</string>
+    <string name="vault_error_storageBlocked">Сейфът не можа да бъде записан — пълна ли е паметта?</string>
+    <string name="vault_biometric_label">Отключване с биометрия</string>
+    <string name="vault_biometric_note">Пряк път, а не втори ключ: парола-фразата остава единственият път назад.</string>
+    <string name="vault_biometric_cancel">Използване на парола-фраза</string>
+    <string name="vault_biometric_unavailable">На това устройство не е настроена силна биометрия.</string>
+    <string name="vault_biometric_invalidated">Регистрирана е нова биометрия, така че прекият път го няма. Отключете с парола-фразата и го включете отново.</string>
+    <string name="vault_biometric_failed">Отключването с биометрия не се получи — използвайте парола-фразата.</string>
+    <string name="vault_screenshots_label">Блокиране на снимки на екрана и на прегледите</string>
 </resources>

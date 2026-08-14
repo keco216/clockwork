@@ -197,4 +197,16 @@ export default {
     'Perangkat ini tidak memberikan kamera — “QR dari gambar” selalu berhasil.',
   'native.scan.camera.denied':
     'Kamera ditolak. Izinkan di setelan aplikasi pada sistem — atau pakai “QR dari gambar”.',
+  'native.vault.lockOnHide': 'dan saat meninggalkan aplikasi',
+  'native.vault.locked.hidden': 'Terkunci saat aplikasi ditinggalkan.',
+  'native.vault.error.storageBlocked': 'Brankas tidak bisa ditulis — apakah penyimpanan penuh?',
+  'native.vault.biometric.label': 'Buka dengan biometrik',
+  'native.vault.biometric.note':
+    'Jalan pintas, bukan kunci kedua: frasa sandi tetap satu-satunya jalan kembali.',
+  'native.vault.biometric.cancel': 'Pakai frasa sandi',
+  'native.vault.biometric.unavailable': 'Perangkat ini belum menyiapkan biometrik yang kuat.',
+  'native.vault.biometric.invalidated':
+    'Biometrik baru didaftarkan, jadi jalan pintasnya hilang. Buka dengan frasa sandi lalu nyalakan lagi.',
+  'native.vault.biometric.failed': 'Membuka dengan biometrik tidak berhasil — pakai frasa sandi.',
+  'native.vault.screenshots.label': 'Blokir tangkapan layar dan pratinjau',
 } satisfies Strings;

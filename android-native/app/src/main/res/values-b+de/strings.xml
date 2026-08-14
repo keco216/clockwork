@@ -77,9 +77,7 @@
         <item quantity="one">%1$s Minute</item>
         <item quantity="other">%1$s Minuten</item>
     </plurals>
-    <string name="vault_lockOnHide">auch beim Verlassen des Tabs</string>
     <string name="vault_error_nothingToStore">Es gibt nichts zu speichern — das Textfeld ist leer.</string>
-    <string name="vault_error_storageBlocked">Der Browser lässt kein Speichern zu (privater Modus?).</string>
     <string name="vault_error_noVault">Es ist kein Tresor gespeichert.</string>
     <string name="vault_error_noPassphrase">Ohne Passphrase gibt es keinen Schlüssel.</string>
     <string name="vault_error_sealFailed">Speichern fehlgeschlagen.</string>
@@ -94,7 +92,6 @@
         <item quantity="one">Nach %1$s Minute ohne Eingabe zugesperrt.</item>
         <item quantity="other">Nach %1$s Minuten ohne Eingabe zugesperrt.</item>
     </plurals>
-    <string name="vault_locked_hidden">Beim Verlassen des Tabs zugesperrt.</string>
     <string name="scan_noQr">In dem Bild war kein QR-Code zu erkennen.</string>
     <string name="scan_unreadable">Das Bild konnte nicht gelesen werden — ist es wirklich ein Bild?</string>
     <string name="scan_done">QR-Code gelesen und eingesetzt.</string>
@@ -146,4 +143,14 @@
     <string name="colophon_note">Kein Netzwerk · kein Speicher · HMAC über javax.crypto</string>
     <string name="scan_camera_unavailable">Dieses Gerät gibt keine Kamera frei — „QR aus Bild“ funktioniert immer.</string>
     <string name="scan_camera_denied">Die Kamera wurde abgelehnt. Erlaubnis in den App-Einstellungen des Systems erteilen — oder „QR aus Bild“ nehmen.</string>
+    <string name="vault_lockOnHide">auch beim Verlassen der App</string>
+    <string name="vault_locked_hidden">Beim Verlassen der App zugesperrt.</string>
+    <string name="vault_error_storageBlocked">Der Tresor ließ sich nicht schreiben — ist der Speicher voll?</string>
+    <string name="vault_biometric_label">Mit Biometrie entsperren</string>
+    <string name="vault_biometric_note">Eine Abkürzung, kein zweiter Schlüssel: Die Passphrase bleibt der einzige Weg zurück.</string>
+    <string name="vault_biometric_cancel">Passphrase nehmen</string>
+    <string name="vault_biometric_unavailable">Auf diesem Gerät ist keine starke Biometrie eingerichtet.</string>
+    <string name="vault_biometric_invalidated">Es wurde neue Biometrie registriert, damit ist die Abkürzung weg. Mit der Passphrase aufsperren und sie neu einschalten.</string>
+    <string name="vault_biometric_failed">Das Entsperren per Biometrie hat nicht geklappt — nimm die Passphrase.</string>
+    <string name="vault_screenshots_label">Bildschirmfotos und Vorschaubilder sperren</string>
 </resources>

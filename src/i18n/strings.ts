@@ -347,6 +347,83 @@ export interface Strings {
    * unverändert.
    */
   'native.scan.camera.denied': string;
+
+  /**
+   * „auch beim Verlassen der App" — native Fassung von `vault.lockOnHide`.
+   *
+   * Im Web hängt die Sperre an `visibilitychange`, also am Tab; nativ an
+   * `onStop` der Activity, also an der App. Derselbe Gedanke, ein anderes
+   * Wort — und ein Wort, das in einer App ohne Tabs schlicht ins Leere zeigt.
+   * Die 35 Fassungen sind ABGELEITET: nur das Wort für „Tab" gegen das für
+   * „App" getauscht, Satzbau unverändert.
+   */
+  'native.vault.lockOnHide': string;
+
+  /** „Beim Verlassen der App zugesperrt." — dieselbe Ableitung, als Meldung. */
+  'native.vault.locked.hidden': string;
+
+  /**
+   * Speichern fehlgeschlagen — native Fassung von `vault.error.storageBlocked`.
+   *
+   * Hier ist es KEINE Ableitung, sondern ein anderer Sachverhalt: Der Web-Satz
+   * nennt den privaten Modus, in dem der Browser `localStorage` sperrt. Nativ
+   * gibt es das nicht — die App schreibt in ihr eigenes Verzeichnis, und wenn
+   * das misslingt, ist der Speicher voll oder die Datei nicht beschreibbar.
+   * Den Web-Satz zu übernehmen hieße, dem Nutzer eine Ursache zu nennen, die
+   * es auf seinem Gerät gar nicht geben kann.
+   */
+  'native.vault.error.storageBlocked': string;
+
+  /**
+   * Der Schalter, der Knopf UND der Titel der System-Abfrage.
+   *
+   * Ein Schlüssel für drei Stellen ist hier kein Sparzwang, sondern richtig:
+   * An allen dreien steht dieselbe Handlung, und drei Formulierungen für
+   * dieselbe Sache wären drei Gelegenheiten, sie verschieden zu nennen.
+   */
+  'native.vault.biometric.label': string;
+
+  /**
+   * Der Satz neben dem Schalter.
+   *
+   * Er ist die wichtigste Zeile des ganzen Postens: Biometrie ist ein
+   * KOMFORTWEG. Der Wickel im Keystore kann jederzeit wertlos werden — neue
+   * Biometrie, entfernte Bildschirmsperre, neues Gerät —, und dann bleibt nur
+   * die Passphrase. Wer das nicht weiß, hält die Abkürzung für den Weg und
+   * vergisst die Passphrase.
+   */
+  'native.vault.biometric.note': string;
+
+  /**
+   * Der Abbruchknopf der System-Abfrage.
+   *
+   * Er heißt nicht „Abbrechen": Hinter ihm liegt das Passphrasenfeld, also
+   * ein zweiter Weg und keine Sackgasse. Android verlangt für diesen Knopf
+   * einen Text, und der soll sagen, wohin er führt.
+   */
+  'native.vault.biometric.cancel': string;
+
+  /** Das Gerät bietet keine starke Biometrie an. */
+  'native.vault.biometric.unavailable': string;
+
+  /**
+   * Neue Biometrie registriert — der Wickel ist ungültig geworden.
+   *
+   * Das ist Absicht und keine Panne: `setInvalidatedByBiometricEnrollment`
+   * sorgt dafür, dass ein hinzugefügter Fingerabdruck den fremden Tresor
+   * nicht mit aufsperrt. Ohne Erklärung sähe genau dieser Schutz wie ein
+   * Fehler aus.
+   */
+  'native.vault.biometric.invalidated': string;
+
+  /** Sensor gesperrt, zu viele Versuche, Hardware weg. */
+  'native.vault.biometric.failed': string;
+
+  /**
+   * `FLAG_SECURE` — Bildschirmfotos und das Vorschaubild in der
+   * Zuletzt-verwendet-Ansicht sperren. Voreinstellung AN.
+   */
+  'native.vault.screenshots.label': string;
 }
 
 /** Alle Schlüssel, deren Wert ein einfacher String ist. */

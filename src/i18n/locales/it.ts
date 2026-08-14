@@ -213,4 +213,18 @@ export default {
     'Questo dispositivo non mette a disposizione una fotocamera — « QR da immagine » funziona sempre.',
   'native.scan.camera.denied':
     'La fotocamera è stata negata. Concedi l’autorizzazione nelle impostazioni di sistema dell’app — oppure usa « QR da immagine ».',
+  'native.vault.lockOnHide': 'e quando si lascia l’app',
+  'native.vault.locked.hidden': 'Chiusa lasciando l’app.',
+  'native.vault.error.storageBlocked':
+    'Non è stato possibile scrivere la cassaforte — la memoria è piena?',
+  'native.vault.biometric.label': 'Sbloccare con la biometria',
+  'native.vault.biometric.note':
+    'Una scorciatoia, non una seconda chiave: la passphrase resta l’unica via di ritorno.',
+  'native.vault.biometric.cancel': 'Usa la passphrase',
+  'native.vault.biometric.unavailable':
+    'Su questo dispositivo non è configurata una biometria forte.',
+  'native.vault.biometric.invalidated':
+    'È stata registrata una nuova biometria, quindi la scorciatoia non c’è più. Sblocca con la passphrase e riattivala.',
+  'native.vault.biometric.failed': 'Lo sblocco biometrico non ha funzionato — usa la passphrase.',
+  'native.vault.screenshots.label': 'Bloccare screenshot e anteprime',
 } satisfies Strings;

@@ -81,9 +81,7 @@
         <item quantity="many">%1$s minuti</item>
         <item quantity="other">%1$s minuti</item>
     </plurals>
-    <string name="vault_lockOnHide">e quando si lascia la scheda</string>
     <string name="vault_error_nothingToStore">Non c’è nulla da salvare — il campo di testo è vuoto.</string>
-    <string name="vault_error_storageBlocked">Il browser non consente di salvare (modalità privata?).</string>
     <string name="vault_error_noVault">Non è salvata alcuna cassaforte.</string>
     <string name="vault_error_noPassphrase">Senza passphrase non c’è chiave.</string>
     <string name="vault_error_sealFailed">Salvataggio non riuscito.</string>
@@ -99,7 +97,6 @@
         <item quantity="many">Chiusa dopo %1$s minuti senza inserimenti.</item>
         <item quantity="other">Chiusa dopo %1$s minuti senza inserimenti.</item>
     </plurals>
-    <string name="vault_locked_hidden">Chiusa lasciando la scheda.</string>
     <string name="scan_noQr">Nell’immagine non si riconosce alcun codice QR.</string>
     <string name="scan_unreadable">Non è stato possibile leggere l’immagine — è davvero un’immagine?</string>
     <string name="scan_done">Codice QR letto e inserito.</string>
@@ -152,4 +149,14 @@
     <string name="colophon_note">Nessuna rete · nessun salvataggio · HMAC tramite javax.crypto</string>
     <string name="scan_camera_unavailable">Questo dispositivo non mette a disposizione una fotocamera — « QR da immagine » funziona sempre.</string>
     <string name="scan_camera_denied">La fotocamera è stata negata. Concedi l’autorizzazione nelle impostazioni di sistema dell’app — oppure usa « QR da immagine ».</string>
+    <string name="vault_lockOnHide">e quando si lascia l’app</string>
+    <string name="vault_locked_hidden">Chiusa lasciando l’app.</string>
+    <string name="vault_error_storageBlocked">Non è stato possibile scrivere la cassaforte — la memoria è piena?</string>
+    <string name="vault_biometric_label">Sbloccare con la biometria</string>
+    <string name="vault_biometric_note">Una scorciatoia, non una seconda chiave: la passphrase resta l’unica via di ritorno.</string>
+    <string name="vault_biometric_cancel">Usa la passphrase</string>
+    <string name="vault_biometric_unavailable">Su questo dispositivo non è configurata una biometria forte.</string>
+    <string name="vault_biometric_invalidated">È stata registrata una nuova biometria, quindi la scorciatoia non c’è più. Sblocca con la passphrase e riattivala.</string>
+    <string name="vault_biometric_failed">Lo sblocco biometrico non ha funzionato — usa la passphrase.</string>
+    <string name="vault_screenshots_label">Bloccare screenshot e anteprime</string>
 </resources>

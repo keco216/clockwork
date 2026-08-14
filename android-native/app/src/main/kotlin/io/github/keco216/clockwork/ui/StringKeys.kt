@@ -69,9 +69,7 @@ object StringKeys {
         "vault.action.wipe" -> R.string.vault_action_wipe
         "vault.action.wipeConfirm" -> R.string.vault_action_wipeConfirm
         "vault.timeout.label" -> R.string.vault_timeout_label
-        "vault.lockOnHide" -> R.string.vault_lockOnHide
         "vault.error.nothingToStore" -> R.string.vault_error_nothingToStore
-        "vault.error.storageBlocked" -> R.string.vault_error_storageBlocked
         "vault.error.noVault" -> R.string.vault_error_noVault
         "vault.error.noPassphrase" -> R.string.vault_error_noPassphrase
         "vault.error.sealFailed" -> R.string.vault_error_sealFailed
@@ -82,7 +80,6 @@ object StringKeys {
         "vault.msg.locked" -> R.string.vault_msg_locked
         "vault.msg.wiped" -> R.string.vault_msg_wiped
         "vault.msg.wipedNote" -> R.string.vault_msg_wipedNote
-        "vault.locked.hidden" -> R.string.vault_locked_hidden
         "scan.noQr" -> R.string.scan_noQr
         "scan.unreadable" -> R.string.scan_unreadable
         "scan.done" -> R.string.scan_done
@@ -130,6 +127,16 @@ object StringKeys {
         "native.colophon.note" -> R.string.colophon_note
         "native.scan.camera.unavailable" -> R.string.scan_camera_unavailable
         "native.scan.camera.denied" -> R.string.scan_camera_denied
+        "native.vault.lockOnHide" -> R.string.vault_lockOnHide
+        "native.vault.locked.hidden" -> R.string.vault_locked_hidden
+        "native.vault.error.storageBlocked" -> R.string.vault_error_storageBlocked
+        "native.vault.biometric.label" -> R.string.vault_biometric_label
+        "native.vault.biometric.note" -> R.string.vault_biometric_note
+        "native.vault.biometric.cancel" -> R.string.vault_biometric_cancel
+        "native.vault.biometric.unavailable" -> R.string.vault_biometric_unavailable
+        "native.vault.biometric.invalidated" -> R.string.vault_biometric_invalidated
+        "native.vault.biometric.failed" -> R.string.vault_biometric_failed
+        "native.vault.screenshots.label" -> R.string.vault_screenshots_label
         else -> null
     }
 

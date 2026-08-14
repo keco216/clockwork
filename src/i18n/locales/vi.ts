@@ -194,4 +194,16 @@ export default {
     'Thiết bị này không cấp máy ảnh — “QR từ ảnh” thì lúc nào cũng chạy.',
   'native.scan.camera.denied':
     'Máy ảnh bị từ chối. Hãy cấp quyền trong cài đặt ứng dụng của hệ thống — hoặc dùng “QR từ ảnh”.',
+  'native.vault.lockOnHide': 'và khi rời khỏi ứng dụng',
+  'native.vault.locked.hidden': 'Đã khoá khi rời khỏi ứng dụng.',
+  'native.vault.error.storageBlocked': 'Không ghi được két — bộ nhớ đã đầy chăng?',
+  'native.vault.biometric.label': 'Mở khoá bằng sinh trắc học',
+  'native.vault.biometric.note':
+    'Một lối tắt, không phải chìa khoá thứ hai: cụm mật khẩu vẫn là đường về duy nhất.',
+  'native.vault.biometric.cancel': 'Dùng cụm mật khẩu',
+  'native.vault.biometric.unavailable': 'Thiết bị này chưa đặt sinh trắc học mạnh.',
+  'native.vault.biometric.invalidated':
+    'Sinh trắc học mới đã được đăng ký nên lối tắt không còn. Hãy mở bằng cụm mật khẩu rồi bật lại.',
+  'native.vault.biometric.failed': 'Mở khoá bằng sinh trắc học không được — hãy dùng cụm mật khẩu.',
+  'native.vault.screenshots.label': 'Chặn ảnh chụp màn hình và bản xem trước',
 } satisfies Strings;

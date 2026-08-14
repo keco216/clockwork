@@ -227,4 +227,15 @@ export default {
     'Ta naprava ne da kamere na voljo — „QR iz slike“ deluje vedno.',
   'native.scan.camera.denied':
     'Kamera je bila zavrnjena. Dovolite jo v sistemskih nastavitvah aplikacije — ali uporabite „QR iz slike“.',
+  'native.vault.lockOnHide': 'in ob zapustitvi aplikacije',
+  'native.vault.locked.hidden': 'Zaklenjeno ob zapustitvi aplikacije.',
+  'native.vault.error.storageBlocked': 'Trezorja ni bilo mogoče zapisati — je shramba polna?',
+  'native.vault.biometric.label': 'Odkleni z biometrijo',
+  'native.vault.biometric.note': 'Bližnjica, ne drugi ključ: geselna fraza ostaja edina pot nazaj.',
+  'native.vault.biometric.cancel': 'Uporabi geselno frazo',
+  'native.vault.biometric.unavailable': 'Na tej napravi ni nastavljena močna biometrija.',
+  'native.vault.biometric.invalidated':
+    'Registrirana je bila nova biometrija, zato je bližnjice konec. Odklenite z geselno frazo in jo znova vklopite.',
+  'native.vault.biometric.failed': 'Odklepanje z biometrijo ni uspelo — uporabite geselno frazo.',
+  'native.vault.screenshots.label': 'Blokiraj posnetke zaslona in predoglede',
 } satisfies Strings;

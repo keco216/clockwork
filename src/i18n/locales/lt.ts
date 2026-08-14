@@ -225,4 +225,16 @@ export default {
     'Šis įrenginys kameros neatiduoda — „QR iš paveikslo“ veikia visada.',
   'native.scan.camera.denied':
     'Kameros neleista. Suteikite leidimą programos nustatymuose sistemoje — arba naudokite „QR iš paveikslo“.',
+  'native.vault.lockOnHide': 'ir paliekant programą',
+  'native.vault.locked.hidden': 'Užrakinta paliekant programą.',
+  'native.vault.error.storageBlocked': 'Seifo nepavyko įrašyti — ar atmintis pilna?',
+  'native.vault.biometric.label': 'Atrakinti biometrija',
+  'native.vault.biometric.note':
+    'Spartusis kelias, o ne antras raktas: slaptafrazė lieka vienintelis kelias atgal.',
+  'native.vault.biometric.cancel': 'Naudoti slaptafrazę',
+  'native.vault.biometric.unavailable': 'Šiame įrenginyje nenustatyta stipri biometrija.',
+  'native.vault.biometric.invalidated':
+    'Užregistruota nauja biometrija, tad spartaus kelio nebėra. Atrakinkite slaptafraze ir vėl ją įjunkite.',
+  'native.vault.biometric.failed': 'Atrakinti biometrija nepavyko — naudokite slaptafrazę.',
+  'native.vault.screenshots.label': 'Blokuoti ekrano nuotraukas ir peržiūras',
 } satisfies Strings;

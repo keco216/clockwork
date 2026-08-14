@@ -77,9 +77,7 @@
         <item quantity="one">%1$s dakika</item>
         <item quantity="other">%1$s dakika</item>
     </plurals>
-    <string name="vault_lockOnHide">ve sekmeden ayrılınca</string>
     <string name="vault_error_nothingToStore">Saklanacak bir şey yok — metin alanı boş.</string>
-    <string name="vault_error_storageBlocked">Tarayıcı saklamaya izin vermiyor (gizli mod?).</string>
     <string name="vault_error_noVault">Saklanmış bir kasa yok.</string>
     <string name="vault_error_noPassphrase">Parola cümlesi olmadan anahtar da olmaz.</string>
     <string name="vault_error_sealFailed">Saklama başarısız oldu.</string>
@@ -94,7 +92,6 @@
         <item quantity="one">%1$s dakika giriş yapılmadığı için kilitlendi.</item>
         <item quantity="other">%1$s dakika giriş yapılmadığı için kilitlendi.</item>
     </plurals>
-    <string name="vault_locked_hidden">Sekmeden ayrılınca kilitlendi.</string>
     <string name="scan_noQr">Görselde hiçbir QR kod seçilemedi.</string>
     <string name="scan_unreadable">Görsel okunamadı — bu gerçekten bir görsel mi?</string>
     <string name="scan_done">QR kod okundu ve eklendi.</string>
@@ -146,4 +143,14 @@
     <string name="colophon_note">Ağ yok · depolama yok · HMAC, javax.crypto üzerinden</string>
     <string name="scan_camera_unavailable">Bu cihaz kamera vermiyor — “Görselden QR” her zaman çalışır.</string>
     <string name="scan_camera_denied">Kameraya izin verilmedi. İzni sistemin uygulama ayarlarından verin — ya da “Görselden QR” kullanın.</string>
+    <string name="vault_lockOnHide">ve uygulamadan ayrılınca</string>
+    <string name="vault_locked_hidden">Uygulamadan ayrılınca kilitlendi.</string>
+    <string name="vault_error_storageBlocked">Kasa yazılamadı — depolama dolu mu?</string>
+    <string name="vault_biometric_label">Biyometriyle kilidi aç</string>
+    <string name="vault_biometric_note">Bir kısayol, ikinci bir anahtar değil: geri dönüşün tek yolu parola cümlesi olarak kalır.</string>
+    <string name="vault_biometric_cancel">Parola cümlesini kullan</string>
+    <string name="vault_biometric_unavailable">Bu cihazda güçlü biyometri kurulu değil.</string>
+    <string name="vault_biometric_invalidated">Yeni biyometri kaydedildi, bu yüzden kısayol gitti. Parola cümlesiyle açın ve yeniden etkinleştirin.</string>
+    <string name="vault_biometric_failed">Biyometriyle kilit açma işe yaramadı — parola cümlesini kullanın.</string>
+    <string name="vault_screenshots_label">Ekran görüntülerini ve önizlemeleri engelle</string>
 </resources>

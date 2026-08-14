@@ -196,4 +196,16 @@ export default {
     'Den här enheten släpper inte fram någon kamera — ”QR från bild” fungerar alltid.',
   'native.scan.camera.denied':
     'Kameran nekades. Ge behörigheten i systemets appinställningar — eller använd ”QR från bild”.',
+  'native.vault.lockOnHide': 'och när appen lämnas',
+  'native.vault.locked.hidden': 'Låstes när appen lämnades.',
+  'native.vault.error.storageBlocked': 'Valvet gick inte att skriva — är lagringen full?',
+  'native.vault.biometric.label': 'Lås upp med biometri',
+  'native.vault.biometric.note':
+    'En genväg, inte en andra nyckel: lösenfrasen förblir enda vägen tillbaka.',
+  'native.vault.biometric.cancel': 'Använd lösenfras',
+  'native.vault.biometric.unavailable': 'Den här enheten har ingen stark biometri inställd.',
+  'native.vault.biometric.invalidated':
+    'Ny biometri registrerades, så genvägen är borta. Lås upp med lösenfrasen och slå på den igen.',
+  'native.vault.biometric.failed': 'Upplåsning med biometri fungerade inte — använd lösenfrasen.',
+  'native.vault.screenshots.label': 'Blockera skärmbilder och förhandsvisningar',
 } satisfies Strings;

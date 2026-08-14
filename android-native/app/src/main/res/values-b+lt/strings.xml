@@ -85,9 +85,7 @@
         <item quantity="many">%1$s minutės</item>
         <item quantity="other">%1$s minučių</item>
     </plurals>
-    <string name="vault_lockOnHide">ir paliekant kortelę</string>
     <string name="vault_error_nothingToStore">Nėra ko įrašyti — teksto laukas tuščias.</string>
-    <string name="vault_error_storageBlocked">Naršyklė neleidžia įrašyti (privatusis režimas?).</string>
     <string name="vault_error_noVault">Nė vienas seifas neįrašytas.</string>
     <string name="vault_error_noPassphrase">Be slaptafrazės nėra rakto.</string>
     <string name="vault_error_sealFailed">Įrašyti nepavyko.</string>
@@ -104,7 +102,6 @@
         <item quantity="many">Užrakinta po %1$s minutės be įvesties.</item>
         <item quantity="other">Užrakinta po %1$s minučių be įvesties.</item>
     </plurals>
-    <string name="vault_locked_hidden">Užrakinta paliekant kortelę.</string>
     <string name="scan_noQr">Paveiksle nepavyko atpažinti nė vieno QR kodo.</string>
     <string name="scan_unreadable">Paveikslo nepavyko perskaityti — ar tai tikrai paveikslas?</string>
     <string name="scan_done">QR kodas perskaitytas ir įterptas.</string>
@@ -158,4 +155,14 @@
     <string name="colophon_note">Jokio tinklo · jokios saugyklos · HMAC per javax.crypto</string>
     <string name="scan_camera_unavailable">Šis įrenginys kameros neatiduoda — „QR iš paveikslo“ veikia visada.</string>
     <string name="scan_camera_denied">Kameros neleista. Suteikite leidimą programos nustatymuose sistemoje — arba naudokite „QR iš paveikslo“.</string>
+    <string name="vault_lockOnHide">ir paliekant programą</string>
+    <string name="vault_locked_hidden">Užrakinta paliekant programą.</string>
+    <string name="vault_error_storageBlocked">Seifo nepavyko įrašyti — ar atmintis pilna?</string>
+    <string name="vault_biometric_label">Atrakinti biometrija</string>
+    <string name="vault_biometric_note">Spartusis kelias, o ne antras raktas: slaptafrazė lieka vienintelis kelias atgal.</string>
+    <string name="vault_biometric_cancel">Naudoti slaptafrazę</string>
+    <string name="vault_biometric_unavailable">Šiame įrenginyje nenustatyta stipri biometrija.</string>
+    <string name="vault_biometric_invalidated">Užregistruota nauja biometrija, tad spartaus kelio nebėra. Atrakinkite slaptafraze ir vėl ją įjunkite.</string>
+    <string name="vault_biometric_failed">Atrakinti biometrija nepavyko — naudokite slaptafrazę.</string>
+    <string name="vault_screenshots_label">Blokuoti ekrano nuotraukas ir peržiūras</string>
 </resources>

@@ -77,9 +77,7 @@
         <item quantity="one">%1$s minuutti</item>
         <item quantity="other">%1$s minuuttia</item>
     </plurals>
-    <string name="vault_lockOnHide">ja välilehdeltä poistuttaessa</string>
     <string name="vault_error_nothingToStore">Ei ole mitään tallennettavaa — tekstikenttä on tyhjä.</string>
-    <string name="vault_error_storageBlocked">Selain ei salli tallentamista (yksityinen tila?).</string>
     <string name="vault_error_noVault">Yhtään holvia ei ole tallennettu.</string>
     <string name="vault_error_noPassphrase">Ilman salauslausetta ei ole avainta.</string>
     <string name="vault_error_sealFailed">Tallentaminen epäonnistui.</string>
@@ -94,7 +92,6 @@
         <item quantity="one">Lukittui %1$s minuutin jälkeen ilman syötettä.</item>
         <item quantity="other">Lukittui %1$s minuutin jälkeen ilman syötettä.</item>
     </plurals>
-    <string name="vault_locked_hidden">Lukittui välilehdeltä poistuttaessa.</string>
     <string name="scan_noQr">Kuvasta ei erottunut yhtään QR-koodia.</string>
     <string name="scan_unreadable">Kuvaa ei voitu lukea — onko se todella kuva?</string>
     <string name="scan_done">QR-koodi luettu ja lisätty.</string>
@@ -146,4 +143,14 @@
     <string name="colophon_note">Ei verkkoa · ei tallennusta · HMAC javax.crypto:n kautta</string>
     <string name="scan_camera_unavailable">Tämä laite ei anna kameraa käyttöön — ”QR kuvasta” toimii aina.</string>
     <string name="scan_camera_denied">Kamerasta kieltäydyttiin. Myönnä lupa järjestelmän sovellusasetuksissa — tai käytä toimintoa ”QR kuvasta”.</string>
+    <string name="vault_lockOnHide">ja sovelluksesta poistuttaessa</string>
+    <string name="vault_locked_hidden">Lukittui sovelluksesta poistuttaessa.</string>
+    <string name="vault_error_storageBlocked">Holvia ei voitu kirjoittaa — onko tallennustila täynnä?</string>
+    <string name="vault_biometric_label">Avaa biometrialla</string>
+    <string name="vault_biometric_note">Oikotie, ei toinen avain: salauslause pysyy ainoana paluutienä.</string>
+    <string name="vault_biometric_cancel">Käytä salauslausetta</string>
+    <string name="vault_biometric_unavailable">Tässä laitteessa ei ole vahvaa biometriaa käytössä.</string>
+    <string name="vault_biometric_invalidated">Uusi biometria rekisteröitiin, joten oikotie on poissa. Avaa salauslauseella ja kytke se uudelleen päälle.</string>
+    <string name="vault_biometric_failed">Biometrinen avaus ei onnistunut — käytä salauslausetta.</string>
+    <string name="vault_screenshots_label">Estä kuvakaappaukset ja esikatselut</string>
 </resources>

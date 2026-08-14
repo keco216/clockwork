@@ -73,9 +73,7 @@
     <plurals name="vault_timeout_minutes">
         <item quantity="other">%1$s นาที</item>
     </plurals>
-    <string name="vault_lockOnHide">และเมื่อออกจากแท็บ</string>
     <string name="vault_error_nothingToStore">ไม่มีอะไรให้บันทึก — ช่องข้อความว่างอยู่</string>
-    <string name="vault_error_storageBlocked">เบราว์เซอร์ไม่ยอมให้บันทึก (โหมดส่วนตัวหรือเปล่า?)</string>
     <string name="vault_error_noVault">ไม่มีตู้นิรภัยที่บันทึกไว้</string>
     <string name="vault_error_noPassphrase">ไม่มีวลีรหัสผ่านก็ไม่มีกุญแจ</string>
     <string name="vault_error_sealFailed">บันทึกไม่สำเร็จ</string>
@@ -89,7 +87,6 @@
     <plurals name="vault_locked_idle">
         <item quantity="other">ล็อกหลังจาก %1$s นาทีที่ไม่มีการป้อน</item>
     </plurals>
-    <string name="vault_locked_hidden">ล็อกเมื่อออกจากแท็บ</string>
     <string name="scan_noQr">ในภาพไม่พบรหัส QR ใดเลย</string>
     <string name="scan_unreadable">อ่านภาพไม่ได้ — นี่เป็นภาพจริงหรือ?</string>
     <string name="scan_done">อ่านรหัส QR และใส่ให้แล้ว</string>
@@ -140,4 +137,14 @@
     <string name="colophon_note">ไม่มีเครือข่าย · ไม่มีที่เก็บ · HMAC ผ่าน javax.crypto</string>
     <string name="scan_camera_unavailable">อุปกรณ์นี้ไม่เปิดให้ใช้กล้อง — “QR จากภาพ” ใช้ได้เสมอ</string>
     <string name="scan_camera_denied">กล้องถูกปฏิเสธ ให้สิทธิ์ในการตั้งค่าแอปของระบบ — หรือใช้ “QR จากภาพ”</string>
+    <string name="vault_lockOnHide">และเมื่อออกจากแอป</string>
+    <string name="vault_locked_hidden">ล็อกเมื่อออกจากแอป</string>
+    <string name="vault_error_storageBlocked">เขียนตู้นิรภัยไม่ได้ — พื้นที่เก็บข้อมูลเต็มหรือเปล่า?</string>
+    <string name="vault_biometric_label">ปลดล็อกด้วยไบโอเมตริก</string>
+    <string name="vault_biometric_note">เป็นทางลัด ไม่ใช่กุญแจดอกที่สอง วลีรหัสผ่านยังเป็นทางกลับทางเดียว</string>
+    <string name="vault_biometric_cancel">ใช้วลีรหัสผ่าน</string>
+    <string name="vault_biometric_unavailable">อุปกรณ์นี้ไม่ได้ตั้งไบโอเมตริกแบบเข้ม</string>
+    <string name="vault_biometric_invalidated">มีการลงทะเบียนไบโอเมตริกใหม่ ทางลัดจึงหายไป ปลดล็อกด้วยวลีรหัสผ่านแล้วเปิดใหม่อีกครั้ง</string>
+    <string name="vault_biometric_failed">ปลดล็อกด้วยไบโอเมตริกไม่สำเร็จ — ใช้วลีรหัสผ่าน</string>
+    <string name="vault_screenshots_label">บล็อกภาพหน้าจอและตัวอย่าง</string>
 </resources>

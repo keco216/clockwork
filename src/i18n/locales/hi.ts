@@ -197,4 +197,16 @@ export default {
   'native.scan.camera.unavailable': 'यह डिवाइस कैमरा नहीं देता — “चित्र से QR” हमेशा काम करता है.',
   'native.scan.camera.denied':
     'कैमरे से मना कर दिया गया. सिस्टम की ऐप सेटिंग में अनुमति दें — या “चित्र से QR” लें.',
+  'native.vault.lockOnHide': 'और ऐप छोड़ने पर भी',
+  'native.vault.locked.hidden': 'ऐप छोड़ने पर बंद हो गई.',
+  'native.vault.error.storageBlocked': 'तिजोरी लिखी नहीं जा सकी — क्या भंडारण भरा है?',
+  'native.vault.biometric.label': 'बायोमेट्रिक से खोलें',
+  'native.vault.biometric.note':
+    'यह छोटा रास्ता है, दूसरी चाबी नहीं: लौटने का रास्ता सिर्फ़ पासफ़्रेज़ है.',
+  'native.vault.biometric.cancel': 'पासफ़्रेज़ लें',
+  'native.vault.biometric.unavailable': 'इस डिवाइस पर मज़बूत बायोमेट्रिक सेट नहीं है.',
+  'native.vault.biometric.invalidated':
+    'नया बायोमेट्रिक दर्ज हुआ, इसलिए छोटा रास्ता चला गया. पासफ़्रेज़ से खोलें और इसे फिर चालू करें.',
+  'native.vault.biometric.failed': 'बायोमेट्रिक से खोलना नहीं हुआ — पासफ़्रेज़ लें.',
+  'native.vault.screenshots.label': 'स्क्रीनशॉट और झलक रोकें',
 } satisfies Strings;

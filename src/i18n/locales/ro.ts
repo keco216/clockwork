@@ -207,4 +207,18 @@ export default {
     'Acest dispozitiv nu pune la dispoziție nicio cameră — „QR din imagine” funcționează întotdeauna.',
   'native.scan.camera.denied':
     'Camera a fost refuzată. Acordați permisiunea în setările aplicației din sistem — sau folosiți „QR din imagine”.',
+  'native.vault.lockOnHide': 'și la părăsirea aplicației',
+  'native.vault.locked.hidden': 'Încuiat la părăsirea aplicației.',
+  'native.vault.error.storageBlocked': 'Seiful nu a putut fi scris — este plină memoria?',
+  'native.vault.biometric.label': 'Deblocare cu biometrie',
+  'native.vault.biometric.note':
+    'O scurtătură, nu o a doua cheie: fraza de acces rămâne singurul drum înapoi.',
+  'native.vault.biometric.cancel': 'Folosiți fraza de acces',
+  'native.vault.biometric.unavailable':
+    'Pe acest dispozitiv nu este configurată o biometrie puternică.',
+  'native.vault.biometric.invalidated':
+    'A fost înregistrată o biometrie nouă, așa că scurtătura a dispărut. Deblocați cu fraza de acces și porniți-o din nou.',
+  'native.vault.biometric.failed':
+    'Deblocarea cu biometrie nu a funcționat — folosiți fraza de acces.',
+  'native.vault.screenshots.label': 'Blocarea capturilor de ecran și a previzualizărilor',
 } satisfies Strings;

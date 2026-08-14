@@ -309,8 +309,26 @@ describe('stripNativeKeys()', () => {
     // als Länge: Ein neuer `native.`-Schlüssel soll diesen Test anfassen
     // müssen, damit niemand einen weiteren einführt, ohne ihn zu bemerken.
     expect([...sets]).toEqual([
-      'native.colophon.note,native.scan.camera.denied,' +
-        'native.scan.camera.unavailable,native.vacant.text',
+      [
+        'native.colophon.note',
+        'native.scan.camera.denied',
+        'native.scan.camera.unavailable',
+        'native.vacant.text',
+        // Seit P7: der Tresor. Die ersten drei ersetzen Web-Sätze, die nativ
+        // schlicht falsch sind („Tab", „der Browser lässt kein Speichern
+        // zu"); die übrigen gibt es im Web gar nicht, weil es dort weder
+        // Biometrie noch FLAG_SECURE gibt.
+        'native.vault.biometric.cancel',
+        'native.vault.biometric.failed',
+        'native.vault.biometric.invalidated',
+        'native.vault.biometric.label',
+        'native.vault.biometric.note',
+        'native.vault.biometric.unavailable',
+        'native.vault.error.storageBlocked',
+        'native.vault.lockOnHide',
+        'native.vault.locked.hidden',
+        'native.vault.screenshots.label',
+      ].join(','),
     ]);
   });
 });

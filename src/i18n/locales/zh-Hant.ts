@@ -186,4 +186,15 @@ export default {
   'native.scan.camera.unavailable': '這個裝置不提供相機 ——「從圖片讀 QR 碼」始終可用。',
   'native.scan.camera.denied':
     '相機遭到拒絕。請在系統的應用程式設定裡授予權限，或改用「從圖片讀 QR 碼」。',
+  'native.vault.lockOnHide': '離開應用程式時也上鎖',
+  'native.vault.locked.hidden': '離開應用程式時已上鎖。',
+  'native.vault.error.storageBlocked': '保險箱寫不進去 — 儲存空間滿了嗎？',
+  'native.vault.biometric.label': '用生物辨識解鎖',
+  'native.vault.biometric.note': '這是捷徑，不是第二把鑰匙：回來的路只有密碼短語。',
+  'native.vault.biometric.cancel': '改用密碼短語',
+  'native.vault.biometric.unavailable': '這台裝置沒有設定強生物辨識。',
+  'native.vault.biometric.invalidated':
+    '註冊了新的生物辨識，捷徑沒了。請用密碼短語解鎖，再重新打開它。',
+  'native.vault.biometric.failed': '生物辨識解鎖沒成功 — 請用密碼短語。',
+  'native.vault.screenshots.label': '阻擋螢幕擷取和預覽',
 } satisfies Strings;

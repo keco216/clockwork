@@ -6,13 +6,41 @@
     Betriebssystem-Ebene keine Verbindung oeffnen — dieselbe Zusage wie
     `connect-src 'none'` in der Web-Fassung, nur eine Schicht tiefer und fuer
     jeden mit `aapt2 dump badging` nachpruefbar.
-  * CAMERA ist die EINZIGE Berechtigung (seit P6), ausschliesslich fuer den
-    QR-Sucher — und sie ist zur Laufzeit freiwillig. „QR aus Bild" laeuft
-    ueber den Photo Picker und braucht keine Speicher-Berechtigung.
+  * CAMERA ist die einzige Berechtigung, die zur Laufzeit ERFRAGT wird
+    (seit P6), ausschliesslich fuer den QR-Sucher. „QR aus Bild" laeuft ueber
+    den Photo Picker und braucht keine Speicher-Berechtigung.
+  * Dazu seit P7 die zwei Biometrie-Berechtigungen unten. Sie stehen hier
+    ausdruecklich, obwohl androidx.biometric sie ohnehin hineinmischen wuerde
+    — siehe Begruendung dort.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <!--
+      ── Die zwei Biometrie-Berechtigungen (P7) ────────────────────────────
+
+      Sie kommen aus dem Manifest von `androidx.biometric` und landen ueber
+      den Manifest-Merge ohnehin im APK. Sie stehen trotzdem HIER, und das ist
+      Absicht: Bis P6 stand in diesem Kopf „CAMERA ist die EINZIGE
+      Berechtigung", und ein `aapt2 dump badging` haette diesen Satz nach dem
+      Einbau der Biometrie widerlegt, ohne dass jemand die Datei angefasst
+      haette. Eine Zusage, die eine Abhaengigkeit still aendern kann, ist
+      keine. Ausgeschrieben ist sie nachlesbar.
+
+      Beide sind „normal" eingestuft: Sie werden beim Installieren erteilt und
+      erfragen nichts. Sie geben auch keinen Zugriff auf biometrische DATEN —
+      die App bekommt einen Fingerabdruck nie zu sehen, sie bekommt nur einen
+      freigeschalteten Cipher zurueck.
+
+      USE_FINGERPRINT ist seit API 28 abgeloest und steht nur fuer API 26/27
+      da, wo BiometricPrompt intern noch ueber FingerprintManager laeuft.
+      minSdk ist 26, also sind das echte Zielgeraete und keine Altlast.
+    -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission
+        android:name="android.permission.USE_FINGERPRINT"
+        android:maxSdkVersion="27" />
 
     <!--
       BEIDE Feature-Namen ausdruecklich freigestellt — die gemessene Falle aus

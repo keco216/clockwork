@@ -200,4 +200,15 @@ export default {
   'native.scan.camera.unavailable': 'Ovaj uređaj ne daje kameru — „QR iz slike“ radi uvijek.',
   'native.scan.camera.denied':
     'Kamera je odbijena. Dopustite je u postavkama aplikacije u sustavu — ili upotrijebite „QR iz slike“.',
+  'native.vault.lockOnHide': 'i pri napuštanju aplikacije',
+  'native.vault.locked.hidden': 'Zaključano pri napuštanju aplikacije.',
+  'native.vault.error.storageBlocked': 'Sef nije bilo moguće zapisati — je li pohrana puna?',
+  'native.vault.biometric.label': 'Otključaj biometrijom',
+  'native.vault.biometric.note': 'Prečac, a ne drugi ključ: zaporka ostaje jedini put natrag.',
+  'native.vault.biometric.cancel': 'Upotrijebi zaporku',
+  'native.vault.biometric.unavailable': 'Na ovom uređaju nije postavljena jaka biometrija.',
+  'native.vault.biometric.invalidated':
+    'Registrirana je nova biometrija, pa je prečac nestao. Otključajte zaporkom i ponovno ga uključite.',
+  'native.vault.biometric.failed': 'Otključavanje biometrijom nije uspjelo — upotrijebite zaporku.',
+  'native.vault.screenshots.label': 'Blokiraj snimke zaslona i preglede',
 } satisfies Strings;

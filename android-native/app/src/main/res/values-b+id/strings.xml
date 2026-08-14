@@ -73,9 +73,7 @@
     <plurals name="vault_timeout_minutes">
         <item quantity="other">%1$s menit</item>
     </plurals>
-    <string name="vault_lockOnHide">dan saat meninggalkan tab</string>
     <string name="vault_error_nothingToStore">Tidak ada yang bisa disimpan — bidang teks kosong.</string>
-    <string name="vault_error_storageBlocked">Peramban tidak mengizinkan penyimpanan (mode pribadi?).</string>
     <string name="vault_error_noVault">Tidak ada brankas yang tersimpan.</string>
     <string name="vault_error_noPassphrase">Tanpa frasa sandi tidak ada kunci.</string>
     <string name="vault_error_sealFailed">Penyimpanan gagal.</string>
@@ -89,7 +87,6 @@
     <plurals name="vault_locked_idle">
         <item quantity="other">Terkunci setelah %1$s menit tanpa masukan.</item>
     </plurals>
-    <string name="vault_locked_hidden">Terkunci saat tab ditinggalkan.</string>
     <string name="scan_noQr">Tidak ada kode QR yang terbaca pada gambar.</string>
     <string name="scan_unreadable">Gambar tidak bisa dibaca — apakah itu memang gambar?</string>
     <string name="scan_done">Kode QR terbaca dan disisipkan.</string>
@@ -140,4 +137,14 @@
     <string name="colophon_note">Tanpa jaringan · tanpa penyimpanan · HMAC lewat javax.crypto</string>
     <string name="scan_camera_unavailable">Perangkat ini tidak memberikan kamera — “QR dari gambar” selalu berhasil.</string>
     <string name="scan_camera_denied">Kamera ditolak. Izinkan di setelan aplikasi pada sistem — atau pakai “QR dari gambar”.</string>
+    <string name="vault_lockOnHide">dan saat meninggalkan aplikasi</string>
+    <string name="vault_locked_hidden">Terkunci saat aplikasi ditinggalkan.</string>
+    <string name="vault_error_storageBlocked">Brankas tidak bisa ditulis — apakah penyimpanan penuh?</string>
+    <string name="vault_biometric_label">Buka dengan biometrik</string>
+    <string name="vault_biometric_note">Jalan pintas, bukan kunci kedua: frasa sandi tetap satu-satunya jalan kembali.</string>
+    <string name="vault_biometric_cancel">Pakai frasa sandi</string>
+    <string name="vault_biometric_unavailable">Perangkat ini belum menyiapkan biometrik yang kuat.</string>
+    <string name="vault_biometric_invalidated">Biometrik baru didaftarkan, jadi jalan pintasnya hilang. Buka dengan frasa sandi lalu nyalakan lagi.</string>
+    <string name="vault_biometric_failed">Membuka dengan biometrik tidak berhasil — pakai frasa sandi.</string>
+    <string name="vault_screenshots_label">Blokir tangkapan layar dan pratinjau</string>
 </resources>

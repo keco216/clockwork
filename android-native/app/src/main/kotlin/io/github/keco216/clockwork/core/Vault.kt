@@ -153,6 +153,87 @@ fun isVaultEnvelope(envelope: VaultEnvelope): Boolean = envelope.kdf == VAULT_KD
 class SealOptions(val iterations: Int = PBKDF2_ITERATIONS)
 
 /**
+ * Der abgeleitete Schluessel samt den zwei Angaben, aus denen er entstanden
+ * ist.
+ *
+ * ── Warum es diesen Typ gibt, und warum erst seit P7 ──────────────────────
+ * Die Web-Fassung haelt waehrend einer offenen Sitzung die PASSPHRASE im
+ * Arbeitsspeicher (`sessionPassphrase` in vault-panel.ts) und leitet bei
+ * jedem „Neu speichern" erneut ab. Nativ ist beides schlechter:
+ *
+ *  1. **Die Passphrase ist das wertvollere Geheimnis.** Sie oeffnet diesen
+ *     Tresor UND vermutlich noch anderes; der abgeleitete Schluessel oeffnet
+ *     nur diesen einen Umschlag. Was die Sitzung ueberlebt, sollte das
+ *     kleinere von beidem sein.
+ *  2. **Die Biometrie braucht genau diesen Schluessel.** Der Auftrag sagt
+ *     ausdruecklich: eingewickelt wird der ABGELEITETE Schluessel, nie die
+ *     Passphrase. Ohne diesen Typ muesste die Oberflaeche die Passphrase
+ *     aufheben, um spaeter noch einmal ableiten zu koennen — also genau das
+ *     Gegenteil.
+ *  3. **600.000 Iterationen kosten Zeit.** Auf dem Geraet ist das rund eine
+ *     halbe Sekunde. Ein „Neu speichern", das erneut ableitet, laesst den
+ *     Knopf eine halbe Sekunde haengen, ohne dass sich am Schluessel etwas
+ *     aendert.
+ *
+ * ── Was das Salt hier soll ────────────────────────────────────────────────
+ * Es gehoert zum Schluessel, nicht zum Umschlag: Derselbe Schluessel entsteht
+ * nur aus derselben Passphrase UND demselben Salt. Der Wickel der Biometrie
+ * legt es deshalb mit ab — passt das Salt des gespeicherten Umschlags nicht
+ * mehr zum Wickel, ist der Wickel veraltet und wird weggeworfen, statt beim
+ * Aufsperren wortlos zu scheitern.
+ */
+class VaultKey(
+    /** 32 Byte. Nach [clear] Nullen. */
+    val bytes: ByteArray,
+    val salt: ByteArray,
+    val iterations: Int,
+) {
+    /**
+     * Ueberschreibt den Schluessel mit Nullen.
+     *
+     * Die Grenze gehoert dazugesagt: Das raeumt GENAU dieses Feld. Kopien, die
+     * `SecretKeySpec` oder der JCE-Provider intern angelegt haben, erreicht
+     * niemand — die JVM gibt Speicher nicht auf Zuruf frei. Es ist also kein
+     * Loeschen, sondern die Verkuerzung eines Zeitfensters; und die ist
+     * billig genug, um sie mitzunehmen.
+     */
+    fun clear() {
+        bytes.fill(0)
+    }
+}
+
+/**
+ * Leitet einen NEUEN Schluessel ab — mit frischem Salt.
+ *
+ * Das ist der Weg beim ersten Versiegeln und bei jedem Passphrasenwechsel.
+ */
+fun newVaultKey(passphrase: String, options: SealOptions = SealOptions()): VaultKey {
+    assertPassphrase(passphrase)
+    val salt = randomBytes(SALT_BYTES)
+    return VaultKey(deriveKeyBytes(passphrase, salt, options.iterations), salt, options.iterations)
+}
+
+/**
+ * Leitet den Schluessel eines VORHANDENEN Umschlags ab — mit dessen Salt und
+ * dessen Iterationszahl.
+ *
+ * Ob die Passphrase stimmt, sagt dieser Aufruf NICHT: Zu jeder Passphrase
+ * gehoert ein Schluessel, nur eben nicht der richtige. Das faellt erst beim
+ * Entschluesseln auf, und genau dort steht die Meldung.
+ */
+fun deriveVaultKey(envelope: VaultEnvelope, passphrase: String): VaultKey {
+    assertPassphrase(passphrase)
+    assertEnvelope(envelope)
+    val salt = fromBase64(envelope.salt, "salt")
+    assertIterations(envelope.iterations)
+    return VaultKey(
+        deriveKeyBytes(passphrase, salt, envelope.iterations),
+        salt,
+        envelope.iterations,
+    )
+}
+
+/**
  * Verschluesselt Klartext zu einem Umschlag.
  *
  * Salt und IV sind bei JEDEM Aufruf frisch. Beim IV ist das nicht Kosmetik:
@@ -163,24 +244,36 @@ fun sealVault(
     plaintext: String,
     passphrase: String,
     options: SealOptions = SealOptions(),
-): VaultEnvelope {
-    assertPassphrase(passphrase)
-    val iterations = options.iterations
+): VaultEnvelope = sealVaultWithKey(plaintext, newVaultKey(passphrase, options))
 
-    val salt = randomBytes(SALT_BYTES)
+/**
+ * Versiegelt mit einem bereits abgeleiteten Schluessel.
+ *
+ * ── Das ist zugleich das „Neu speichern" der Web-Fassung ──────────────────
+ * Wird hier der Schluessel der laufenden Sitzung uebergeben, entsteht ein
+ * Umschlag mit DEMSELBEN Salt und derselben Iterationszahl, aber einem
+ * frischen IV. Das ist kein Kompromiss, sondern die genaue Beschreibung des
+ * Vorgangs: Der Schluessel hat sich nicht geaendert, der Inhalt schon.
+ *
+ * Das Salt bleiben zu lassen ist unbedenklich — es soll vorberechnete
+ * Tabellen ueber MEHRERE Tresore verhindern und ist dafuer weiterhin
+ * einmalig. Der IV dagegen MUSS frisch sein, und er ist es: Bei GCM waere
+ * eine Wiederverwendung mit demselben Schluessel der eine Fehler, der alles
+ * aufgibt.
+ */
+fun sealVaultWithKey(plaintext: String, key: VaultKey): VaultEnvelope {
     val iv = randomBytes(IV_BYTES)
-    val key = deriveKey(passphrase, salt, iterations)
 
     val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-    cipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(GCM_TAG_BITS, iv))
-    cipher.updateAAD(headerBytes(VAULT_VERSION, VAULT_KDF, iterations))
+    cipher.init(Cipher.ENCRYPT_MODE, key.asSecretKey(), GCMParameterSpec(GCM_TAG_BITS, iv))
+    cipher.updateAAD(headerBytes(VAULT_VERSION, VAULT_KDF, key.iterations))
     val ciphertext = cipher.doFinal(plaintext.toByteArray(Charsets.UTF_8))
 
     return VaultEnvelope(
         v = VAULT_VERSION,
         kdf = VAULT_KDF,
-        iterations = iterations,
-        salt = toBase64(salt),
+        iterations = key.iterations,
+        salt = toBase64(key.salt),
         iv = toBase64(iv),
         data = toBase64(ciphertext),
     )
@@ -195,22 +288,25 @@ fun sealVault(
  *   einen Angreifer ein Hinweis — und fuer den Nutzer ist die Antwort ohnehin
  *   dieselbe.
  */
-fun openVault(envelope: VaultEnvelope, passphrase: String): String {
-    assertPassphrase(passphrase)
+fun openVault(envelope: VaultEnvelope, passphrase: String): String =
+    openVaultWithKey(envelope, deriveVaultKey(envelope, passphrase))
+
+/**
+ * Entschluesselt mit einem bereits abgeleiteten Schluessel.
+ *
+ * Der Weg der Biometrie: Dort kommt der Schluessel aus dem Keystore-Wickel,
+ * und eine Passphrase gibt es in diesem Moment gar nicht.
+ */
+fun openVaultWithKey(envelope: VaultEnvelope, key: VaultKey): String {
     assertEnvelope(envelope)
 
-    val salt = fromBase64(envelope.salt, "salt")
     val iv = fromBase64(envelope.iv, "iv")
     val data = fromBase64(envelope.data, "data")
-
-    if (envelope.iterations < 1) {
-        throw VaultError("err.vault.iterations", mapOf("value" to envelope.iterations.toString()))
-    }
+    assertIterations(envelope.iterations)
 
     return try {
-        val key = deriveKey(passphrase, salt, envelope.iterations)
         val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(GCM_TAG_BITS, iv))
+        cipher.init(Cipher.DECRYPT_MODE, key.asSecretKey(), GCMParameterSpec(GCM_TAG_BITS, iv))
         cipher.updateAAD(headerBytes(envelope.v, envelope.kdf, envelope.iterations))
         String(cipher.doFinal(data), Charsets.UTF_8)
     } catch (_: Exception) {
@@ -241,11 +337,11 @@ fun openVault(envelope: VaultEnvelope, passphrase: String): String {
  * mit einer Passphrase aus "Straße" und einem Emoji. Passte die Umrechnung
  * nicht, waere genau dieses Fixture rot und alle ASCII-Fixtures gruen.
  */
-private fun deriveKey(passphrase: String, salt: ByteArray, iterations: Int): SecretKeySpec {
+private fun deriveKeyBytes(passphrase: String, salt: ByteArray, iterations: Int): ByteArray {
     val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
     val spec = PBEKeySpec(passphrase.toCharArray(), salt, iterations, 256)
     return try {
-        SecretKeySpec(factory.generateSecret(spec).encoded, "AES")
+        factory.generateSecret(spec).encoded
     } finally {
         // Raeumt die Kopie der Passphrase im Spec weg, soweit die Plattform es
         // zulaesst. Der `String`, aus dem sie kam, bleibt im Konstantenpool
@@ -283,6 +379,32 @@ private fun assertEnvelope(envelope: VaultEnvelope) {
         )
     }
 }
+
+/**
+ * Eine Iterationszahl unter 1 ist keine Manipulation, sondern Unsinn — sie
+ * bekommt deshalb ihre EIGENE Meldung und nicht die neutrale „Oeffnen
+ * fehlgeschlagen".
+ *
+ * Die Unterscheidung ist kein Widerspruch zur Regel weiter oben: Verschwiegen
+ * wird, WORAN eine Entschluesselung gescheitert ist. Dass eine Datei
+ * offensichtlich kaputt ist, verraet einem Angreifer nichts, was er nicht
+ * ohnehin sieht.
+ */
+private fun assertIterations(iterations: Int) {
+    if (iterations < 1) {
+        throw VaultError("err.vault.iterations", mapOf("value" to iterations.toString()))
+    }
+}
+
+/**
+ * Der Schluessel in der Form, die die JCE verlangt.
+ *
+ * Bewusst bei JEDEM Aufruf neu statt einmal im Feld: `SecretKeySpec` KOPIERT
+ * die Bytes im Konstruktor. Ein Feld waere eine zweite, dauerhafte Kopie des
+ * Schluessels, die [VaultKey.clear] nicht mehr erreicht — die Kopie hier lebt
+ * nur bis zum Ende des Aufrufs.
+ */
+private fun VaultKey.asSecretKey(): SecretKeySpec = SecretKeySpec(bytes, "AES")
 
 private fun randomBytes(length: Int): ByteArray =
     ByteArray(length).also { SecureRandom().nextBytes(it) }

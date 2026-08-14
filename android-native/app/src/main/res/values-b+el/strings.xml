@@ -77,9 +77,7 @@
         <item quantity="one">%1$s λεπτό</item>
         <item quantity="other">%1$s λεπτά</item>
     </plurals>
-    <string name="vault_lockOnHide">και όταν φύγετε από την καρτέλα</string>
     <string name="vault_error_nothingToStore">Δεν υπάρχει τίποτα να αποθηκευτεί — το πεδίο κειμένου είναι κενό.</string>
-    <string name="vault_error_storageBlocked">Το πρόγραμμα περιήγησης δεν επιτρέπει αποθήκευση (ιδιωτική περιήγηση;).</string>
     <string name="vault_error_noVault">Δεν υπάρχει αποθηκευμένη θυρίδα.</string>
     <string name="vault_error_noPassphrase">Χωρίς συνθηματική φράση δεν υπάρχει κλειδί.</string>
     <string name="vault_error_sealFailed">Η αποθήκευση απέτυχε.</string>
@@ -94,7 +92,6 @@
         <item quantity="one">Κλείδωσε μετά από %1$s λεπτό χωρίς είσοδο.</item>
         <item quantity="other">Κλείδωσε μετά από %1$s λεπτά χωρίς είσοδο.</item>
     </plurals>
-    <string name="vault_locked_hidden">Κλείδωσε με την έξοδο από την καρτέλα.</string>
     <string name="scan_noQr">Στην εικόνα δεν αναγνωρίστηκε κανένας κωδικός QR.</string>
     <string name="scan_unreadable">Η εικόνα δεν μπόρεσε να διαβαστεί — είναι όντως εικόνα;</string>
     <string name="scan_done">Ο κωδικός QR διαβάστηκε και εισήχθη.</string>
@@ -146,4 +143,14 @@
     <string name="colophon_note">Χωρίς δίκτυο · χωρίς αποθήκευση · HMAC μέσω javax.crypto</string>
     <string name="scan_camera_unavailable">Αυτή η συσκευή δεν παραχωρεί κάμερα — το «QR από εικόνα» δουλεύει πάντα.</string>
     <string name="scan_camera_denied">Η κάμερα απορρίφθηκε. Δώστε την άδεια στις ρυθμίσεις εφαρμογών του συστήματος — ή χρησιμοποιήστε το «QR από εικόνα».</string>
+    <string name="vault_lockOnHide">και όταν φύγετε από την εφαρμογή</string>
+    <string name="vault_locked_hidden">Κλείδωσε με την έξοδο από την εφαρμογή.</string>
+    <string name="vault_error_storageBlocked">Η θυρίδα δεν μπόρεσε να γραφτεί — μήπως ο αποθηκευτικός χώρος είναι γεμάτος;</string>
+    <string name="vault_biometric_label">Ξεκλείδωμα με βιομετρικά</string>
+    <string name="vault_biometric_note">Μια συντόμευση, όχι δεύτερο κλειδί: η συνθηματική φράση παραμένει ο μόνος δρόμος επιστροφής.</string>
+    <string name="vault_biometric_cancel">Χρήση συνθηματικής φράσης</string>
+    <string name="vault_biometric_unavailable">Αυτή η συσκευή δεν έχει ρυθμισμένα ισχυρά βιομετρικά.</string>
+    <string name="vault_biometric_invalidated">Καταχωρίστηκαν νέα βιομετρικά, οπότε η συντόμευση χάθηκε. Ξεκλειδώστε με τη συνθηματική φράση και ενεργοποιήστε την ξανά.</string>
+    <string name="vault_biometric_failed">Το ξεκλείδωμα με βιομετρικά δεν πέτυχε — χρησιμοποιήστε τη συνθηματική φράση.</string>
+    <string name="vault_screenshots_label">Αποκλεισμός στιγμιότυπων οθόνης και προεπισκοπήσεων</string>
 </resources>

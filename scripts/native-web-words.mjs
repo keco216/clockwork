@@ -41,39 +41,30 @@ export const WEB_WORDS = [
  * Schluessel, die einen Treffer vorerst tragen duerfen — mit Begruendung und
  * mit dem Posten, der sie aufloest.
  *
- * ── Warum es diese Liste ueberhaupt gibt ──────────────────────────────────
- * Die Web-Woerter sind in EINEM Durchgang gefunden worden, werden aber in
- * dreien beseitigt: Der Fusszeilen-Satz gehoert zu P5, die Kamera-Saetze zu
- * P6, die Tresor-Saetze zu P7. Ohne diese Liste blockierte der erste Befund
- * den Generator, bis alle drei Posten fertig sind — und dann liefe die
- * Pruefung monatelang gar nicht.
+ * ── SIE IST LEER, und das ist das Ergebnis ───────────────────────────────
+ * Sechs Saetze standen einmal darin. Der Fusszeilen-Satz ist mit P5
+ * gegangen, die zwei Kamera-Saetze mit P6, die drei Tresor-Saetze mit P7
+ * (`vault.error.storageBlocked`, `vault.lockOnHide`, `vault.locked.hidden` —
+ * alle drei haben jetzt eine `native.`-Variante und werden nativ gar nicht
+ * mehr ausgespielt). In den nativen en-Ressourcen kommt keines der vier
+ * Web-Woerter mehr vor.
  *
- * ── Warum sie trotzdem keine Hintertuer ist ──────────────────────────────
+ * ── Warum die Liste trotzdem stehen bleibt ───────────────────────────────
+ * Weil der naechste Satz, der nur im Browser wahr ist, wieder in einem
+ * anderen Posten beseitigt wird als in dem, in dem er auffaellt. Der
+ * Mechanismus ist die Arbeit wert, nicht die drei Zeilen Inhalt.
+ *
+ * ── Warum sie keine Hintertuer ist ───────────────────────────────────────
  * Erstens steht in jeder Zeile, WER sie aufloest. Zweitens raeumt sie sich
  * selbst ab: Ein Eintrag, dessen Schluessel gar nicht mehr ausgespielt wird
  * (weil eine `native.`-Variante ihn verdeckt), ist ein FEHLER und keine
  * harmlose Altlast — dieselbe Regel wie bei F-Droids „Unused scandelete
- * path". Wer P6 fertig macht, kann den Eintrag also nicht vergessen.
- * Drittens deckt sie nur die GENANNTEN Woerter je Schluessel: Kommt ein
- * neues dazu, schlaegt die Pruefung trotzdem an.
+ * path". Genau das hat beim Leeren dieser Liste gearbeitet: Wer P7 fertig
+ * macht, KANN die drei Eintraege nicht vergessen, denn der Generator bricht
+ * sonst ab. Drittens deckt sie nur die GENANNTEN Woerter je Schluessel:
+ * Kommt ein neues dazu, schlaegt die Pruefung trotzdem an.
  */
-export const ALLOWED = new Map([
-  [
-    'vault.error.storageBlocked',
-    {
-      words: ['browser'],
-      reason: 'P7 — erst pruefen, welcher Fehlerfall nativ existiert (voller Speicher?)',
-    },
-  ],
-  [
-    'vault.lockOnHide',
-    { words: ['tab'], reason: 'P7 — nativ heisst das „beim Verlassen der App"' },
-  ],
-  [
-    'vault.locked.hidden',
-    { words: ['tab'], reason: 'P7 — nativ heisst das „beim Verlassen der App"' },
-  ],
-]);
+export const ALLOWED = new Map([]);
 
 /**
  * Findet die Web-Woerter in einem Text.

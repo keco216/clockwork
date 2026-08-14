@@ -218,4 +218,15 @@ export default {
   'native.scan.camera.unavailable': 'המכשיר הזה אינו מוסר מצלמה — „QR מתמונה” עובד תמיד.',
   'native.scan.camera.denied':
     'המצלמה נדחתה. אפשרו את ההרשאה בהגדרות האפליקציה של המערכת — או השתמשו ב„QR מתמונה”.',
+  'native.vault.lockOnHide': 'וגם ביציאה מהאפליקציה',
+  'native.vault.locked.hidden': 'ננעלה ביציאה מהאפליקציה.',
+  'native.vault.error.storageBlocked': 'לא ניתן היה לכתוב את הכספת — האם האחסון מלא?',
+  'native.vault.biometric.label': 'פתיחה בזיהוי ביומטרי',
+  'native.vault.biometric.note': 'קיצור דרך, לא מפתח שני: משפט־הסיסמה נשאר הדרך היחידה חזרה.',
+  'native.vault.biometric.cancel': 'להשתמש במשפט־סיסמה',
+  'native.vault.biometric.unavailable': 'במכשיר הזה לא הוגדר זיהוי ביומטרי חזק.',
+  'native.vault.biometric.invalidated':
+    'נרשם זיהוי ביומטרי חדש, ולכן קיצור הדרך נעלם. פתחו עם משפט־הסיסמה והפעילו אותו מחדש.',
+  'native.vault.biometric.failed': 'הפתיחה בזיהוי ביומטרי לא הצליחה — השתמשו במשפט־הסיסמה.',
+  'native.vault.screenshots.label': 'חסימת צילומי מסך ותצוגות מקדימות',
 } satisfies Strings;

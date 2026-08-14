@@ -234,4 +234,15 @@ export default {
   'native.scan.camera.unavailable': 'هذا الجهاز لا يتيح كاميرا — أما «QR من صورة» فيعمل دائمًا.',
   'native.scan.camera.denied':
     'رُفضت الكاميرا. امنح الإذن من إعدادات التطبيق في النظام — أو استعمل «QR من صورة».',
+  'native.vault.lockOnHide': 'وعند مغادرة التطبيق',
+  'native.vault.locked.hidden': 'أُقفلت عند مغادرة التطبيق.',
+  'native.vault.error.storageBlocked': 'تعذّرت كتابة الخزنة — أالتخزين ممتلئ؟',
+  'native.vault.biometric.label': 'الفتح بالسمات الحيوية',
+  'native.vault.biometric.note': 'اختصار لا مفتاح ثانٍ: عبارة المرور تبقى الطريق الوحيد للعودة.',
+  'native.vault.biometric.cancel': 'استعمال عبارة المرور',
+  'native.vault.biometric.unavailable': 'لا سمات حيوية قوية مُعدّة على هذا الجهاز.',
+  'native.vault.biometric.invalidated':
+    'سُجّلت سمات حيوية جديدة، فذهب الاختصار. افتح بعبارة المرور وشغّله من جديد.',
+  'native.vault.biometric.failed': 'لم ينجح الفتح بالسمات الحيوية — استعمل عبارة المرور.',
+  'native.vault.screenshots.label': 'منع لقطات الشاشة والمعاينات',
 } satisfies Strings;

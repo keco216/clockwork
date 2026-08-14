@@ -199,4 +199,16 @@ export default {
     'See seade ei anna kaamerat kasutada — „QR pildilt“ töötab alati.',
   'native.scan.camera.denied':
     'Kaamerast keelduti. Anna luba süsteemi rakenduste seadetes — või kasuta valikut „QR pildilt“.',
+  'native.vault.lockOnHide': 'ja rakendusest lahkumisel',
+  'native.vault.locked.hidden': 'Lukustus rakendusest lahkumisel.',
+  'native.vault.error.storageBlocked': 'Seifi ei õnnestunud kirjutada — kas mälu on täis?',
+  'native.vault.biometric.label': 'Ava biomeetriaga',
+  'native.vault.biometric.note':
+    'Otsetee, mitte teine võti: paroolifraas jääb ainsaks tagasiteeks.',
+  'native.vault.biometric.cancel': 'Kasuta paroolifraasi',
+  'native.vault.biometric.unavailable': 'Selles seadmes pole tugevat biomeetriat seadistatud.',
+  'native.vault.biometric.invalidated':
+    'Registreeriti uus biomeetria, seega otsetee on kadunud. Ava paroolifraasiga ja lülita see uuesti sisse.',
+  'native.vault.biometric.failed': 'Biomeetriline avamine ei õnnestunud — kasuta paroolifraasi.',
+  'native.vault.screenshots.label': 'Blokeeri ekraanipildid ja eelvaated',
 } satisfies Strings;

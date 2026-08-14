@@ -85,9 +85,7 @@
         <item quantity="few">%1$s minutah</item>
         <item quantity="other">%1$s minutah</item>
     </plurals>
-    <string name="vault_lockOnHide">in ob zapustitvi zavihka</string>
     <string name="vault_error_nothingToStore">Ni česa shraniti — besedilno polje je prazno.</string>
-    <string name="vault_error_storageBlocked">Brskalnik shranjevanja ne dovoli (zasebni način?).</string>
     <string name="vault_error_noVault">Noben trezor ni shranjen.</string>
     <string name="vault_error_noPassphrase">Brez geselne fraze ni ključa.</string>
     <string name="vault_error_sealFailed">Shranjevanje ni uspelo.</string>
@@ -104,7 +102,6 @@
         <item quantity="few">Zaklenjeno po %1$s minutah brez vnosa.</item>
         <item quantity="other">Zaklenjeno po %1$s minutah brez vnosa.</item>
     </plurals>
-    <string name="vault_locked_hidden">Zaklenjeno ob zapustitvi zavihka.</string>
     <string name="scan_noQr">Na sliki ni bilo mogoče prepoznati nobene kode QR.</string>
     <string name="scan_unreadable">Slike ni bilo mogoče prebrati — je to res slika?</string>
     <string name="scan_done">Koda QR prebrana in vstavljena.</string>
@@ -158,4 +155,14 @@
     <string name="colophon_note">Brez omrežja · brez shrambe · HMAC prek javax.crypto</string>
     <string name="scan_camera_unavailable">Ta naprava ne da kamere na voljo — „QR iz slike“ deluje vedno.</string>
     <string name="scan_camera_denied">Kamera je bila zavrnjena. Dovolite jo v sistemskih nastavitvah aplikacije — ali uporabite „QR iz slike“.</string>
+    <string name="vault_lockOnHide">in ob zapustitvi aplikacije</string>
+    <string name="vault_locked_hidden">Zaklenjeno ob zapustitvi aplikacije.</string>
+    <string name="vault_error_storageBlocked">Trezorja ni bilo mogoče zapisati — je shramba polna?</string>
+    <string name="vault_biometric_label">Odkleni z biometrijo</string>
+    <string name="vault_biometric_note">Bližnjica, ne drugi ključ: geselna fraza ostaja edina pot nazaj.</string>
+    <string name="vault_biometric_cancel">Uporabi geselno frazo</string>
+    <string name="vault_biometric_unavailable">Na tej napravi ni nastavljena močna biometrija.</string>
+    <string name="vault_biometric_invalidated">Registrirana je bila nova biometrija, zato je bližnjice konec. Odklenite z geselno frazo in jo znova vklopite.</string>
+    <string name="vault_biometric_failed">Odklepanje z biometrijo ni uspelo — uporabite geselno frazo.</string>
+    <string name="vault_screenshots_label">Blokiraj posnetke zaslona in predoglede</string>
 </resources>

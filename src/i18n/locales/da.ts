@@ -198,4 +198,16 @@ export default {
     'Denne enhed giver ikke adgang til noget kamera — »QR fra billede« virker altid.',
   'native.scan.camera.denied':
     'Kameraet blev afvist. Giv tilladelsen i systemets app-indstillinger — eller brug »QR fra billede«.',
+  'native.vault.lockOnHide': 'og når appen forlades',
+  'native.vault.locked.hidden': 'Låst, da appen blev forladt.',
+  'native.vault.error.storageBlocked': 'Boksen kunne ikke skrives — er lagerpladsen fuld?',
+  'native.vault.biometric.label': 'Lås op med biometri',
+  'native.vault.biometric.note':
+    'En genvej, ikke en ekstra nøgle: adgangssætningen er stadig den eneste vej tilbage.',
+  'native.vault.biometric.cancel': 'Brug adgangssætning',
+  'native.vault.biometric.unavailable': 'Denne enhed har ingen stærk biometri sat op.',
+  'native.vault.biometric.invalidated':
+    'Der blev registreret ny biometri, så genvejen er væk. Lås op med adgangssætningen, og slå den til igen.',
+  'native.vault.biometric.failed': 'Oplåsning med biometri virkede ikke — brug adgangssætningen.',
+  'native.vault.screenshots.label': 'Bloker skærmbilleder og forhåndsvisninger',
 } satisfies Strings;

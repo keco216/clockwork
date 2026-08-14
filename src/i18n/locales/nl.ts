@@ -203,4 +203,17 @@ export default {
     'Dit apparaat geeft geen camera vrij — ‘QR uit afbeelding’ werkt altijd.',
   'native.scan.camera.denied':
     'De camera is geweigerd. Geef de toestemming in de app-instellingen van het systeem — of gebruik ‘QR uit afbeelding’.',
+  'native.vault.lockOnHide': 'en bij het verlaten van de app',
+  'native.vault.locked.hidden': 'Op slot gegaan bij het verlaten van de app.',
+  'native.vault.error.storageBlocked': 'De kluis kon niet worden weggeschreven — is de opslag vol?',
+  'native.vault.biometric.label': 'Ontgrendelen met biometrie',
+  'native.vault.biometric.note':
+    'Een sluiproute, geen tweede sleutel: de wachtwoordzin blijft de enige weg terug.',
+  'native.vault.biometric.cancel': 'Wachtwoordzin gebruiken',
+  'native.vault.biometric.unavailable': 'Op dit apparaat is geen sterke biometrie ingesteld.',
+  'native.vault.biometric.invalidated':
+    'Er is nieuwe biometrie geregistreerd, dus de sluiproute is weg. Ontgrendel met de wachtwoordzin en zet hem opnieuw aan.',
+  'native.vault.biometric.failed':
+    'Ontgrendelen met biometrie lukte niet — gebruik de wachtwoordzin.',
+  'native.vault.screenshots.label': 'Schermafbeeldingen en voorbeelden blokkeren',
 } satisfies Strings;

@@ -85,9 +85,7 @@
         <item quantity="many">%1$s minúty</item>
         <item quantity="other">%1$s minútach</item>
     </plurals>
-    <string name="vault_lockOnHide">a pri opustení karty</string>
     <string name="vault_error_nothingToStore">Nie je čo uložiť — textové pole je prázdne.</string>
-    <string name="vault_error_storageBlocked">Prehliadač ukladanie nepovolí (anonymný režim?).</string>
     <string name="vault_error_noVault">Žiadny trezor nie je uložený.</string>
     <string name="vault_error_noPassphrase">Bez heslovej frázy niet kľúča.</string>
     <string name="vault_error_sealFailed">Uloženie sa nepodarilo.</string>
@@ -104,7 +102,6 @@
         <item quantity="many">Zamknuté po %1$s minúty bez zadávania.</item>
         <item quantity="other">Zamknuté po %1$s minútach bez zadávania.</item>
     </plurals>
-    <string name="vault_locked_hidden">Zamknuté pri opustení karty.</string>
     <string name="scan_noQr">V obrázku sa nedal rozpoznať žiadny QR kód.</string>
     <string name="scan_unreadable">Obrázok sa nepodarilo prečítať — je to naozaj obrázok?</string>
     <string name="scan_done">QR kód prečítaný a vložený.</string>
@@ -158,4 +155,14 @@
     <string name="colophon_note">Žiadna sieť · žiadne úložisko · HMAC cez javax.crypto</string>
     <string name="scan_camera_unavailable">Toto zariadenie kameru neuvoľní — „QR z obrázka“ funguje vždy.</string>
     <string name="scan_camera_denied">Kamera bola odmietnutá. Povoľte ju v systémových nastaveniach aplikácie — alebo použite „QR z obrázka“.</string>
+    <string name="vault_lockOnHide">a pri opustení aplikácie</string>
+    <string name="vault_locked_hidden">Zamknuté pri opustení aplikácie.</string>
+    <string name="vault_error_storageBlocked">Trezor sa nepodarilo zapísať — nie je úložisko plné?</string>
+    <string name="vault_biometric_label">Odomknúť biometriou</string>
+    <string name="vault_biometric_note">Skratka, nie druhý kľúč: heslová fráza zostáva jedinou cestou späť.</string>
+    <string name="vault_biometric_cancel">Použiť heslovú frázu</string>
+    <string name="vault_biometric_unavailable">Na tomto zariadení nie je nastavená silná biometria.</string>
+    <string name="vault_biometric_invalidated">Zaregistrovala sa nová biometria, takže skratka zmizla. Odomknite heslovou frázou a znova ju zapnite.</string>
+    <string name="vault_biometric_failed">Odomknutie biometriou zlyhalo — použite heslovú frázu.</string>
+    <string name="vault_screenshots_label">Blokovať snímky obrazovky a náhľady</string>
 </resources>

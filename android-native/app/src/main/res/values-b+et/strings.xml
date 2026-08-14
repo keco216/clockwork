@@ -77,9 +77,7 @@
         <item quantity="one">%1$s minut</item>
         <item quantity="other">%1$s minutit</item>
     </plurals>
-    <string name="vault_lockOnHide">ja kaardilt lahkumisel</string>
     <string name="vault_error_nothingToStore">Salvestada pole midagi — tekstiväli on tühi.</string>
-    <string name="vault_error_storageBlocked">Brauser ei luba salvestada (privaatrežiim?).</string>
     <string name="vault_error_noVault">Ühtki seifi ei ole salvestatud.</string>
     <string name="vault_error_noPassphrase">Ilma paroolifraasita ei ole võtit.</string>
     <string name="vault_error_sealFailed">Salvestamine ebaõnnestus.</string>
@@ -94,7 +92,6 @@
         <item quantity="one">Lukustus pärast %1$s minutit ilma sisendita.</item>
         <item quantity="other">Lukustus pärast %1$s minutit ilma sisendita.</item>
     </plurals>
-    <string name="vault_locked_hidden">Lukustus kaardilt lahkumisel.</string>
     <string name="scan_noQr">Pildilt ei olnud ühtki QR-koodi näha.</string>
     <string name="scan_unreadable">Pilti ei õnnestunud lugeda — kas see on tõesti pilt?</string>
     <string name="scan_done">QR-kood loetud ja lisatud.</string>
@@ -146,4 +143,14 @@
     <string name="colophon_note">Ei mingit võrku · ei mingit salvestust · HMAC javax.crypto kaudu</string>
     <string name="scan_camera_unavailable">See seade ei anna kaamerat kasutada — „QR pildilt“ töötab alati.</string>
     <string name="scan_camera_denied">Kaamerast keelduti. Anna luba süsteemi rakenduste seadetes — või kasuta valikut „QR pildilt“.</string>
+    <string name="vault_lockOnHide">ja rakendusest lahkumisel</string>
+    <string name="vault_locked_hidden">Lukustus rakendusest lahkumisel.</string>
+    <string name="vault_error_storageBlocked">Seifi ei õnnestunud kirjutada — kas mälu on täis?</string>
+    <string name="vault_biometric_label">Ava biomeetriaga</string>
+    <string name="vault_biometric_note">Otsetee, mitte teine võti: paroolifraas jääb ainsaks tagasiteeks.</string>
+    <string name="vault_biometric_cancel">Kasuta paroolifraasi</string>
+    <string name="vault_biometric_unavailable">Selles seadmes pole tugevat biomeetriat seadistatud.</string>
+    <string name="vault_biometric_invalidated">Registreeriti uus biomeetria, seega otsetee on kadunud. Ava paroolifraasiga ja lülita see uuesti sisse.</string>
+    <string name="vault_biometric_failed">Biomeetriline avamine ei õnnestunud — kasuta paroolifraasi.</string>
+    <string name="vault_screenshots_label">Blokeeri ekraanipildid ja eelvaated</string>
 </resources>

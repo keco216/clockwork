@@ -81,9 +81,7 @@
         <item quantity="few">%1$s minute</item>
         <item quantity="other">%1$s minuta</item>
     </plurals>
-    <string name="vault_lockOnHide">i pri napuštanju kartice</string>
     <string name="vault_error_nothingToStore">Nema se što spremiti — tekstno polje je prazno.</string>
-    <string name="vault_error_storageBlocked">Preglednik ne dopušta spremanje (privatni način?).</string>
     <string name="vault_error_noVault">Nijedan sef nije spremljen.</string>
     <string name="vault_error_noPassphrase">Bez zaporke nema ključa.</string>
     <string name="vault_error_sealFailed">Spremanje nije uspjelo.</string>
@@ -99,7 +97,6 @@
         <item quantity="few">Zaključano nakon %1$s minute bez unosa.</item>
         <item quantity="other">Zaključano nakon %1$s minuta bez unosa.</item>
     </plurals>
-    <string name="vault_locked_hidden">Zaključano pri napuštanju kartice.</string>
     <string name="scan_noQr">Na slici se nije mogao prepoznati nijedan QR kod.</string>
     <string name="scan_unreadable">Sliku nije bilo moguće pročitati — je li to doista slika?</string>
     <string name="scan_done">QR kod pročitan i umetnut.</string>
@@ -152,4 +149,14 @@
     <string name="colophon_note">Bez mreže · bez pohrane · HMAC preko javax.crypto</string>
     <string name="scan_camera_unavailable">Ovaj uređaj ne daje kameru — „QR iz slike“ radi uvijek.</string>
     <string name="scan_camera_denied">Kamera je odbijena. Dopustite je u postavkama aplikacije u sustavu — ili upotrijebite „QR iz slike“.</string>
+    <string name="vault_lockOnHide">i pri napuštanju aplikacije</string>
+    <string name="vault_locked_hidden">Zaključano pri napuštanju aplikacije.</string>
+    <string name="vault_error_storageBlocked">Sef nije bilo moguće zapisati — je li pohrana puna?</string>
+    <string name="vault_biometric_label">Otključaj biometrijom</string>
+    <string name="vault_biometric_note">Prečac, a ne drugi ključ: zaporka ostaje jedini put natrag.</string>
+    <string name="vault_biometric_cancel">Upotrijebi zaporku</string>
+    <string name="vault_biometric_unavailable">Na ovom uređaju nije postavljena jaka biometrija.</string>
+    <string name="vault_biometric_invalidated">Registrirana je nova biometrija, pa je prečac nestao. Otključajte zaporkom i ponovno ga uključite.</string>
+    <string name="vault_biometric_failed">Otključavanje biometrijom nije uspjelo — upotrijebite zaporku.</string>
+    <string name="vault_screenshots_label">Blokiraj snimke zaslona i preglede</string>
 </resources>

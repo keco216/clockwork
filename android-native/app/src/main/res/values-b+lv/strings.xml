@@ -81,9 +81,7 @@
         <item quantity="one">%1$s minūtes</item>
         <item quantity="other">%1$s minūtēm</item>
     </plurals>
-    <string name="vault_lockOnHide">un pametot cilni</string>
     <string name="vault_error_nothingToStore">Nav ko saglabāt — teksta lauks ir tukšs.</string>
-    <string name="vault_error_storageBlocked">Pārlūks neļauj saglabāt (privātais režīms?).</string>
     <string name="vault_error_noVault">Neviens seifs nav saglabāts.</string>
     <string name="vault_error_noPassphrase">Bez paroles frāzes nav atslēgas.</string>
     <string name="vault_error_sealFailed">Saglabāšana neizdevās.</string>
@@ -99,7 +97,6 @@
         <item quantity="one">Aizslēgts pēc %1$s minūtes bez ievades.</item>
         <item quantity="other">Aizslēgts pēc %1$s minūtēm bez ievades.</item>
     </plurals>
-    <string name="vault_locked_hidden">Aizslēgts, pametot cilni.</string>
     <string name="scan_noQr">Attēlā nebija saskatāms neviens QR kods.</string>
     <string name="scan_unreadable">Attēlu neizdevās nolasīt — vai tas tiešām ir attēls?</string>
     <string name="scan_done">QR kods nolasīts un ievietots.</string>
@@ -152,4 +149,14 @@
     <string name="colophon_note">Bez tīkla · bez krātuves · HMAC caur javax.crypto</string>
     <string name="scan_camera_unavailable">Šī ierīce kameru neatdod — „QR no attēla“ darbojas vienmēr.</string>
     <string name="scan_camera_denied">Kamera tika atteikta. Piešķiriet atļauju lietotnes iestatījumos sistēmā — vai izmantojiet „QR no attēla“.</string>
+    <string name="vault_lockOnHide">un pametot lietotni</string>
+    <string name="vault_locked_hidden">Aizslēgts, pametot lietotni.</string>
+    <string name="vault_error_storageBlocked">Seifu neizdevās ierakstīt — vai krātuve ir pilna?</string>
+    <string name="vault_biometric_label">Atslēgt ar biometriju</string>
+    <string name="vault_biometric_note">Īsceļš, nevis otra atslēga: paroles frāze paliek vienīgais ceļš atpakaļ.</string>
+    <string name="vault_biometric_cancel">Izmantot paroles frāzi</string>
+    <string name="vault_biometric_unavailable">Šajā ierīcē nav iestatīta spēcīga biometrija.</string>
+    <string name="vault_biometric_invalidated">Tika reģistrēta jauna biometrija, tāpēc īsceļa vairs nav. Atslēdziet ar paroles frāzi un ieslēdziet to no jauna.</string>
+    <string name="vault_biometric_failed">Atslēgšana ar biometriju neizdevās — izmantojiet paroles frāzi.</string>
+    <string name="vault_screenshots_label">Bloķēt ekrānuzņēmumus un priekšskatījumus</string>
 </resources>

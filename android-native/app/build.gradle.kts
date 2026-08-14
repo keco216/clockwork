@@ -167,6 +167,17 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.zxing.core)
 
+    /* Biometrie (P7). `BiometricPrompt` ist die einzige Art, einen
+       Keystore-Schluessel mit `setUserAuthenticationRequired` freizuschalten:
+       Der `CryptoObject` geht in die System-Abfrage hinein und kommt
+       freigeschaltet zurueck — die App bekommt den Fingerabdruck selbst nie zu
+       sehen. Ein eigener Dialog kann das grundsaetzlich nicht.
+
+       Die Bibliothek zieht `androidx.fragment` mit; das ist der Grund, warum
+       die Abfrage eine FragmentActivity braucht. MainActivity ist ueber
+       AppCompatActivity ohnehin eine. */
+    implementation(libs.androidx.biometric)
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
 }

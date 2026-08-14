@@ -41,6 +41,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -176,22 +177,32 @@ private fun ListboxRow(
 }
 
 /**
- * Der Sprachumschalter: Auswahlfeld plus Popover.
+ * Das Auswahlfeld samt Popover — allgemein, weil es zwei Aufgaben hat.
  *
- * Die Liste kommt aus `LocaleRegistry.kt` — erzeugt aus `registry.ts`, nach
- * Eigennamen sortiert. NICHT aus `Locale.getDisplayLanguage`: Die
- * Plattformdaten nennen dieselbe Sprache je nach Geraet anders (gemessen:
- * zh-Hans ist dort „中文 (简体)", im Katalog „简体中文").
+ * Gebaut wurde es in P5 fuer den Sprachumschalter; P7 braucht dasselbe
+ * Bauteil fuer die Sperrzeit des Tresors. Die achtzig Zeilen Popover-Logik
+ * ein zweites Mal hinzuschreiben waere die Sorte Verdopplung, die dieses
+ * Projekt sonst ueberall vermeidet — und die erste Abweichung faellt dann
+ * erst auf, wenn jemand beide nebeneinander sieht.
+ *
+ * @param emptyLabel Was im Feld steht, wenn nichts passt. Ohne den Wert
+ *   stuende dort im Fehlerfall gar nichts, und ein leeres Auswahlfeld sieht
+ *   aus wie ein kaputtes.
  */
 @Composable
-fun LanguagePicker(
-    current: String,
-    onPick: (String) -> Unit,
+fun <T> Pick(
+    label: String,
+    aria: String,
+    options: List<T>,
+    selected: T?,
+    display: (T) -> String,
+    onPick: (T) -> Unit,
     modifier: Modifier = Modifier,
+    emptyLabel: String = "",
+    popoverWidth: Dp = 240.dp,
+    maxPopoverHeight: Dp = 320.dp,
 ) {
     val colors = LocalColors.current
-    val label = text("lang.label")
-    val aria = text("lang.aria")
 
     var open by remember { mutableStateOf(false) }
     // `rendered` haelt das Popover waehrend der ABFAHRT im Baum. Ohne das
@@ -209,8 +220,6 @@ fun LanguagePicker(
             rendered = false
         }
     }
-
-    val selected = LOCALES.firstOrNull { it.code == current }
 
     Column(modifier = modifier) {
         BasicText(
@@ -233,7 +242,7 @@ fun LanguagePicker(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             BasicText(
-                text = selected?.name ?: current,
+                text = selected?.let(display) ?: emptyLabel,
                 style = TextStyles.small.copy(color = colors.ink),
                 maxLines = 1,
             )
@@ -255,23 +264,23 @@ fun LanguagePicker(
                     .alpha(enter.value)
                     .scale(0.95f + 0.05f * enter.value)
                     .padding(top = (4 * (1f - enter.value)).dp)
-                    .width(240.dp)
+                    .width(popoverWidth)
                     .clip(RoundedCornerShape(Dimens.radiusPanel))
                     .background(colors.surface)
                     .padding(Dimens.sp2),
             ) {
                 Column(
                     modifier = Modifier
-                        .heightIn(max = 320.dp)
+                        .heightIn(max = maxPopoverHeight)
                         .verticalScroll(rememberScrollState()),
                 ) {
-                    for (locale in LOCALES) {
+                    for (option in options) {
                         ListboxRow(
-                            label = locale.name,
-                            selected = locale.code == current,
+                            label = display(option),
+                            selected = option == selected,
                             onClick = {
                                 open = false
-                                onPick(locale.code)
+                                onPick(option)
                             },
                         )
                     }
@@ -279,6 +288,34 @@ fun LanguagePicker(
             }
         }
     }
+}
+
+/**
+ * Der Sprachumschalter.
+ *
+ * Die Liste kommt aus `LocaleRegistry.kt` — erzeugt aus `registry.ts`, nach
+ * Eigennamen sortiert. NICHT aus `Locale.getDisplayLanguage`: Die
+ * Plattformdaten nennen dieselbe Sprache je nach Geraet anders (gemessen:
+ * zh-Hans ist dort „中文 (简体)", im Katalog „简体中文").
+ */
+@Composable
+fun LanguagePicker(
+    current: String,
+    onPick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Pick(
+        label = text("lang.label"),
+        aria = text("lang.aria"),
+        options = LOCALES,
+        selected = LOCALES.firstOrNull { it.code == current },
+        display = { it.name },
+        onPick = { onPick(it.code) },
+        modifier = modifier,
+        // Kennt die Registry den Code nicht, steht der Code selbst da. Das
+        // ist keine schoene Anzeige, aber eine ehrliche: Sie sagt, WAS gilt.
+        emptyLabel = current,
+    )
 }
 
 /**

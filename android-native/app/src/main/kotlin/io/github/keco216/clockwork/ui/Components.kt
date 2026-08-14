@@ -11,13 +11,16 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,6 +38,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -257,6 +261,107 @@ private fun Modifier.shadowApprox(shape: Shape): Modifier = this.shadow(
     spotColor = Color.Black.copy(alpha = 0.06f),
 )
 
+/* ── Schalter ───────────────────────────────────────────────────────────── */
+
+/**
+ * Der Switch der Referenz.
+ *
+ * ── Die Geometrie ist abgemessen, nicht geschaetzt ────────────────────────
+ * Bahn 40 × 20, Daumen 22 × 16 mit 2 dp Rand, Weg also 40 − 22 − 4 = 14 dp.
+ * Die Bahn faerbt in 250 ms um, der Daumen faehrt in 300 ms — zwei Zeiten,
+ * weil die Referenz zwei hat (`--dur-calm` und `--dur-glide`). Der Daumen ist
+ * in BEIDEN Themes Snow: `.switch__thumb` traegt dort fest `bg-white`.
+ *
+ * Eingeschaltet ist die Bahn Signal-Orange. Das ist die V9-Entscheidung gegen
+ * die aeltere Regel „an in Tinte": In einem HeroUI-Theme ist der Akzent die
+ * Farbe jedes Ein-Zustands, und „genau ein Akzent" bleibt damit wahr.
+ *
+ * ── Eine bewusste Abweichung von der Web-Fassung ──────────────────────────
+ * Im Web ist der Schalter ein `<input type="checkbox">` von 20 px Hoehe, und
+ * getroffen wird er mit der Maus. Hier traegt die ganze ZEILE die
+ * Trefferflaeche von 44 dp — dieselbe Sprosse wie die Aufklapper. Ein 20 dp
+ * hohes Ziel ist auf einem Telefon kein Ziel, sondern eine Geduldsprobe.
+ *
+ * ── Warum der Weg ueber `offset` und nicht `absoluteOffset` laeuft ────────
+ * `offset` ist leserichtungsbewusst: Auf Arabisch faehrt der Daumen von
+ * selbst nach links. Die Web-Fassung braucht dafuer eine eigene
+ * `:root[dir='rtl']`-Regel; hier faellt sie weg.
+ */
+@Composable
+fun Switch(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    description: String? = null,
+) {
+    val colors = LocalColors.current
+    val interaction = remember { MutableInteractionSource() }
+    val focused by interaction.collectIsFocusedAsState()
+
+    val travel by animateFloatAsState(
+        targetValue = if (checked) 1f else 0f,
+        animationSpec = tween(Motion.glide, easing = Motion.spring),
+        label = "switch-thumb",
+    )
+    val tint by animateFloatAsState(
+        targetValue = if (checked) 1f else 0f,
+        animationSpec = tween(Motion.calm, easing = Motion.spring),
+        label = "switch-track",
+    )
+
+    val trackShape = RoundedCornerShape(Dimens.radiusKey)
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(Dimens.radiusField))
+            .clickable(
+                interactionSource = interaction,
+                indication = null,
+                enabled = enabled,
+                // `Switch` und nicht `Checkbox`: TalkBack sagt dann „an"/„aus"
+                // statt „angehakt", und genau das ist dieses Bauteil.
+                role = Role.Switch,
+                onClick = { onCheckedChange(!checked) },
+            )
+            .semantics { stateDescription = if (checked) "on" else "off" }
+            .defaultMinSize(minHeight = Dimens.touchMin)
+            .alpha(if (enabled) 1f else 0.5f)
+            .padding(vertical = Dimens.sp2),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.gapPair),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .focusRing(focused, colors.signal, trackShape, 2.dp)
+                .size(width = 40.dp, height = 20.dp)
+                .clip(trackShape)
+                .background(lerp(colors.surfaceFill, colors.signal, tint)),
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(2.dp)
+                    .offset(x = (14 * travel).dp)
+                    .size(width = 22.dp, height = 16.dp)
+                    .clip(RoundedCornerShape(Dimens.radiusInset))
+                    .background(colors.switchThumb),
+            )
+        }
+
+        Column(verticalArrangement = Arrangement.spacedBy(Dimens.sp1)) {
+            BasicText(text = label, style = TextStyles.small.copy(color = colors.ink))
+            if (description != null) {
+                BasicText(
+                    text = description,
+                    style = TextStyles.micro.copy(color = colors.ink3),
+                )
+            }
+        }
+    }
+}
+
 /* ── Zeile ──────────────────────────────────────────────────────────────── */
 
 /** Eine Zeile mit Paar-Fuge — der haeufigste Aufbau der Oberflaeche. */
@@ -340,6 +445,16 @@ fun FoldRow(
     expanded: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
+    /**
+     * Die Betriebsleuchte vor der Beschriftung — nur der Tresor traegt eine.
+     *
+     * Sie ist 6 dp gross und liegt auf der Mitte der Kleinbuchstaben, nicht
+     * auf der Grundlinie: Eine Leuchte auf der Grundlinie sieht aus wie ein
+     * Punkt am Satzende. Im Web macht das `vertical-align: 0.26em`; hier
+     * genuegt die Zentrierung der Zeile, weil die Leuchte ein eigenes
+     * Rechteck ist und keinen Schriftzug tragen muss.
+     */
+    lamp: Color? = null,
 ) {
     val colors = LocalColors.current
     val interaction = remember { MutableInteractionSource() }
@@ -362,12 +477,26 @@ fun FoldRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        BasicText(
-            text = label,
-            style = TextStyles.small.copy(color = colors.ink),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Row(
+            modifier = Modifier.weight(1f, fill = false),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.gapPair),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (lamp != null) {
+                Box(
+                    modifier = Modifier
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(lamp),
+                )
+            }
+            BasicText(
+                text = label,
+                style = TextStyles.small.copy(color = colors.ink),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         Chevron(expanded = expanded, colour = colors.ink2)
     }
 }

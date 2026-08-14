@@ -227,4 +227,15 @@ export default {
     'To urządzenie nie udostępnia kamery — „QR z obrazu” działa zawsze.',
   'native.scan.camera.denied':
     'Odmówiono dostępu do kamery. Przyznaj uprawnienie w ustawieniach aplikacji w systemie — albo użyj „QR z obrazu”.',
+  'native.vault.lockOnHide': 'oraz przy opuszczeniu aplikacji',
+  'native.vault.locked.hidden': 'Zamknięty przy opuszczeniu aplikacji.',
+  'native.vault.error.storageBlocked': 'Nie udało się zapisać sejfu — czy pamięć jest pełna?',
+  'native.vault.biometric.label': 'Odblokuj biometrią',
+  'native.vault.biometric.note': 'Skrót, nie drugi klucz: hasło pozostaje jedyną drogą powrotną.',
+  'native.vault.biometric.cancel': 'Użyj hasła',
+  'native.vault.biometric.unavailable': 'Na tym urządzeniu nie skonfigurowano silnej biometrii.',
+  'native.vault.biometric.invalidated':
+    'Zarejestrowano nową biometrię, więc skrót zniknął. Odblokuj hasłem i włącz go ponownie.',
+  'native.vault.biometric.failed': 'Odblokowanie biometrią się nie powiodło — użyj hasła.',
+  'native.vault.screenshots.label': 'Blokuj zrzuty ekranu i podglądy',
 } satisfies Strings;

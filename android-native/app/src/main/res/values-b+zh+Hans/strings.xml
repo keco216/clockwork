@@ -73,9 +73,7 @@
     <plurals name="vault_timeout_minutes">
         <item quantity="other">%1$s 分钟</item>
     </plurals>
-    <string name="vault_lockOnHide">离开标签页时也上锁</string>
     <string name="vault_error_nothingToStore">没有可保存的内容 —— 文本框是空的。</string>
-    <string name="vault_error_storageBlocked">浏览器不允许保存（无痕模式？）。</string>
     <string name="vault_error_noVault">没有保存过任何保险箱。</string>
     <string name="vault_error_noPassphrase">没有密码短语就没有密钥。</string>
     <string name="vault_error_sealFailed">保存失败。</string>
@@ -89,7 +87,6 @@
     <plurals name="vault_locked_idle">
         <item quantity="other">%1$s 分钟无输入，已上锁。</item>
     </plurals>
-    <string name="vault_locked_hidden">离开标签页时已上锁。</string>
     <string name="scan_noQr">图片里认不出二维码。</string>
     <string name="scan_unreadable">图片读不出来 —— 这真是一张图片吗？</string>
     <string name="scan_done">二维码已读取并填入。</string>
@@ -140,4 +137,14 @@
     <string name="colophon_note">无网络 · 无存储 · HMAC 经由 javax.crypto</string>
     <string name="scan_camera_unavailable">这个设备不提供摄像头 ——“从图片读二维码”始终可用。</string>
     <string name="scan_camera_denied">摄像头被拒绝。请在系统的应用设置里授予权限，或改用“从图片读二维码”。</string>
+    <string name="vault_lockOnHide">离开应用时也上锁</string>
+    <string name="vault_locked_hidden">离开应用时已上锁。</string>
+    <string name="vault_error_storageBlocked">保险箱写不进去 — 存储空间满了吗？</string>
+    <string name="vault_biometric_label">用生物识别解锁</string>
+    <string name="vault_biometric_note">这是捷径，不是第二把钥匙：回来的路只有密码短语。</string>
+    <string name="vault_biometric_cancel">改用密码短语</string>
+    <string name="vault_biometric_unavailable">这台设备没有设置强生物识别。</string>
+    <string name="vault_biometric_invalidated">注册了新的生物识别，捷径没了。请用密码短语解锁，再重新打开它。</string>
+    <string name="vault_biometric_failed">生物识别解锁没成功 — 请用密码短语。</string>
+    <string name="vault_screenshots_label">阻止截图和预览</string>
 </resources>

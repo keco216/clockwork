@@ -77,9 +77,7 @@
         <item quantity="one">%1$s मिनट</item>
         <item quantity="other">%1$s मिनट</item>
     </plurals>
-    <string name="vault_lockOnHide">और टैब छोड़ने पर भी</string>
     <string name="vault_error_nothingToStore">सहेजने को कुछ नहीं है — टेक्स्ट फ़ील्ड खाली है.</string>
-    <string name="vault_error_storageBlocked">ब्राउज़र सहेजने नहीं देता (निजी मोड?).</string>
     <string name="vault_error_noVault">कोई तिजोरी सहेजी नहीं गई है.</string>
     <string name="vault_error_noPassphrase">पासफ़्रेज़ के बिना कोई कुंजी नहीं.</string>
     <string name="vault_error_sealFailed">सहेजना विफल रहा.</string>
@@ -94,7 +92,6 @@
         <item quantity="one">%1$s मिनट बिना इनपुट के बीतने पर बंद हो गई.</item>
         <item quantity="other">%1$s मिनट बिना इनपुट के बीतने पर बंद हो गई.</item>
     </plurals>
-    <string name="vault_locked_hidden">टैब छोड़ने पर बंद हो गई.</string>
     <string name="scan_noQr">चित्र में कोई QR कोड नहीं पहचाना जा सका.</string>
     <string name="scan_unreadable">चित्र पढ़ा नहीं जा सका — क्या यह सचमुच चित्र है?</string>
     <string name="scan_done">QR कोड पढ़ लिया और डाल दिया गया.</string>
@@ -146,4 +143,14 @@
     <string name="colophon_note">कोई नेटवर्क नहीं · कोई भंडारण नहीं · HMAC javax.crypto से</string>
     <string name="scan_camera_unavailable">यह डिवाइस कैमरा नहीं देता — “चित्र से QR” हमेशा काम करता है.</string>
     <string name="scan_camera_denied">कैमरे से मना कर दिया गया. सिस्टम की ऐप सेटिंग में अनुमति दें — या “चित्र से QR” लें.</string>
+    <string name="vault_lockOnHide">और ऐप छोड़ने पर भी</string>
+    <string name="vault_locked_hidden">ऐप छोड़ने पर बंद हो गई.</string>
+    <string name="vault_error_storageBlocked">तिजोरी लिखी नहीं जा सकी — क्या भंडारण भरा है?</string>
+    <string name="vault_biometric_label">बायोमेट्रिक से खोलें</string>
+    <string name="vault_biometric_note">यह छोटा रास्ता है, दूसरी चाबी नहीं: लौटने का रास्ता सिर्फ़ पासफ़्रेज़ है.</string>
+    <string name="vault_biometric_cancel">पासफ़्रेज़ लें</string>
+    <string name="vault_biometric_unavailable">इस डिवाइस पर मज़बूत बायोमेट्रिक सेट नहीं है.</string>
+    <string name="vault_biometric_invalidated">नया बायोमेट्रिक दर्ज हुआ, इसलिए छोटा रास्ता चला गया. पासफ़्रेज़ से खोलें और इसे फिर चालू करें.</string>
+    <string name="vault_biometric_failed">बायोमेट्रिक से खोलना नहीं हुआ — पासफ़्रेज़ लें.</string>
+    <string name="vault_screenshots_label">स्क्रीनशॉट और झलक रोकें</string>
 </resources>

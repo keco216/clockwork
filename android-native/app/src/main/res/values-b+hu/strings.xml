@@ -77,9 +77,7 @@
         <item quantity="one">%1$s perc</item>
         <item quantity="other">%1$s perc</item>
     </plurals>
-    <string name="vault_lockOnHide">és a lap elhagyásakor</string>
     <string name="vault_error_nothingToStore">Nincs mit tárolni — a szövegmező üres.</string>
-    <string name="vault_error_storageBlocked">A böngésző nem engedi a tárolást (privát mód?).</string>
     <string name="vault_error_noVault">Nincs tárolt széf.</string>
     <string name="vault_error_noPassphrase">Jelmondat nélkül nincs kulcs.</string>
     <string name="vault_error_sealFailed">A tárolás nem sikerült.</string>
@@ -94,7 +92,6 @@
         <item quantity="one">%1$s perc bevitel nélkül eltelt, ezért bezárt.</item>
         <item quantity="other">%1$s perc bevitel nélkül eltelt, ezért bezárt.</item>
     </plurals>
-    <string name="vault_locked_hidden">A lap elhagyásakor bezárt.</string>
     <string name="scan_noQr">A képen nem volt felismerhető QR-kód.</string>
     <string name="scan_unreadable">A képet nem sikerült beolvasni — tényleg kép ez?</string>
     <string name="scan_done">QR-kód beolvasva és beillesztve.</string>
@@ -146,4 +143,14 @@
     <string name="colophon_note">Nincs hálózat · nincs tárolás · HMAC a javax.crypto-n keresztül</string>
     <string name="scan_camera_unavailable">Ez az eszköz nem ad kamerát — a „QR képből” mindig működik.</string>
     <string name="scan_camera_denied">A kamera elutasítva. Engedélyezze a rendszer alkalmazásbeállításaiban — vagy használja a „QR képből” gombot.</string>
+    <string name="vault_lockOnHide">és az alkalmazás elhagyásakor</string>
+    <string name="vault_locked_hidden">Az alkalmazás elhagyásakor bezárt.</string>
+    <string name="vault_error_storageBlocked">A széfet nem sikerült kiírni — megtelt a tárhely?</string>
+    <string name="vault_biometric_label">Feloldás biometriával</string>
+    <string name="vault_biometric_note">Rövidítés, nem második kulcs: a jelmondat marad az egyetlen visszaút.</string>
+    <string name="vault_biometric_cancel">Jelmondat használata</string>
+    <string name="vault_biometric_unavailable">Ezen az eszközön nincs beállítva erős biometria.</string>
+    <string name="vault_biometric_invalidated">Új biometria lett regisztrálva, így a rövidítés eltűnt. Oldja fel a jelmondattal, és kapcsolja be újra.</string>
+    <string name="vault_biometric_failed">A biometrikus feloldás nem sikerült — használja a jelmondatot.</string>
+    <string name="vault_screenshots_label">Képernyőképek és előnézetek tiltása</string>
 </resources>

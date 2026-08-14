@@ -187,4 +187,16 @@ export default {
   'native.scan.camera.unavailable': 'อุปกรณ์นี้ไม่เปิดให้ใช้กล้อง — “QR จากภาพ” ใช้ได้เสมอ',
   'native.scan.camera.denied':
     'กล้องถูกปฏิเสธ ให้สิทธิ์ในการตั้งค่าแอปของระบบ — หรือใช้ “QR จากภาพ”',
+  'native.vault.lockOnHide': 'และเมื่อออกจากแอป',
+  'native.vault.locked.hidden': 'ล็อกเมื่อออกจากแอป',
+  'native.vault.error.storageBlocked': 'เขียนตู้นิรภัยไม่ได้ — พื้นที่เก็บข้อมูลเต็มหรือเปล่า?',
+  'native.vault.biometric.label': 'ปลดล็อกด้วยไบโอเมตริก',
+  'native.vault.biometric.note':
+    'เป็นทางลัด ไม่ใช่กุญแจดอกที่สอง วลีรหัสผ่านยังเป็นทางกลับทางเดียว',
+  'native.vault.biometric.cancel': 'ใช้วลีรหัสผ่าน',
+  'native.vault.biometric.unavailable': 'อุปกรณ์นี้ไม่ได้ตั้งไบโอเมตริกแบบเข้ม',
+  'native.vault.biometric.invalidated':
+    'มีการลงทะเบียนไบโอเมตริกใหม่ ทางลัดจึงหายไป ปลดล็อกด้วยวลีรหัสผ่านแล้วเปิดใหม่อีกครั้ง',
+  'native.vault.biometric.failed': 'ปลดล็อกด้วยไบโอเมตริกไม่สำเร็จ — ใช้วลีรหัสผ่าน',
+  'native.vault.screenshots.label': 'บล็อกภาพหน้าจอและตัวอย่าง',
 } satisfies Strings;

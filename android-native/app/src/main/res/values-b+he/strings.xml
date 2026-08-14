@@ -85,9 +85,7 @@
         <item quantity="many">%1$s דקות</item>
         <item quantity="other">%1$s דקות</item>
     </plurals>
-    <string name="vault_lockOnHide">וגם ביציאה מהלשונית</string>
     <string name="vault_error_nothingToStore">אין מה לשמור — שדה הטקסט ריק.</string>
-    <string name="vault_error_storageBlocked">הדפדפן אינו מתיר שמירה (גלישה פרטית?).</string>
     <string name="vault_error_noVault">לא שמורה שום כספת.</string>
     <string name="vault_error_noPassphrase">בלי משפט־סיסמה אין מפתח.</string>
     <string name="vault_error_sealFailed">השמירה נכשלה.</string>
@@ -104,7 +102,6 @@
         <item quantity="many">ננעלה לאחר %1$s דקות בלי קלט.</item>
         <item quantity="other">ננעלה לאחר %1$s דקות בלי קלט.</item>
     </plurals>
-    <string name="vault_locked_hidden">ננעלה ביציאה מהלשונית.</string>
     <string name="scan_noQr">בתמונה לא זוהה שום קוד QR.</string>
     <string name="scan_unreadable">לא הצלחנו לקרוא את התמונה — זו באמת תמונה?</string>
     <string name="scan_done">קוד ה‑QR נקרא והוכנס.</string>
@@ -158,4 +155,14 @@
     <string name="colophon_note">בלי רשת · בלי אחסון · HMAC דרך javax.crypto</string>
     <string name="scan_camera_unavailable">המכשיר הזה אינו מוסר מצלמה — „QR מתמונה” עובד תמיד.</string>
     <string name="scan_camera_denied">המצלמה נדחתה. אפשרו את ההרשאה בהגדרות האפליקציה של המערכת — או השתמשו ב„QR מתמונה”.</string>
+    <string name="vault_lockOnHide">וגם ביציאה מהאפליקציה</string>
+    <string name="vault_locked_hidden">ננעלה ביציאה מהאפליקציה.</string>
+    <string name="vault_error_storageBlocked">לא ניתן היה לכתוב את הכספת — האם האחסון מלא?</string>
+    <string name="vault_biometric_label">פתיחה בזיהוי ביומטרי</string>
+    <string name="vault_biometric_note">קיצור דרך, לא מפתח שני: משפט־הסיסמה נשאר הדרך היחידה חזרה.</string>
+    <string name="vault_biometric_cancel">להשתמש במשפט־סיסמה</string>
+    <string name="vault_biometric_unavailable">במכשיר הזה לא הוגדר זיהוי ביומטרי חזק.</string>
+    <string name="vault_biometric_invalidated">נרשם זיהוי ביומטרי חדש, ולכן קיצור הדרך נעלם. פתחו עם משפט־הסיסמה והפעילו אותו מחדש.</string>
+    <string name="vault_biometric_failed">הפתיחה בזיהוי ביומטרי לא הצליחה — השתמשו במשפט־הסיסמה.</string>
+    <string name="vault_screenshots_label">חסימת צילומי מסך ותצוגות מקדימות</string>
 </resources>

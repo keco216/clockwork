@@ -73,9 +73,7 @@
     <plurals name="vault_timeout_minutes">
         <item quantity="other">%1$s 分鐘</item>
     </plurals>
-    <string name="vault_lockOnHide">離開分頁時也上鎖</string>
     <string name="vault_error_nothingToStore">沒有可儲存的內容 —— 文字方塊是空的。</string>
-    <string name="vault_error_storageBlocked">瀏覽器不允許儲存（無痕模式？）。</string>
     <string name="vault_error_noVault">沒有儲存過任何保險箱。</string>
     <string name="vault_error_noPassphrase">沒有密碼短語就沒有金鑰。</string>
     <string name="vault_error_sealFailed">儲存失敗。</string>
@@ -89,7 +87,6 @@
     <plurals name="vault_locked_idle">
         <item quantity="other">%1$s 分鐘無輸入，已上鎖。</item>
     </plurals>
-    <string name="vault_locked_hidden">離開分頁時已上鎖。</string>
     <string name="scan_noQr">圖片裡認不出 QR 碼。</string>
     <string name="scan_unreadable">圖片讀不出來 —— 這真的是一張圖片嗎？</string>
     <string name="scan_done">QR 碼已讀取並填入。</string>
@@ -140,4 +137,14 @@
     <string name="colophon_note">無網路 · 無儲存 · HMAC 經由 javax.crypto</string>
     <string name="scan_camera_unavailable">這個裝置不提供相機 ——「從圖片讀 QR 碼」始終可用。</string>
     <string name="scan_camera_denied">相機遭到拒絕。請在系統的應用程式設定裡授予權限，或改用「從圖片讀 QR 碼」。</string>
+    <string name="vault_lockOnHide">離開應用程式時也上鎖</string>
+    <string name="vault_locked_hidden">離開應用程式時已上鎖。</string>
+    <string name="vault_error_storageBlocked">保險箱寫不進去 — 儲存空間滿了嗎？</string>
+    <string name="vault_biometric_label">用生物辨識解鎖</string>
+    <string name="vault_biometric_note">這是捷徑，不是第二把鑰匙：回來的路只有密碼短語。</string>
+    <string name="vault_biometric_cancel">改用密碼短語</string>
+    <string name="vault_biometric_unavailable">這台裝置沒有設定強生物辨識。</string>
+    <string name="vault_biometric_invalidated">註冊了新的生物辨識，捷徑沒了。請用密碼短語解鎖，再重新打開它。</string>
+    <string name="vault_biometric_failed">生物辨識解鎖沒成功 — 請用密碼短語。</string>
+    <string name="vault_screenshots_label">阻擋螢幕擷取和預覽</string>
 </resources>
