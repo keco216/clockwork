@@ -12,6 +12,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -45,6 +48,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -324,12 +329,16 @@ fun ClockworkApp() {
        ihrem eigenen Platz. Seit die Leiste SCHWEBT, gibt es diesen Platz
        nicht mehr; sie liegt als Overlay ueber dem Inhalt, und der laeuft
        unter ihr durch. Deshalb eine Box mit drei Lagen: Buehne, Kopf,
-       Leiste. */
+       Leiste.
+
+       ── Und seit N14 eine vierte, ganz oben (Systemleisten-Schutz) ────────
+       Die aeussere Box traegt KEIN Polster mehr; das sitzt an der inneren.
+       Dazwischen passt damit ein Streifen, der die Statusleiste abdeckt —
+       siehe die lange Begruendung weiter unten am `statusScrim`. */
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.ground)
-            .systemBarsPadding()
             /* Die Zeitschaltung des Tresors haengt an der Benutzung. Im Web
                sind das `pointerdown`, `keydown` und `focusin` am DOKUMENT —
                hier die INITIAL-Phase der Zeigerereignisse an der Wurzel, also
@@ -345,6 +354,7 @@ fun ClockworkApp() {
                 }
             },
     ) {
+      Box(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
         /* Die Buehne — und NUR sie — weicht der Tastatur. Kopf und Leiste
            bleiben aussen vor: Der Kopf steht oben und geht die Tastatur
            nichts an, und die Leiste soll hinter ihr verschwinden statt auf
@@ -397,6 +407,41 @@ fun ClockworkApp() {
             }
         }
 
+        /* ── Die Abblendung unter der Leiste (N14) ─────────────────────────
+           Sie liegt UEBER der Buehne und UNTER der Leiste — deshalb steht sie
+           hier zwischen beiden im Baum.
+
+           ── Warum sie da ist, obwohl N13 sie verworfen hatte ─────────────
+           N13 hat sie an der Kontrastmessung abgelehnt: Ein Schleier liegt
+           ueber Text UND Grund, und schon ein Viertel Deckung drueckt
+           `--ink-3` auf 3,34:1. Das Argument stimmt weiter — es beantwortet
+           nur die falsche Frage.
+
+           Kevins Befund am Geraet: Transluzenz OHNE Weichzeichner wirkt
+           nicht milchig, sondern kaputt. Man liest halbe Buchstaben durch
+           eine Flaeche, auf der Beschriftungen stehen. Und einen echten
+           Weichzeichner gibt es hier nicht (siehe
+           docs/geprueft-und-verworfen.md).
+
+           Also blendet der Inhalt ab, BEVOR er die Leiste erreicht. Damit
+           gilt die Kontrastfrage nicht mehr dem Text IN der Abblendung — der
+           ist dort per Definition am Auslaufen, wie ein Wort am unteren
+           Bildrand —, sondern der LESBAREN Zone darueber. Wo die endet, ist
+           ausgerechnet und steht in der Abnahme-Doku; `native-nav-contrast.mjs
+           --abblendung` rechnet es nach.
+
+           ── Die Geometrie ────────────────────────────────────────────────
+           Der Anlauf ist `--gap-group` (24 dp) und endet DECKEND an der
+           Oberkante der Leiste; darunter bleibt es Grund. Ein kuerzerer
+           Anlauf sieht aus wie eine Kante, ein laengerer frisst Ablesbares. */
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .height(with(density) { navHeight.toDp() } + FADE_RUN)
+                .background(fadeBrush(colors.ground, navHeight, density.density)),
+        )
+
         // Der Kopf liegt UEBER der Buehne und ist deckend — genau wie
         // `position: sticky` im Web, wo der Inhalt unter ihm durchlaeuft.
         // Deshalb steht er hier als vorletztes Kind der Box; nach ihm kommt
@@ -421,7 +466,68 @@ fun ClockworkApp() {
                 .align(Alignment.BottomCenter)
                 .onSizeChanged { navHeight = it.height },
         )
+      }
+
+        /* ── Der Systemleisten-Schutz (N14) ────────────────────────────────
+           Ein deckender Streifen in `--ground`, genau so hoch wie der Einzug
+           der Statusleiste, und als LETZTES Kind — er liegt damit ueber
+           allem.
+
+           ── Warum das Polster allein nicht reichte ───────────────────────
+           Der Einzug sass schon vorher richtig: Die Buehne beginnt unter der
+           Statusleiste, gescrollter Inhalt kann gar nicht dorthin. Der Kopf
+           aber wird beim Verstauen (M1) mit `offset` nach oben GESCHOBEN, und
+           ein Versatz clippt nichts — er zeichnet einfach weiter, auch ueber
+           der Polsterkante. Am S24 nachgemessen: Die Zustandszeile
+           („Offline · nichts gespeichert") stand neben der Systemuhr.
+
+           Das ist genau der Fall, fuer den das Edge-to-Edge-Muster der
+           Plattform die „system bar protection" vorsieht: nicht die Bewegung
+           beschneiden, sondern die Systemzone abdecken. Der Kopf faehrt damit
+           HINTER den Streifen und ist weg, ohne dass seine Fahrt eine
+           Sonderregel braucht.
+
+           `--ground` und nicht `--surface`: Der Streifen ist die Fortsetzung
+           des Seitengrunds nach oben, kein eigenes Bauteil. Im Web traegt
+           dieselbe Zone die `theme-color`. */
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .windowInsetsTopHeight(WindowInsets.statusBars)
+                .background(colors.ground),
+        )
     }
+}
+
+/**
+ * Der Anlauf der Abblendung: die Strecke, auf der der Inhalt verschwindet.
+ *
+ * `--gap-group`, also dasselbe Mass, das zwei Karten trennt. Der Verlauf soll
+ * wie eine Fuge wirken und nicht wie ein Effekt.
+ */
+private val FADE_RUN: Dp = Dimens.gapGroup
+
+/**
+ * Der Verlauf: durchsichtig am Anfang, ab der Leistenoberkante deckend.
+ *
+ * Die zwei Haltepunkte stehen in ANTEILEN der Gesamthoehe, weil ein
+ * Brush in Pixeln rechnet und die Leistenhoehe gemessen wird — eine feste
+ * Pixelzahl waere bei Schriftskala 1,5 falsch.
+ */
+private fun fadeBrush(ground: Color, navHeightPx: Int, densityScale: Float): Brush {
+    val run = FADE_RUN.value * densityScale
+    val total = navHeightPx + run
+    // Bei ungemessener Leiste (erstes Bild) waere `total` gleich `run`; dann
+    // ist der Anteil 1 und der Verlauf laeuft ueber die ganze Hoehe. Das ist
+    // richtig und nicht bloss unschaedlich — es gibt in dem Bild noch keine
+    // Leiste, unter der etwas verschwinden muesste.
+    val stop = if (total <= 0f) 1f else (run / total).coerceIn(0f, 1f)
+    return Brush.verticalGradient(
+        0f to ground.copy(alpha = 0f),
+        stop to ground,
+        1f to ground,
+    )
 }
 
 /**
@@ -556,6 +662,7 @@ private fun VacantStage(
                 modifier = Modifier.fillMaxWidth(),
                 variant = KeyVariant.Default,
                 large = true,
+                glyph = { tint -> KeyGlyph(tint) },
             )
         }
 
@@ -749,7 +856,7 @@ private fun WorkingStage(
         // ── Die Eingabe als Fold-Zeile (V10) ───────────────────────────────
         // „Eingabe · 3 Konten" mit demselben Zaehler wie im Web: eine Zahl,
         // eine Quelle. Tippen oeffnet den Editor in der Schublade darunter.
-        Panel(modifier = Modifier.fillMaxWidth()) {
+        Panel(modifier = Modifier.fillMaxWidth(), padding = FoldPanelPadding) {
             Column {
                 FoldRow(
                     label = "${text("zone.input")} · ${countLabel(entries)}",
@@ -761,7 +868,11 @@ private fun WorkingStage(
                     // mit zu — stuende sie aussen, bliebe im zugeklappten
                     // Zustand eine Luecke ohne Inhalt stehen.
                     Column(
-                        modifier = Modifier.padding(top = Dimens.gapPair),
+                        // Unten dasselbe Mass wie oben: Seit die Karte nur
+                        // noch --sp-2 Polster traegt (N14), muss die
+                        // Schublade ihre eigene Fuge zur Unterkante
+                        // mitbringen.
+                        modifier = Modifier.padding(top = Dimens.gapPair, bottom = Dimens.gapPair),
                         verticalArrangement = Arrangement.spacedBy(Dimens.gapPair),
                     ) {
                         SecretField(
@@ -839,6 +950,7 @@ private fun countLabel(entries: List<ParsedEntry>): String {
 @Composable
 private fun FilterField(value: String, onValueChange: (String) -> Unit) {
     val colors = LocalColors.current
+    val interaction = remember { MutableInteractionSource() }
     // Ausserhalb des Modifiers geholt: `semantics {}` ist kein Composable und
     // darf `text()` nicht aufrufen.
     val label = text("filter.label")
@@ -849,11 +961,12 @@ private fun FilterField(value: String, onValueChange: (String) -> Unit) {
         singleLine = true,
         textStyle = TextStyles.body.copy(color = colors.ink),
         cursorBrush = androidx.compose.ui.graphics.SolidColor(colors.signal),
+        interactionSource = interaction,
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(min = Dimens.controlH)
             .clip(RoundedCornerShape(Dimens.radiusField))
-            .background(colors.surfaceFill)
+            .background(fieldFill(interaction))
             .padding(horizontal = Dimens.sp3, vertical = Dimens.sp2)
             .semantics { contentDescription = label },
         decorationBox = { inner ->
@@ -882,17 +995,19 @@ private fun SecretField(
     onFocusChange: (Boolean) -> Unit,
 ) {
     val colors = LocalColors.current
+    val interaction = remember { MutableInteractionSource() }
 
     BasicTextField(
         value = field,
         onValueChange = onFieldChange,
         textStyle = TextStyles.body.copy(color = colors.ink),
         cursorBrush = androidx.compose.ui.graphics.SolidColor(colors.signal),
+        interactionSource = interaction,
         modifier = Modifier
             .fillMaxWidth()
             .onFocusChanged { onFocusChange(it.isFocused) }
             .clip(RoundedCornerShape(Dimens.radiusField))
-            .background(colors.surfaceFill)
+            .background(fieldFill(interaction))
             .padding(Dimens.sp3),
         decorationBox = { inner ->
             if (field.text.isEmpty()) {

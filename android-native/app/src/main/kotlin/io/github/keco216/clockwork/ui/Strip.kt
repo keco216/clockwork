@@ -11,6 +11,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -24,6 +39,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import io.github.keco216.clockwork.core.groupDigits
 import io.github.keco216.clockwork.ui.theme.Dimens
 import io.github.keco216.clockwork.ui.theme.LocalColors
@@ -44,6 +60,14 @@ import kotlinx.coroutines.launch
  * eben NICHT, und das ist Absicht.
  */
 private const val COMPACT_BELOW_DP = 420
+
+/**
+ * Wie lange „Kopiert" stehen bleibt.
+ *
+ * `COPY_FEEDBACK_MS` aus `strip.ts`, unveraendert uebernommen — die Quittung
+ * soll auf beiden Fassungen gleich lang stehen.
+ */
+private const val COPY_FEEDBACK_MS = 1600L
 
 /**
  * Wie viel der KARTENbreite die Ziffer einnimmt — das `cqi` der Web-Fassung.
@@ -99,6 +123,27 @@ fun Strip(
     // das ist keine Unsauberkeit, sondern die Vorlage.
     val compact = LocalConfiguration.current.screenWidthDp < COMPACT_BELOW_DP
 
+    /* ── Die Kopier-Quittung (N14) ─────────────────────────────────────────
+       1,6 s lang steht „Kopiert" in der Taste, und die Nabe des Zifferblatts
+       traegt so lange den Akzent. Beides zusammen ist die Quittung der
+       Web-Fassung; nativ fehlte sie bis N14.
+
+       Ein ZAEHLER statt eines blossen Schalters: Wer zweimal hintereinander
+       kopiert, soll die Meldung zweimal EINTRETEN sehen. Ein Schalter, der
+       schon auf true steht, loeste keine zweite Fahrt aus. */
+    var copyStamp by remember { mutableIntStateOf(0) }
+    var copied by remember { mutableStateOf(false) }
+    LaunchedEffect(copyStamp) {
+        if (copyStamp == 0) return@LaunchedEffect
+        copied = true
+        delay(COPY_FEEDBACK_MS)
+        copied = false
+    }
+    val copyNow: () -> Unit = {
+        onCopy(code)
+        copyStamp++
+    }
+
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
@@ -137,7 +182,9 @@ fun Strip(
                 progress = progress,
                 period = period,
                 expiring = expiring,
-                onCopy = onCopy,
+                copied = copied,
+                copyStamp = copyStamp,
+                onCopyTap = copyNow,
             )
         } else {
             WideStrip(
@@ -150,7 +197,9 @@ fun Strip(
                 progress = progress,
                 period = period,
                 expiring = expiring,
-                onCopy = onCopy,
+                copied = copied,
+                copyStamp = copyStamp,
+                onCopyTap = copyNow,
             )
         }
     }
@@ -173,7 +222,9 @@ private fun CompactStrip(
     progress: Double,
     period: Int,
     expiring: Boolean,
-    onCopy: (String) -> Unit,
+    copied: Boolean,
+    copyStamp: Int,
+    onCopyTap: () -> Unit,
 ) {
     val colors = LocalColors.current
 
@@ -187,6 +238,7 @@ private fun CompactStrip(
                 progress = progress,
                 period = period,
                 expiring = expiring,
+                copied = copied,
                 modifier = Modifier.size(Dimens.controlHLg),
             )
             Column(modifier = Modifier.weight(1f)) {
@@ -213,7 +265,12 @@ private fun CompactStrip(
 
         // Der Code ueber die ganze Kartenbreite — hier kann ihm nichts mehr in
         // den Weg laufen, weil nichts mehr daneben steht.
-        FlippingCode(code = code, fontSize = codeSize, modifier = Modifier.fillMaxWidth())
+        FlippingCode(
+            code = code,
+            fontSize = codeSize,
+            modifier = Modifier.fillMaxWidth(),
+            onCopy = onCopyTap,
+        )
 
         BasicText(
             text = meta,
@@ -223,11 +280,11 @@ private fun CompactStrip(
 
         // Kopieren ist DIE Handlung dieser Karte, und unten ist die Daumenzone.
         // 44 dp ist die lg-Sprosse der Hoehenleiter — dieselbe Zahl wie im Web.
-        Key(
-            label = text("key.copy"),
-            onClick = { onCopy(code) },
+        CopyKey(
+            copied = copied,
+            stamp = copyStamp,
+            onCopy = onCopyTap,
             modifier = Modifier.fillMaxWidth(),
-            variant = KeyVariant.Default,
             large = true,
         )
     }
@@ -265,7 +322,9 @@ private fun WideStrip(
     progress: Double,
     period: Int,
     expiring: Boolean,
-    onCopy: (String) -> Unit,
+    copied: Boolean,
+    copyStamp: Int,
+    onCopyTap: () -> Unit,
 ) {
     val colors = LocalColors.current
 
@@ -278,6 +337,7 @@ private fun WideStrip(
                 progress = progress,
                 period = period,
                 expiring = expiring,
+                copied = copied,
                 modifier = Modifier.size(Dimens.controlHLg),
             )
             Row(
@@ -302,17 +362,13 @@ private fun WideStrip(
                 }
                 Chip(label = spec, accent = true)
             }
-            FlippingCode(code = code, fontSize = codeSize)
+            FlippingCode(code = code, fontSize = codeSize, onCopy = onCopyTap)
             BasicText(
                 text = meta,
                 style = TextStyles.micro.copy(color = colors.ink3),
                 maxLines = 1,
             )
-            Key(
-                label = text("key.copy"),
-                onClick = { onCopy(code) },
-                variant = KeyVariant.Default,
-            )
+            CopyKey(copied = copied, stamp = copyStamp, onCopy = onCopyTap)
         },
     ) { measurables, constraints ->
         val gaugeM = measurables[0]
@@ -370,12 +426,56 @@ private fun WideStrip(
  * nicht darunter: Bei 190 ms waere weniger als Blinzeln sichtbar.
  */
 @Composable
-private fun FlippingCode(code: String, fontSize: TextUnit, modifier: Modifier = Modifier) {
+private fun FlippingCode(
+    code: String,
+    fontSize: TextUnit,
+    modifier: Modifier = Modifier,
+    onCopy: (() -> Unit)? = null,
+) {
     val colors = LocalColors.current
     val grouped = groupDigits(code)
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+
+    /* ── Die Ziffern kopieren selbst (N14) ────────────────────────────────
+       Kevins Wunsch: „wenn ich bei den Zahlen antippe, soll auch kopiert
+       sein." Das ist eine ABWEICHUNG von der Web-Fassung, und eine bewusste:
+       Dort steht die Maus vor einer Taste; hier geht der Daumen zuerst auf
+       die groesste Flaeche der Karte, und das sind die Ziffern.
+
+       Die Taste bleibt trotzdem stehen. Sie ist die BESCHRIFTETE Handlung —
+       ein Screenreader liest „Kopieren, Schaltflaeche", nicht „988 925". Der
+       Code bekommt deshalb kein `Role.Button`, sondern eine eigene
+       Beschreibung; er ist eine Abkuerzung, keine zweite Taste.
+
+       Die Rueckmeldung ist dieselbe wie ueberall seit N14: eine Flaeche, die
+       in 150 ms kommt. Sie liegt hinter den Ziffern und traegt den Feldradius,
+       nicht die Pille — was man drueckt, ist hier ein Stueck Text und kein
+       Bedienelement. */
+    val touch by animateColorAsState(
+        targetValue = if (pressed) colors.surfaceActive else Color.Transparent,
+        animationSpec = tween(Motion.quick, easing = Motion.spring),
+        label = "Code-Beruehrung",
+    )
+    val copyAria = text("strip.copyAria", mapOf("name" to code))
 
     Row(
-        modifier = modifier,
+        modifier = modifier
+            .clip(RoundedCornerShape(Dimens.radiusField))
+            .background(touch)
+            .then(
+                if (onCopy == null) {
+                    Modifier
+                } else {
+                    Modifier
+                        .clickable(
+                            interactionSource = interaction,
+                            indication = null,
+                            onClick = onCopy,
+                        )
+                        .semantics { contentDescription = copyAria }
+                },
+            ),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -455,4 +555,71 @@ fun FaultStrip(source: String, message: String, modifier: Modifier = Modifier) {
             )
         }
     }
+}
+
+/**
+ * Die Kopiertaste samt Quittung — „Kopieren" wird 1,6 s lang „Kopiert" (N14).
+ *
+ * ── Warum das eine Paritaetsluecke war und kein Wunsch ────────────────────
+ * Die Web-Fassung tut das seit V11: `key.copyDone` steht in allen 37 Sprachen
+ * im Katalog, die Ressourcen lagen fertig im Baum, und `strip.ts` faehrt den
+ * Wortwechsel mit dem Wert-Eintritt der Referenz. Nativ fehlte er schlicht.
+ * Aufgefallen ist es Kevin am Geraet: „beim Kopieren soll was Besonderes sein."
+ *
+ * ── Die Zahlen sind die der Web-Fassung, nicht neu erfunden ───────────────
+ *   1600 ms  wie lange das Wort stehen bleibt (`COPY_FEEDBACK_MS`)
+ *   250 ms   der Eintritt: aus 8 dp Versatz und 80 % Groesse (`slot-value-in`)
+ *   150 ms   der Rueckweg — nur ein Ausblenden
+ *
+ * Der Unterschied zwischen Hin- und Rueckweg ist Absicht und steht in
+ * `strip.ts` begruendet: Der Eintritt meldet ein ERGEBNIS und darf auffallen;
+ * das Zuruecksetzen ist Aufraeumen und soll es nicht.
+ *
+ * ── Reduzierte Bewegung ───────────────────────────────────────────────────
+ * Auch hier ohne eigene Abfrage: Steht die Animator-Skala des Systems auf 0,
+ * springt der Wert. Das WORT wechselt trotzdem — die Rueckmeldung ist ein
+ * Zustand und keine Animation, genau wie die Nabe im Zifferblatt. Wer
+ * Bewegung abstellt, verliert die Fahrt, nicht die Auskunft.
+ */
+@Composable
+private fun CopyKey(
+    copied: Boolean,
+    stamp: Int,
+    onCopy: () -> Unit,
+    modifier: Modifier = Modifier,
+    large: Boolean = false,
+) {
+    val enter = remember { Animatable(1f) }
+    LaunchedEffect(copied, stamp) {
+        enter.snapTo(0f)
+        enter.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(
+                durationMillis = if (copied) Motion.calm else Motion.quick,
+                easing = Motion.spring,
+            ),
+        )
+    }
+
+    val progress = enter.value
+    val slide = with(LocalDensity.current) { (8.dp * (1f - progress)).toPx() }
+
+    Key(
+        label = if (copied) text("key.copyDone") else text("key.copy"),
+        onClick = onCopy,
+        modifier = modifier,
+        variant = KeyVariant.Default,
+        large = large,
+        glyph = { tint -> CopyGlyph(tint) },
+        labelModifier = Modifier.graphicsLayer {
+            alpha = progress
+            // Versatz und Groesse NUR auf dem Hinweg: Der Rueckweg ist im Web
+            // ein reines Ausblenden.
+            if (copied) {
+                translationY = slide
+                scaleX = 0.8f + 0.2f * progress
+                scaleY = 0.8f + 0.2f * progress
+            }
+        },
+    )
 }

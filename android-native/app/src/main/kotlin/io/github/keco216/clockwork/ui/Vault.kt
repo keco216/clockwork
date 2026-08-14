@@ -2,6 +2,7 @@ package io.github.keco216.clockwork.ui
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -569,7 +570,7 @@ fun VaultZone(
         else -> text("vault.state.open")
     }
 
-    Panel(modifier = modifier) {
+    Panel(modifier = modifier, padding = FoldPanelPadding) {
         Column {
             FoldRow(
                 label = stateLabel,
@@ -580,7 +581,9 @@ fun VaultZone(
 
             Drawer(open = expanded) {
                 Column(
-                    modifier = Modifier.padding(top = Dimens.gapPair),
+                    // Wie in der Eingabe-Schublade: eigene Fuge zur
+                    // Unterkante, weil die Karte nur noch --sp-2 traegt.
+                    modifier = Modifier.padding(top = Dimens.gapPair, bottom = Dimens.gapPair),
                     verticalArrangement = Arrangement.spacedBy(Dimens.gapStack),
                 ) {
                     // Die Erklaerung gilt nur, solange der Tresor AUS ist —
@@ -678,54 +681,69 @@ private fun PassphraseForm(
     onSubmit: () -> Unit,
 ) {
     val colors = LocalColors.current
+    val interaction = remember { MutableInteractionSource() }
     val label = if (state == VaultState.Off) {
         text("vault.pass.new")
     } else {
         text("vault.pass.existing")
     }
 
+    /* ── Gestapelt, nicht nebeneinander (N14) ─────────────────────────────
+       Bis N13 standen Feld und Taste in EINER Zeile. Auf dem S24 war das
+       Ergebnis ein gestauchtes Feld neben einer breiten Taste — Kevins
+       Befund, und er gilt fuer beide Zustaende („Neue Passphrase" wie
+       „Aufsperren").
+
+       Die Web-Fassung macht es mobil anders, und danach richtet sich diese
+       App: Beschriftung, Feld in VOLLER Breite, Haupthandlung in voller
+       Breite darunter. Der Grund ist nicht Geschmack, sondern die
+       Zeichenzahl — eine Passphrase ist laenger als ein Tastenwort, und ein
+       Feld, das die Haelfte davon zeigt, laesst einen Tippfehler nicht
+       finden.
+
+       Die Taste traegt `--control-h-lg` (44 dp) statt der normalen 40: Sie
+       ist die EINE Haupthandlung dieses Panels, und die Web-Fassung gibt der
+       Haupthandlung eine eigene Sprosse der Hoehenleiter. */
     Column(verticalArrangement = Arrangement.spacedBy(Dimens.gapPair)) {
         BasicText(text = label, style = TextStyles.micro.copy(color = colors.ink3))
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Dimens.gapPair),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            BasicTextField(
-                value = passphrase,
-                onValueChange = onPassphraseChange,
-                singleLine = true,
-                // `PasswordVisualTransformation` und Keyboard-Typ Passwort:
-                // Damit bietet die Tastatur keine Vorschlaege an und traegt
-                // die Passphrase nicht in ihr eigenes Woerterbuch ein.
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Go,
-                ),
-                keyboardActions = KeyboardActions(onGo = { onSubmit() }),
-                textStyle = TextStyles.body.copy(color = colors.ink),
-                cursorBrush = SolidColor(colors.signal),
-                modifier = Modifier
-                    .weight(1f)
-                    .heightIn(min = Dimens.controlH)
-                    .clip(RoundedCornerShape(Dimens.radiusField))
-                    .background(colors.surfaceFill)
-                    .padding(horizontal = Dimens.sp3, vertical = Dimens.sp2)
-                    .semantics { contentDescription = label },
-            )
+        BasicTextField(
+            value = passphrase,
+            onValueChange = onPassphraseChange,
+            singleLine = true,
+            // `PasswordVisualTransformation` und Keyboard-Typ Passwort:
+            // Damit bietet die Tastatur keine Vorschlaege an und traegt
+            // die Passphrase nicht in ihr eigenes Woerterbuch ein.
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Go,
+            ),
+            keyboardActions = KeyboardActions(onGo = { onSubmit() }),
+            textStyle = TextStyles.body.copy(color = colors.ink),
+            cursorBrush = SolidColor(colors.signal),
+            interactionSource = interaction,
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = Dimens.controlH)
+                .clip(RoundedCornerShape(Dimens.radiusField))
+                .background(fieldFill(interaction))
+                .padding(horizontal = Dimens.sp3, vertical = Dimens.sp2)
+                .semantics { contentDescription = label },
+        )
 
-            Key(
-                label = if (state == VaultState.Off) {
-                    text("vault.action.seal")
-                } else {
-                    text("vault.action.unseal")
-                },
-                onClick = onSubmit,
-                variant = KeyVariant.Primary,
-                enabled = !busy,
-            )
-        }
+        Key(
+            label = if (state == VaultState.Off) {
+                text("vault.action.seal")
+            } else {
+                text("vault.action.unseal")
+            },
+            onClick = onSubmit,
+            variant = KeyVariant.Primary,
+            enabled = !busy,
+            large = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 

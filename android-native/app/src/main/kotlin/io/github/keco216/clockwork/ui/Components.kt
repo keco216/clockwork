@@ -1,5 +1,6 @@
 package io.github.keco216.clockwork.ui
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -47,6 +48,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 import androidx.compose.foundation.clickable
@@ -129,18 +131,62 @@ fun Key(
     variant: KeyVariant = KeyVariant.Default,
     large: Boolean = false,
     enabled: Boolean = true,
+    /**
+     * Das Zeichen vor der Beschriftung (N14, Kevins Wunsch aus der
+     * Spiegelung).
+     *
+     * Optional, und ausdruecklich nicht an jeder Taste: Ein Zeichen soll die
+     * Handlung schneller lesbar machen, nicht die Zeile fuellen. Es kommt
+     * dorthin, wo es eine bekannte Form gibt — Kopieren, Bild, Kamera,
+     * Schluessel. „Zusperren" oder „Neu speichern" tragen keines, weil jedes
+     * Schloss-Zeichen dort raten liesse, welcher der beiden Zustaende gemeint
+     * ist.
+     *
+     * Es bekommt die Vordergrundfarbe der Variante uebergeben und zeichnet
+     * damit — eine Taste hat EINE Tinte.
+     */
+    glyph: (@Composable (Color) -> Unit)? = null,
+    /**
+     * Ein Modifier NUR fuer die Beschriftung — fuer die Kopier-Quittung.
+     *
+     * Die Kopiertaste laesst ihr Wort eintreten, wenn es sich aendert
+     * („Kopieren" wird „Kopiert"); das ZEICHEN daneben bleibt dabei stehen.
+     * Deshalb ein eigener Griff an der Schrift statt einer Bewegung an der
+     * ganzen Taste — dieselbe Trennung wie im Web, wo `slot-value-in` am
+     * `<span>` haengt und nicht am `<button>`.
+     */
+    labelModifier: Modifier = Modifier,
 ) {
     val colors = LocalColors.current
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
     val focused by interaction.collectIsFocusedAsState()
 
-    val background = when (variant) {
+    val target = when (variant) {
         KeyVariant.Primary -> if (pressed) colors.signalHover else colors.signal
         KeyVariant.Default -> if (pressed) colors.fillActive else colors.surfaceFill
         KeyVariant.Flat -> colors.fillSoft
         KeyVariant.Danger -> if (pressed) colors.faultSoftHover else colors.faultSoft
     }
+
+    /* ── Die Flaeche FAEHRT, sie springt nicht (N14) ───────────────────────
+       Bis N13 wechselte der Ton beim Druck hart. Im Web tut er das nicht: Die
+       Tasten tragen dort einen Uebergang auf `background-color`, und ohne ihn
+       wirkt die Umkehr wie ein Bildfehler statt wie eine Rueckmeldung.
+
+       `--dur-quick` (150 ms) und nicht `--dur-calm`: Eine Rueckmeldung auf
+       eine Beruehrung muss schneller sein als eine Bewegung, die etwas
+       erzaehlt. Das Nachgeben (`scale`) bleibt auf 250 ms — es ist Physik,
+       kein Signal, und die zwei duerfen verschieden schnell sein.
+
+       Wie beim Nachgeben haengt auch das an der Animator-Skala des Systems:
+       Steht sie auf 0, springt der Wert — das native Gegenstueck zu
+       `prefers-reduced-motion`. */
+    val background by animateColorAsState(
+        targetValue = target,
+        animationSpec = tween(durationMillis = Motion.quick, easing = Motion.spring),
+        label = "Tastenflaeche",
+    )
     val foreground = when (variant) {
         KeyVariant.Primary -> colors.signalInk
         KeyVariant.Default, KeyVariant.Flat -> colors.ink
@@ -185,13 +231,64 @@ fun Key(
             .padding(horizontal = Dimens.sp4),
         contentAlignment = Alignment.Center,
     ) {
-        BasicText(
-            text = label,
-            style = TextStyles.small.copy(color = foreground),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(Dimens.gapPair),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (glyph != null) {
+                /* Das Zeichen steht bei 20 dp und nicht bei den 24 des
+                   Satzes: Neben einer 14-sp-Zeile in einer 40-dp-Taste waere
+                   der volle Kasten so hoch wie die halbe Taste. Das Raster
+                   bleibt dasselbe — `Glyph` rechnet in Anteilen der
+                   Kastenseite, also skaliert der Strich mit. */
+                Box(modifier = Modifier.size(KEY_GLYPH)) { glyph(foreground) }
+            }
+            BasicText(
+                text = label,
+                style = TextStyles.small.copy(color = foreground),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = labelModifier,
+            )
+        }
     }
+}
+
+/** Die Zeichengroesse in einer Taste. */
+private val KEY_GLYPH: Dp = 20.dp
+
+/**
+ * Die Fuellung eines Feldes, die auf BERUEHRUNG reagiert (N14).
+ *
+ * ── Warum es das gibt ─────────────────────────────────────────────────────
+ * Kevins Ansage nach der Sichtung: „beim Beruehren soll auch animiert sein
+ * wie ein Hover-Effekt — das soll beim Input-Text und bei allen Sachen, auch
+ * bei den Buttons."
+ *
+ * Die Tasten hatten es schon; die FELDER nicht. Sie standen in jeder Lage auf
+ * `--surface-fill`, ob man sie gerade beschrieb oder nicht. Im Web tun sie das
+ * nicht: Dort traegt ein Feld unter `:focus-within` die naechste Sprosse der
+ * Flaechenleiter — und genau diese Sprosse steht hier.
+ *
+ * ── Warum FOKUS und nicht Druck ───────────────────────────────────────────
+ * Ein Feld wird nicht gedrueckt, sondern beschrieben. Der Druck dauert einen
+ * Wimpernschlag, das Schreiben Minuten — und die ganze Zeit soll man sehen,
+ * wohin die Tastatur tippt. Deshalb haengt die Fuellung am Fokus und nicht an
+ * `pressed`.
+ *
+ * `--dur-quick` wie bei den Tasten: Eine Rueckmeldung auf eine Beruehrung ist
+ * schneller als eine Bewegung, die etwas erzaehlt.
+ */
+@Composable
+fun fieldFill(interaction: MutableInteractionSource): Color {
+    val colors = LocalColors.current
+    val focused by interaction.collectIsFocusedAsState()
+    val fill by animateColorAsState(
+        targetValue = if (focused) colors.fillActive else colors.surfaceFill,
+        animationSpec = tween(durationMillis = Motion.quick, easing = Motion.spring),
+        label = "Feldfuellung",
+    )
+    return fill
 }
 
 /* ── Chip ───────────────────────────────────────────────────────────────── */
@@ -236,6 +333,23 @@ fun Chip(label: String, modifier: Modifier = Modifier, accent: Boolean = false) 
  * HeroUI woertlich als `--surface-shadow: transparent` im Paket, und in
  * tokens.css als `--elev-1: none`.
  */
+/**
+ * Das Polster einer Karte, die nur eine Fold-Zeile traegt (N14).
+ *
+ * Kevins Befund aus der Spiegelung: „die Boxen muessen schmaler sein beim
+ * Input und beim Off." Er hat recht, und die Zahl sagt warum — mit dem
+ * normalen Gruppenpolster ergaben 24 + 44 + 24 eine **92 dp hohe Karte fuer
+ * eine einzige Textzeile.** Das liest sich nicht als Zeile, sondern als
+ * leerer Kasten mit Beschriftung.
+ *
+ * Die 44 dp der Zeile sind dabei nicht verhandelbar (Trefferflaeche), das
+ * Polster schon: `--sp-2` oben und unten ergibt **60 dp**. Seitlich bleibt es
+ * beim Gruppenmass, damit die Zeile mit dem Inhalt der Nachbarkarten
+ * fluchtet — ein Kasten, der schmaler wird, ruecke sonst als einziger ein.
+ */
+val FoldPanelPadding: PaddingValues =
+    PaddingValues(horizontal = Dimens.gapGroup, vertical = Dimens.sp2)
+
 @Composable
 fun Panel(
     modifier: Modifier = Modifier,
@@ -458,11 +572,23 @@ fun FoldRow(
 ) {
     val colors = LocalColors.current
     val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+
+    /* Dieselbe Beruehrungs-Rueckmeldung wie an Tasten und Navigationsposten
+       (N14): Die Zeile ist ein Knopf ueber die volle Kartenbreite, und ohne
+       Flaeche sieht man nur, DASS sich etwas aufklappt — nicht, dass man
+       getroffen hat. */
+    val touch by animateColorAsState(
+        targetValue = if (pressed) colors.surfaceActive else Color.Transparent,
+        animationSpec = tween(durationMillis = Motion.quick, easing = Motion.spring),
+        label = "Fold-Beruehrung",
+    )
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(Dimens.radiusField))
+            .background(touch)
             .clickable(
                 interactionSource = interaction,
                 indication = null,

@@ -182,6 +182,7 @@ fun ScanControls(
                     )
                 },
                 modifier = Modifier.weight(1f),
+                glyph = { tint -> ImageGlyph(tint) },
             )
             Key(
                 label = text("key.camera"),
@@ -204,6 +205,7 @@ fun ScanControls(
                 modifier = Modifier
                     .weight(1f)
                     .focusRequester(cameraKeyFocus),
+                glyph = { tint -> CameraGlyph(tint) },
             )
         }
 

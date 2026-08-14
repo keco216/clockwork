@@ -37,11 +37,24 @@ fun Gauge(
     modifier: Modifier = Modifier,
     period: Int = 30,
     expiring: Boolean = false,
+    /**
+     * Frisch kopiert (N14) — dann traegt die NABE den Akzent.
+     *
+     * Woertlich die Regel der Web-Fassung: `.strip--copied .dialface__hub
+     * { fill: var(--signal-text) }`. Nur die Nabe, nicht der Zeiger: Der
+     * zeigt die Zeit an und darf nicht behaupten, sie sei abgelaufen.
+     *
+     * Und als ZUSTAND, nicht als Animation — wer Bewegung abstellt, soll die
+     * Quittung trotzdem sehen. Derselbe Satz steht im Web in mark.css.
+     */
+    copied: Boolean = false,
 ) {
     val colors = LocalColors.current
     // Die letzten fuenf Sekunden sind einer der wenigen Zustaende MIT
     // Bedeutung — also einer der wenigen, die den Akzent tragen duerfen.
     val handColour = if (expiring) colors.signalText else colors.ink2
+    // Nur die NABE quittiert das Kopieren — der Zeiger zeigt die Zeit an.
+    val hubColour = if (copied) colors.signalText else handColour
 
     Canvas(modifier = modifier) {
         drawDial(
@@ -49,6 +62,7 @@ fun Gauge(
             period = period,
             tickColour = colors.ink3,
             handColour = handColour,
+            hubColour = hubColour,
         )
     }
 }
@@ -58,6 +72,7 @@ private fun DrawScope.drawDial(
     period: Int,
     tickColour: Color,
     handColour: Color,
+    hubColour: Color,
 ) {
     val radius = size.minDimension / 2f
     val center = Offset(size.width / 2f, size.height / 2f)
@@ -102,7 +117,7 @@ private fun DrawScope.drawDial(
         cap = StrokeCap.Butt,
     )
 
-    drawCircle(color = handColour, radius = radius * Dial.HUB, center = center)
+    drawCircle(color = hubColour, radius = radius * Dial.HUB, center = center)
 }
 
 /** Die verbleibenden Sekunden als Text — fuer die Zeile unter dem Code. */

@@ -1072,3 +1072,242 @@ keine Tests machen") und sieht sich den Build selbst an — seit diesem Posten
 über eine Bildschirmspiegelung am Desktop. Die Bilder fehlen deshalb. Was oben
 steht, ist gemessen und gilt; es ist nur nicht alles, was der Auftrag
 aufzählt.
+
+---
+
+## N14 — Feinschliff 3: der Detail-Pass
+
+Der Auftrag nannte fünf Blöcke. Was daraus wurde, ist mehr: Kevin hat den Build
+während des Laufs live in einer **Bildschirmspiegelung** mitgesehen und Punkt
+für Punkt nachgereicht. Die Reihenfolge unten ist die des Auftrags; was aus der
+Sichtung dazukam, steht am Ende jedes Blocks.
+
+### 1. Systemleisten-Schutz
+
+**Reproduziert, und die Ursache war nicht die vermutete.** `systemBarsPadding()`
+stand längst im Code, die Bühne begann also unter der Statusleiste, und
+gescrollter Inhalt konnte gar nicht dorthin. Der Fehler saß woanders:
+
+Der Kopf wird beim Verstauen (M1) mit `Modifier.offset` nach oben GESCHOBEN —
+und ein Versatz clippt nichts. Er zeichnet weiter, auch über der Polsterkante.
+Am S24 nachgemessen: Die Zustandszeile („Offline · nichts gespeichert") stand
+neben der Systemuhr.
+
+**Behoben nach dem Edge-to-Edge-Muster der Plattform**, also nicht durch
+Beschneiden der Bewegung, sondern durch Abdecken der Systemzone: Ein deckender
+Streifen in `--ground`, genau so hoch wie der Statusleisten-Einzug
+(`windowInsetsTopHeight`), liegt als LETZTES Kind über allem. Der Kopf fährt
+dahinter und ist weg, ohne dass seine Fahrt eine Sonderregel braucht.
+
+Dafür trägt die äußere Box kein Polster mehr; das sitzt jetzt an einer inneren.
+Unten bleibt es beim Gesten-Inset, das `systemBarsPadding()` ohnehin abzieht —
+gemessen in N13: 101 px unter der Karte = 12 dp Rand plus 56 px Systemleiste.
+
+### 2. Die Abblendung ist Pflicht geworden
+
+N13 hatte sie an der Kontrastmessung verworfen. N14 dreht das um, und die
+Begründung samt der Rechnung, die weiterhin gilt, steht in
+[`../geprueft-und-verworfen.md`](../geprueft-und-verworfen.md).
+
+Gebaut ist sie als Verlauf über der Bühne und unter der Leiste: Anlauf
+`--gap-group` (24 dp), deckend ab der Leistenoberkante. Die Höhe kommt aus der
+GEMESSENEN Leistenhöhe, nicht aus einer Konstanten — sonst stimmte sie bei
+Schriftskala 1,5 nicht mehr.
+
+**Die Deckung der Leiste steigt auf 90 %** (N13: 82 %). Nicht wegen der
+Rechnung — die erlaubt 76 % —, sondern wegen des Auges: Kevins Befund lautet,
+dass Transluzenz ohne Weichzeichner nicht milchig wirkt, sondern kaputt.
+
+Die strenge Prüfung bleibt trotzdem auf der ganzen Inhaltsliste stehen und
+wird nicht auf „ist ja abgeblendet" verkürzt. Fällt die Abblendung irgendwann
+weg, soll die Leiste immer noch lesbar sein — und die Prüfung es merken.
+
+| Messpunkt bei 90 %   | hell        | dunkel      |
+| -------------------- | ----------- | ----------- |
+| Beschriftung inaktiv | **6,30:1**  | **7,56:1**  |
+| Beschriftung aktiv   | **14,73:1** | **14,52:1** |
+| Zeichen inaktiv      | 6,30:1      | 7,56:1      |
+| Zeichen aktiv        | 5,46:1      | 5,81:1      |
+
+Gegenprobe unverändert: Bei 50 % Deckung reißen vier der acht Punkte.
+
+### 3. Das Start-Zeichen, Schnitt v3 — und v4
+
+Der Auftrag verlangte „geschlossener Ring, kräftiger Zeiger, höchstens vier
+Ticks". Gebaut wurde zuerst genau das. Kevins nächste Ansage in der Spiegelung
+war weitergehend: **„die Icons würde ich von Google Design nehmen, aus der
+Library, also das Material 3."**
+
+Also die Geometrie von **Material Symbols `schedule`**: geschlossener Ring,
+ZWEI Zeiger verschiedener Länge auf 12 und 4, **keine Teilstriche**. Das ist
+der eigentliche Fix — der Grund, warum das Zeichen dreimal als Stern gelesen
+wurde, ist nicht die ANZAHL der Marken, sondern ihre Natur: Ein Ring aus
+einzelnen Strichen IST ein Stern, solange das Auge die Lücken sieht.
+
+**Die Bibliothek gehört trotzdem nicht dazu.**
+`androidx.compose.material:material-icons-*` zöge `androidx.compose.material`
+in den Klassenpfad, und `gradlew checkNoMaterial` verbietet das seit P0 mit
+einem eigenen Dauertest. Übernommen ist die FORM (Apache-2.0, frei),
+gezeichnet mit den Mitteln des Hauses: 24er-Raster, 2 dp, runde Kappen.
+
+**Das Zahnrad war danach der schlechtere Nachbar** („sieht überhaupt nicht gut
+aus"). Es bestand aus einem gestrichelten Kreis und acht radialen Strichen —
+derselbe Fehler wie beim Zifferblatt. Jetzt ist es EIN geschlossener Pfad, der
+zwischen zwei Radien wechselt: acht Zähne auf 9,0 Einheiten, Rumpf auf 6,4,
+schräge Flanken, runde Fügung, und ein RING als Bohrung statt einer gefüllten
+Nabe. Ein Zahnrad ohne Loch ist ein Sägeblatt.
+
+### 4. Die Passphrase-Zeile ist gestapelt
+
+Feld und Taste standen in EINER Zeile; auf dem S24 ergab das ein gestauchtes
+Feld neben einer breiten Taste. Jetzt das Mobil-Muster der Web-Fassung:
+Beschriftung, Feld in voller Breite, Haupthandlung in voller Breite darunter
+mit `--control-h-lg` (44 dp). Gilt für beide Zustände.
+
+Der Grund ist nicht Geschmack, sondern die Zeichenzahl: Eine Passphrase ist
+länger als ein Tastenwort, und ein Feld, das die Hälfte davon zeigt, lässt
+einen Tippfehler nicht finden.
+
+### 5. Was aus der Spiegelung dazukam
+
+**a. Die zwei Fold-Karten waren zu hoch.** 24 + 44 + 24 = **92 dp für eine
+einzige Textzeile.** Das liest sich nicht als Zeile, sondern als leerer Kasten
+mit Beschriftung. Die 44 dp sind nicht verhandelbar (Trefferfläche), das
+Polster schon: `--sp-2` oben und unten ergibt **60 dp**. Seitlich bleibt es
+beim Gruppenmaß, damit die Zeile mit den Nachbarkarten fluchtet.
+
+**b. Tasten tragen Zeichen.** Kopieren, QR aus Bild, Kamera, Testschlüssel —
+vier neue Glyphen im 24er-Raster, in der Taste auf 20 dp. Wo KEINES steht, ist
+das eine Entscheidung: „Zusperren" und „Neu speichern" bleiben ohne, weil jedes
+Schloss-Zeichen dort raten ließe, welcher der beiden Zustände gemeint ist.
+
+**c. Alles reagiert auf Berührung**, auf `--dur-quick` (150 ms) mit der
+Federkurve:
+
+| Bauteil                    | Ruhe             | berührt                                         |
+| -------------------------- | ---------------- | ----------------------------------------------- |
+| Navigationsposten, inaktiv | durchsichtig     | `--surface-active`                              |
+| Navigationsposten, aktiv   | Pille            | `--fill-active`                                 |
+| Textfelder                 | `--surface-fill` | `--fill-active` — am FOKUS                      |
+| Fold-Zeilen                | durchsichtig     | `--surface-active`                              |
+| Code-Ziffern               | durchsichtig     | `--surface-active`                              |
+| Tasten                     | Füllung          | gedrückte Tönung, jetzt fahrend statt springend |
+
+Bei den Feldern hängt es am Fokus und nicht am Druck: Ein Feld wird nicht
+gedrückt, sondern beschrieben — und die ganze Zeit soll man sehen, wohin die
+Tastatur tippt. Das ist auch die Web-Regel (`:focus-within`).
+
+**d. Die Leiste nach Samsung-Vorbild, zweiter Durchgang.** Kevin hat drei
+Aufnahmen aus Telefon und Kontakte geschickt. Daraus übernommen:
+
+- **Die Aktiv-Pille ist NEUTRAL** (`--surface-active`), die Beschriftung steht
+  in `--ink`. Vom Akzent bleibt das ZEICHEN des aktiven Postens. Das war
+  Kevins Wahl aus drei vorgelegten Varianten.
+- **Keine Umrandung mehr.** N13 hatte eine Haarlinie, weil die Leiste bei 82 %
+  über einer weißen Karte verschwand. Mit der Abblendung ist ihr Untergrund
+  verlässlich `--ground`, der Anlass also entfallen — und Samsungs Leiste hat
+  gar keine Kante, sie trennt sich allein durch ihre Fläche.
+- **Die Leiste umschließt ihre Posten** statt randbreit zu laufen. In Kevins
+  Bildern misst sie rund 60 % der Fensterbreite. Die seitlichen 16 dp sind
+  seither ein Mindestabstand und kein Rand an einem Balken.
+- **Kartenpolster von `--sp-2` auf `--sp-1`** — die Pille füllt die Karte fast
+  aus, wie im Vorbild.
+
+**e. Die Kopier-Quittung war eine Paritätslücke.** `key.copyDone` liegt seit
+V11 in allen 37 Sprachen im Katalog, die Ressourcen lagen fertig im Baum, und
+`strip.ts` fährt den Wortwechsel — nativ fehlte er schlicht. Jetzt steht
+**1,6 s lang „Kopiert"** in der Taste (Eintritt 250 ms aus 8 dp und 80 %
+Größe, Rückweg nur ein Ausblenden über 150 ms — alle drei Zahlen aus
+`strip.ts`), und die **Nabe des Zifferblatts** trägt so lange den Akzent,
+wörtlich nach `.strip--copied .dialface__hub` in `mark.css`.
+
+Dazu eine bewusste ABWEICHUNG von der Web-Fassung: **Die Ziffern kopieren
+selbst.** Dort steht die Maus vor einer Taste; hier geht der Daumen zuerst auf
+die größte Fläche der Karte. Die Taste bleibt trotzdem — sie ist die
+BESCHRIFTETE Handlung, und ein Screenreader liest „Kopieren, Schaltfläche"
+statt „988 925".
+
+**f. Die Zeichen bewegen sich nach ihrer eigenen Mechanik.** Kevins Ansage:
+„eine physikalische Logik, wenn man drauf klickt."
+
+| Zeichen | beim Tippen                        | warum genau das                                                                       |
+| ------- | ---------------------------------- | ------------------------------------------------------------------------------------- |
+| Uhr     | langer Zeiger 360°, kurzer **30°** | das Übersetzungsverhältnis einer echten Uhr: eine Stunde je Umlauf des Minutenzeigers |
+| Zahnrad | **45°**                            | 360 / 8 Zähne — die kleinste Drehung, nach der wieder Zahn auf Zahn steht             |
+
+Beide laufen **dieselbe Zeit**, obwohl das eine 360° zurücklegt und das andere
+45: So verhalten sich gekoppelte Räder. Gleiche Winkelgeschwindigkeit wäre die
+unphysikalische Variante.
+
+Die Dauer ist **`--dur-spin` (750 ms)**, und das ist keine beliebige größere
+Zahl: Es ist die Dauer, die dieses Projekt für genau eine Umdrehung schon
+kennt — der Wartezeiger dreht sich in ihr einmal herum. Der erste Anlauf nahm
+`--dur-sheet` (350 ms); Kevins Urteil am Gerät: zu schnell. Eine volle
+Umdrehung in 350 ms ist ein Schnappen, keine Bewegung, die man verfolgen kann.
+
+Ausgelöst wird sie bei JEDEM Tipp, auch auf den schon gewählten Posten — ein
+Uhrwerk läuft auch dann weiter, wenn man es zweimal anstößt. Der generische
+Größensprung aus dem ersten Entwurf ist dafür entfallen: Zwei Bewegungen
+übereinander wären Lärm, und die mechanische ist die bessere.
+
+### Ein Fehler, der seit P5 im Code lag
+
+**Die Tastatur legte sich über die Bühne.** `MainActivity` ruft
+`enableEdgeToEdge()`, und damit hört das Fenster auf, sich bei geöffneter
+Tastatur zu VERKLEINERN — das `adjustResize` im Manifest greift nur, solange
+das Fenster die Systemleisten selbst einrechnet. Stattdessen meldet die
+Plattform den Einzug, und die App muss ihn anwenden. `imePadding` kam im ganzen
+Quelltext nicht vor; das Textfeld verschwand unter der Tastatur, und die
+Tastenzeile darunter war gar nicht erreichbar.
+
+Zwei Dinge gehören dazu, und keines allein reicht: Die Bühne bekommt
+`imePadding()` (nur dann kann Compose ein fokussiertes Feld in den Blick
+scrollen), und das untere Polster fällt weg, solange die Tastatur steht — die
+schwebende Leiste liegt dann hinter ihr, und Platz für etwas freizuhalten, das
+man nicht sieht, ergäbe eine Lücke von 74 dp über der Tastatur.
+
+Gefunden hat es Kevin an der Spiegelung, nicht der Bau.
+
+### Was NICHT gemacht wurde, und warum
+
+Aus Block 5 des Auftrags sind **a, b, c, e, g offen**: Leerzustand-Ausrichtung
+gegen die Web-Mobil-Fassung, Kopf-Abstände, Karten-Titel der
+Einstellungen-Seite, Chevron-Drehung verifizieren, Chip- und
+„folgt"-Zeilen-Maße gegen die Token. Der Lauf ist stattdessen Kevins
+Live-Liste gefolgt — seine Punkte kamen während der Arbeit herein und waren
+durchweg gewichtiger als die Restpunkte.
+
+**Punkt d ist beantwortet, aber anders als gedacht:** `versionName` steht auf
+`"2.0.0-dev"`. Das `-dev` steckt NICHT im Debug-Suffix, sondern im Namen
+selbst; ein Release-Build zeigte damit „2.0.0-dev (20000)". Für v2.0.0 muss
+das raus — eingetragen in die Release-Checkliste, nicht eigenmächtig geändert.
+
+**Punkt f** (dunkler Label-Kontrast über durchscheinendem Inhalt) ist von
+`native-nav-contrast.mjs` erledigt: 7,56:1 im schlechtesten Fall.
+
+### Ketten
+
+| Kette                                  | Ergebnis                                                   |
+| -------------------------------------- | ---------------------------------------------------------- |
+| `gradlew testDebugUnitTest`            | **221 Tests, 0 Fehler** (unverändert)                      |
+| `gradlew checkNoMaterial`              | grün                                                       |
+| `node scripts/native-theme-check.mjs`  | **92 Werte** deckungsgleich                                |
+| `node scripts/native-nav-contrast.mjs` | 8 Messpunkte grün, Gegenprobe fällt durch                  |
+| Web: typecheck · Tests · Build         | grün, **560 Tests**                                        |
+| `dist/clockwork.html`                  | **801.401 Byte, SHA-256 `175f4a8e…584e`** — byte-identisch |
+
+Keine neuen Unit-Tests, wie schon in N12 und N13: Was diese Posten ändern, ist
+Geometrie, Farbmischung und Bewegung. Geprüft wird das von Skripten, die
+rechnen, und am Pixel — nicht auf der JVM.
+
+### Was an Bildbeweisen fehlt
+
+Der Auftrag verlangt je Punkt ein Bild in `docs/abnahme/`. Sie fehlen: Kevin
+hat den Build während des ganzen Laufs selbst in der Spiegelung geprüft und
+seine Befunde direkt genannt, und ab dem Punkt, an dem er das Gerät mitbedient
+hat, sind meine eigenen Messungen dort unbrauchbar geworden — zwei Hände auf
+demselben Telefon ergeben keinen reproduzierbaren Messaufbau. **P9 fotografiert
+den Endstand ohnehin; die Bilder gehören dorthin.**
+
+Was in diesem Abschnitt an Zahlen steht, ist gemessen: am Pixel (N13-Geometrie,
+unverändert gültig), im Kontrastskript und in den Ketten.

@@ -27,12 +27,12 @@
  * deshalb eine ABLEITUNG aus `--surface` — nach derselben Regel, mit der im
  * Web `--signal-soft` aus `--signal` entsteht:
  *
- *     color-mix(in oklab, var(--surface) 82%, transparent)
+ *     color-mix(in oklab, var(--surface) 90%, transparent)
  *
  * Diese Mischung ergibt (vormultipliziert, wie CSS Color 5 es vorschreibt)
- * exakt `--surface` mit 82 % Deckkraft — nachzulesen in der Begruendung von
+ * exakt `--surface` mit 90 % Deckkraft — nachzulesen in der Begruendung von
  * `mixOklab` in native-theme-check.mjs. In Compose ist das `surface.copy(alpha
- * = 0.82f)`, und beide zeichnen dasselbe: Gemalt wird in sRGB, nicht in oklab.
+ * = 0.90f)`, und beide zeichnen dasselbe: Gemalt wird in sRGB, nicht in oklab.
  * Die zwei Zahlen stehen deshalb in `BottomNav.kt` und werden von hier gelesen.
  *
  * ── Aufruf ────────────────────────────────────────────────────────────────
@@ -186,7 +186,7 @@ const CONTENT = {
  * Die vier Messpunkte je Theme.
  *
  * ── Warum die Pille DECKEND ist, und das keine Bequemlichkeit ist ─────────
- * Der erste Entwurf liess auch sie durchscheinen: Inhalt → Leiste (82 %) →
+ * Der erste Entwurf liess auch sie durchscheinen: Inhalt → Leiste (82 %, dem Stand von N13) →
  * `--signal-soft` (15 %) → Schrift in `--signal-text`. Die Rechnung hat ihn
  * verworfen, und zwar deutlich — der AKTIVE Posten war der engste Punkt der
  * ganzen Leiste und hielt in beiden Themes nur bis 90 % Deckung, also genau
@@ -208,15 +208,25 @@ const CONTENT = {
 function probes(colours, alpha) {
   return [
     { name: 'Beschriftung inaktiv', ink: 'nav-ink', pill: false, min: TEXT_MIN },
-    { name: 'Beschriftung aktiv', ink: 'signal-text', pill: true, min: TEXT_MIN },
+    { name: 'Beschriftung aktiv', ink: 'ink', pill: true, min: TEXT_MIN },
     { name: 'Zeichen inaktiv', ink: 'nav-ink', pill: false, min: GLYPH_MIN },
     { name: 'Zeichen aktiv', ink: 'signal-text', pill: true, min: GLYPH_MIN },
   ].map((probe) => ({ ...probe, alpha, colours }));
 }
 
-/** Die deckende Pillenfarbe: `--signal-soft` auf `--surface` vorgemischt. */
+/**
+ * Die Pillenfarbe.
+ *
+ * Seit N14 ist es `--surface-active`, die Sprosse der Flaechenleiter fuer
+ * „beruehrt" — Kevins Entscheidung nach dem Vorbild von One UI 8.5, wo die
+ * aktive Wahl grau und nicht farbig ist. Vorher (N13) stand hier
+ * `--signal-soft` auf `--surface` vorgemischt.
+ *
+ * Deckend bleibt sie in beiden Faellen: Der Untergrund des aktiven Postens
+ * darf nicht davon abhaengen, was gerade darunter scrollt.
+ */
 export function pillColour(tokens) {
-  return over(tokens.get('surface'), tokens.get('signal-soft'));
+  return tokens.get('surface-active');
 }
 
 /** Rechnet einen Messpunkt ueber einer Inhaltsfarbe aus. */
@@ -287,6 +297,59 @@ if (mode === '--sweep') {
     }
     colours[theme].set('nav-ink', colours[theme].get('ink-2'));
   }
+  process.exit(0);
+}
+
+if (mode === '--abblendung') {
+  /**
+   * Die Grenze der LESBAREN Zone (N14).
+   *
+   * Seit N14 blendet der Inhalt zur Leiste hin nach `--ground` ab. Ein
+   * Schleier liegt dabei ueber Text UND Grund — beide wandern also auf
+   * `--ground` zu, und ihr Abstand schrumpft. Bei voller Deckung ist er 1,00:1,
+   * und das ist kein Fehler, sondern der Zweck: Der Text ist dort am
+   * Auslaufen, so wie ein Wort am unteren Bildrand.
+   *
+   * Zu beweisen ist deshalb nicht, dass in der Abblendung noch AA gilt,
+   * sondern WO sie anfaengt zu wirken. Diese Rechnung nennt fuer jede
+   * Textstufe den Punkt, an dem sie unter 4,5:1 faellt — als Schleier-Anteil
+   * und als Strecke in dp vom Anfang des Anlaufs.
+   *
+   * Der Anlauf ist `--gap-group` = 24 dp (`FADE_RUN` in ClockworkApp.kt).
+   */
+  const RUN_DP = 24;
+  const TEXT = [
+    ['ink', 'Code-Ziffern und Kontonamen'],
+    ['ink-2', 'Beschreibungen, Fusszeile'],
+    ['ink-3', 'die leiseste Stufe: Platzhalter, Meta'],
+  ];
+
+  for (const theme of ['light', 'dark']) {
+    const tokens = colours[theme];
+    const ground = tokens.get('ground');
+    const surface = tokens.get('surface');
+    console.log(`\n── ${theme}: Abblendung nach --ground, Anlauf ${RUN_DP} dp ──`);
+
+    for (const [name, where] of TEXT) {
+      const ink = tokens.get(name);
+      let limit = 0;
+      for (let veil = 0; veil <= 1.001; veil += 0.005) {
+        const layer = { ...ground, a: veil };
+        if (contrast(over(ink, layer), over(surface, layer)) < TEXT_MIN) break;
+        limit = veil;
+      }
+      const dp = (limit * RUN_DP).toFixed(1);
+      console.log(
+        `  --${name.padEnd(6)} lesbar bis Schleier ${(limit * 100).toFixed(0).padStart(3)} % ` +
+          `= ${dp} dp im Anlauf — ${where}`,
+      );
+    }
+  }
+
+  console.log(
+    '\nDie strengste Stufe gibt die Grenze vor. Darunter ist der Inhalt\n' +
+      'ABSICHTLICH am Auslaufen; darueber gilt AA unveraendert.',
+  );
   process.exit(0);
 }
 

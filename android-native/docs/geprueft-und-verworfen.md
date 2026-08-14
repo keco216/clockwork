@@ -7,9 +7,9 @@ wurde, mit welcher Messung oder welcher Regel es gescheitert ist, und was
 stattdessen dasteht. Wer einen Punkt neu aufmachen will, findet hier die
 Bedingung, unter der die Entscheidung kippen würde.
 
-> **Stand N13.** Der Posten P9 ergänzt diese Liste um die Punkte aus der
+> **Stand N14.** Der Posten P9 ergänzt diese Liste um die Punkte aus der
 > Bau-Phase (Material3, ML Kit und was sonst geprüft und verworfen wurde);
-> hier stehen bislang nur die Befunde aus N13.
+> hier stehen bislang nur die Befunde aus N13 und N14.
 
 ---
 
@@ -47,7 +47,8 @@ One UI 8.5 „frosted" nennt und die Apple seit Jahren als Material führt.
    Bild einer Scrollbewegung.
 
 **Was stattdessen dasteht:** Transluzenz ohne Weichzeichnung — `--surface` mit
-82 % Deckkraft. Der Inhalt scheint durch, er ist nur nicht unscharf. Der
+90 % Deckkraft (N13: 82 %; N14 hat sie angehoben, weil Durchsicht ohne
+Weichzeichner nicht milchig wirkt, sondern kaputt). Der Inhalt scheint durch, er ist nur nicht unscharf. Der
 Grad ist ausgerechnet und nicht geschätzt (siehe
 `scripts/native-nav-contrast.mjs`).
 
@@ -59,12 +60,17 @@ mitbringt, der ohne Doppel-Rendering auskommt. Dann als eigener Commit — und
 
 ## Verlaufsabblendung des Inhalts zur Unterkante
 
+> **ZURÜCKGENOMMEN in N14 — sie ist jetzt Pflicht.** Der Eintrag bleibt
+> trotzdem stehen, weil er die Rechnung enthält, die weiterhin gilt; nur die
+> Schlussfolgerung war an die falsche Frage geknüpft. Was N14 daran geändert
+> hat, steht am Ende dieses Eintrags.
+
 **Wollte:** Der Inhalt soll zur Leiste hin sanft ausblenden, damit die Kante
 zwischen Inhalt und schwebender Leiste weicher wird — Samsungs
 „gradient blur"-Anmutung ohne den Weichzeichner.
 
-**Verworfen, und zwar an der Kontrastmessung.** Eine Abblendung liegt über
-Text und Grund gleichermaßen — genau das war beim ersten Anlauf falsch
+**In N13 verworfen, und zwar an der Kontrastmessung.** Eine Abblendung liegt
+über Text und Grund gleichermaßen — genau das war beim ersten Anlauf falsch
 gerechnet worden, und mit der richtigen Rechnung ist der Befund eindeutig:
 
 | Schleier zum `--ground` | `--ink-3` hell | `--ink-3` dunkel | Code in `--ink` hell |
@@ -85,11 +91,43 @@ Anzeige nicht aus. Die Hausregel lautet seit V5 „Was man anfasst, wird weich.
 Was man abliest, bleibt scharf." Ein Code, der beim Scrollen verblasst, ist
 eine Anzeige, die über ihren eigenen Zustand lügt.
 
-**Was stattdessen dasteht:** Eine harte, ehrliche Kante — der Schatten
-(`--elev-2`) im Hellen, die Innenlichtkante im Dunkeln, dazu seit N13 eine
-Haarlinie in `--rule` für den Fall, dass eine weiße Karte unter der Leiste
-durchläuft und beide gleich hell sind.
+**Was stattdessen dastand (bis N14):** Eine harte Kante — der Schatten
+(`--elev-2`) im Hellen, die Innenlichtkante im Dunkeln, dazu eine Haarlinie in
+`--rule` für den Fall, dass eine weiße Karte unter der Leiste durchläuft und
+beide gleich hell sind. **Die Haarlinie ist mit N14 wieder weg** — mit der
+Abblendung ist der Untergrund der Leiste verlässlich `--ground`, ihr Anlass
+also entfallen.
 
 **Wann das kippt:** Nie in dieser Form. Wollte man die Kante trotzdem weicher,
 müsste die Abblendung den Inhalt AUSSPAREN — also nur den Untergrund
 einfärben —, und das kann eine Überlagerung grundsätzlich nicht.
+
+### Und dann ist es doch gekippt — N14, einen Lauf später
+
+Kevins Befund am Gerät: **Transluzenz ohne Weichzeichner wirkt nicht milchig,
+sondern kaputt.** Man liest halbe Buchstaben durch eine Fläche, auf der
+Beschriftungen stehen. Und einen echten Weichzeichner gibt es hier nicht — der
+steht einen Eintrag weiter oben, verworfen.
+
+Damit war die Ablehnung an die falsche Frage geknüpft. Sie lautete: „Bleibt
+Text in der Abblendung lesbar?" Die richtige lautet: „Wo hört die lesbare Zone
+auf?" Text in der Abblendung ist dort **per Definition am Auslaufen**, wie ein
+Wort am unteren Bildrand — 1,00:1 ist an dieser Stelle kein Mangel, sondern
+der Zweck.
+
+Die Zahlen oben stimmen weiterhin; sie beantworten jetzt eine andere Frage.
+`native-nav-contrast.mjs --abblendung` rechnet sie aus und nennt die Grenze:
+
+| Textstufe | lesbar bis Schleier … | = Strecke im 24-dp-Anlauf, hell | dunkel  |
+| --------- | --------------------- | ------------------------------- | ------- |
+| `--ink`   | 42 % / 53 %           | 10,0 dp                         | 12,6 dp |
+| `--ink-2` | 21 % / 37 %           | 5,0 dp                          | 8,9 dp  |
+| `--ink-3` | 10 % / 22 %           | **2,4 dp**                      | 5,3 dp  |
+
+Die strengste Stufe gibt die Grenze vor: Über den obersten **2,4 dp** des
+Anlaufs gilt AA unverändert, darunter läuft der Inhalt absichtlich aus.
+
+**Was daraus für die Liste folgt:** Ein Eintrag hier ist die Antwort auf eine
+FRAGE, nicht ein Urteil über eine Sache. Wer eine Verwerfung umdreht, muss die
+Frage benennen, die sich geändert hat — sonst sieht es aus, als hätte die
+Messung getäuscht. Sie hat nicht.
