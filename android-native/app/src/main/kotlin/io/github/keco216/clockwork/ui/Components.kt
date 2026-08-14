@@ -207,7 +207,9 @@ fun Key(
         label = "Tastenflaeche",
     )
     val foreground = when (variant) {
-        KeyVariant.Primary -> colors.signalInk
+        // Snow und nicht `--signal-ink` — Kevins Entscheidung, samt gemessener
+        // Folge dokumentiert bei `ClockworkColors.signalKeyInk` (N15).
+        KeyVariant.Primary -> colors.signalKeyInk
         KeyVariant.Default, KeyVariant.Flat -> colors.ink
         KeyVariant.Danger -> colors.faultSoftInk
         KeyVariant.Accent -> colors.signalSoftInk

@@ -78,8 +78,43 @@ data class ClockworkColors(
     /** Der eine Akzent (HeroUI `--accent`). */
     val signal: Color,
     /** Die Schrift AUF Signal — gemessen, nicht uebernommen: Snow haelt dort
-     *  nur 3,39:1, Eclipse 5,23. */
+     *  nur 3,39:1, Eclipse 5,23.
+     *
+     *  Diese Rolle spiegelt weiter `--signal-ink` und wird von
+     *  native-theme-check geprueft. Die native Taste benutzt sie seit N15
+     *  NICHT mehr — siehe [signalKeyInk] samt Begruendung. */
     val signalInk: Color,
+
+    /**
+     * Die Schrift auf der SIGNAL-TASTE — eine bewusste Abweichung von
+     * `--signal-ink`, auf Kevins Entscheidung (N15).
+     *
+     * ── Was hier passiert ist ─────────────────────────────────────────────
+     * Der Testschluessel-Knopf ist mit N15 die Haupthandlung geworden, also
+     * eine Flaeche in `--signal` (so steht es in index.html:320). Kevins
+     * Ansage dazu: „aber die schrifttexte weiss."
+     *
+     * ── Die Folge, gemessen und ihm genannt ───────────────────────────────
+     * Snow auf `--signal` haelt **3,30:1**, gedrueckt (`--signal-hover`) nur
+     * **2,88:1**. Eine 14-sp-Beschriftung braucht nach WCAG AA 4,5:1. Genau
+     * deshalb steht in tokens.css ueberhaupt `--signal-ink` (#18181b, 5,23:1)
+     * — die Zahl ist dort seit V9 notiert.
+     *
+     * Ihm ist beides vorgelegt worden: Snow auf einem TIEFEREN Orange
+     * (#a8360c, 6,40:1) haette weisse Schrift UND die Zusage gehalten. Er hat
+     * das Markenorange gewaehlt. Das ist seine Entscheidung, sie ist mit der
+     * Zahl daneben getroffen, und sie steht hier, damit sie nachlesbar bleibt
+     * statt unbemerkt zu wirken.
+     *
+     * ── Warum eine eigene Rolle und nicht ein geaenderter Wert ────────────
+     * Weil `--signal-ink` im WEB weiter #18181b ist und dort gilt. Den Wert in
+     * Tokens.kt zu ueberschreiben hiesse, die Marke `// css:` zu entfernen und
+     * damit einen der 92 geprueften Werte still aus der Pruefung zu nehmen —
+     * dieselbe Sorte stiller Verlust, die dieses Projekt an anderen Stellen
+     * teuer bezahlt hat. Diese Rolle traegt deshalb KEINE `// css:`-Marke: Sie
+     * hat absichtlich kein Gegenstueck.
+     */
+    val signalKeyInk: Color,
     val signalHover: Color,
     /** Feine Geometrie: Schrift, Zeiger, Leuchten. */
     val signalText: Color,
@@ -120,6 +155,8 @@ val LightColors = ClockworkColors(
     ruleStrong = Color(0xFFDEDEE0), // css: light --rule-strong
     signal = Color(0xFFF05A28), // css: light --signal
     signalInk = Color(0xFF18181B), // css: light --signal-ink
+    // abweichung: Snow statt --signal-ink, Kevins Entscheidung (N15) — 3,30:1
+    signalKeyInk = Color(0xFFFCFCFC),
     signalHover = Color(0xFFF46D44), // css: light --signal-hover
     signalText = Color(0xFFA8360C), // css: light --signal-text
     signalSoft = Color(0x26F05A28), // css: light --signal-soft
@@ -149,6 +186,9 @@ val DarkColors = ClockworkColors(
     ruleStrong = Color(0xFF28282C), // css: dark --rule-strong
     signal = Color(0xFFF05A28), // css: dark --signal
     signalInk = Color(0xFF18181B), // css: dark --signal-ink
+    // abweichung: dieselbe Zahl in BEIDEN Themes — die Flaeche darunter ist in
+    // beiden `--signal`, also darf die Tinte darauf nicht mit dem Theme kippen.
+    signalKeyInk = Color(0xFFFCFCFC),
     signalHover = Color(0xFFF46D44), // css: dark --signal-hover
     signalText = Color(0xFFF4825C), // css: dark --signal-text
     signalSoft = Color(0x1FF05A28), // css: dark --signal-soft

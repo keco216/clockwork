@@ -1,7 +1,10 @@
 package io.github.keco216.clockwork.ui
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -9,6 +12,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import io.github.keco216.clockwork.ui.theme.Dial
 import io.github.keco216.clockwork.ui.theme.LocalColors
+import io.github.keco216.clockwork.ui.theme.Motion
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
@@ -50,17 +54,52 @@ fun Gauge(
     copied: Boolean = false,
 ) {
     val colors = LocalColors.current
-    // Die letzten fuenf Sekunden sind einer der wenigen Zustaende MIT
-    // Bedeutung — also einer der wenigen, die den Akzent tragen duerfen.
-    val handColour = if (expiring) colors.signalText else colors.ink2
-    // Nur die NABE quittiert das Kopieren — der Zeiger zeigt die Zeit an.
-    val hubColour = if (copied) colors.signalText else handColour
+
+    /* ── Die drei Farben stehen jetzt so, wie sie im Web stehen (N15) ──────
+       Kevins Befund am Geraet: „beim logo design die uhr muss beim zeiger
+       orange sein." Er hat recht, und es war nicht Geschmack, sondern ein
+       Paritaetsfehler — gleich ein dreifacher. Die Web-Fassung sagt in
+       `styles/mark.css`:
+
+         .dialface__tick     { stroke: var(--ink-3) }
+         .dialface__handMark { stroke: var(--signal-text) }   ← IMMER
+         .dialface__hub      { fill:   var(--ink) }
+         .strip--expiring .dialface__tick { stroke: var(--signal-text) }
+         .strip--copied   .dialface__hub  { fill:   var(--signal-text) }
+
+       Nativ stand dagegen: Zeiger in `--ink-2` und nur in den letzten fuenf
+       Sekunden in Signal, Nabe in derselben Farbe wie der Zeiger, Marken nie
+       in Signal. Damit war der EINE Akzent des Zifferblatts verschwunden — und
+       der Zeiger ist genau die Stelle, an der die Marke ihn traegt (das Emblem
+       hat seine Signalmarke auf 12 Uhr, die Wortmarke ihren Index, das C-Werk
+       sein Lager).
+
+       Warum der TIEFE Signal-Ton und nicht der Markenwert: Der Zeiger ist
+       0,073 R stark, also feine Geometrie — und `#f05a28` haelt auf der
+       beruehrten Flaeche hell nur 2,89:1. Steht so gemessen in mark.css.
+
+       Was `expiring` jetzt tut, ist die Umkehrung des alten Fehlers: Nicht der
+       Zeiger wird orange (der ist es schon), sondern die TEILUNG zieht mit an.
+       Im Web ist das „der einzige Moment, in dem das Geraet von sich aus
+       Signalfarbe zeigt". */
+    val tickColour = if (expiring) colors.signalText else colors.ink3
+    val handColour = colors.signalText
+
+    /* Die Nabe traegt `--ink` und quittiert das Kopieren — und sie FAEHRT
+       dabei, weil sie es im Web auch tut (`transition: fill var(--dur-calm)`).
+       Als Farbfahrt und nicht als Animation: Steht die Animator-Skala auf 0,
+       springt der Wert, und die Quittung ist trotzdem da. */
+    val hubColour by animateColorAsState(
+        targetValue = if (copied) colors.signalText else colors.ink,
+        animationSpec = tween(Motion.calm, easing = Motion.spring),
+        label = "dial-hub",
+    )
 
     Canvas(modifier = modifier) {
         drawDial(
             progress = progress.coerceIn(0.0, 1.0),
             period = period,
-            tickColour = colors.ink3,
+            tickColour = tickColour,
             handColour = handColour,
             hubColour = hubColour,
         )

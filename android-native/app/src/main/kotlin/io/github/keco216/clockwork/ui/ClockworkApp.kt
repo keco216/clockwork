@@ -336,6 +336,40 @@ fun ClockworkApp() {
     val keyboardUp = WindowInsets.ime.getBottom(density) > 0
     val bottomInset = if (keyboardUp) 0.dp else with(density) { navHeight.toDp() }
 
+    /* ── Mit der Tastatur geht auch der Fokus (N15) ─────────────────────────
+       Kevins Befund am Geraet: „beim input text wenn ich wieder zurueckgehe ist
+       es immer noch angetastet." Er hat recht, und es ist ein Fehler und keine
+       Kleinigkeit: Der erste Zurueck-Druck schliesst in Compose nur die
+       TASTATUR, den Fokus laesst er stehen. Zurueck bleibt damit ein Feld, das
+       aussieht wie ein Feld, in das gerade getippt wird — mit blinkendem
+       Cursor in Signalfarbe und der Fuellung `--fill-active` — obwohl es keine
+       Tastatur mehr dazu gibt.
+
+       Im Web gibt es das Problem nicht: Dort nimmt ein Klick daneben dem Feld
+       den Fokus, und `:focus-within` faellt damit von selbst zurueck. Nativ
+       muss man es sagen.
+
+       ── Warum der Uebergang gemerkt wird und nicht der Zustand ────────────
+       Weil der Fokus VOR der Tastatur kommt: Wer das Feld antippt, hat einen
+       Wimpernschlag lang Fokus ohne Tastatur. Eine Regel „kein IME also kein
+       Fokus" wuerde in genau diesem Wimpernschlag zuschlagen und den Fokus
+       wieder wegnehmen — die Tastatur ginge nie auf. Geraeumt wird deshalb nur
+       der WECHSEL von „Tastatur war da" zu „Tastatur ist weg".
+
+       Das gilt fuer alle drei Felder der App (Secret, Filter, Passphrase) und
+       steht deshalb hier, an der einen Stelle, die den IME-Einzug ohnehin
+       kennt. */
+    val focus = LocalFocusManager.current
+    var keyboardWasUp by remember { mutableStateOf(false) }
+    LaunchedEffect(keyboardUp) {
+        if (keyboardUp) {
+            keyboardWasUp = true
+        } else if (keyboardWasUp) {
+            keyboardWasUp = false
+            focus.clearFocus()
+        }
+    }
+
     /* ── Zurueck fuehrt zur Startseite (N15) ───────────────────────────────
        Seit N11 hat die App zwei Seiten, und bis N14 fuehrte die Zurueck-Geste
        auf BEIDEN aus der App heraus. Auf der Einstellungen-Seite ist das
@@ -725,7 +759,25 @@ private fun VacantStage(
                 label = text("vacant.demo"),
                 onClick = { if (field.text.isEmpty()) onTestKey() },
                 modifier = Modifier.fillMaxWidth(),
-                variant = KeyVariant.Default,
+                /* ── Die HAUPTHANDLUNG dieser Buehne (N15) ──────────────────
+                   Bis N14 stand hier `Default`, also die neutrale Fuellung.
+                   Das war ein Paritaetsfehler, und er ist in einer Zeile
+                   nachlesbar — `index.html`:320 gibt diesem Knopf
+                   `class="key key--primary key--lg"`, also die volle
+                   Signalflaeche und die grosse Sprosse.
+
+                   Kevins Befund am Geraet: „ich meine den hover button herum
+                   orange". Genau das ist `--signal` als Flaeche samt
+                   `--signal-hover` beim Druck; die Tinte darauf ist
+                   `--signal-ink` (#18181b, gemessen 5,23:1 — Snow haelt dort
+                   nur 3,39).
+
+                   Inhaltlich stimmt es auch: Im Leerzustand gibt es genau eine
+                   Handlung, die ohne eigenes Material funktioniert, und die
+                   Hausregel gibt der EINEN Haupthandlung eines Panels die
+                   Signalflaeche. Die zwei Wege daneben („QR aus Bild",
+                   „Kamera") bleiben `Default` — auch das wie im Web. */
+                variant = KeyVariant.Primary,
                 large = true,
                 glyph = { tint -> KeyGlyph(tint) },
             )

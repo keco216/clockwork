@@ -1706,6 +1706,114 @@ Skripten, die rechnen — nicht auf der JVM. Die einzige neue reine Funktion
 (`Feedback.constant()`) ist eine Zuordnungstabelle auf Plattform-Konstanten; ein
 Test darüber prüfte, dass eine Konstante gleich sich selbst ist.
 
+### Nachtrag aus Kevins Sichtung: der Zeiger, der Knopf und der Fokus
+
+Drei Befunde von ihm, und sie haben **fünf Fehler** aufgedeckt — drei am
+Zifferblatt (seit P5), einen am Knopf und einen am Textfeld (seit P5). Kevins
+Sätze: „beim logo design die uhr muss beim zeiger orange sein, und beim button
+den testschlüssel bitte auch orange machen" — „ich meine den hover button herum
+orange nicht den schlüssel" — „aber die schrifttexte weiss" — „beim input text
+wenn ich wieder zurückgehe ist es immer noch angetastet".
+
+**Das Zifferblatt.** Was `styles/mark.css` sagt, und was nativ danebenstand:
+
+| Teil                  | Web                                       | nativ bis N15                         |
+| --------------------- | ----------------------------------------- | ------------------------------------- |
+| Marken (`__tick`)     | `--ink-3`, bei `expiring` `--signal-text` | `--ink-3`, bei `expiring` unverändert |
+| Zeiger (`__handMark`) | **`--signal-text`, immer**                | `--ink-2`, nur bei `expiring` Signal  |
+| Nabe (`__hub`)        | `--ink`, bei `copied` `--signal-text`     | dieselbe Farbe wie der Zeiger         |
+
+Damit war der EINE Akzent des Zifferblatts verschwunden — und der Zeiger ist
+genau die Stelle, an der die Marke ihn trägt: Das Emblem hat seine Signalmarke
+auf 12 Uhr, die Wortmarke ihren Index, das C-Werk sein Lager. Im Leerzustand
+steht der Zeiger bei `progress = 0` auf 12 Uhr, also genau dort, wo das Emblem
+seine Signalmarke hat.
+
+Alle drei Farben stehen jetzt so wie im Web. Was `expiring` tut, ist damit die
+Umkehrung des alten Fehlers: Nicht der Zeiger wird orange (der ist es schon),
+sondern die TEILUNG zieht mit an — im Web „der einzige Moment, in dem das Gerät
+von sich aus Signalfarbe zeigt". Die Nabe FÄHRT dabei in `--dur-calm`, weil sie
+es im Web auch tut (`transition: fill`); als Farbfahrt und nicht als Animation,
+damit die Quittung bei abgeschalteter Bewegung bleibt.
+
+Der tiefe Signal-Ton und nicht der Markenwert: Der Zeiger ist 0,073 R stark,
+also feine Geometrie — `#f05a28` hält auf der berührten Fläche hell nur 2,89:1.
+So gemessen in mark.css.
+
+**Der Testschlüssel-Knopf** war der VIERTE Paritätsfehler in derselben Sichtung —
+und die Klärung hat einen Umweg gekostet: Der erste Anlauf hat sein ZEICHEN
+orange gemacht. Kevins Nachsatz: „ich meine den hover button herum orange nicht
+den schlüssel."
+
+Nachgesehen statt weiter geraten, und die Antwort steht in einer Zeile:
+`index.html`:320 gibt diesem Knopf `class="key key--primary key--lg"`. Er ist im
+Web die **Haupthandlung** — volle Signalfläche, `--signal-hover` beim Drücken,
+Tinte `--signal-ink` (#18181b, gemessen 5,23:1; Snow hielte dort nur 3,39). Nativ
+stand `Default`, also die neutrale Füllung.
+
+Inhaltlich stimmt es auch: Im Leerzustand gibt es genau eine Handlung, die ohne
+eigenes Material funktioniert, und die Hausregel gibt der EINEN Haupthandlung
+eines Panels die Signalfläche. Die zwei Wege daneben („QR aus Bild", „Kamera")
+bleiben `Default` — auch das wie im Web. Das Zeichen trägt dieselbe Tinte wie die
+Beschriftung: eine Taste hat EINE Tinte, und die Ausnahme aus dem ersten Anlauf
+ist wieder ausgebaut.
+
+#### Und die Tinte darauf ist WEISS — eine Abweichung mit Zahl
+
+Kevins dritter Satz: „aber die schrifttexte weiss." Das widerspricht einem
+gemessenen Wert des Hauses, deshalb ist es vorgerechnet und vorgelegt worden:
+
+| Kombination                                    | Kontrast   |
+| ---------------------------------------------- | ---------- |
+| Snow `#fcfcfc` auf `--signal` `#f05a28`        | **3,30:1** |
+| Snow auf `--signal-hover` `#f46d44` (gedrückt) | **2,88:1** |
+| Snow auf dem tiefen Orange `#a8360c`           | 6,40:1     |
+| `--signal-ink` `#18181b` auf `--signal` (Web)  | 5,23:1     |
+
+Eine 14-sp-Beschriftung braucht nach WCAG AA 4,5:1. **Kevin hat mit dieser Zahl
+vor Augen das Markenorange gewählt** — nicht das tiefere, das weiße Schrift und
+die Zusage gehalten hätte. Das ist seine Entscheidung; sie steht hier und im
+Quelltext bei `ClockworkColors.signalKeyInk`, damit sie nachlesbar bleibt statt
+unbemerkt zu wirken.
+
+Umgesetzt ist sie als eigene FARBROLLE und nicht als geänderter Wert:
+`--signal-ink` bleibt in Tokens.kt bei #18181b und damit unter der Prüfung
+(weiter **92 Werte** deckungsgleich). Die neue Rolle trägt bewusst keine
+`// css:`-Marke — sie hat kein Gegenstück im Web. Den Wert einfach zu
+überschreiben hätte die Marke entfernt und damit einen geprüften Wert still aus
+der Prüfung genommen; genau diese Sorte stiller Verlust ist diesem Projekt schon
+zweimal teuer geworden.
+
+Die Rolle gilt für BEIDE Themes mit derselben Zahl: Die Fläche darunter ist in
+beiden `--signal`, also darf die Tinte darauf nicht mit dem Theme kippen. Sie
+betrifft damit auch die zweite Signal-Taste der App — die Haupthandlung des
+Tresors („Verschlüsselt speichern" / „Aufsperren"). Zwei orange Tasten mit
+verschiedener Schriftfarbe wären schlechter als eine Abweichung.
+
+#### Das Textfeld blieb „angetastet" — ein Fehler, der seit P5 im Code lag
+
+Kevins vierter Satz: „beim input text wenn ich wieder zurückgehe ist es immer
+noch angetastet." Am Bild sieht man es genau: der Cursor steht in Signalfarbe im
+Feld, die Füllung ist die berührte (`--fill-active`) — und keine Tastatur dazu.
+
+**Die Ursache ist der erste Zurück-Druck.** Er schließt in Compose nur die
+TASTATUR; den Fokus lässt er stehen. Zurück bleibt ein Feld, das aussieht, als
+würde gerade darin getippt. Im Web gibt es das nicht: Dort nimmt ein Klick
+daneben dem Feld den Fokus, und `:focus-within` fällt von selbst zurück.
+
+**Behoben an EINER Stelle** — dort, wo die App den IME-Einzug ohnehin kennt
+(`ClockworkApp`, dieselbe Zeile, die seit N13 das untere Polster wegnimmt). Damit
+gilt die Regel für alle drei Felder der App: Secret, Filter, Passphrase.
+
+**Und zwar am ÜBERGANG, nicht am Zustand**, und das ist der ganze Witz daran:
+Der Fokus kommt VOR der Tastatur. Wer das Feld antippt, hat einen Wimpernschlag
+lang Fokus ohne IME — eine Regel „kein IME, also kein Fokus" würde genau dann
+zuschlagen, und die Tastatur ginge nie auf. Geräumt wird deshalb nur der Wechsel
+von „Tastatur war da" zu „Tastatur ist weg".
+
+Gebaut, 221 Tests unverändert, `checkNoMaterial` grün, installiert. **Die Bilder
+dazu macht Kevin selbst** — er testet.
+
 ### Was an Beweisen offen bleibt
 
 Vollständigkeit ist hier wichtiger als ein gutes Bild:
@@ -1718,6 +1826,8 @@ Vollständigkeit ist hier wichtiger als ein gutes Bild:
 5. **Die Predictive-Back-Vorschau** mitten in der Geste.
 6. **Die neue dunkle Popover-Fläche** (`--surface-fill`) ist nach Kevins Befund
    gebaut und installiert, aber nicht mehr von mir fotografiert.
+7. **Der Zeiger in Signal und das Testschlüssel-Zeichen in Signal** — beides
+   nach Kevins Sichtung gebaut und installiert, ebenfalls nicht fotografiert.
 
 Der Grund ist derselbe für alle sechs: Kevin hat ab Punkt 5 selbst getestet, und
 zwei Hände auf einem Telefon ergeben keinen Messaufbau. **P9 fotografiert den
