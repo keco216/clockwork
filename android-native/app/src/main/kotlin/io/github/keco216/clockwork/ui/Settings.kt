@@ -42,6 +42,7 @@ fun SettingsPage(
     vault: VaultController,
     scroll: ScrollState,
     topInset: Dp,
+    bottomInset: Dp,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -53,10 +54,10 @@ fun SettingsPage(
             .padding(
                 start = Dimens.gapGroup,
                 end = Dimens.gapGroup,
-                // Wie auf der Startseite: Leistenhoehe plus Gruppenfuge,
-                // damit die Ueber-Karte vollstaendig ueber die schwebende
-                // Leiste hinausgescrollt werden kann (N12).
-                bottom = Dimens.gapGroup + navOverlayHeight,
+                // Wie auf der Startseite: gemessene Leistenhoehe plus
+                // Gruppenfuge, damit die Ueber-Karte vollstaendig ueber die
+                // schwebende Leiste hinausgescrollt werden kann (N12/N13).
+                bottom = Dimens.gapGroup + bottomInset,
             )
             .padding(top = topInset),
         verticalArrangement = Arrangement.spacedBy(Dimens.gapGroup),

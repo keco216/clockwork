@@ -877,3 +877,198 @@ nicht erklärt:
 Hier steht deshalb keine Erklärung, sondern die Beobachtung. **Vor P9 gehört das
 nachgestellt** — mit einem echten Tresor, kontrollierten Tipps und einem Blick
 auf `files/` nach jedem Schritt.
+
+---
+
+## N13 — Feinschliff 2: die Leiste wird durchscheinend, die Pille eng
+
+Kevins Vorgabe war die Tab-Leiste aus One UI 8.5: milchige Fläche, Inhalt
+sichtbar darunter, Zeichen mit Beschriftung, und die aktive Wahl als kompakte
+Hervorhebung eng um ihren Posten statt als segmentbreiter Block. Samsungs
+starre Umschaltung ist ausdrücklich NICHT übernommen — die gleitende Pille
+bleibt bei 250 ms auf der Federkurve des Hauses.
+
+### Der Transluzenzgrad ist ausgerechnet, nicht gewählt
+
+Dafür gibt es seit N13 `scripts/native-nav-contrast.mjs`. Es ist die Antwort
+auf ein Problem, das N12 noch nicht hatte: Solange die Leiste deckte, stand
+ihre Beschriftung auf genau einer bekannten Fläche. Seit sie durchscheint,
+hängt ihr Untergrund davon ab, was gerade darunter scrollt — der Kontrast ist
+keine Zahl mehr, sondern eine Schar von Zahlen.
+
+Das Skript rechnet deshalb über ALLE Inhaltsfarben, die unter der Leiste
+vorkommen können, statt über die eine, die man für die schlimmste hält.
+
+**Dabei fällt die erste Annahme des Auftrags.** Dort steht als schlechtester
+Fall „hellste Karte hell, dunkelste dunkel". Gemessen ist es umgekehrt: Im
+Hellen ist die Leiste fast weiß und ihre Schrift dunkel — eine weiße Karte
+darunter ändert also nichts, sie ist der BESTE Fall. Weh tut die Code-Ziffer
+in `--ink`, die die Leiste abdunkelt. Im Dunkeln steht es spiegelbildlich. Die
+Regel lautet nicht „hell/dunkel", sondern: der Inhalt, der die Leiste in
+Richtung ihrer eigenen Schriftfarbe zieht.
+
+**Der zweite Befund war unbequemer.** Der erste Entwurf ließ auch die
+Aktiv-Pille durchscheinen. Die Schwellenrechnung (`--sweep`) hat ihn verworfen:
+
+| Messpunkt                             | hält bis … Deckung, hell | dunkel     |
+| ------------------------------------- | ------------------------ | ---------- |
+| Beschriftung inaktiv, `--ink-3`       | 90 %                     | 87 %       |
+| Beschriftung inaktiv, `--ink-2`       | **76 %**                 | **76 %**   |
+| Beschriftung aktiv, Pille transluzent | 90 %                     | 90 %       |
+| Beschriftung aktiv, Pille deckend     | unbegrenzt               | unbegrenzt |
+
+Der aktive Posten war der engste Punkt der ganzen Leiste — und zwar bei genau
+dem Grad, bei dem von „frosted" nichts übrig bleibt. Der Grund liegt in der
+Auslegung von `--signal-text`: Die Farbe hält auf den vier Hausflächen GERADE
+4,5:1 und hat keine Reserve, die man an Transluzenz verfüttern könnte.
+
+Daraus zwei Entscheidungen, beide ausgerechnet:
+
+1. **Die Pille ist deckend** — `--signal-soft` auf `--surface` vorgemischt.
+   Damit ist der Untergrund des aktiven Postens eine Konstante, und er kann
+   durch nichts unlesbar werden, was darunter vorbeiläuft. Das ist zugleich
+   das Verhalten der Referenz: Samsungs „circular highlight" ist eine gedeckte
+   Fläche, kein Schleier.
+2. **Die inaktive Beschriftung steigt von `--ink-3` auf `--ink-2`.** `--ink-3`
+   hält auf `--surface` 5,53:1, hat also 1,03 Reserve — zu wenig. Die Regel
+   dahinter ist alt: Im Web trägt Text auf dem GEHÄUSE `--ink-2` und nur Text
+   auf einem PANEL `--ink-3`. Eine Leiste, durch die beliebiger Inhalt
+   scheint, ist der Gehäusefall in seiner unangenehmsten Form — ihr Untergrund
+   steht nicht einmal fest.
+
+Genommen sind **82 %**: sechs Punkte über der Schwelle. Die Prüfung mit
+diesem Wert:
+
+| Messpunkt            | hell       | dunkel     | schlechtester Fall                |
+| -------------------- | ---------- | ---------- | --------------------------------- |
+| Beschriftung inaktiv | **5,28:1** | **5,74:1** | `--ink` unter der Leiste          |
+| Beschriftung aktiv   | **5,50:1** | **6,02:1** | deckende Pille, inhaltsunabhängig |
+| Zeichen inaktiv      | 5,28:1     | 5,74:1     | (Mindestmaß 3:1)                  |
+| Zeichen aktiv        | 5,50:1     | 6,02:1     | (Mindestmaß 3:1)                  |
+
+**Gegenprobe gelaufen:** `--gegenprobe` rechnet dieselben acht Punkte mit 50 %
+Deckung; vier davon reißen, bis hinunter auf 1,95:1. Eine Messung, die nicht
+durchfallen kann, misst nichts — dieselbe Lehre, die dieses Projekt beim
+APK-Vergleich teuer bezahlt hat.
+
+### Am Pixel nachgemessen (S24 Ultra, Dichte 600, 1 dp = 3,75 px, dunkel)
+
+| Was                   | gemessen               | in dp    | Soll        |
+| --------------------- | ---------------------- | -------- | ----------- |
+| Karte, Höhe           | y 2786 … 3018 = 233 px | **62,1** | 62          |
+| Karte, Rand seitlich  | x 60 … 1379            | **16,0** | `--sp-4`    |
+| Pille, Höhe           | y 2816 … 2988 = 173 px | **46,1** | 46 (Inhalt) |
+| Polster Karte → Pille | 30 px, oben wie unten  | **8,0**  | `--sp-2`    |
+| Haarlinie             | 4 px                   | **1,07** | 1           |
+
+**Die Transluzenz ist am Pixel belegt, nicht behauptet:** Die Kartenfläche
+über dem Grund misst **#151517**. Eine deckende Leiste wäre `--surface`, also
+#18181b. Der Rechenwert für `--surface` mit 82 % über `--ground` ist
+#151517 — auf den Kanalwert genau. Ebenso die Pille: gemessen **#32201d**,
+gerechnet #32201d.
+
+**Die Radien sind konzentrisch, und zwar durch den Bau statt durch zwei
+ausgerechnete Zahlen:** Kartenradius 31,05 dp, Pillenradius 23,05 dp,
+Differenz 8,0 dp = das Polster. Die Kartenhöhe IST die Pillenhöhe plus zweimal
+Polster.
+
+**Die Pille sitzt auf ihrem Segment:** Segmentmitten bei x = 405 und 1035,
+Pillenmitte 404,5.
+
+### Die Pillen sind gleich groß — Kevins Befund, und er hat recht
+
+Der erste N13-Entwurf ließ jede Pille genau ihren eigenen Inhalt umschließen.
+Das ist die wörtliche Lesart von „eng um Icon und Beschriftung", und am Gerät
+war sie falsch: Die Beschriftungen messen **27,2 dp** („Start") gegen
+**76,5 dp** („Einstellungen"), die Pillen also 51,2 gegen 100,5 dp. Kevins
+Urteil aus der Spiegelung: „warum sind da Größenunterschiede, muss gleich
+sein."
+
+Zwei gleich breite Posten mit zwei verschieden großen Hervorhebungen sehen aus
+wie ein Fehler, nicht wie ein System. Das Maß gibt seither der **breiteste**
+Inhalt vor, und alle tragen es — abgeleitet aus derselben Messung:
+76,5 + 2 × 12 = **100,5 dp** für beide. Die Pille bleibt damit kompakt (sie
+umschließt die längste Beschriftung eng), ohne dass ihre Größe davon erzählt,
+wie lang ein Wort zufällig ist; in einer anderen Sprache verschiebt sich das
+Maß mit, weil gemessen und nicht gerechnet wird.
+
+Nebenwirkung, und eine gute: Die Fahrt hat nur noch EINE Spur. Der Cursor
+fährt im Ort, seine Breite steht fest.
+
+### Was die Leiste nicht mehr aus einer Konstanten holt
+
+`navOverlayHeight` ist weg. Die Höhe der Leiste kommt seit N13 aus ihrem
+Inhalt — Zeichen, Beschriftung, Vorschub —, und bei Schriftskala 1,5 wächst
+sie mit. Eine Konstante hätte dann zu wenig freigehalten, und die letzte Karte
+wäre unter der Leiste steckengeblieben: genau der Fehler, den N12 für die
+Normalgröße behoben hat. Die Bühnen messen ihr unteres Polster jetzt mit
+`onSizeChanged` — dasselbe Werkzeug, mit dem der Kopf oben schon gemessen
+wird, und aus demselben Grund.
+
+### Zwei Fehler, die dieser Posten gefunden hat
+
+**1. Die Tastatur legte sich über die Bühne.** Kevins zweiter Befund aus der
+Spiegelung, und der ältere von beiden — er steckt seit P5 im Code. Beim Tippen
+verschwindet das Feld unter der Tastatur, und die Tastenzeile darunter ist gar
+nicht mehr zu erreichen.
+
+Die Ursache ist eine Kombination, die einzeln jeweils richtig aussieht:
+`MainActivity` ruft `enableEdgeToEdge()`, und damit hört das Fenster auf, sich
+bei geöffneter Tastatur zu VERKLEINERN — das `adjustResize` im Manifest greift
+nur, solange das Fenster die Systemleisten selbst einrechnet. Stattdessen
+meldet die Plattform den Einzug, und die App muss ihn anwenden. Sie tat es
+nirgends: `imePadding` kam im ganzen Quelltext nicht vor.
+
+Zwei Dinge gehören dazu, und keines allein reicht — die Bühne bekommt
+`imePadding()`, damit ihr Sichtfenster wirklich kürzer wird (nur dann kann
+Compose ein fokussiertes Textfeld in den Blick scrollen), und das untere
+Polster fällt weg, solange die Tastatur steht: Die schwebende Leiste liegt dann
+hinter ihr, und Platz für etwas freizuhalten, das man nicht sieht, ergäbe eine
+Lücke von 74 dp über der Tastatur.
+
+**2. Der Fokusring umschloss das ganze Segment.** Bis N13 war das richtig, weil
+die Hervorhebung ebenso breit war. Mit der kompakten Pille sah es am Gerät aus
+wie ein Defekt: ein orangefarbener Ring um die halbe Leiste, in dem eine
+kleine Pille sitzt. Er hängt jetzt am Pilleninhalt.
+
+Aufgelöst nach derselben Trennung, die auch die Pille begründet: Was man
+TRIFFT, bleibt das ganze Segment — die `selectable`-Zone ist unverändert. Was
+man SIEHT, ist genau. Ein Fokusring ist etwas, das man sieht.
+
+### Geprüft und verworfen
+
+Zwei Punkte aus dem Auftrag sind bewusst NICHT gebaut. Beide stehen mit
+Begründung und Messwerten in
+[`../geprueft-und-verworfen.md`](../geprueft-und-verworfen.md):
+
+- **echter Backdrop-Blur** — Abhängigkeitsregel, falsche Ebene (der
+  Fenster-Weichzeichner meint das, was hinter dem FENSTER liegt), und im
+  Eigenbau ein Doppel-Rendering des ganzen Scrollinhalts in jedem Bild;
+- **Verlaufsabblendung zur Unterkante** — an der Kontrastmessung gescheitert.
+  Schon ein Viertel Schleier drückt `--ink-3` auf 3,34:1 (hell), die Hälfte
+  drückt den Code selbst auf 3,46:1. Es gibt keinen Grad, der gleichzeitig
+  wirkt und AA hält.
+
+### Ketten
+
+| Kette                                     | Ergebnis                                                   |
+| ----------------------------------------- | ---------------------------------------------------------- |
+| `gradlew testDebugUnitTest --rerun-tasks` | **221 Tests, 0 Fehler** (unverändert)                      |
+| `gradlew checkNoMaterial`                 | grün                                                       |
+| `node scripts/native-nav-contrast.mjs`    | **8 Messpunkte grün**, Gegenprobe fällt durch              |
+| Web: typecheck · Tests · Build            | grün, **560 Tests**                                        |
+| `dist/clockwork.html`                     | **801.401 Byte, SHA-256 `175f4a8e…584e`** — byte-identisch |
+
+Keine neuen Unit-Tests, wie schon bei N12: Was dieser Posten ändert, ist
+Geometrie und Farbmischung. Geprüft wird beides — nur eben von einem Skript,
+das rechnet, und am Pixel, nicht auf der JVM.
+
+### Was an Beweisen offen bleibt
+
+Der Auftrag verlangt zusätzlich Bilder in hell UND dunkel mit buntem Inhalt
+sichtbar unter der Leiste, die Pillenfahrt am Gerät gemessen und den
+Compositor-Ruhezustand. **Kevin hat den Lauf am Gerät abgebrochen** („brauchst
+keine Tests machen") und sieht sich den Build selbst an — seit diesem Posten
+über eine Bildschirmspiegelung am Desktop. Die Bilder fehlen deshalb. Was oben
+steht, ist gemessen und gilt; es ist nur nicht alles, was der Auftrag
+aufzählt.

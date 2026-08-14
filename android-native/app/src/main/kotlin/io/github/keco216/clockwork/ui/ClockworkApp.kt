@@ -16,7 +16,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -53,6 +56,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -267,6 +271,22 @@ fun ClockworkApp() {
     val scroll = if (page == Page.Settings) settingsScroll else homeScroll
 
     var mastheadHeight by remember { mutableIntStateOf(0) }
+
+    /* ── Was die Leiste unten verdeckt, wird GEMESSEN (N13) ────────────────
+       Bis N12 stand hier eine Konstante (`navOverlayHeight`), addiert aus
+       Segmenthoehe, Polster und Abstand. Sie war richtig — solange die Leiste
+       eine feste Hoehe hatte.
+
+       Seit N13 kommt ihre Hoehe aus dem Inhalt: Zeichen, Beschriftung und
+       deren Vorschub. Bei Schriftskala 1,5 waechst die Beschriftung, und mit
+       ihr die Karte; eine Konstante haette dann zu wenig freigehalten, und die
+       letzte Karte waere unter der Leiste steckengeblieben — genau der Fehler,
+       den N12 fuer die Normalgroesse behoben hat.
+
+       Gemessen wird deshalb dasselbe wie beim Kopf, mit demselben Werkzeug und
+       aus demselben Grund. */
+    var navHeight by remember { mutableIntStateOf(0) }
+
     val stowed = rememberStowed(scroll, mastheadHeight)
     val stow by animateFloatAsState(
         targetValue = if (stowed) 1f else 0f,
@@ -274,6 +294,30 @@ fun ClockworkApp() {
         label = "masthead-stow",
     )
     val topInset = with(density) { mastheadHeight.toDp() }
+
+    /* ── Die Tastatur (N13) ────────────────────────────────────────────────
+       Kevins Befund am gespiegelten Geraet: Beim Tippen liegt die Tastatur
+       ueber der Buehne. Das Feld, in das man gerade schreibt, kann darunter
+       verschwinden, und die Tastenzeile darunter ist gar nicht mehr zu
+       erreichen.
+
+       Die Ursache ist eine Kombination, die einzeln jeweils richtig aussieht:
+       `MainActivity` ruft `enableEdgeToEdge()`, und damit hoert das Fenster
+       auf, sich bei geoeffneter Tastatur zu VERKLEINERN — das
+       `adjustResize` im Manifest greift nur, solange das Fenster die
+       Systemleisten selbst einrechnet. Stattdessen meldet die Plattform den
+       Einzug, und die App muss ihn anwenden. Genau das tat sie nirgends.
+
+       Zwei Dinge gehoeren dazu, und keines allein reicht:
+         - die Buehne bekommt `imePadding()` (weiter unten), damit ihr
+           Sichtfenster wirklich kuerzer wird — nur dann kann Compose ein
+           fokussiertes Textfeld in den Blick scrollen;
+         - das untere Polster faellt weg, solange die Tastatur steht: Die
+           schwebende Leiste liegt dann hinter ihr, und Platz fuer etwas
+           freizuhalten, das man nicht sieht, ergaebe eine Luecke von 74 dp
+           ueber der Tastatur. */
+    val keyboardUp = WindowInsets.ime.getBottom(density) > 0
+    val bottomInset = if (keyboardUp) 0.dp else with(density) { navHeight.toDp() }
 
     /* ── Die Buehne liegt UNTER der Leiste (N12) ───────────────────────────
        Bis N11 war das hier eine Spalte: Buehne, Fusszeile, Leiste — jede mit
@@ -301,42 +345,56 @@ fun ClockworkApp() {
                 }
             },
     ) {
-        if (page == Page.Settings) {
-            SettingsPage(vault = vault, scroll = settingsScroll, topInset = topInset)
-        } else if (vacant) {
-            VacantStage(
-                field = field,
-                onFieldChange = { field = it; vault.resetIdleTimer() },
-                onFocusChange = { fieldFocused = it },
-                onTestKey = { field = TextFieldValue(TEST_KEY) },
-                note = note,
-                onScan = ::handleScan,
-                onNote = ::setNote,
-                vault = vault,
-                vaultOpen = vaultOpen,
-                onVaultOpenChange = { vaultOpen = it },
-                scroll = scroll,
-                topInset = topInset,
-            )
-        } else {
-            WorkingStage(
-                field = field,
-                onFieldChange = { field = it; vault.resetIdleTimer() },
-                onFocusChange = { fieldFocused = it },
-                entries = entries,
-                unixSeconds = unixSeconds,
-                inputOpen = inputOpen,
-                onToggleInput = { inputOpen = !inputOpen },
-                onCopy = { code -> context.copySensitive(code) },
-                note = note,
-                onScan = ::handleScan,
-                onNote = ::setNote,
-                vault = vault,
-                vaultOpen = vaultOpen,
-                onVaultOpenChange = { vaultOpen = it },
-                scroll = scroll,
-                topInset = topInset,
-            )
+        /* Die Buehne — und NUR sie — weicht der Tastatur. Kopf und Leiste
+           bleiben aussen vor: Der Kopf steht oben und geht die Tastatur
+           nichts an, und die Leiste soll hinter ihr verschwinden statt auf
+           ihr zu reiten. Genau deshalb sitzt `imePadding()` hier an einer
+           eigenen Huelle und nicht an der grossen Box. */
+        Box(modifier = Modifier.fillMaxSize().imePadding()) {
+            if (page == Page.Settings) {
+                SettingsPage(
+                    vault = vault,
+                    scroll = settingsScroll,
+                    topInset = topInset,
+                    bottomInset = bottomInset,
+                )
+            } else if (vacant) {
+                VacantStage(
+                    field = field,
+                    onFieldChange = { field = it; vault.resetIdleTimer() },
+                    onFocusChange = { fieldFocused = it },
+                    onTestKey = { field = TextFieldValue(TEST_KEY) },
+                    note = note,
+                    onScan = ::handleScan,
+                    onNote = ::setNote,
+                    vault = vault,
+                    vaultOpen = vaultOpen,
+                    onVaultOpenChange = { vaultOpen = it },
+                    scroll = scroll,
+                    topInset = topInset,
+                    bottomInset = bottomInset,
+                )
+            } else {
+                WorkingStage(
+                    field = field,
+                    onFieldChange = { field = it; vault.resetIdleTimer() },
+                    onFocusChange = { fieldFocused = it },
+                    entries = entries,
+                    unixSeconds = unixSeconds,
+                    inputOpen = inputOpen,
+                    onToggleInput = { inputOpen = !inputOpen },
+                    onCopy = { code -> context.copySensitive(code) },
+                    note = note,
+                    onScan = ::handleScan,
+                    onNote = ::setNote,
+                    vault = vault,
+                    vaultOpen = vaultOpen,
+                    onVaultOpenChange = { vaultOpen = it },
+                    scroll = scroll,
+                    topInset = topInset,
+                    bottomInset = bottomInset,
+                )
+            }
         }
 
         // Der Kopf liegt UEBER der Buehne und ist deckend — genau wie
@@ -359,7 +417,9 @@ fun ClockworkApp() {
         BottomNav(
             current = page,
             onSelect = { page = it },
-            modifier = Modifier.align(Alignment.BottomCenter),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .onSizeChanged { navHeight = it.height },
         )
     }
 }
@@ -424,6 +484,7 @@ private fun VacantStage(
     onVaultOpenChange: (Boolean) -> Unit,
     scroll: ScrollState,
     topInset: Dp,
+    bottomInset: Dp,
 ) {
     val colors = LocalColors.current
 
@@ -451,7 +512,7 @@ private fun VacantStage(
             .verticalScroll(scroll)
             .padding(
                 top = topInset,
-                bottom = Dimens.gapGroup + navOverlayHeight,
+                bottom = Dimens.gapGroup + bottomInset,
                 start = Dimens.gapGroup,
                 end = Dimens.gapGroup,
             ),
@@ -562,6 +623,7 @@ private fun WorkingStage(
     onVaultOpenChange: (Boolean) -> Unit,
     scroll: ScrollState,
     topInset: Dp,
+    bottomInset: Dp,
 ) {
     val colors = LocalColors.current
     val context = LocalContext.current
@@ -595,10 +657,10 @@ private fun WorkingStage(
             .verticalScroll(scroll)
             .padding(
                 top = topInset,
-                // Leistenhoehe plus Gruppenfuge: So laesst sich die letzte
-                // Karte vollstaendig ueber die schwebende Leiste hinaus
+                // Gemessene Leistenhoehe plus Gruppenfuge: So laesst sich die
+                // letzte Karte vollstaendig ueber die schwebende Leiste hinaus
                 // scrollen, und darunter bleiben sichtbare 24 dp Luft.
-                bottom = Dimens.gapGroup + navOverlayHeight,
+                bottom = Dimens.gapGroup + bottomInset,
                 start = Dimens.gapGroup,
                 end = Dimens.gapGroup,
             ),
