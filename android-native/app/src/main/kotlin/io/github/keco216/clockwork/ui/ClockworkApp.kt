@@ -71,6 +71,7 @@ import io.github.keco216.clockwork.core.parseEntries
 import io.github.keco216.clockwork.core.parseMigrationUri
 import io.github.keco216.clockwork.core.periodProgress
 import io.github.keco216.clockwork.core.timeCounter
+import io.github.keco216.clockwork.store.WebViewImport
 import kotlinx.coroutines.delay
 import io.github.keco216.clockwork.ui.theme.Dimens
 import io.github.keco216.clockwork.ui.theme.LocalColors
@@ -147,7 +148,16 @@ fun ClockworkApp() {
        Zeitschaltung und die `onStop`-Sperre auch dann greifen muessen, wenn
        gerade niemand die Zone ansieht. */
     val vault = remember(context, scope) { VaultController(context.filesDir, scope) }
-    LaunchedEffect(vault) { vault.load() }
+    LaunchedEffect(vault) {
+        /* Die Uebernahme aus der WebView-Fassung laeuft VOR dem ersten Laden —
+           sonst saehe der Tresor-Zustand einen Augenblick lang „aus", obwohl
+           gleich ein Umschlag da ist, und der Aufklapper malte den falschen
+           Zustand vor. Auf jeder Installation ausser der einen, die von 1.x
+           kommt, kehrt der Aufruf sofort zurueck: Er sieht nach, ob es
+           ueberhaupt WebView-Daten gibt, und tut sonst nichts. */
+        WebViewImport(context).runIfNeeded()
+        vault.load()
+    }
 
     // Die zwei Lambdas werden bei JEDER Komposition frisch gesetzt: Ein
     // festgehaltenes `field` waere nach dem naechsten Tastendruck veraltet,

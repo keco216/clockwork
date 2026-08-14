@@ -384,3 +384,178 @@ uses-feature-not-required: android.hardware.camera
 uses-feature-not-required: android.hardware.camera.any
 INTERNET-Treffer: 0
 ```
+
+## P8 — die Übernahme aus der WebView-Fassung
+
+Der Posten, für den das Format-Kapitel aus P2 gemacht war: Wer von der
+1.x-Fassung aktualisiert, soll seinen Tresor wiederfinden.
+
+### Der Aufbau — und warum er einen Release-Build braucht
+
+| Rolle         | Datei                                        | Größe       | versionCode | Zertifikat      |
+| ------------- | -------------------------------------------- | ----------- | ----------- | --------------- |
+| Ausgangsstand | `android/…/release/app-release.apk` (v1.5.4) | 1.235.807 B | 10504       | `d31e10a4…cf3f` |
+| Update        | `android-native/…/release/app-release.apk`   | 3.228.931 B | 20000       | `d31e10a4…cf3f` |
+
+Beide tragen **dasselbe** Zertifikat — sonst nähme Android das Update gar nicht
+an (`INSTALL_FAILED_UPDATE_INCOMPATIBLE`, in v1.4.0 schon einmal gemessen). Der
+Debug-Build kann diesen Beweis grundsätzlich nicht führen: Sein
+`applicationIdSuffix .dev` macht ihn zu einer anderen App.
+
+Installiert wurde mit `adb install -r`, also **ohne** Deinstallation. Die
+Antwort war `Success`; das allein belegt die Signaturgleichheit.
+
+Das APK ist mit 3,23 MB rund zweieinhalbmal so groß wie die 1,24-MB-WebView-
+Hülle. Das ist der Preis von Compose und war zu erwarten — die Zahl steht hier
+ungeschönt, weil sie in P9 ohnehin fällig ist.
+
+### Vorher: was wirklich in der WebView lag
+
+Gemessen am Gerät, nicht angenommen (`adb root`, dann die LevelDB der 1.5.4
+gelesen):
+
+```
+$ strings -n 6 …/app_webview/Default/Local Storage/leveldb/000003.log
+META:https://localhost
+2fa-live.vault.v1
+{"v":1,"kdf":"PBKDF2-SHA-256","iterations":600000,"salt":"ts/c2XBRdnFRAp4PPFlcMg==",
+ "iv":"thrshUByzB0gGnBp","data":"hXYyCIuWlMnnCEaGa8tszkepVq4MSVRgW+mU1TATYKq+…"}
+2fa-live.lock-settings.v1
+{"timeoutMs":900000,"lockOnHide":false}
+```
+
+**Die erste Zeile ist der eigentliche Fund.** Der Auftrag sagt, Scheme und Host
+seien „aus `capacitor.config.json` abzulesen" — dort steht nichts davon. Die
+Datei hat keinen `server`-Block, weder im Repo noch in der ausgelieferten 1.5.4
+(deren `assets/capacitor.config.json` nachgesehen). `https://localhost` ist
+Capacitors **Vorgabe** aus `CapConfig.java` (`hostname = "localhost"`,
+`androidScheme = CAPACITOR_HTTPS_SCHEME`). Hier steht sie jetzt gemessen da.
+
+Warum das mehr ist als eine Fußnote: Ein falscher Origin wirft keinen Fehler.
+`localStorage.getItem` liefert dann still `null`, die Übernahme meldete „nichts
+gefunden", und der Tresor wäre beim Löschen der Altdaten weg. Das ist dieselbe
+Falle wie beim APK-Vergleich, dessen leeres Vergleichsfeld „identisch" meldete.
+
+Der Ausgangsstand war absichtlich **nicht** auf den Voreinstellungen:
+15 Minuten statt 5, und „beim Verlassen zusperren" AUS. Sonst bewiese eine
+übernommene Einstellung nichts.
+
+### Nachher: was die native Fassung vorfand
+
+Nach dem ersten Start der 2.0.0 liegen im `filesDir` drei Dateien:
+
+```
+vault.json          {"v":1,"kdf":"PBKDF2-SHA-256","iterations":600000,
+                     "salt":"ts/c2XBRdnFRAp4PPFlcMg==","iv":"thrshUByzB0gGnBp","data":"hXYyCIuW…"}
+lock-settings.json  {"timeoutMs":900000,"lockOnHide":false,"biometric":false,"blockScreenshots":true}
+webview-import.json {"imported":true}
+```
+
+Der Umschlag ist **Zeichen für Zeichen** derselbe wie in der LevelDB. Die zwei
+Werte, die es im Web überhaupt gibt, sind mitgewandert; die zwei nativen
+(`biometric`, `blockScreenshots`) stehen auf ihrer Voreinstellung — es gibt im
+Web kein Gegenstück, aus dem sie kommen könnten.
+
+### Und sind die Altdaten weg?
+
+```
+$ grep -rl '2fa-live' /data/data/io.github.keco216.clockwork/
+(kein Treffer)
+```
+
+Über das **ganze** Datenverzeichnis, nicht nur über die eine Datei. Die LevelDB
+ist von 635 auf 30 Byte geschrumpft — übrig ist der Kopfsatz, kein Eintrag.
+
+Das Verzeichnis `app_webview` ist trotzdem wieder da: Unsere **eigene** WebView
+legt es beim Lesen an. Genau deshalb gibt es den Merker; ohne ihn träfe die
+Vorprüfung „gibt es WebView-Daten?" bei jedem Start wieder zu.
+
+### Zwei Gegenproben zum Merker
+
+| Ablauf                    | `vault.json` | Merker danach        |
+| ------------------------- | ------------ | -------------------- |
+| Neustart (Merker liegt)   | unverändert  | `{"imported":true}`  |
+| Merker gelöscht, Neustart | unverändert  | `{"imported":false}` |
+
+Die zweite Zeile prüft den Verteidigungszweig: Ein nativer Tresor ist da, also
+wird **nicht** gelesen und **nichts** gelöscht — der Merker wird nur neu
+gesetzt, damit der nächste Start nicht wieder eine WebView hochzieht. Ohne
+diesen Zweig hätte ein gelöschter Merker den Tresor überschreiben können.
+
+### Der Beweis, der zählt: die Passphrase öffnet
+
+Die in der 1.5.4 gesetzte Passphrase („geheim", im Feld als sechs Punkte
+gegengeprüft) sperrt die native Fassung auf: „Open — secrets are in the text
+field", Kopf auf „Offline · vault open", Konto zurück.
+
+Der Code ist zweimal gegen Node gerechnet, und der Zähler-Wechsel zwischen den
+beiden Ablesungen ist selbst ein Beweis:
+
+| Gerätezeit | Zähler   | App zeigt                      | `node -e` rechnet |
+| ---------- | -------- | ------------------------------ | ----------------- |
+| 1786707041 | 59556901 | 203 820 · folgt 550 709 · 18 s | 203820 / 550709   |
+
+Die Restsekunden rechnet Node auf 19, die App zeigt 18 — das ist die
+Verzögerung des Auslesens, kein Gangunterschied.
+
+### Der Beweis ist zweimal gelaufen
+
+Der erste Durchgang lief gegen einen Build, dem noch ein Zweig fehlte: Lag
+unter dem Tresor-Schlüssel etwas, das **kein bekannter Umschlag** ist, hätte
+die Übernahme es beim Aufräumen mitgelöscht. Das ist der Fall, der eintritt,
+wenn die 1.x-Fassung je ein zweites Umschlag-Format bekäme — ein alter
+Importeur, der ein neueres Format wegräumt, ist genau der Datenverlust, gegen
+den die ganze Reihenfolge in dieser Klasse gebaut ist.
+
+Der Zweig ist nachgetragen (`ImportOutcome.Unreadable`: nichts lesen, nichts
+löschen, nur den Merker setzen) und mit zwei Tests belegt. **Damit passte das
+gemessene APK nicht mehr zum Quelltext, also ist der ganze Beweisgang neu
+gelaufen** — Emulator zurückgesetzt, 1.5.4 neu installiert, Tresor neu
+angelegt, Update eingespielt. Alle Zahlen oben stammen aus diesem zweiten
+Durchgang und damit aus genau dem Stand, der committet ist.
+
+### Die Bilder
+
+| Datei                         | Was es zeigt                                                                                                                          |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `p8-uebernommen-gesperrt.png` | Was ein 1.x-Nutzer nach dem Update zuerst sieht: Kopf „Offline · vault locked", Leerbühne, Tresor-Zone mit Passphrasenfeld            |
+| `p8-uebernommen-offen.png`    | Nach dem Aufsperren: **15 Minuten** und „and when the app is left" AUS — die übernommenen Werte —, dazu der Biometrie-Schalter aus P7 |
+
+**Damit ist auch der letzte offene Punkt aus P7 erledigt.** Dort fehlte ein Bild
+des OFFENEN Tresors mit dem Biometrie-Schalter; das zweite Bild trägt ihn samt
+seinem Satz „A shortcut, not a second key: the passphrase stays the only way
+back." Dass der Tresor darin aus einer Übernahme stammt, ändert am Schalter
+nichts — er hängt am Zustand „offen", nicht an der Herkunft des Umschlags.
+
+Für beide Aufnahmen musste `blockScreenshots` über den Schalter in der App aus:
+FLAG_SECURE sperrt auch `adb shell screencap`. Die Datei bestätigt den Weg über
+die Oberfläche (`"blockScreenshots":false`), und die übernommenen Werte stehen
+unverändert daneben.
+
+Beide Bilder stammen aus dem ERSTEN Durchgang. Sie zeigen die Oberfläche, und
+an der hat der nachgetragene Zweig nichts geändert — er greift nur bei einem
+Umschlag, den diese Fassung nicht kennt. Wer sie neu schießen will, setzt den
+Emulator nach dem Rezept oben zurück.
+
+### Was dabei nicht passiert ist
+
+Am APK nachgemessen, nach dem Einbau des WebView-Pfads:
+
+```
+uses-permission: android.permission.CAMERA
+uses-permission: android.permission.USE_BIOMETRIC
+uses-permission: android.permission.USE_FINGERPRINT maxSdkVersion='27'
+INTERNET-Treffer: 0
+```
+
+Die eine Seite, die geladen wird, kommt über `shouldInterceptRequest` aus dem
+Programm selbst. Es gibt keine Netzanfrage, und es gibt weiterhin keine
+Berechtigung, eine zu stellen.
+
+### Ein Befund für P9, nicht für hier
+
+Im Kompaktraster (411 dp) stehen die drei Tresor-Tasten in EINER Zeile und
+werden dabei gekürzt: „Store ag…", „Delete e…". Die Web-Fassung bricht an
+derselben Stelle auf zwei Zeilen um. Sichtbare Abweichung, also nach der
+Auftragsregel ein Fehler — er gehört in den Paritätsdurchgang P9 und nicht in
+diesen Posten.

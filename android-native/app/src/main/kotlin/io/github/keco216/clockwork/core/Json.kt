@@ -77,6 +77,36 @@ internal object Json {
     }
 
     /**
+     * Liest einen ALLEINSTEHENDEN Wert, der eine Zeichenkette oder `null` ist.
+     *
+     * ── Wofuer das gebraucht wird ─────────────────────────────────────────
+     * `WebView.evaluateJavascript` liefert sein Ergebnis JSON-CODIERT zurueck,
+     * auch wenn der Ausdruck bereits eine Zeichenkette ergibt. Aus
+     * `localStorage.getItem(...)` wird also nicht `{"v":1,...}`, sondern
+     * `"{\"v\":1,...}"` — und wenn nichts gespeichert war, der Vierzeichentext
+     * `null`. Genau diese eine Huelle nimmt diese Funktion ab (P8).
+     *
+     * Sie ist bewusst streng: alles andere — eine Zahl, ein Objekt, Text
+     * hinter dem Wert — wirft. Ein stillschweigend falsch gedeuteter
+     * Rueckgabewert waere hier besonders teuer, weil die Uebernahme dann
+     * „nichts gefunden" meldet, obwohl der Tresor da war.
+     *
+     * @throws IllegalArgumentException bei allem, was nicht passt.
+     */
+    fun parseStringOrNull(text: String): String? {
+        val reader = Reader(text)
+        reader.skipWhitespace()
+        val value = reader.readValue()
+        reader.skipWhitespace()
+        require(reader.atEnd()) { "Text hinter dem Wert" }
+        return when (value) {
+            is Value.Text -> value.value
+            Value.Null -> null
+            else -> throw IllegalArgumentException("erwartet wurde eine Zeichenkette oder null")
+        }
+    }
+
+    /**
      * Schreibt ein flaches Objekt.
      *
      * Die Reihenfolge ist die der uebergebenen Map — bei einem `LinkedHashMap`
