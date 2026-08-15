@@ -24,4 +24,6 @@ Open source under the MIT licence. The OTP algorithms are written from scratch a
 
 Speaks 37 languages, all bundled, including right-to-left layouts.
 
+Android 8.0 or newer. On Android 7, 1.5.4 stays the final version.
+
 One thing, independent of this app: set up backup codes with every provider before you rely on any authenticator. They are the only thing that gets you back in when a secret is gone.

@@ -22,6 +22,8 @@ Es wird nichts erhoben, weil es nirgendwo hingehen könnte. Kein Analytics, kein
 ZUM NACHPRÜFEN GEBAUT
 Open Source unter der MIT-Lizenz. Die OTP-Algorithmen sind von Hand nach den RFC-Testvektoren geschrieben — keine OTP-Bibliothek. Quelltext, Testlauf und die Messskripte hinter jeder Zusage oben liegen öffentlich unter github.com/keco216/clockwork.
 
-Spricht 37 Sprachen, alle mitgebündelt, auch rechtsläufige Layouts.
+Spricht 37 Sprachen, alle mitgebündelt, auch Layouts von rechts nach links.
+
+Ab Android 8.0. Auf Android 7 bleibt 1.5.4 die letzte Fassung.
 
 Eine Sache, unabhängig von dieser App: Richte bei jedem Anbieter Backup-Codes ein, bevor du dich auf einen Authenticator verlässt. Sie sind das Einzige, was dich wieder hineinlässt, wenn ein Secret weg ist.
