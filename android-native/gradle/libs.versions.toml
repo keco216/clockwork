@@ -21,7 +21,7 @@ coroutines = "1.11.0"
 # core-ktx 1.19.0, lifecycle 2.11.0 und Compose 1.12.0 (BOM 2026.08.00)
 # verlangen `compileSdk 37` UND `Android Gradle plugin 9.1.0 or higher` — der
 # Bau bricht mit 30 solchen Meldungen ab. AGP 8.13 ist hier aber keine Laune,
-# sondern das Ende einer Zange, die in CLAUDE.md gemessen dokumentiert ist:
+# sondern das Ende einer Zange, die in den Projektnotizen gemessen dokumentiert ist:
 # Gradle 9.5.1 ist die juengste Fassung, die auf Java 25 laeuft (das JBR IST
 # Java 25) und noch AGP 8.x traegt; ab Gradle 9.6 fehlt dem AGP eine interne
 # API. AGP 9.1 haette also einen zweiten Gradle im Projekt bedeutet — 240 MB

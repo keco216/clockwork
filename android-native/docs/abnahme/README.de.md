@@ -6,7 +6,7 @@ soll bis zur bewussten Veröffentlichung unverändert bleiben.
 
 Alle Aufnahmen entstehen am Emulator über `adb shell screencap` + `adb pull` —
 **nicht** über `adb exec-out … >`, das zerstört unter PowerShell den
-Binärstrom (siehe CLAUDE.md, Fallen).
+Binärstrom (siehe Fallensammlung).
 
 ## P5 — die zwei Raster der Code-Karte
 
@@ -697,7 +697,7 @@ Sie steht jetzt in Bidi-Isolation (U+2068/U+2069) und liest sich wieder als
 ### Was beim Messen selbst schiefging
 
 Zwei Stunden dieses Postens gingen an Messfehler, nicht an Code — beide sind
-in CLAUDE.md als Fallen notiert:
+in der Fallensammlung notiert:
 
 - **`Select-Object -First N` beendet den Node-Prozess vorzeitig.** Der
   String-Generator wurde mitten im Lauf abgeschnitten und schrieb die neuen
@@ -1612,7 +1612,7 @@ und `imeOptions` der laufenden Verbindung.
 **Zurück führte auf BEIDEN Seiten aus der App heraus.** Auf der
 Einstellungen-Seite ist das falsch: Wer dort etwas eingestellt hat, will zurück
 zu seinen Codes. Die Folge war am Gerät gemessen — der nächste Wisch scrollte den
-Launcher (die Falle steht seit P7 in CLAUDE.md).
+Launcher (die Falle steht seit P7 in der Fallensammlung).
 
 Gebaut ist `PredictiveBackHandler` und nicht `BackHandler`: Android 14 hat die
 Geste sichtbar gemacht, wer vom Rand zieht sieht WOHIN es geht und kann
@@ -1836,7 +1836,7 @@ Tasten am Feld und nicht an der Bühne zu führen.
 
 **Sie gibt den Fokus zurück**, und das ist keine Höflichkeit: Sie VERSCHWINDET im
 selben Moment (das Feld ist jetzt leer), und ein Bauteil, das den Fokus hält und
-aus der Komposition fällt, gibt ihn nicht weiter — die Falle steht in CLAUDE.md.
+aus der Komposition fällt, gibt ihn nicht weiter — die Falle steht in der Fallensammlung.
 Die Web-Fassung löst es mit derselben Zeile (`input.focus()` direkt nach dem
 Leeren).
 

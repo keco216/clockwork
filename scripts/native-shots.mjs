@@ -347,7 +347,7 @@ async function tippeInsFeld(inhalt, erwartet) {
   }
   await sleep(1200);
 
-  /* 5) Geprueft wird das ERGEBNIS, nicht die Absicht (CLAUDE.md).
+  /* 5) Geprueft wird das ERGEBNIS, nicht die Absicht (Fallensammlung).
 
         Der erste Anlauf las den Feldinhalt zurueck und verglich ihn Zeichen
         fuer Zeichen. Das trug bei einer Zeile und scheiterte bei zwoelf:

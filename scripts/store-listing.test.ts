@@ -10,7 +10,7 @@
  * letzten Release und seither unbemerkt.
  *
  * Geschrieben werden beide Baeume von `scripts/store-listing.mjs` (Texte) und
- * `scripts/store-frames.mjs` (Bilder) aus je EINER Quelle. Dieser Test prueft
+ * `scripts/store-figma.mjs` (Bilder) aus je EINER Quelle. Dieser Test prueft
  * das Ergebnis — nicht die Absicht.
  *
  * Dazu die Vollstaendigkeitsregel fuer die Bildtexte (N22): Die
@@ -162,7 +162,7 @@ describe('Store-Auftritt', () => {
         const sprachenbild = (await lies(sprache))['6'];
 
         // Ohne die Prüfung stünde hier ein `?.` — und ein `?.` verschluckt
-        // auch einen Tippfehler im Schlüssel (Falle aus CLAUDE.md).
+        // auch einen Tippfehler im Schlüssel (Falle aus der Fallensammlung).
         expect(sprachenbild, `${sprache}: Motiv 6 fehlt`).toBeDefined();
         expect(sprachenbild?.headline.match(/\d+/g) ?? []).toEqual([String(locales.length)]);
       }

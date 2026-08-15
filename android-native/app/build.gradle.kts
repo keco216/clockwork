@@ -14,7 +14,7 @@ plugins {
    Ohne die Variable entsteht ein UNSIGNIERTES Release — wer klont, baut ohne
    Umbau, und weder Pfade noch Geheimnisse geraten ins Repo oder in die CI.
 
-   Falle aus CLAUDE.md, hier nur zur Erinnerung: In key.properties muss jeder
+   Falle aus der Fallensammlung, hier nur zur Erinnerung: In key.properties muss jeder
    Backslash VERDOPPELT stehen. Gradle liest die Datei als Java-Properties, und
    dort entwertet der Backslash das naechste Zeichen — aus C:\Users\... wird
    sonst ein relativer Pfad, und Gradle sucht ihn unter .gradle\daemon\. */
@@ -32,7 +32,7 @@ val keystoreProps: Properties? = System.getenv("CLOCKWORK_KEYSTORE")
    Deshalb NICHT den Versionsnamen im Bild nachtraeglich uebermalen (das waere
    die erfundene UI, die N18 ausdruecklich verbietet) und auch nicht `-dev`
    dauerhaft entfernen (das ist eine Release-Entscheidung, siehe
-   Release-Checkliste in CLAUDE.md). Stattdessen ein ausdruecklicher, opt-in
+   Release-Checkliste der Projektnotizen). Stattdessen ein ausdruecklicher, opt-in
    Schalter: `-Pclockwork.storeShot` nimmt fuer diesen einen Bau die
    Werkstattmarkierungen aus dem Versionsnamen — und nur die. Die
    applicationId behaelt ihr `.dev`, der Bau bleibt also neben einer
@@ -89,7 +89,7 @@ android {
 
            Mit dem ersten Play-Bau ist der Zweig kein Prototyp mehr: Was hier
            steht, ist der Auslieferungsstand. `-dev` ist deshalb weg (Punkt 2
-           der Release-Checkliste in CLAUDE.md). Der Debug-Bau bleibt
+           der Release-Checkliste der Projektnotizen). Der Debug-Bau bleibt
            unterscheidbar — er traegt weiter `.dev` an der applicationId und
            `-debug` am Versionsnamen.
 

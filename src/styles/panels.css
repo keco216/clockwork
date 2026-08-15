@@ -214,7 +214,7 @@
 
    Es ist derselbe Fehler wie beim 6 rem hohen Passwortfeld in V2 und bei der
    unsichtbaren Warnfarbe in V5 — an genau diesem Bauteil sogar zum zweiten Mal.
-   Die Lehre steht seit V5 in CLAUDE.md und lautet: Ein Bauteil in einer
+   Die Lehre steht seit V5 in den Projektnotizen und lautet: Ein Bauteil in einer
    importierten Datei, das eine Basisklasse überschreibt, braucht die DOPPELTE
    Klasse. Nicht die Hoffnung auf eine Zeilennummer. */
 .field.vault__pass {

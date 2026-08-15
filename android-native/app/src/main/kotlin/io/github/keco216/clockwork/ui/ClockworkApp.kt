@@ -435,7 +435,7 @@ fun ClockworkApp() {
        falsch: Wer dort etwas eingestellt hat, will zurueck zu seinen Codes und
        nicht auf den Startbildschirm. Am Geraet gemessen war die Folge, dass der
        naechste Wisch den Launcher scrollte (die Falle steht seit P7 in
-       CLAUDE.md).
+       der Fallensammlung).
 
        ── Warum PREDICTIVE und nicht einfach `BackHandler` ──────────────────
        Weil Android 14 die Geste sichtbar gemacht hat: Wer vom Rand zieht, sieht
@@ -1323,7 +1323,7 @@ private fun FilterField(value: String, onValueChange: (String) -> Unit) {
  * ── Warum sie den Fokus zurueckgibt ──────────────────────────────────────
  * Weil sie im selben Moment VERSCHWINDET (das Feld ist jetzt leer). Ein
  * Bauteil, das den Fokus haelt und aus der Komposition faellt, gibt ihn nicht
- * weiter — die Falle steht in CLAUDE.md, und die Web-Fassung loest sie mit
+ * weiter — die Falle steht in der Fallensammlung, und die Web-Fassung loest sie mit
  * derselben Zeile (`input.focus()` direkt nach dem Leeren).
  *
  * KEINE Rueckfrage: Die Web-Fassung hat keine, und die Taste steht direkt an
@@ -1359,7 +1359,7 @@ private fun ClearKey(onClear: () -> Unit, modifier: Modifier = Modifier) {
  * haelt, aendert ihn STILL, und man sieht dem Ergebnis nichts an: Der Code
  * rechnet sich weiter aus, er stimmt nur nicht mehr. Genau dieser Fehler ist
  * dem Projekt schon einmal passiert, nur mit `adb shell input text` als
- * Verursacher (CLAUDE.md, Fallen) — und er hat damals eine Dreiviertelstunde
+ * Verursacher (Fallensammlung) — und er hat damals eine Dreiviertelstunde
  * gekostet, weil der falsche Code aussah wie ein Rechenfehler.
  *
  * `KeyboardType.Ascii` — bittet um ein lateinisches Tastenfeld

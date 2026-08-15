@@ -7,7 +7,7 @@
  * aus zwei Ebenen, die das System selbst maskiert und skaliert. Als
  * `VectorDrawable` ist jede Ebene eine Textdatei — aufloesungsfrei, ein paar
  * hundert Byte statt zwoelf PNGs, und ohne die Node-zlib-Falle, die den
- * F-Droid-Bau der 1.x-Fassung unreproduzierbar macht (CLAUDE.md, Fallen).
+ * F-Droid-Bau der 1.x-Fassung unreproduzierbar macht (Fallensammlung).
  *
  * ── Warum es trotzdem ein Skript ist ──────────────────────────────────────
  * Weil die Geometrie eine gemessene ist und keine gezeichnete. Sie steht in
