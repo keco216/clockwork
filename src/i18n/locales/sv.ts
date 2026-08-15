@@ -187,4 +187,34 @@ export default {
   'err.migration.badPercent': 'Parametern ”data” innehåller trasig procentkodning.',
   'err.migration.badBase64': 'Parametern ”data” är inte giltig Base64.',
   'err.migration.noAccounts': 'I den här exporten finns inga konton.',
+
+  'native.vacant.text': 'Secret, otpauth-länk eller QR-bild — inget av det lämnar den här enheten.',
+
+  'native.colophon.note': 'Inget nätverk · ingen lagring · HMAC via javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Den här enheten släpper inte fram någon kamera — ”QR från bild” fungerar alltid.',
+  'native.scan.camera.denied':
+    'Kameran nekades. Ge behörigheten i systemets appinställningar — eller använd ”QR från bild”.',
+  'native.vault.lockOnHide': 'och när appen lämnas',
+  'native.vault.locked.hidden': 'Låstes när appen lämnades.',
+  'native.vault.error.storageBlocked': 'Valvet gick inte att skriva — är lagringen full?',
+  'native.vault.biometric.label': 'Lås upp med biometri',
+  'native.vault.biometric.note':
+    'En genväg, inte en andra nyckel: lösenfrasen förblir enda vägen tillbaka.',
+  'native.vault.biometric.cancel': 'Använd lösenfras',
+  'native.vault.biometric.unavailable': 'Den här enheten har ingen stark biometri inställd.',
+  'native.vault.biometric.invalidated':
+    'Ny biometri registrerades, så genvägen är borta. Lås upp med lösenfrasen och slå på den igen.',
+  'native.vault.biometric.failed': 'Upplåsning med biometri fungerade inte — använd lösenfrasen.',
+  'native.vault.screenshots.label': 'Blockera skärmbilder och förhandsvisningar',
+
+  'native.nav.home': 'Start',
+  'native.nav.settings': 'Inställningar',
+  'native.about.title': 'Om',
+  'native.about.version': 'Version',
+  'native.about.network':
+    'Appen har inget nätverkstillstånd. Den kan inte öppna någon anslutning — varken för uppdateringar, för statistik eller av misstag.',
+  'native.about.licenses': 'Licenser',
+  'native.about.source': 'Källkod',
 } satisfies Strings;

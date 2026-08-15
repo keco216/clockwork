@@ -181,4 +181,34 @@ export default {
   'err.migration.badPercent': '“data” 매개변수에 깨진 퍼센트 부호화가 있다.',
   'err.migration.badBase64': '“data” 매개변수가 올바른 Base64 가 아니다.',
   'err.migration.noAccounts': '이 내보내기에는 계정이 하나도 없다.',
+
+  'native.vacant.text': '시크릿, otpauth 링크, QR 이미지 — 어느 것도 이 기기를 벗어나지 않는다.',
+
+  'native.colophon.note': '네트워크 없음 · 저장 없음 · HMAC 은 javax.crypto 로',
+
+  'native.scan.camera.unavailable':
+    '이 기기는 카메라를 내주지 않는다 — “이미지에서 QR” 은 언제나 된다.',
+  'native.scan.camera.denied':
+    '카메라가 거부되었다. 시스템의 앱 설정에서 권한을 허용하거나 “이미지에서 QR” 을 쓰기 바란다.',
+  'native.vault.lockOnHide': '앱을 떠날 때도 잠근다',
+  'native.vault.locked.hidden': '앱을 떠나서 잠갔다.',
+  'native.vault.error.storageBlocked': '금고를 기록하지 못했다 — 저장 공간이 찼나?',
+  'native.vault.biometric.label': '생체 인식으로 잠금 해제',
+  'native.vault.biometric.note':
+    '지름길일 뿐 두 번째 열쇠는 아니다. 돌아오는 길은 암호 문구뿐이다.',
+  'native.vault.biometric.cancel': '암호 문구 쓰기',
+  'native.vault.biometric.unavailable': '이 기기에는 강한 생체 인식이 설정되어 있지 않다.',
+  'native.vault.biometric.invalidated':
+    '생체 인식이 새로 등록되어 지름길이 사라졌다. 암호 문구로 열고 다시 켜기 바란다.',
+  'native.vault.biometric.failed': '생체 인식 잠금 해제가 되지 않았다 — 암호 문구를 쓰기 바란다.',
+  'native.vault.screenshots.label': '화면 캡처와 미리 보기 막기',
+
+  'native.nav.home': '홈',
+  'native.nav.settings': '설정',
+  'native.about.title': '정보',
+  'native.about.version': '버전',
+  'native.about.network':
+    '이 앱에는 네트워크 권한이 없다. 연결을 열 수 없다 — 업데이트를 위해서도, 통계를 위해서도, 실수로도.',
+  'native.about.licenses': '라이선스',
+  'native.about.source': '소스 코드',
 } satisfies Strings;

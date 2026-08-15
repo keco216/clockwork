@@ -192,4 +192,34 @@ export default {
   'err.migration.badPercent': 'Parametrā „data“ ir bojāts procentu kodējums.',
   'err.migration.badBase64': 'Parametrs „data“ nav derīgs Base64.',
   'err.migration.noAccounts': 'Šajā eksportā nav neviena konta.',
+
+  'native.vacant.text': 'Noslēpums, otpauth saite vai QR attēls — nekas no tā neatstāj šo ierīci.',
+
+  'native.colophon.note': 'Bez tīkla · bez krātuves · HMAC caur javax.crypto',
+
+  'native.scan.camera.unavailable': 'Šī ierīce kameru neatdod — „QR no attēla“ darbojas vienmēr.',
+  'native.scan.camera.denied':
+    'Kamera tika atteikta. Piešķiriet atļauju lietotnes iestatījumos sistēmā — vai izmantojiet „QR no attēla“.',
+  'native.vault.lockOnHide': 'un pametot lietotni',
+  'native.vault.locked.hidden': 'Aizslēgts, pametot lietotni.',
+  'native.vault.error.storageBlocked': 'Seifu neizdevās ierakstīt — vai krātuve ir pilna?',
+  'native.vault.biometric.label': 'Atslēgt ar biometriju',
+  'native.vault.biometric.note':
+    'Īsceļš, nevis otra atslēga: paroles frāze paliek vienīgais ceļš atpakaļ.',
+  'native.vault.biometric.cancel': 'Izmantot paroles frāzi',
+  'native.vault.biometric.unavailable': 'Šajā ierīcē nav iestatīta spēcīga biometrija.',
+  'native.vault.biometric.invalidated':
+    'Tika reģistrēta jauna biometrija, tāpēc īsceļa vairs nav. Atslēdziet ar paroles frāzi un ieslēdziet to no jauna.',
+  'native.vault.biometric.failed':
+    'Atslēgšana ar biometriju neizdevās — izmantojiet paroles frāzi.',
+  'native.vault.screenshots.label': 'Bloķēt ekrānuzņēmumus un priekšskatījumus',
+
+  'native.nav.home': 'Sākums',
+  'native.nav.settings': 'Iestatījumi',
+  'native.about.title': 'Par',
+  'native.about.version': 'Versija',
+  'native.about.network':
+    'Lietotnei nav tīkla atļaujas. Tā nevar atvērt savienojumu — ne atjauninājumiem, ne statistikai, ne aiz kļūdas.',
+  'native.about.licenses': 'Licences',
+  'native.about.source': 'Pirmkods',
 } satisfies Strings;

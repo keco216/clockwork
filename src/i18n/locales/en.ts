@@ -190,4 +190,34 @@ export default {
   'err.migration.badPercent': 'The “data” parameter contains broken percent encoding.',
   'err.migration.badBase64': 'The “data” parameter is not valid Base64.',
   'err.migration.noAccounts': 'There are no accounts in this export.',
+
+  'native.vacant.text': 'Secret, otpauth link or QR image — none of it leaves this device.',
+
+  'native.colophon.note': 'No network · no storage · HMAC via javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'This device does not hand out a camera — “QR from image” always works.',
+  'native.scan.camera.denied':
+    'The camera was denied. Allow it in the system’s app settings — or use “QR from image”.',
+  'native.vault.lockOnHide': 'and when the app is left',
+  'native.vault.locked.hidden': 'Locked on leaving the app.',
+  'native.vault.error.storageBlocked': 'The vault could not be written — is the storage full?',
+  'native.vault.biometric.label': 'Unlock with biometrics',
+  'native.vault.biometric.note':
+    'A shortcut, not a second key: the passphrase stays the only way back.',
+  'native.vault.biometric.cancel': 'Use passphrase',
+  'native.vault.biometric.unavailable': 'This device has no strong biometrics set up.',
+  'native.vault.biometric.invalidated':
+    'New biometrics were enrolled, so the shortcut is gone. Unlock with the passphrase and switch it on again.',
+  'native.vault.biometric.failed': 'Biometric unlocking did not work — use the passphrase.',
+  'native.vault.screenshots.label': 'Block screenshots and previews',
+
+  'native.nav.home': 'Home',
+  'native.nav.settings': 'Settings',
+  'native.about.title': 'About',
+  'native.about.version': 'Version',
+  'native.about.network':
+    'The app has no network permission. It cannot open a connection — not for updates, not for statistics, not by mistake.',
+  'native.about.licenses': 'Licenses',
+  'native.about.source': 'Source code',
 } satisfies Strings;

@@ -210,4 +210,32 @@ export default {
   'err.migration.badPercent': 'בפרמטר „data” יש קידוד אחוזים שבור.',
   'err.migration.badBase64': 'הפרמטר „data” אינו Base64 תקין.',
   'err.migration.noAccounts': 'בייצוא הזה אין שום חשבון.',
+
+  'native.vacant.text': 'סוד, קישור otpauth או תמונת QR — דבר מאלה אינו עוזב את המכשיר הזה.',
+
+  'native.colophon.note': 'בלי רשת · בלי אחסון · HMAC דרך javax.crypto',
+
+  'native.scan.camera.unavailable': 'המכשיר הזה אינו מוסר מצלמה — „QR מתמונה” עובד תמיד.',
+  'native.scan.camera.denied':
+    'המצלמה נדחתה. אפשרו את ההרשאה בהגדרות האפליקציה של המערכת — או השתמשו ב„QR מתמונה”.',
+  'native.vault.lockOnHide': 'וגם ביציאה מהאפליקציה',
+  'native.vault.locked.hidden': 'ננעלה ביציאה מהאפליקציה.',
+  'native.vault.error.storageBlocked': 'לא ניתן היה לכתוב את הכספת — האם האחסון מלא?',
+  'native.vault.biometric.label': 'פתיחה בזיהוי ביומטרי',
+  'native.vault.biometric.note': 'קיצור דרך, לא מפתח שני: משפט־הסיסמה נשאר הדרך היחידה חזרה.',
+  'native.vault.biometric.cancel': 'להשתמש במשפט־סיסמה',
+  'native.vault.biometric.unavailable': 'במכשיר הזה לא הוגדר זיהוי ביומטרי חזק.',
+  'native.vault.biometric.invalidated':
+    'נרשם זיהוי ביומטרי חדש, ולכן קיצור הדרך נעלם. פתחו עם משפט־הסיסמה והפעילו אותו מחדש.',
+  'native.vault.biometric.failed': 'הפתיחה בזיהוי ביומטרי לא הצליחה — השתמשו במשפט־הסיסמה.',
+  'native.vault.screenshots.label': 'חסימת צילומי מסך ותצוגות מקדימות',
+
+  'native.nav.home': 'בית',
+  'native.nav.settings': 'הגדרות',
+  'native.about.title': 'אודות',
+  'native.about.version': 'גרסה',
+  'native.about.network':
+    'ליישום אין הרשאת רשת. הוא לא יכול לפתוח חיבור — לא לעדכונים, לא לסטטיסטיקה ולא בטעות.',
+  'native.about.licenses': 'רישיונות',
+  'native.about.source': 'קוד המקור',
 } satisfies Strings;

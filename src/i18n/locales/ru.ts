@@ -215,4 +215,35 @@ export default {
   'err.migration.badPercent': 'В параметре «data» испорчено процентное кодирование.',
   'err.migration.badBase64': 'Параметр «data» не является годным Base64.',
   'err.migration.noAccounts': 'В этой выгрузке нет ни одной учётной записи.',
+
+  'native.vacant.text':
+    'Секрет, ссылка otpauth или изображение QR — ничто из этого не покидает устройство.',
+
+  'native.colophon.note': 'Никакой сети · никакого хранилища · HMAC через javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Это устройство не выдаёт камеру — «QR из изображения» работает всегда.',
+  'native.scan.camera.denied':
+    'В камере отказано. Выдайте разрешение в системных настройках приложения — или возьмите «QR из изображения».',
+  'native.vault.lockOnHide': 'и при выходе из приложения',
+  'native.vault.locked.hidden': 'Заперт при выходе из приложения.',
+  'native.vault.error.storageBlocked': 'Сейф не удалось записать — не заполнена ли память?',
+  'native.vault.biometric.label': 'Отпирать биометрией',
+  'native.vault.biometric.note':
+    'Это короткий путь, а не второй ключ: парольная фраза остаётся единственной дорогой назад.',
+  'native.vault.biometric.cancel': 'Взять парольную фразу',
+  'native.vault.biometric.unavailable': 'На этом устройстве не настроена сильная биометрия.',
+  'native.vault.biometric.invalidated':
+    'Зарегистрирована новая биометрия, поэтому короткого пути больше нет. Отоприте парольной фразой и включите его заново.',
+  'native.vault.biometric.failed': 'Отпереть биометрией не вышло — возьмите парольную фразу.',
+  'native.vault.screenshots.label': 'Запрещать снимки экрана и предпросмотр',
+
+  'native.nav.home': 'Главная',
+  'native.nav.settings': 'Настройки',
+  'native.about.title': 'О приложении',
+  'native.about.version': 'Версия',
+  'native.about.network':
+    'У приложения нет разрешения на сеть. Оно не может открыть соединение — ни для обновлений, ни для статистики, ни по ошибке.',
+  'native.about.licenses': 'Лицензии',
+  'native.about.source': 'Исходный код',
 } satisfies Strings;

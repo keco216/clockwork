@@ -188,4 +188,35 @@ export default {
   'err.migration.badPercent': 'Parameteren »data« indeholder en ødelagt procentkodning.',
   'err.migration.badBase64': 'Parameteren »data« er ikke gyldig Base64.',
   'err.migration.noAccounts': 'I denne eksport er der ingen konti.',
+
+  'native.vacant.text':
+    'Secret, otpauth-link eller QR-billede — intet af det forlader denne enhed.',
+
+  'native.colophon.note': 'Intet netværk · intet lager · HMAC via javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Denne enhed giver ikke adgang til noget kamera — »QR fra billede« virker altid.',
+  'native.scan.camera.denied':
+    'Kameraet blev afvist. Giv tilladelsen i systemets app-indstillinger — eller brug »QR fra billede«.',
+  'native.vault.lockOnHide': 'og når appen forlades',
+  'native.vault.locked.hidden': 'Låst, da appen blev forladt.',
+  'native.vault.error.storageBlocked': 'Boksen kunne ikke skrives — er lagerpladsen fuld?',
+  'native.vault.biometric.label': 'Lås op med biometri',
+  'native.vault.biometric.note':
+    'En genvej, ikke en ekstra nøgle: adgangssætningen er stadig den eneste vej tilbage.',
+  'native.vault.biometric.cancel': 'Brug adgangssætning',
+  'native.vault.biometric.unavailable': 'Denne enhed har ingen stærk biometri sat op.',
+  'native.vault.biometric.invalidated':
+    'Der blev registreret ny biometri, så genvejen er væk. Lås op med adgangssætningen, og slå den til igen.',
+  'native.vault.biometric.failed': 'Oplåsning med biometri virkede ikke — brug adgangssætningen.',
+  'native.vault.screenshots.label': 'Bloker skærmbilleder og forhåndsvisninger',
+
+  'native.nav.home': 'Start',
+  'native.nav.settings': 'Indstillinger',
+  'native.about.title': 'Om',
+  'native.about.version': 'Version',
+  'native.about.network':
+    'Appen har ingen netværkstilladelse. Den kan ikke åbne en forbindelse — hverken til opdateringer, til statistik eller ved et uheld.',
+  'native.about.licenses': 'Licenser',
+  'native.about.source': 'Kildekode',
 } satisfies Strings;

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/fi.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">TOTP-todennin · RFC 6238</string>
+    <string name="skip_toCodes">Siirry koodeihin</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Ei verkkoa</string>
+    <string name="status_vault_off">mitään ei tallenneta</string>
+    <string name="status_vault_locked">holvi lukossa</string>
+    <string name="status_vault_open">holvi auki</string>
+    <string name="zone_input">Syöte</string>
+    <string name="zone_vault">Holvi</string>
+    <string name="zone_codes">Koodit</string>
+    <string name="input_legend">Yksi rivi kutakin kohdetta kohden</string>
+    <string name="input_placeholder">esim. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s tai %2$s — sekaisin. %3$s aloittaa muistiinpanon.</string>
+    <string name="input_help_images">QR-kuvia voi myös raahata tähän tai liittää näppäimillä %1$s.</string>
+    <string name="input_help_migration">Google Authenticatorin viennit (%1$s) muunnetaan itsestään.</string>
+    <string name="input_help_more">Kaikki syötemuodot</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s tili</item>
+        <item quantity="other">%1$s tiliä</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s virhe</item>
+        <item quantity="other">%1$s virhettä</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Tyhjennä</string>
+    <string name="key_qrImage">QR kuvasta</string>
+    <string name="key_camera">Kamera</string>
+    <string name="key_cameraStop">Sammuta kamera</string>
+    <string name="key_copy">Kopioi</string>
+    <string name="key_copyDone">Kopioitu</string>
+    <string name="key_copyFailed">Epäonnistui</string>
+    <string name="viewfinder_hint">Pidä QR-koodi kehyksen sisällä</string>
+    <string name="filter_label">Suodata tilejä</string>
+    <string name="filter_placeholder">Suodata nimen mukaan</string>
+    <string name="filter_empty">Mikään ei vastaa hakua ”%1$s”.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s numero</item>
+        <item quantity="other">%1$s numeroa</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">seuraava</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">sekuntia</string>
+    <string name="strip_seconds_valid">voimassa</string>
+    <string name="strip_accountFallback">Tili %1$s</string>
+    <string name="strip_copyAria">Kopioi kohteen %1$s koodi</string>
+    <string name="strip_copyAnnounce">Koodi %1$s kopioitu</string>
+    <string name="strip_copyFailedHint">Kopiointi epäonnistui. Maalaa koodi käsin.</string>
+    <string name="fault_title">Riviä ei voi lukea</string>
+    <string name="vault_state_off">Pois — mitään ei tallenneta</string>
+    <string name="vault_state_locked">Lukossa — salauslause tarvitaan</string>
+    <string name="vault_state_open">Auki — secretit ovat tekstikentässä</string>
+    <string name="vault_explain">Oletuksena Clockwork ei tallenna mitään. Jos otat kassakaapin käyttöön, syöte jää tänne salauslauseellasi salattuna — ilman sitä tallennettu lohko on arvoton.</string>
+    <string name="vault_explain_crypto">Avain johdetaan salauslauseesta PBKDF2-SHA-256:lla ja %1$s kierroksella, ja salauksen tekee AES-256-GCM. Vain sinetöity kirjekuori tallennetaan: ei koskaan selkokielistä tekstiä, ei salauslausetta, ei johdettua avainta.</string>
+    <string name="vault_explain_more">Kaikki yksityiskohdat</string>
+    <string name="vault_pass_new">Uusi salauslause</string>
+    <string name="vault_pass_existing">Salauslause</string>
+    <string name="vault_action_seal">Tallenna salattuna</string>
+    <string name="vault_action_unseal">Avaa</string>
+    <string name="vault_action_deriving">Avainta johdetaan …</string>
+    <string name="vault_action_lock">Lukitse</string>
+    <string name="vault_action_update">Tallenna uudelleen</string>
+    <string name="vault_action_wipe">Poista kaikki</string>
+    <string name="vault_action_wipeConfirm">Poistetaanko oikeasti?</string>
+    <string name="vault_timeout_label">Lukittuu itsestään, kun kuluu</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minuutti</item>
+        <item quantity="other">%1$s minuuttia</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">Ei ole mitään tallennettavaa — tekstikenttä on tyhjä.</string>
+    <string name="vault_error_noVault">Yhtään holvia ei ole tallennettu.</string>
+    <string name="vault_error_noPassphrase">Ilman salauslausetta ei ole avainta.</string>
+    <string name="vault_error_sealFailed">Tallentaminen epäonnistui.</string>
+    <string name="vault_error_unsealFailed">Avaaminen epäonnistui.</string>
+    <string name="vault_msg_sealed">Holvi tallennettu salattuna.</string>
+    <string name="vault_msg_resealed">Holvi salattu uudelleen.</string>
+    <string name="vault_msg_unsealed">Holvi avattu.</string>
+    <string name="vault_msg_locked">Holvi lukittu.</string>
+    <string name="vault_msg_wiped">Holvi poistettu.</string>
+    <string name="vault_msg_wipedNote">Poistettu. Tallennustilaan ei jäänyt mitään.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Lukittui %1$s minuutin jälkeen ilman syötettä.</item>
+        <item quantity="other">Lukittui %1$s minuutin jälkeen ilman syötettä.</item>
+    </plurals>
+    <string name="scan_noQr">Kuvasta ei erottunut yhtään QR-koodia.</string>
+    <string name="scan_unreadable">Kuvaa ei voitu lukea — onko se todella kuva?</string>
+    <string name="scan_done">QR-koodi luettu ja lisätty.</string>
+    <string name="scan_camera_notFound">Kameraa ei ole kytketty. ”QR kuvasta” toimii silti.</string>
+    <string name="scan_camera_busy">Kamera on juuri nyt toisen ohjelman käytössä.</string>
+    <string name="scan_camera_failed">Kameraa ei saatu käyntiin. ”QR kuvasta” toimii aina.</string>
+    <plurals name="import_done">
+        <item quantity="one">%1$s tili otettu Google Authenticatorin viennistä</item>
+        <item quantity="other">%1$s tiliä otettu Google Authenticatorin viennistä</item>
+    </plurals>
+    <string name="import_skipped">ohitettu: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, laskuriin perustuva)</string>
+    <string name="import_skip_algorithm">%1$s (algoritmia ei tueta)</string>
+    <string name="import_skip_emptySecret">%1$s (tyhjä secret)</string>
+    <string name="import_unnamed">Nimetön</string>
+    <string name="import_unreadable">Vientiä ei voi lukea.</string>
+    <string name="vacant_demo">Lisää testiavain</string>
+    <string name="lang_label">Kieli</string>
+    <string name="lang_aria">Valitse kieli</string>
+    <string name="err_base32_paddingInside">Merkki ”=” saa olla vain lopussa (se on pelkkää täytettä).</string>
+    <string name="err_base32_empty">Avain secret on tyhjä.</string>
+    <string name="err_base32_badChar">Kelvoton merkki ”%1$s” kohdassa %2$s. Base32 tuntee vain kirjaimet A–Z ja numerot 2–7 — numeroita 0, 1 ja 8 siinä ei esiinny (sekoitettu kirjaimiin O, I ja B?).</string>
+    <string name="err_base32_badLength">Kelvoton pituus: %1$s merkkiä (ilman välilyöntejä ja täytettä). Base32 koodaa 5 tavua 8 merkkiin; viimeiseen lohkoon mahtuu vain 2, 4, 5, 7 tai 8 merkkiä. Todennäköisesti yksi merkki puuttuu tai on yksi liikaa.</string>
+    <string name="err_uri_invalid">Tämä ei ole kelvollinen URI. Odotetaan muotoa ”otpauth://totp/…”.</string>
+    <string name="err_uri_scheme">Tuntematon skeema ”%1$s”. Odotetaan ”otpauth”.</string>
+    <string name="err_uri_hotp">Tämä on HOTP-URI (laskuriin perustuva). Tämä sovellus tuottaa vain aikaan perustuvia TOTP-koodeja — muuhun pitäisi tallentaa laskurin tila.</string>
+    <string name="err_uri_type">Tuntematon tyyppi ”%1$s”. Osoitteen ”otpauth://” jälkeen tulee ”totp”.</string>
+    <string name="err_uri_typeEmpty">(tyhjä)</string>
+    <string name="err_uri_noSecret">URI:sta puuttuu parametri ”secret”.</string>
+    <string name="err_uri_badLabel">URI:n nimiössä on rikkinäinen prosenttikoodaus (esimerkiksi yksinäinen ”%”).</string>
+    <string name="err_uri_algorithm">Tuntematon algoritmi ”%1$s”. Tuettuja ovat SHA1, SHA256 ja SHA512.</string>
+    <string name="err_uri_digits">Kelvoton arvo kentälle ”digits”: %1$s. Sallittu on %2$s–%3$s.</string>
+    <string name="err_uri_period">Kelvoton arvo kentälle ”period”: %1$s. Odotetaan 1–3600 sekuntia.</string>
+    <string name="err_uri_integer">Parametrin ”%1$s” on oltava kokonaisluku; löytyi ”%2$s”.</string>
+    <string name="err_otp_digits">Kelvoton numeroiden määrä: %1$s. Sallittu on %2$s–%3$s.</string>
+    <string name="err_otp_emptySecret">Secret on tyhjä — siitä ei voi laskea koodia.</string>
+    <string name="err_line_unreadable">Tätä riviä ei voitu lukea.</string>
+    <string name="err_vault_openFailed">Holvia ei saatu auki. Väärä salauslause — tai tallennettuja tietoja on muutettu.</string>
+    <string name="err_vault_badFormat">Tallennetut holvitiedot ovat tuntemattomassa muodossa.</string>
+    <string name="err_vault_version">Holviversiota %1$s ei tueta (odotettiin: %2$s).</string>
+    <string name="err_vault_base64">Holvitietojen kenttä ”%1$s” ei ole kelvollista Base64:ää.</string>
+    <string name="err_vault_iterations">Kelvoton kierrosten määrä: %1$s.</string>
+    <string name="err_migration_notExport">Tämä ei ole Google Authenticatorin vienti. Odotetaan muotoa ”otpauth-migration://offline?data=…”.</string>
+    <string name="err_migration_noData">URI:sta puuttuu parametri ”data”.</string>
+    <string name="err_migration_badPercent">Parametrissa ”data” on rikkinäinen prosenttikoodaus.</string>
+    <string name="err_migration_badBase64">Parametri ”data” ei ole kelvollista Base64:ää.</string>
+    <string name="err_migration_noAccounts">Tässä viennissä ei ole yhtään tiliä.</string>
+    <string name="vacant_text">Secret, otpauth-linkki tai QR-kuva — mikään niistä ei poistu tästä laitteesta.</string>
+    <string name="colophon_note">Ei verkkoa · ei tallennusta · HMAC javax.crypto:n kautta</string>
+    <string name="scan_camera_unavailable">Tämä laite ei anna kameraa käyttöön — ”QR kuvasta” toimii aina.</string>
+    <string name="scan_camera_denied">Kamerasta kieltäydyttiin. Myönnä lupa järjestelmän sovellusasetuksissa — tai käytä toimintoa ”QR kuvasta”.</string>
+    <string name="vault_lockOnHide">ja sovelluksesta poistuttaessa</string>
+    <string name="vault_locked_hidden">Lukittui sovelluksesta poistuttaessa.</string>
+    <string name="vault_error_storageBlocked">Holvia ei voitu kirjoittaa — onko tallennustila täynnä?</string>
+    <string name="vault_biometric_label">Avaa biometrialla</string>
+    <string name="vault_biometric_note">Oikotie, ei toinen avain: salauslause pysyy ainoana paluutienä.</string>
+    <string name="vault_biometric_cancel">Käytä salauslausetta</string>
+    <string name="vault_biometric_unavailable">Tässä laitteessa ei ole vahvaa biometriaa käytössä.</string>
+    <string name="vault_biometric_invalidated">Uusi biometria rekisteröitiin, joten oikotie on poissa. Avaa salauslauseella ja kytke se uudelleen päälle.</string>
+    <string name="vault_biometric_failed">Biometrinen avaus ei onnistunut — käytä salauslausetta.</string>
+    <string name="vault_screenshots_label">Estä kuvakaappaukset ja esikatselut</string>
+    <string name="nav_home">Etusivu</string>
+    <string name="nav_settings">Asetukset</string>
+    <string name="about_title">Tietoja</string>
+    <string name="about_version">Versio</string>
+    <string name="about_network">Sovelluksella ei ole verkkolupaa. Se ei voi avata yhteyttä — ei päivityksiin, ei tilastoihin eikä vahingossa.</string>
+    <string name="about_licenses">Lisenssit</string>
+    <string name="about_source">Lähdekoodi</string>
+</resources>

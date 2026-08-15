@@ -197,4 +197,37 @@ export default {
   'err.migration.badPercent': 'Parametrul „data” conține o codificare procentuală stricată.',
   'err.migration.badBase64': 'Parametrul „data” nu este Base64 valid.',
   'err.migration.noAccounts': 'În acest export nu există niciun cont.',
+
+  'native.vacant.text':
+    'Secret, link otpauth sau imagine QR — nimic din toate acestea nu părăsește acest dispozitiv.',
+
+  'native.colophon.note': 'Fără rețea · fără stocare · HMAC prin javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Acest dispozitiv nu pune la dispoziție nicio cameră — „QR din imagine” funcționează întotdeauna.',
+  'native.scan.camera.denied':
+    'Camera a fost refuzată. Acordați permisiunea în setările aplicației din sistem — sau folosiți „QR din imagine”.',
+  'native.vault.lockOnHide': 'și la părăsirea aplicației',
+  'native.vault.locked.hidden': 'Încuiat la părăsirea aplicației.',
+  'native.vault.error.storageBlocked': 'Seiful nu a putut fi scris — este plină memoria?',
+  'native.vault.biometric.label': 'Deblocare cu biometrie',
+  'native.vault.biometric.note':
+    'O scurtătură, nu o a doua cheie: fraza de acces rămâne singurul drum înapoi.',
+  'native.vault.biometric.cancel': 'Folosiți fraza de acces',
+  'native.vault.biometric.unavailable':
+    'Pe acest dispozitiv nu este configurată o biometrie puternică.',
+  'native.vault.biometric.invalidated':
+    'A fost înregistrată o biometrie nouă, așa că scurtătura a dispărut. Deblocați cu fraza de acces și porniți-o din nou.',
+  'native.vault.biometric.failed':
+    'Deblocarea cu biometrie nu a funcționat — folosiți fraza de acces.',
+  'native.vault.screenshots.label': 'Blocarea capturilor de ecran și a previzualizărilor',
+
+  'native.nav.home': 'Acasă',
+  'native.nav.settings': 'Setări',
+  'native.about.title': 'Despre',
+  'native.about.version': 'Versiune',
+  'native.about.network':
+    'Aplicația nu are permisiune de rețea. Nu poate deschide nicio conexiune — nici pentru actualizări, nici pentru statistici, nici din greșeală.',
+  'native.about.licenses': 'Licențe',
+  'native.about.source': 'Cod sursă',
 } satisfies Strings;

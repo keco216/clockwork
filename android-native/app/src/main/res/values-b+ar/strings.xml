@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/ar.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">مُوثِّق TOTP · RFC 6238</string>
+    <string name="skip_toCodes">انتقل إلى الرموز</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">دون اتصال</string>
+    <string name="status_vault_off">لا يُحفظ شيء</string>
+    <string name="status_vault_locked">الخزنة مقفلة</string>
+    <string name="status_vault_open">الخزنة مفتوحة</string>
+    <string name="zone_input">الإدخال</string>
+    <string name="zone_vault">الخزنة</string>
+    <string name="zone_codes">الرموز</string>
+    <string name="input_legend">مُدخَل واحد في كل سطر</string>
+    <string name="input_placeholder">مثال:\nJBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32 أو %1$s أو %2$s — مختلطة. و%3$s تبدأ ملاحظة.</string>
+    <string name="input_help_images">يمكن أيضًا سحب صور رمز QR إلى هنا أو لصقها بـ %1$s.</string>
+    <string name="input_help_migration">تُحوَّل صادرات Google Authenticator (%1$s) تلقائيًا.</string>
+    <string name="input_help_more">كل صيغ الإدخال</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="zero">%1$s حساب</item>
+        <item quantity="one">%1$s حساب</item>
+        <item quantity="two">%1$s حساب</item>
+        <item quantity="few">%1$s حسابات</item>
+        <item quantity="many">%1$s حسابًا</item>
+        <item quantity="other">%1$s حساب</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="zero">%1$s خطأ</item>
+        <item quantity="one">%1$s خطأ</item>
+        <item quantity="two">%1$s خطأ</item>
+        <item quantity="few">%1$s أخطاء</item>
+        <item quantity="many">%1$s خطأً</item>
+        <item quantity="other">%1$s خطأ</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">إفراغ</string>
+    <string name="key_qrImage">QR من صورة</string>
+    <string name="key_camera">الكاميرا</string>
+    <string name="key_cameraStop">إيقاف الكاميرا</string>
+    <string name="key_copy">نسخ</string>
+    <string name="key_copyDone">نُسخ</string>
+    <string name="key_copyFailed">أخفق</string>
+    <string name="viewfinder_hint">أبقِ رمز QR داخل الإطار</string>
+    <string name="filter_label">تصفية الحسابات</string>
+    <string name="filter_placeholder">تصفية بالاسم</string>
+    <string name="filter_empty">لا يوجد ما يطابق «%1$s».</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="zero">%1$s خانة</item>
+        <item quantity="one">%1$s خانة</item>
+        <item quantity="two">%1$s خانة</item>
+        <item quantity="few">%1$s خانات</item>
+        <item quantity="many">%1$s خانة</item>
+        <item quantity="other">%1$s خانة</item>
+    </plurals>
+    <string name="strip_period">%1$s ث</string>
+    <string name="strip_next">التالي</string>
+    <string name="strip_seconds_abbr">ث</string>
+    <string name="strip_seconds_title">ثوانٍ</string>
+    <string name="strip_seconds_valid">صالح</string>
+    <string name="strip_accountFallback">حساب %1$s</string>
+    <string name="strip_copyAria">انسخ رمز %1$s</string>
+    <string name="strip_copyAnnounce">نُسخ الرمز %1$s</string>
+    <string name="strip_copyFailedHint">أخفق النسخ. حدِّد الرمز يدويًا.</string>
+    <string name="fault_title">سطر غير مقروء</string>
+    <string name="vault_state_off">مطفأة — لا يُحفظ شيء</string>
+    <string name="vault_state_locked">مقفلة — عبارة المرور مطلوبة</string>
+    <string name="vault_state_open">مفتوحة — الأسرار في حقل النص</string>
+    <string name="vault_explain">لا يحفظ Clockwork شيئًا بشكل افتراضي. وإن شغّلت الخزنة بقي المُدخَل هنا مُعمّى بعبارة مرورك، وبغيرها لا قيمة للكتلة المحفوظة.</string>
+    <string name="vault_explain_crypto">يُشتَق المفتاح من عبارة المرور بـ PBKDF2-SHA-256 عبر %1$s تكرار، ويتولّى AES-256-GCM التعمية. ولا يُحفَظ سوى المُغلَّف المختوم: لا النص الصريح، ولا عبارة المرور، ولا المفتاح المُشتَق.</string>
+    <string name="vault_explain_more">كل التفاصيل</string>
+    <string name="vault_pass_new">عبارة مرور جديدة</string>
+    <string name="vault_pass_existing">عبارة المرور</string>
+    <string name="vault_action_seal">احفظ مُعمّى</string>
+    <string name="vault_action_unseal">افتح</string>
+    <string name="vault_action_deriving">يُشتَقّ المفتاح …</string>
+    <string name="vault_action_lock">أقفل</string>
+    <string name="vault_action_update">احفظ من جديد</string>
+    <string name="vault_action_wipe">احذف كل شيء</string>
+    <string name="vault_action_wipeConfirm">أتريد الحذف فعلًا؟</string>
+    <string name="vault_timeout_label">تُقفل من تلقائها بعد</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="zero">%1$s دقيقة</item>
+        <item quantity="one">%1$s دقيقة</item>
+        <item quantity="two">%1$s دقيقة</item>
+        <item quantity="few">%1$s دقائق</item>
+        <item quantity="many">%1$s دقيقة</item>
+        <item quantity="other">%1$s دقيقة</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">لا شيء يُحفظ — حقل النص فارغ.</string>
+    <string name="vault_error_noVault">لا خزنة محفوظة.</string>
+    <string name="vault_error_noPassphrase">بغير عبارة مرور لا مفتاح.</string>
+    <string name="vault_error_sealFailed">أخفق الحفظ.</string>
+    <string name="vault_error_unsealFailed">أخفق الفتح.</string>
+    <string name="vault_msg_sealed">حُفظت الخزنة مُعمّاة.</string>
+    <string name="vault_msg_resealed">أُعيد تعمية الخزنة.</string>
+    <string name="vault_msg_unsealed">فُتحت الخزنة.</string>
+    <string name="vault_msg_locked">أُقفلت الخزنة.</string>
+    <string name="vault_msg_wiped">حُذفت الخزنة.</string>
+    <string name="vault_msg_wipedNote">حُذفت. لم يبقَ شيء في التخزين.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="zero">أُقفلت بعد %1$s دقيقة دون إدخال.</item>
+        <item quantity="one">أُقفلت بعد %1$s دقيقة دون إدخال.</item>
+        <item quantity="two">أُقفلت بعد %1$s دقيقة دون إدخال.</item>
+        <item quantity="few">أُقفلت بعد %1$s دقائق دون إدخال.</item>
+        <item quantity="many">أُقفلت بعد %1$s دقيقة دون إدخال.</item>
+        <item quantity="other">أُقفلت بعد %1$s دقيقة دون إدخال.</item>
+    </plurals>
+    <string name="scan_noQr">لم يُميَّز أي رمز QR في الصورة.</string>
+    <string name="scan_unreadable">تعذّرت قراءة الصورة — أهي صورة حقًا؟</string>
+    <string name="scan_done">قُرئ رمز QR وأُدرج.</string>
+    <string name="scan_camera_notFound">لا كاميرا موصولة. و«QR من صورة» يعمل على أي حال.</string>
+    <string name="scan_camera_busy">الكاميرا مشغولة الآن ببرنامج آخر.</string>
+    <string name="scan_camera_failed">تعذّر تشغيل الكاميرا. و«QR من صورة» يعمل دائمًا.</string>
+    <plurals name="import_done">
+        <item quantity="zero">نُقل %1$s حساب من صادرات Google Authenticator</item>
+        <item quantity="one">نُقل %1$s حساب من صادرات Google Authenticator</item>
+        <item quantity="two">نُقل %1$s حساب من صادرات Google Authenticator</item>
+        <item quantity="few">نُقلت %1$s حسابات من صادرات Google Authenticator</item>
+        <item quantity="many">نُقل %1$s حسابًا من صادرات Google Authenticator</item>
+        <item quantity="other">نُقل %1$s حساب من صادرات Google Authenticator</item>
+    </plurals>
+    <string name="import_skipped">تُخطّي: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP، قائم على عدّاد)</string>
+    <string name="import_skip_algorithm">%1$s (خوارزمية غير مدعومة)</string>
+    <string name="import_skip_emptySecret">%1$s (سرّ فارغ)</string>
+    <string name="import_unnamed">بلا اسم</string>
+    <string name="import_unreadable">الصادرات غير مقروءة.</string>
+    <string name="vacant_demo">إدراج مفتاح تجريبي</string>
+    <string name="lang_label">اللغة</string>
+    <string name="lang_aria">اختر اللغة</string>
+    <string name="err_base32_paddingInside">المحرف «=» لا يجوز إلا في النهاية (فهو حشو ليس إلا).</string>
+    <string name="err_base32_empty">مفتاح السرّ فارغ.</string>
+    <string name="err_base32_badChar">محرف غير صالح «%1$s» في الموضع %2$s. لا يعرف Base32 غير A–Z و2–7 — والأرقام 0 و1 و8 لا ترد فيه (أخُلطت بـ O وI وB؟).</string>
+    <string name="err_base32_badLength">طول غير صالح: %1$s محرفًا (دون المسافات والحشو). يرمّز Base32 خمسة بايتات في ثمانية محارف؛ ولا يقبل الحقل الأخير غير 2 أو 4 أو 5 أو 7 أو 8 محارف. الأرجح أن محرفًا ناقص أو أن محرفًا زائد.</string>
+    <string name="err_uri_invalid">هذا ليس URI صالحًا. المتوقع «otpauth://totp/…».</string>
+    <string name="err_uri_scheme">مخطط مجهول «%1$s». المتوقع «otpauth».</string>
+    <string name="err_uri_hotp">هذا URI من نوع HOTP (قائم على عدّاد). لا ينشئ هذا التطبيق غير رموز TOTP المرتبطة بالوقت — وإلا لوجب حفظ حالة العدّاد.</string>
+    <string name="err_uri_type">نوع مجهول «%1$s». يجب أن يأتي «totp» بعد «otpauth://».</string>
+    <string name="err_uri_typeEmpty">(فارغ)</string>
+    <string name="err_uri_noSecret">ينقص URI المعامل «secret».</string>
+    <string name="err_uri_badLabel">يحوي وسم URI ترميزًا مئويًا معطوبًا (مثل «%» وحيدة).</string>
+    <string name="err_uri_algorithm">خوارزمية مجهولة «%1$s». المدعوم: SHA1 وSHA256 وSHA512.</string>
+    <string name="err_uri_digits">قيمة غير صالحة لـ «digits»: %1$s. المسموح من %2$s إلى %3$s.</string>
+    <string name="err_uri_period">قيمة غير صالحة لـ «period»: %1$s. المتوقع من 1 إلى 3600 ثانية.</string>
+    <string name="err_uri_integer">يجب أن يكون المعامل «%1$s» عددًا صحيحًا؛ وُجد «%2$s».</string>
+    <string name="err_otp_digits">عدد خانات غير صالح: %1$s. المسموح من %2$s إلى %3$s.</string>
+    <string name="err_otp_emptySecret">السرّ فارغ — لا يمكن حساب أي رمز منه.</string>
+    <string name="err_line_unreadable">تعذّرت قراءة هذا السطر.</string>
+    <string name="err_vault_openFailed">تعذّر فتح الخزنة. عبارة المرور خاطئة — أو أن البيانات المحفوظة قد غُيّرت.</string>
+    <string name="err_vault_badFormat">بيانات الخزنة المحفوظة بصيغة مجهولة.</string>
+    <string name="err_vault_version">إصدار الخزنة %1$s غير مدعوم (المتوقع: %2$s).</string>
+    <string name="err_vault_base64">الحقل «%1$s» من بيانات الخزنة ليس Base64 صالحًا.</string>
+    <string name="err_vault_iterations">عدد تكرارات غير صالح: %1$s.</string>
+    <string name="err_migration_notExport">هذه ليست صادرات Google Authenticator. المتوقع «otpauth-migration://offline?data=…».</string>
+    <string name="err_migration_noData">ينقص URI المعامل «data».</string>
+    <string name="err_migration_badPercent">يحوي المعامل «data» ترميزًا مئويًا معطوبًا.</string>
+    <string name="err_migration_badBase64">المعامل «data» ليس Base64 صالحًا.</string>
+    <string name="err_migration_noAccounts">لا حسابات في هذه الصادرات.</string>
+    <string name="vacant_text">سر أو رابط otpauth أو صورة QR — لا شيء من ذلك يغادر هذا الجهاز.</string>
+    <string name="colophon_note">لا شبكة · لا تخزين · HMAC عبر javax.crypto</string>
+    <string name="scan_camera_unavailable">هذا الجهاز لا يتيح كاميرا — أما «QR من صورة» فيعمل دائمًا.</string>
+    <string name="scan_camera_denied">رُفضت الكاميرا. امنح الإذن من إعدادات التطبيق في النظام — أو استعمل «QR من صورة».</string>
+    <string name="vault_lockOnHide">وعند مغادرة التطبيق</string>
+    <string name="vault_locked_hidden">أُقفلت عند مغادرة التطبيق.</string>
+    <string name="vault_error_storageBlocked">تعذّرت كتابة الخزنة — أالتخزين ممتلئ؟</string>
+    <string name="vault_biometric_label">الفتح بالسمات الحيوية</string>
+    <string name="vault_biometric_note">اختصار لا مفتاح ثانٍ: عبارة المرور تبقى الطريق الوحيد للعودة.</string>
+    <string name="vault_biometric_cancel">استعمال عبارة المرور</string>
+    <string name="vault_biometric_unavailable">لا سمات حيوية قوية مُعدّة على هذا الجهاز.</string>
+    <string name="vault_biometric_invalidated">سُجّلت سمات حيوية جديدة، فذهب الاختصار. افتح بعبارة المرور وشغّله من جديد.</string>
+    <string name="vault_biometric_failed">لم ينجح الفتح بالسمات الحيوية — استعمل عبارة المرور.</string>
+    <string name="vault_screenshots_label">منع لقطات الشاشة والمعاينات</string>
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_settings">الإعدادات</string>
+    <string name="about_title">عن التطبيق</string>
+    <string name="about_version">الإصدار</string>
+    <string name="about_network">لا يملك التطبيق إذن الشبكة. لا يستطيع فتح أي اتصال — لا للتحديثات ولا للإحصاءات ولا عن طريق الخطأ.</string>
+    <string name="about_licenses">التراخيص</string>
+    <string name="about_source">الشفرة المصدرية</string>
+</resources>

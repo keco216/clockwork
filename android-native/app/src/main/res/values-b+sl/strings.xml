@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/sl.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">Overjevalnik TOTP · RFC 6238</string>
+    <string name="skip_toCodes">Skoči na kode</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Brez omrežja</string>
+    <string name="status_vault_off">nič se ne shranjuje</string>
+    <string name="status_vault_locked">trezor zaklenjen</string>
+    <string name="status_vault_open">trezor odprt</string>
+    <string name="zone_input">Vnos</string>
+    <string name="zone_vault">Trezor</string>
+    <string name="zone_codes">Kode</string>
+    <string name="input_legend">En vnos na vrstico</string>
+    <string name="input_placeholder">npr. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s ali %2$s — pomešano. %3$s začne opombo.</string>
+    <string name="input_help_images">Slike s kodo QR lahko povlečete sem ali prilepite s %1$s.</string>
+    <string name="input_help_migration">Izvozi iz Google Authenticatorja (%1$s) se pretvorijo samodejno.</string>
+    <string name="input_help_more">Vse vhodne oblike</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s račun</item>
+        <item quantity="two">%1$s računa</item>
+        <item quantity="few">%1$s računi</item>
+        <item quantity="other">%1$s računov</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s napaka</item>
+        <item quantity="two">%1$s napaki</item>
+        <item quantity="few">%1$s napake</item>
+        <item quantity="other">%1$s napak</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Izprazni</string>
+    <string name="key_qrImage">QR iz slike</string>
+    <string name="key_camera">Kamera</string>
+    <string name="key_cameraStop">Izklopi kamero</string>
+    <string name="key_copy">Kopiraj</string>
+    <string name="key_copyDone">Kopirano</string>
+    <string name="key_copyFailed">Ni uspelo</string>
+    <string name="viewfinder_hint">Kodo QR držite v okvirju</string>
+    <string name="filter_label">Filtriraj račune</string>
+    <string name="filter_placeholder">Filtriraj po imenu</string>
+    <string name="filter_empty">Nič se ne ujema z »%1$s«.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s števka</item>
+        <item quantity="two">%1$s števki</item>
+        <item quantity="few">%1$s števke</item>
+        <item quantity="other">%1$s števk</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">sledi</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">sekunde</string>
+    <string name="strip_seconds_valid">velja</string>
+    <string name="strip_accountFallback">Račun %1$s</string>
+    <string name="strip_copyAria">Kopiraj kodo za %1$s</string>
+    <string name="strip_copyAnnounce">Koda %1$s kopirana</string>
+    <string name="strip_copyFailedHint">Kopiranje ni uspelo. Kodo označite ročno.</string>
+    <string name="fault_title">Vrstica ni berljiva</string>
+    <string name="vault_state_off">Izklopljen — nič se ne shranjuje</string>
+    <string name="vault_state_locked">Zaklenjen — potrebna je geselna fraza</string>
+    <string name="vault_state_open">Odprt — secreti so v besedilnem polju</string>
+    <string name="vault_explain">Clockwork privzeto ne shrani ničesar. Če vklopite sef, vnos ostane tukaj šifriran z vašo geselno frazo — brez nje je shranjeni blok brez vrednosti.</string>
+    <string name="vault_explain_crypto">Ključ nastane iz geselne fraze s PBKDF2-SHA-256 in %1$s ponovitvami, šifrira pa AES-256-GCM. Shrani se le zapečatena ovojnica: nikoli čisto besedilo, nikoli geselna fraza, nikoli izpeljani ključ.</string>
+    <string name="vault_explain_more">Vse podrobnosti</string>
+    <string name="vault_pass_new">Nova geselna fraza</string>
+    <string name="vault_pass_existing">Geselna fraza</string>
+    <string name="vault_action_seal">Shrani šifrirano</string>
+    <string name="vault_action_unseal">Odkleni</string>
+    <string name="vault_action_deriving">Izpeljevanje ključa …</string>
+    <string name="vault_action_lock">Zakleni</string>
+    <string name="vault_action_update">Shrani znova</string>
+    <string name="vault_action_wipe">Izbriši vse</string>
+    <string name="vault_action_wipeConfirm">Res izbrisati?</string>
+    <string name="vault_timeout_label">Sam se zaklene po</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minuti</item>
+        <item quantity="two">%1$s minutah</item>
+        <item quantity="few">%1$s minutah</item>
+        <item quantity="other">%1$s minutah</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">Ni česa shraniti — besedilno polje je prazno.</string>
+    <string name="vault_error_noVault">Noben trezor ni shranjen.</string>
+    <string name="vault_error_noPassphrase">Brez geselne fraze ni ključa.</string>
+    <string name="vault_error_sealFailed">Shranjevanje ni uspelo.</string>
+    <string name="vault_error_unsealFailed">Odklepanje ni uspelo.</string>
+    <string name="vault_msg_sealed">Trezor shranjen šifrirano.</string>
+    <string name="vault_msg_resealed">Trezor znova šifriran.</string>
+    <string name="vault_msg_unsealed">Trezor odklenjen.</string>
+    <string name="vault_msg_locked">Trezor zaklenjen.</string>
+    <string name="vault_msg_wiped">Trezor izbrisan.</string>
+    <string name="vault_msg_wipedNote">Izbrisano. V shrambi ni ostalo nič.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Zaklenjeno po %1$s minuti brez vnosa.</item>
+        <item quantity="two">Zaklenjeno po %1$s minutah brez vnosa.</item>
+        <item quantity="few">Zaklenjeno po %1$s minutah brez vnosa.</item>
+        <item quantity="other">Zaklenjeno po %1$s minutah brez vnosa.</item>
+    </plurals>
+    <string name="scan_noQr">Na sliki ni bilo mogoče prepoznati nobene kode QR.</string>
+    <string name="scan_unreadable">Slike ni bilo mogoče prebrati — je to res slika?</string>
+    <string name="scan_done">Koda QR prebrana in vstavljena.</string>
+    <string name="scan_camera_notFound">Nobena kamera ni priključena. „QR iz slike“ deluje kljub temu.</string>
+    <string name="scan_camera_busy">Kamero trenutno uporablja drug program.</string>
+    <string name="scan_camera_failed">Kamere ni bilo mogoče zagnati. „QR iz slike“ deluje vedno.</string>
+    <plurals name="import_done">
+        <item quantity="one">Prevzet %1$s račun iz izvoza Google Authenticatorja</item>
+        <item quantity="two">Prevzeta %1$s računa iz izvoza Google Authenticatorja</item>
+        <item quantity="few">Prevzeti %1$s računi iz izvoza Google Authenticatorja</item>
+        <item quantity="other">Prevzetih %1$s računov iz izvoza Google Authenticatorja</item>
+    </plurals>
+    <string name="import_skipped">preskočeno: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, na podlagi števca)</string>
+    <string name="import_skip_algorithm">%1$s (nepodprt algoritem)</string>
+    <string name="import_skip_emptySecret">%1$s (prazen secret)</string>
+    <string name="import_unnamed">Brez imena</string>
+    <string name="import_unreadable">Izvoz ni berljiv.</string>
+    <string name="vacant_demo">Vstavi testni ključ</string>
+    <string name="lang_label">Jezik</string>
+    <string name="lang_aria">Izberi jezik</string>
+    <string name="err_base32_paddingInside">Znak „=“ sme stati le na koncu (je zgolj polnilo).</string>
+    <string name="err_base32_empty">Ključ secret je prazen.</string>
+    <string name="err_base32_badChar">Neveljaven znak „%1$s“ na mestu %2$s. Base32 pozna le A–Z in 2–7 — števk 0, 1 in 8 v njem ni (zamenjane z O, I in B?).</string>
+    <string name="err_base32_badLength">Neveljavna dolžina: %1$s znakov (brez presledkov in polnila). Base32 kodira 5 bajtov v 8 znakov; v zadnjem bloku je mogočih le 2, 4, 5, 7 ali 8 znakov. Najbrž en znak manjka ali pa je eden odveč.</string>
+    <string name="err_uri_invalid">To ni veljaven URI. Pričakovano je „otpauth://totp/…“.</string>
+    <string name="err_uri_scheme">Neznana shema „%1$s“. Pričakovano je „otpauth“.</string>
+    <string name="err_uri_hotp">To je URI vrste HOTP (na podlagi števca). Ta aplikacija ustvarja le časovne kode TOTP — za drugo bi bilo treba shranjevati stanje števca.</string>
+    <string name="err_uri_type">Neznana vrsta „%1$s“. Za „otpauth://“ mora stati „totp“.</string>
+    <string name="err_uri_typeEmpty">(prazno)</string>
+    <string name="err_uri_noSecret">V URI manjka parameter „secret“.</string>
+    <string name="err_uri_badLabel">Oznaka URI vsebuje pokvarjeno odstotkovno kodiranje (na primer osamljen „%“).</string>
+    <string name="err_uri_algorithm">Neznan algoritem „%1$s“. Podprti so SHA1, SHA256 in SHA512.</string>
+    <string name="err_uri_digits">Neveljavna vrednost za „digits“: %1$s. Dovoljeno je od %2$s do %3$s.</string>
+    <string name="err_uri_period">Neveljavna vrednost za „period“: %1$s. Pričakovano je 1 do 3600 sekund.</string>
+    <string name="err_uri_integer">Parameter „%1$s“ mora biti celo število; najdeno je bilo „%2$s“.</string>
+    <string name="err_otp_digits">Neveljavno število števk: %1$s. Dovoljeno je od %2$s do %3$s.</string>
+    <string name="err_otp_emptySecret">Secret je prazen — iz njega ni mogoče izračunati nobene kode.</string>
+    <string name="err_line_unreadable">Te vrstice ni bilo mogoče prebrati.</string>
+    <string name="err_vault_openFailed">Trezorja ni bilo mogoče odpreti. Napačna geselna fraza — ali pa so bili shranjeni podatki spremenjeni.</string>
+    <string name="err_vault_badFormat">Shranjeni podatki trezorja so v neznani obliki.</string>
+    <string name="err_vault_version">Različica trezorja %1$s ni podprta (pričakovano: %2$s).</string>
+    <string name="err_vault_base64">Polje „%1$s“ podatkov trezorja ni veljaven Base64.</string>
+    <string name="err_vault_iterations">Neveljavno število ponovitev: %1$s.</string>
+    <string name="err_migration_notExport">To ni izvoz iz Google Authenticatorja. Pričakovano je „otpauth-migration://offline?data=…“.</string>
+    <string name="err_migration_noData">V URI manjka parameter „data“.</string>
+    <string name="err_migration_badPercent">Parameter „data“ vsebuje pokvarjeno odstotkovno kodiranje.</string>
+    <string name="err_migration_badBase64">Parameter „data“ ni veljaven Base64.</string>
+    <string name="err_migration_noAccounts">V tem izvozu ni nobenega računa.</string>
+    <string name="vacant_text">Skrivnost, povezava otpauth ali slika QR — nič od tega ne zapusti te naprave.</string>
+    <string name="colophon_note">Brez omrežja · brez shrambe · HMAC prek javax.crypto</string>
+    <string name="scan_camera_unavailable">Ta naprava ne da kamere na voljo — „QR iz slike“ deluje vedno.</string>
+    <string name="scan_camera_denied">Kamera je bila zavrnjena. Dovolite jo v sistemskih nastavitvah aplikacije — ali uporabite „QR iz slike“.</string>
+    <string name="vault_lockOnHide">in ob zapustitvi aplikacije</string>
+    <string name="vault_locked_hidden">Zaklenjeno ob zapustitvi aplikacije.</string>
+    <string name="vault_error_storageBlocked">Trezorja ni bilo mogoče zapisati — je shramba polna?</string>
+    <string name="vault_biometric_label">Odkleni z biometrijo</string>
+    <string name="vault_biometric_note">Bližnjica, ne drugi ključ: geselna fraza ostaja edina pot nazaj.</string>
+    <string name="vault_biometric_cancel">Uporabi geselno frazo</string>
+    <string name="vault_biometric_unavailable">Na tej napravi ni nastavljena močna biometrija.</string>
+    <string name="vault_biometric_invalidated">Registrirana je bila nova biometrija, zato je bližnjice konec. Odklenite z geselno frazo in jo znova vklopite.</string>
+    <string name="vault_biometric_failed">Odklepanje z biometrijo ni uspelo — uporabite geselno frazo.</string>
+    <string name="vault_screenshots_label">Blokiraj posnetke zaslona in predoglede</string>
+    <string name="nav_home">Domov</string>
+    <string name="nav_settings">Nastavitve</string>
+    <string name="about_title">O aplikaciji</string>
+    <string name="about_version">Različica</string>
+    <string name="about_network">Aplikacija nima dovoljenja za omrežje. Povezave ne more odpreti — ne za posodobitve, ne za statistiko, ne pomotoma.</string>
+    <string name="about_licenses">Licence</string>
+    <string name="about_source">Izvorna koda</string>
+</resources>

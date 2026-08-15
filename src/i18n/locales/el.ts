@@ -200,4 +200,37 @@ export default {
   'err.migration.badPercent': 'Η παράμετρος «data» περιέχει χαλασμένη κωδικοποίηση επί τοις εκατό.',
   'err.migration.badBase64': 'Η παράμετρος «data» δεν είναι έγκυρο Base64.',
   'err.migration.noAccounts': 'Σε αυτή την εξαγωγή δεν υπάρχουν λογαριασμοί.',
+
+  'native.vacant.text':
+    'Μυστικό, σύνδεσμος otpauth ή εικόνα QR — τίποτα από αυτά δεν φεύγει από αυτή τη συσκευή.',
+
+  'native.colophon.note': 'Χωρίς δίκτυο · χωρίς αποθήκευση · HMAC μέσω javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Αυτή η συσκευή δεν παραχωρεί κάμερα — το «QR από εικόνα» δουλεύει πάντα.',
+  'native.scan.camera.denied':
+    'Η κάμερα απορρίφθηκε. Δώστε την άδεια στις ρυθμίσεις εφαρμογών του συστήματος — ή χρησιμοποιήστε το «QR από εικόνα».',
+  'native.vault.lockOnHide': 'και όταν φύγετε από την εφαρμογή',
+  'native.vault.locked.hidden': 'Κλείδωσε με την έξοδο από την εφαρμογή.',
+  'native.vault.error.storageBlocked':
+    'Η θυρίδα δεν μπόρεσε να γραφτεί — μήπως ο αποθηκευτικός χώρος είναι γεμάτος;',
+  'native.vault.biometric.label': 'Ξεκλείδωμα με βιομετρικά',
+  'native.vault.biometric.note':
+    'Μια συντόμευση, όχι δεύτερο κλειδί: η συνθηματική φράση παραμένει ο μόνος δρόμος επιστροφής.',
+  'native.vault.biometric.cancel': 'Χρήση συνθηματικής φράσης',
+  'native.vault.biometric.unavailable': 'Αυτή η συσκευή δεν έχει ρυθμισμένα ισχυρά βιομετρικά.',
+  'native.vault.biometric.invalidated':
+    'Καταχωρίστηκαν νέα βιομετρικά, οπότε η συντόμευση χάθηκε. Ξεκλειδώστε με τη συνθηματική φράση και ενεργοποιήστε την ξανά.',
+  'native.vault.biometric.failed':
+    'Το ξεκλείδωμα με βιομετρικά δεν πέτυχε — χρησιμοποιήστε τη συνθηματική φράση.',
+  'native.vault.screenshots.label': 'Αποκλεισμός στιγμιότυπων οθόνης και προεπισκοπήσεων',
+
+  'native.nav.home': 'Αρχική',
+  'native.nav.settings': 'Ρυθμίσεις',
+  'native.about.title': 'Σχετικά',
+  'native.about.version': 'Έκδοση',
+  'native.about.network':
+    'Η εφαρμογή δεν έχει άδεια δικτύου. Δεν μπορεί να ανοίξει σύνδεση — ούτε για ενημερώσεις, ούτε για στατιστικά, ούτε κατά λάθος.',
+  'native.about.licenses': 'Άδειες',
+  'native.about.source': 'Πηγαίος κώδικας',
 } satisfies Strings;

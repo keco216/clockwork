@@ -1,0 +1,34 @@
+{
+  "1": {
+    "headline": "Codes that never leave your device.",
+    "subline": "No network. No accounts. No tracking."
+  },
+  "2": {
+    "headline": "No network. Not even the permission.",
+    "subline": "The app cannot open a connection."
+  },
+  "3": {
+    "headline": "Your vault. Your passphrase.",
+    "subline": "AES-256-GCM · key from PBKDF2"
+  },
+  "4": {
+    "headline": "Unlock with your fingerprint.",
+    "subline": "A shortcut, not a second key."
+  },
+  "5": {
+    "headline": "Scan or paste — done.",
+    "subline": "Read on the device, not in a cloud."
+  },
+  "6": {
+    "headline": "Speaks 37 languages.",
+    "subline": "All bundled — nothing is fetched."
+  },
+  "7": {
+    "headline": "Dark and light.",
+    "subline": ""
+  },
+  "feature": {
+    "headline": "CLOCKWORK",
+    "subline": "TOTP Authenticator · RFC 6238 · fully offline"
+  }
+}

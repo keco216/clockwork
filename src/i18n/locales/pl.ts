@@ -217,4 +217,34 @@ export default {
   'err.migration.badPercent': 'Parametr „data” zawiera uszkodzone kodowanie procentowe.',
   'err.migration.badBase64': 'Parametr „data” nie jest prawidłowym Base64.',
   'err.migration.noAccounts': 'W tym eksporcie nie ma żadnych kont.',
+
+  'native.vacant.text':
+    'Secret, link otpauth albo obraz QR — nic z tego nie opuszcza tego urządzenia.',
+
+  'native.colophon.note': 'Bez sieci · bez zapisu · HMAC przez javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'To urządzenie nie udostępnia kamery — „QR z obrazu” działa zawsze.',
+  'native.scan.camera.denied':
+    'Odmówiono dostępu do kamery. Przyznaj uprawnienie w ustawieniach aplikacji w systemie — albo użyj „QR z obrazu”.',
+  'native.vault.lockOnHide': 'oraz przy opuszczeniu aplikacji',
+  'native.vault.locked.hidden': 'Zamknięty przy opuszczeniu aplikacji.',
+  'native.vault.error.storageBlocked': 'Nie udało się zapisać sejfu — czy pamięć jest pełna?',
+  'native.vault.biometric.label': 'Odblokuj biometrią',
+  'native.vault.biometric.note': 'Skrót, nie drugi klucz: hasło pozostaje jedyną drogą powrotną.',
+  'native.vault.biometric.cancel': 'Użyj hasła',
+  'native.vault.biometric.unavailable': 'Na tym urządzeniu nie skonfigurowano silnej biometrii.',
+  'native.vault.biometric.invalidated':
+    'Zarejestrowano nową biometrię, więc skrót zniknął. Odblokuj hasłem i włącz go ponownie.',
+  'native.vault.biometric.failed': 'Odblokowanie biometrią się nie powiodło — użyj hasła.',
+  'native.vault.screenshots.label': 'Blokuj zrzuty ekranu i podglądy',
+
+  'native.nav.home': 'Start',
+  'native.nav.settings': 'Ustawienia',
+  'native.about.title': 'O aplikacji',
+  'native.about.version': 'Wersja',
+  'native.about.network':
+    'Aplikacja nie ma uprawnienia do sieci. Nie otworzy połączenia — ani po aktualizacje, ani po statystyki, ani przez pomyłkę.',
+  'native.about.licenses': 'Licencje',
+  'native.about.source': 'Kod źródłowy',
 } satisfies Strings;

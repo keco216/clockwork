@@ -215,4 +215,35 @@ export default {
   'err.migration.badPercent': 'Parametre „data“ yra sugadintas procentinis kodavimas.',
   'err.migration.badBase64': 'Parametras „data“ nėra tinkamas Base64.',
   'err.migration.noAccounts': 'Šiame eksporte nėra nė vienos paskyros.',
+
+  'native.vacant.text':
+    'Slaptas raktas, otpauth nuoroda ar QR paveikslėlis — niekas iš to neišeina iš šio įrenginio.',
+
+  'native.colophon.note': 'Jokio tinklo · jokios saugyklos · HMAC per javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Šis įrenginys kameros neatiduoda — „QR iš paveikslo“ veikia visada.',
+  'native.scan.camera.denied':
+    'Kameros neleista. Suteikite leidimą programos nustatymuose sistemoje — arba naudokite „QR iš paveikslo“.',
+  'native.vault.lockOnHide': 'ir paliekant programą',
+  'native.vault.locked.hidden': 'Užrakinta paliekant programą.',
+  'native.vault.error.storageBlocked': 'Seifo nepavyko įrašyti — ar atmintis pilna?',
+  'native.vault.biometric.label': 'Atrakinti biometrija',
+  'native.vault.biometric.note':
+    'Spartusis kelias, o ne antras raktas: slaptafrazė lieka vienintelis kelias atgal.',
+  'native.vault.biometric.cancel': 'Naudoti slaptafrazę',
+  'native.vault.biometric.unavailable': 'Šiame įrenginyje nenustatyta stipri biometrija.',
+  'native.vault.biometric.invalidated':
+    'Užregistruota nauja biometrija, tad spartaus kelio nebėra. Atrakinkite slaptafraze ir vėl ją įjunkite.',
+  'native.vault.biometric.failed': 'Atrakinti biometrija nepavyko — naudokite slaptafrazę.',
+  'native.vault.screenshots.label': 'Blokuoti ekrano nuotraukas ir peržiūras',
+
+  'native.nav.home': 'Pradžia',
+  'native.nav.settings': 'Nustatymai',
+  'native.about.title': 'Apie',
+  'native.about.version': 'Versija',
+  'native.about.network':
+    'Programa neturi tinklo leidimo. Ji negali užmegzti ryšio — nei atnaujinimams, nei statistikai, nei per klaidą.',
+  'native.about.licenses': 'Licencijos',
+  'native.about.source': 'Pirminis kodas',
 } satisfies Strings;

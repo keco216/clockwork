@@ -189,4 +189,35 @@ export default {
   'err.migration.badPercent': 'Parameeter „data“ sisaldab katkist protsendikodeeringut.',
   'err.migration.badBase64': 'Parameeter „data“ ei ole kehtiv Base64.',
   'err.migration.noAccounts': 'Selles eksportfailis ei ole ühtki kontot.',
+
+  'native.vacant.text':
+    'Salajane võti, otpauth-link või QR-pilt — miski neist ei lahku sellest seadmest.',
+
+  'native.colophon.note': 'Ei mingit võrku · ei mingit salvestust · HMAC javax.crypto kaudu',
+
+  'native.scan.camera.unavailable':
+    'See seade ei anna kaamerat kasutada — „QR pildilt“ töötab alati.',
+  'native.scan.camera.denied':
+    'Kaamerast keelduti. Anna luba süsteemi rakenduste seadetes — või kasuta valikut „QR pildilt“.',
+  'native.vault.lockOnHide': 'ja rakendusest lahkumisel',
+  'native.vault.locked.hidden': 'Lukustus rakendusest lahkumisel.',
+  'native.vault.error.storageBlocked': 'Seifi ei õnnestunud kirjutada — kas mälu on täis?',
+  'native.vault.biometric.label': 'Ava biomeetriaga',
+  'native.vault.biometric.note':
+    'Otsetee, mitte teine võti: paroolifraas jääb ainsaks tagasiteeks.',
+  'native.vault.biometric.cancel': 'Kasuta paroolifraasi',
+  'native.vault.biometric.unavailable': 'Selles seadmes pole tugevat biomeetriat seadistatud.',
+  'native.vault.biometric.invalidated':
+    'Registreeriti uus biomeetria, seega otsetee on kadunud. Ava paroolifraasiga ja lülita see uuesti sisse.',
+  'native.vault.biometric.failed': 'Biomeetriline avamine ei õnnestunud — kasuta paroolifraasi.',
+  'native.vault.screenshots.label': 'Blokeeri ekraanipildid ja eelvaated',
+
+  'native.nav.home': 'Avaleht',
+  'native.nav.settings': 'Seaded',
+  'native.about.title': 'Teave',
+  'native.about.version': 'Versioon',
+  'native.about.network':
+    'Rakendusel pole võrguluba. See ei saa ühendust avada — ei uuenduste, statistika ega kogemata.',
+  'native.about.licenses': 'Litsentsid',
+  'native.about.source': 'Lähtekood',
 } satisfies Strings;

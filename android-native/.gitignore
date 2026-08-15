@@ -1,0 +1,18 @@
+# Bauergebnisse und Maschinenlokales. Alles andere in diesem Ordner ist Quelle
+# — auch die generierten Ressourcen (values-*/strings.xml aus P4), damit ein
+# Bau ohne Node auskommt. Dieselbe Linie wie bei den Icons der 1.x-Fassung.
+build/
+.gradle/
+local.properties
+.cxx/
+
+# Android Studio
+.idea/
+*.iml
+captures/
+
+# Der Diff-Export der Endabnahme (N4). Er entsteht mit
+#   git diff main...kotlin-android > android-native/docs/abnahme/diff-kotlin-android.txt
+# und ist ein PRUEFARTEFAKT, kein Repo-Inhalt: Er waere eine zweite Kopie des
+# Zweigs, die beim naechsten Commit still falsch wird.
+docs/abnahme/diff-kotlin-android.txt

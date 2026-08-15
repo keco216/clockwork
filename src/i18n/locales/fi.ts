@@ -190,4 +190,34 @@ export default {
   'err.migration.badPercent': 'Parametrissa ”data” on rikkinäinen prosenttikoodaus.',
   'err.migration.badBase64': 'Parametri ”data” ei ole kelvollista Base64:ää.',
   'err.migration.noAccounts': 'Tässä viennissä ei ole yhtään tiliä.',
+
+  'native.vacant.text':
+    'Secret, otpauth-linkki tai QR-kuva — mikään niistä ei poistu tästä laitteesta.',
+
+  'native.colophon.note': 'Ei verkkoa · ei tallennusta · HMAC javax.crypto:n kautta',
+
+  'native.scan.camera.unavailable':
+    'Tämä laite ei anna kameraa käyttöön — ”QR kuvasta” toimii aina.',
+  'native.scan.camera.denied':
+    'Kamerasta kieltäydyttiin. Myönnä lupa järjestelmän sovellusasetuksissa — tai käytä toimintoa ”QR kuvasta”.',
+  'native.vault.lockOnHide': 'ja sovelluksesta poistuttaessa',
+  'native.vault.locked.hidden': 'Lukittui sovelluksesta poistuttaessa.',
+  'native.vault.error.storageBlocked': 'Holvia ei voitu kirjoittaa — onko tallennustila täynnä?',
+  'native.vault.biometric.label': 'Avaa biometrialla',
+  'native.vault.biometric.note': 'Oikotie, ei toinen avain: salauslause pysyy ainoana paluutienä.',
+  'native.vault.biometric.cancel': 'Käytä salauslausetta',
+  'native.vault.biometric.unavailable': 'Tässä laitteessa ei ole vahvaa biometriaa käytössä.',
+  'native.vault.biometric.invalidated':
+    'Uusi biometria rekisteröitiin, joten oikotie on poissa. Avaa salauslauseella ja kytke se uudelleen päälle.',
+  'native.vault.biometric.failed': 'Biometrinen avaus ei onnistunut — käytä salauslausetta.',
+  'native.vault.screenshots.label': 'Estä kuvakaappaukset ja esikatselut',
+
+  'native.nav.home': 'Etusivu',
+  'native.nav.settings': 'Asetukset',
+  'native.about.title': 'Tietoja',
+  'native.about.version': 'Versio',
+  'native.about.network':
+    'Sovelluksella ei ole verkkolupaa. Se ei voi avata yhteyttä — ei päivityksiin, ei tilastoihin eikä vahingossa.',
+  'native.about.licenses': 'Lisenssit',
+  'native.about.source': 'Lähdekoodi',
 } satisfies Strings;

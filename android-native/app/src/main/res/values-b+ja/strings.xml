@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/ja.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">TOTP 認証アプリ · RFC 6238</string>
+    <string name="skip_toCodes">コードへ移動</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">オフライン</string>
+    <string name="status_vault_off">何も保存しない</string>
+    <string name="status_vault_locked">金庫は施錠中</string>
+    <string name="status_vault_open">金庫は解錠中</string>
+    <string name="zone_input">入力</string>
+    <string name="zone_vault">金庫</string>
+    <string name="zone_codes">コード</string>
+    <string name="input_legend">1 行に 1 項目</string>
+    <string name="input_placeholder">例: JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32、%1$s、%2$s — 混在可。%3$s で注記が始まる。</string>
+    <string name="input_help_images">QR 画像はここへドラッグするか、%1$s で貼り付けてもよい。</string>
+    <string name="input_help_migration">Google Authenticator のエクスポート (%1$s) は自動で変換される。</string>
+    <string name="input_help_more">入力形式をすべて表示</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="other">%1$s件のアカウント</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="other">%1$s件のエラー</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">消去</string>
+    <string name="key_qrImage">画像から QR</string>
+    <string name="key_camera">カメラ</string>
+    <string name="key_cameraStop">カメラを止める</string>
+    <string name="key_copy">コピー</string>
+    <string name="key_copyDone">コピーした</string>
+    <string name="key_copyFailed">失敗</string>
+    <string name="viewfinder_hint">QR コードを枠内に収める</string>
+    <string name="filter_label">アカウントを絞り込む</string>
+    <string name="filter_placeholder">名前で絞り込む</string>
+    <string name="filter_empty">「%1$s」に一致するものはない。</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="other">%1$s 桁</item>
+    </plurals>
+    <string name="strip_period">%1$s 秒</string>
+    <string name="strip_next">次</string>
+    <string name="strip_seconds_abbr">秒</string>
+    <string name="strip_seconds_title">秒</string>
+    <string name="strip_seconds_valid">有効</string>
+    <string name="strip_accountFallback">アカウント %1$s</string>
+    <string name="strip_copyAria">%1$s のコードをコピー</string>
+    <string name="strip_copyAnnounce">コード %1$s をコピーした</string>
+    <string name="strip_copyFailedHint">コピーに失敗した。コードを手で選択してほしい。</string>
+    <string name="fault_title">読み取れない行</string>
+    <string name="vault_state_off">オフ — 何も保存しない</string>
+    <string name="vault_state_locked">施錠中 — パスフレーズが必要</string>
+    <string name="vault_state_open">解錠中 — シークレットはテキスト欄にある</string>
+    <string name="vault_explain">Clockwork は既定では何も保存しない。金庫を入れれば、入力はパスフレーズで暗号化されたままここに残る。パスフレーズがなければ、保存された塊には何の価値もない。</string>
+    <string name="vault_explain_crypto">鍵はパスフレーズから PBKDF2-SHA-256 を %1$s 回かけて導き、暗号化は AES-256-GCM が担う。保存されるのは封をした包みだけで、平文もパスフレーズも導いた鍵も残らない。</string>
+    <string name="vault_explain_more">詳細をすべて表示</string>
+    <string name="vault_pass_new">新しいパスフレーズ</string>
+    <string name="vault_pass_existing">パスフレーズ</string>
+    <string name="vault_action_seal">暗号化して保存</string>
+    <string name="vault_action_unseal">解錠</string>
+    <string name="vault_action_deriving">鍵を導出中 …</string>
+    <string name="vault_action_lock">施錠</string>
+    <string name="vault_action_update">保存し直す</string>
+    <string name="vault_action_wipe">すべて削除</string>
+    <string name="vault_action_wipeConfirm">本当に削除する?</string>
+    <string name="vault_timeout_label">自動で施錠するまで</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="other">%1$s 分</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">保存するものがない — テキスト欄が空。</string>
+    <string name="vault_error_noVault">金庫は保存されていない。</string>
+    <string name="vault_error_noPassphrase">パスフレーズがなければ鍵もない。</string>
+    <string name="vault_error_sealFailed">保存に失敗した。</string>
+    <string name="vault_error_unsealFailed">解錠に失敗した。</string>
+    <string name="vault_msg_sealed">金庫を暗号化して保存した。</string>
+    <string name="vault_msg_resealed">金庫を暗号化し直した。</string>
+    <string name="vault_msg_unsealed">金庫を解錠した。</string>
+    <string name="vault_msg_locked">金庫を施錠した。</string>
+    <string name="vault_msg_wiped">金庫を削除した。</string>
+    <string name="vault_msg_wipedNote">削除した。保存領域には何も残っていない。</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="other">%1$s 分間の無操作で施錠した。</item>
+    </plurals>
+    <string name="scan_noQr">画像から QR コードを読み取れなかった。</string>
+    <string name="scan_unreadable">画像を読み込めなかった — 本当に画像?</string>
+    <string name="scan_done">QR コードを読み取って挿入した。</string>
+    <string name="scan_camera_notFound">カメラが接続されていない。「画像から QR」なら動く。</string>
+    <string name="scan_camera_busy">カメラは別のプログラムが使用中。</string>
+    <string name="scan_camera_failed">カメラを起動できなかった。「画像から QR」なら必ず動く。</string>
+    <plurals name="import_done">
+        <item quantity="other">Google Authenticator のエクスポートから %1$s 件のアカウントを取り込んだ</item>
+    </plurals>
+    <string name="import_skipped">見送り: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP、カウンター方式)</string>
+    <string name="import_skip_algorithm">%1$s (未対応のアルゴリズム)</string>
+    <string name="import_skip_emptySecret">%1$s (シークレットが空)</string>
+    <string name="import_unnamed">名称未設定</string>
+    <string name="import_unreadable">エクスポートを読み取れない。</string>
+    <string name="vacant_demo">テスト鍵を挿入</string>
+    <string name="lang_label">言語</string>
+    <string name="lang_aria">言語を選ぶ</string>
+    <string name="err_base32_paddingInside">文字「=」は末尾にしか置けない (単なる詰め物)。</string>
+    <string name="err_base32_empty">シークレット鍵が空。</string>
+    <string name="err_base32_badChar">%2$s 文字目に不正な文字「%1$s」。Base32 は A–Z と 2–7 しか知らない — 数字の 0、1、8 は現れない (O、I、B と取り違えた?)。</string>
+    <string name="err_base32_badLength">不正な長さ: %1$s 文字 (空白と詰め物を除く)。Base32 は 5 バイトを 8 文字に符号化する。最後の塊に入るのは 2、4、5、7、8 文字のいずれかだけ。おそらく 1 文字足りないか、1 文字多い。</string>
+    <string name="err_uri_invalid">これは正しい URI ではない。期待するのは「otpauth://totp/…」。</string>
+    <string name="err_uri_scheme">未知のスキーム「%1$s」。期待するのは「otpauth」。</string>
+    <string name="err_uri_hotp">これは HOTP の URI (カウンター方式)。このアプリは時刻に基づく TOTP コードしか作らない — そちらはカウンターの値を保存する必要がある。</string>
+    <string name="err_uri_type">未知の種別「%1$s」。「otpauth://」の後には「totp」が来る。</string>
+    <string name="err_uri_typeEmpty">(空)</string>
+    <string name="err_uri_noSecret">URI に引数「secret」がない。</string>
+    <string name="err_uri_badLabel">URI のラベルにパーセント符号化の壊れがある (単独の「%」など)。</string>
+    <string name="err_uri_algorithm">未知のアルゴリズム「%1$s」。対応するのは SHA1、SHA256、SHA512。</string>
+    <string name="err_uri_digits">「digits」の値が不正: %1$s。許されるのは %2$s〜%3$s。</string>
+    <string name="err_uri_period">「period」の値が不正: %1$s。期待するのは 1〜3600 秒。</string>
+    <string name="err_uri_integer">引数「%1$s」は整数でなければならない。見つかったのは「%2$s」。</string>
+    <string name="err_otp_digits">桁数が不正: %1$s。許されるのは %2$s〜%3$s。</string>
+    <string name="err_otp_emptySecret">シークレットが空 — そこからはコードを計算できない。</string>
+    <string name="err_line_unreadable">この行は読み取れなかった。</string>
+    <string name="err_vault_openFailed">金庫を開けられなかった。パスフレーズが違うか、保存されたデータが書き換えられている。</string>
+    <string name="err_vault_badFormat">保存された金庫データの形式が不明。</string>
+    <string name="err_vault_version">金庫のバージョン %1$s には対応していない (期待: %2$s)。</string>
+    <string name="err_vault_base64">金庫データの項目「%1$s」が正しい Base64 ではない。</string>
+    <string name="err_vault_iterations">反復回数が不正: %1$s。</string>
+    <string name="err_migration_notExport">これは Google Authenticator のエクスポートではない。期待するのは「otpauth-migration://offline?data=…」。</string>
+    <string name="err_migration_noData">URI に引数「data」がない。</string>
+    <string name="err_migration_badPercent">引数「data」にパーセント符号化の壊れがある。</string>
+    <string name="err_migration_badBase64">引数「data」が正しい Base64 ではない。</string>
+    <string name="err_migration_noAccounts">このエクスポートにはアカウントが入っていない。</string>
+    <string name="vacant_text">シークレット、otpauth リンク、QR 画像 — どれもこの端末から出ない。</string>
+    <string name="colophon_note">ネットワークなし · 保存なし · HMAC は javax.crypto 経由</string>
+    <string name="scan_camera_unavailable">この端末ではカメラを使えない — 「画像から QR」なら必ず動く。</string>
+    <string name="scan_camera_denied">カメラが拒否された。システムのアプリ設定で許可するか、「画像から QR」を使ってほしい。</string>
+    <string name="vault_lockOnHide">アプリを離れたときも施錠する</string>
+    <string name="vault_locked_hidden">アプリを離れたので施錠した。</string>
+    <string name="vault_error_storageBlocked">金庫を書き込めなかった — 空き容量が足りない?</string>
+    <string name="vault_biometric_label">生体認証で解錠する</string>
+    <string name="vault_biometric_note">近道であって二本目の鍵ではない。戻る道はパスフレーズだけ。</string>
+    <string name="vault_biometric_cancel">パスフレーズを使う</string>
+    <string name="vault_biometric_unavailable">この端末には強い生体認証が設定されていない。</string>
+    <string name="vault_biometric_invalidated">生体認証が新しく登録されたので近道は消えた。パスフレーズで解錠して、もう一度入れてほしい。</string>
+    <string name="vault_biometric_failed">生体認証での解錠がうまくいかなかった — パスフレーズを使ってほしい。</string>
+    <string name="vault_screenshots_label">スクリーンショットとプレビューを禁じる</string>
+    <string name="nav_home">ホーム</string>
+    <string name="nav_settings">設定</string>
+    <string name="about_title">このアプリについて</string>
+    <string name="about_version">バージョン</string>
+    <string name="about_network">このアプリにネットワーク権限はない。接続を開けない — 更新のためにも、統計のためにも、うっかりでも。</string>
+    <string name="about_licenses">ライセンス</string>
+    <string name="about_source">ソースコード</string>
+</resources>

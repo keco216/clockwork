@@ -179,4 +179,33 @@ export default {
   'err.migration.badPercent': 'พารามิเตอร์ “data” มีการเข้ารหัสเปอร์เซ็นต์ที่เสีย',
   'err.migration.badBase64': 'พารามิเตอร์ “data” ไม่ใช่ Base64 ที่ถูกต้อง',
   'err.migration.noAccounts': 'ในไฟล์ส่งออกนี้ไม่มีบัญชีใดเลย',
+
+  'native.vacant.text': 'ซีเคร็ต ลิงก์ otpauth หรือรูป QR — ไม่มีสิ่งใดออกจากอุปกรณ์นี้',
+
+  'native.colophon.note': 'ไม่มีเครือข่าย · ไม่มีที่เก็บ · HMAC ผ่าน javax.crypto',
+
+  'native.scan.camera.unavailable': 'อุปกรณ์นี้ไม่เปิดให้ใช้กล้อง — “QR จากภาพ” ใช้ได้เสมอ',
+  'native.scan.camera.denied':
+    'กล้องถูกปฏิเสธ ให้สิทธิ์ในการตั้งค่าแอปของระบบ — หรือใช้ “QR จากภาพ”',
+  'native.vault.lockOnHide': 'และเมื่อออกจากแอป',
+  'native.vault.locked.hidden': 'ล็อกเมื่อออกจากแอป',
+  'native.vault.error.storageBlocked': 'เขียนตู้นิรภัยไม่ได้ — พื้นที่เก็บข้อมูลเต็มหรือเปล่า?',
+  'native.vault.biometric.label': 'ปลดล็อกด้วยไบโอเมตริก',
+  'native.vault.biometric.note':
+    'เป็นทางลัด ไม่ใช่กุญแจดอกที่สอง วลีรหัสผ่านยังเป็นทางกลับทางเดียว',
+  'native.vault.biometric.cancel': 'ใช้วลีรหัสผ่าน',
+  'native.vault.biometric.unavailable': 'อุปกรณ์นี้ไม่ได้ตั้งไบโอเมตริกแบบเข้ม',
+  'native.vault.biometric.invalidated':
+    'มีการลงทะเบียนไบโอเมตริกใหม่ ทางลัดจึงหายไป ปลดล็อกด้วยวลีรหัสผ่านแล้วเปิดใหม่อีกครั้ง',
+  'native.vault.biometric.failed': 'ปลดล็อกด้วยไบโอเมตริกไม่สำเร็จ — ใช้วลีรหัสผ่าน',
+  'native.vault.screenshots.label': 'บล็อกภาพหน้าจอและตัวอย่าง',
+
+  'native.nav.home': 'หน้าแรก',
+  'native.nav.settings': 'ตั้งค่า',
+  'native.about.title': 'เกี่ยวกับ',
+  'native.about.version': 'รุ่น',
+  'native.about.network':
+    'แอปไม่มีสิทธิ์เครือข่าย จึงเปิดการเชื่อมต่อไม่ได้ — ไม่ว่าเพื่ออัปเดต เพื่อสถิติ หรือโดยพลั้งเผลอ',
+  'native.about.licenses': 'สัญญาอนุญาต',
+  'native.about.source': 'ซอร์สโค้ด',
 } satisfies Strings;

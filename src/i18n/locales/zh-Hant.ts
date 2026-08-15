@@ -178,4 +178,32 @@ export default {
   'err.migration.badPercent': '參數「data」裡有壞掉的百分號編碼。',
   'err.migration.badBase64': '參數「data」不是有效的 Base64。',
   'err.migration.noAccounts': '這份匯出裡沒有任何帳戶。',
+
+  'native.vacant.text': '密鑰、otpauth 連結或 QR 圖片——都不會離開這個裝置。',
+
+  'native.colophon.note': '無網路 · 無儲存 · HMAC 經由 javax.crypto',
+
+  'native.scan.camera.unavailable': '這個裝置不提供相機 ——「從圖片讀 QR 碼」始終可用。',
+  'native.scan.camera.denied':
+    '相機遭到拒絕。請在系統的應用程式設定裡授予權限，或改用「從圖片讀 QR 碼」。',
+  'native.vault.lockOnHide': '離開應用程式時也上鎖',
+  'native.vault.locked.hidden': '離開應用程式時已上鎖。',
+  'native.vault.error.storageBlocked': '保險箱寫不進去 — 儲存空間滿了嗎？',
+  'native.vault.biometric.label': '用生物辨識解鎖',
+  'native.vault.biometric.note': '這是捷徑，不是第二把鑰匙：回來的路只有密碼短語。',
+  'native.vault.biometric.cancel': '改用密碼短語',
+  'native.vault.biometric.unavailable': '這台裝置沒有設定強生物辨識。',
+  'native.vault.biometric.invalidated':
+    '註冊了新的生物辨識，捷徑沒了。請用密碼短語解鎖，再重新打開它。',
+  'native.vault.biometric.failed': '生物辨識解鎖沒成功 — 請用密碼短語。',
+  'native.vault.screenshots.label': '阻擋螢幕擷取和預覽',
+
+  'native.nav.home': '主頁',
+  'native.nav.settings': '設定',
+  'native.about.title': '關於',
+  'native.about.version': '版本',
+  'native.about.network':
+    '這個應用沒有網路權限。它打不開任何連線——不為更新，不為統計，也不會誤開。',
+  'native.about.licenses': '授權條款',
+  'native.about.source': '原始碼',
 } satisfies Strings;

@@ -198,4 +198,37 @@ export default {
   'err.migration.badPercent': 'Der »data«-Parameter enthält eine kaputte Prozent-Codierung.',
   'err.migration.badBase64': 'Der »data«-Parameter ist kein gültiges Base64.',
   'err.migration.noAccounts': 'In diesem Export stehen keine Konten.',
+
+  'native.vacant.text': 'Secret, otpauth-Link oder QR-Bild — nichts davon verlässt dieses Gerät.',
+
+  'native.colophon.note': 'Kein Netzwerk · kein Speicher · HMAC über javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Dieses Gerät gibt keine Kamera frei — „QR aus Bild“ funktioniert immer.',
+  'native.scan.camera.denied':
+    'Die Kamera wurde abgelehnt. Erlaubnis in den App-Einstellungen des Systems erteilen — ' +
+    'oder „QR aus Bild“ nehmen.',
+  'native.vault.lockOnHide': 'auch beim Verlassen der App',
+  'native.vault.locked.hidden': 'Beim Verlassen der App zugesperrt.',
+  'native.vault.error.storageBlocked':
+    'Der Tresor ließ sich nicht schreiben — ist der Speicher voll?',
+  'native.vault.biometric.label': 'Mit Biometrie entsperren',
+  'native.vault.biometric.note':
+    'Eine Abkürzung, kein zweiter Schlüssel: Die Passphrase bleibt der einzige Weg zurück.',
+  'native.vault.biometric.cancel': 'Passphrase nehmen',
+  'native.vault.biometric.unavailable': 'Auf diesem Gerät ist keine starke Biometrie eingerichtet.',
+  'native.vault.biometric.invalidated':
+    'Es wurde neue Biometrie registriert, damit ist die Abkürzung weg. Mit der Passphrase aufsperren und sie neu einschalten.',
+  'native.vault.biometric.failed':
+    'Das Entsperren per Biometrie hat nicht geklappt — nimm die Passphrase.',
+  'native.vault.screenshots.label': 'Bildschirmfotos und Vorschaubilder sperren',
+
+  'native.nav.home': 'Start',
+  'native.nav.settings': 'Einstellungen',
+  'native.about.title': 'Über',
+  'native.about.version': 'Version',
+  'native.about.network':
+    'Die App hat keine Netzwerk-Berechtigung. Sie kann keine Verbindung öffnen — nicht für Aktualisierungen, nicht für Statistik, nicht aus Versehen.',
+  'native.about.licenses': 'Lizenzen',
+  'native.about.source': 'Quelltext',
 } satisfies Strings;

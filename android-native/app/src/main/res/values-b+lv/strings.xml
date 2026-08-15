@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/lv.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">TOTP autentificētājs · RFC 6238</string>
+    <string name="skip_toCodes">Pāriet uz kodiem</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Bez tīkla</string>
+    <string name="status_vault_off">nekas netiek saglabāts</string>
+    <string name="status_vault_locked">seifs aizslēgts</string>
+    <string name="status_vault_open">seifs atvērts</string>
+    <string name="zone_input">Ievade</string>
+    <string name="zone_vault">Seifs</string>
+    <string name="zone_codes">Kodi</string>
+    <string name="input_legend">Viens ieraksts rindā</string>
+    <string name="input_placeholder">piem. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s vai %2$s — jaukti. %3$s sāk piezīmi.</string>
+    <string name="input_help_images">QR attēlus var arī ievilkt šeit vai ielīmēt ar %1$s.</string>
+    <string name="input_help_migration">Google Authenticator eksporti (%1$s) tiek pārveidoti automātiski.</string>
+    <string name="input_help_more">Visi ievades formāti</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="zero">%1$s kontu</item>
+        <item quantity="one">%1$s konts</item>
+        <item quantity="other">%1$s konti</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="zero">%1$s kļūdu</item>
+        <item quantity="one">%1$s kļūda</item>
+        <item quantity="other">%1$s kļūdas</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Iztukšot</string>
+    <string name="key_qrImage">QR no attēla</string>
+    <string name="key_camera">Kamera</string>
+    <string name="key_cameraStop">Izslēgt kameru</string>
+    <string name="key_copy">Kopēt</string>
+    <string name="key_copyDone">Nokopēts</string>
+    <string name="key_copyFailed">Neizdevās</string>
+    <string name="viewfinder_hint">Turiet QR kodu rāmī</string>
+    <string name="filter_label">Filtrēt kontus</string>
+    <string name="filter_placeholder">Filtrēt pēc nosaukuma</string>
+    <string name="filter_empty">Nekas neatbilst “%1$s”.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="zero">%1$s ciparu</item>
+        <item quantity="one">%1$s cipars</item>
+        <item quantity="other">%1$s cipari</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">seko</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">sekundes</string>
+    <string name="strip_seconds_valid">derīgs</string>
+    <string name="strip_accountFallback">Konts %1$s</string>
+    <string name="strip_copyAria">Kopēt %1$s kodu</string>
+    <string name="strip_copyAnnounce">Kods %1$s nokopēts</string>
+    <string name="strip_copyFailedHint">Kopēšana neizdevās. Iezīmējiet kodu ar roku.</string>
+    <string name="fault_title">Rinda nav salasāma</string>
+    <string name="vault_state_off">Izslēgts — nekas netiek saglabāts</string>
+    <string name="vault_state_locked">Aizslēgts — vajadzīga paroles frāze</string>
+    <string name="vault_state_open">Atvērts — secret ir teksta laukā</string>
+    <string name="vault_explain">Pēc noklusējuma Clockwork nesaglabā neko. Ja ieslēdz seifu, ievadītais paliek šeit šifrēts ar tavu paroles frāzi — bez tās saglabātais bloks nav nekā vērts.</string>
+    <string name="vault_explain_crypto">Atslēgu no paroles frāzes atvasina PBKDF2-SHA-256 ar %1$s iterācijām, bet šifrē AES-256-GCM. Saglabā tikai aizzīmogoto aploksni: nekad atklāto tekstu, nekad paroles frāzi, nekad atvasināto atslēgu.</string>
+    <string name="vault_explain_more">Visa informācija</string>
+    <string name="vault_pass_new">Jauna paroles frāze</string>
+    <string name="vault_pass_existing">Paroles frāze</string>
+    <string name="vault_action_seal">Saglabāt šifrētu</string>
+    <string name="vault_action_unseal">Atslēgt</string>
+    <string name="vault_action_deriving">Atslēga tiek atvasināta …</string>
+    <string name="vault_action_lock">Aizslēgt</string>
+    <string name="vault_action_update">Saglabāt no jauna</string>
+    <string name="vault_action_wipe">Dzēst visu</string>
+    <string name="vault_action_wipeConfirm">Tiešām dzēst?</string>
+    <string name="vault_timeout_label">Aizslēdzas pats pēc</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="zero">%1$s minūtēm</item>
+        <item quantity="one">%1$s minūtes</item>
+        <item quantity="other">%1$s minūtēm</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">Nav ko saglabāt — teksta lauks ir tukšs.</string>
+    <string name="vault_error_noVault">Neviens seifs nav saglabāts.</string>
+    <string name="vault_error_noPassphrase">Bez paroles frāzes nav atslēgas.</string>
+    <string name="vault_error_sealFailed">Saglabāšana neizdevās.</string>
+    <string name="vault_error_unsealFailed">Atslēgšana neizdevās.</string>
+    <string name="vault_msg_sealed">Seifs saglabāts šifrēts.</string>
+    <string name="vault_msg_resealed">Seifs šifrēts no jauna.</string>
+    <string name="vault_msg_unsealed">Seifs atslēgts.</string>
+    <string name="vault_msg_locked">Seifs aizslēgts.</string>
+    <string name="vault_msg_wiped">Seifs izdzēsts.</string>
+    <string name="vault_msg_wipedNote">Izdzēsts. Krātuvē vairs nekā nav.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="zero">Aizslēgts pēc %1$s minūtēm bez ievades.</item>
+        <item quantity="one">Aizslēgts pēc %1$s minūtes bez ievades.</item>
+        <item quantity="other">Aizslēgts pēc %1$s minūtēm bez ievades.</item>
+    </plurals>
+    <string name="scan_noQr">Attēlā nebija saskatāms neviens QR kods.</string>
+    <string name="scan_unreadable">Attēlu neizdevās nolasīt — vai tas tiešām ir attēls?</string>
+    <string name="scan_done">QR kods nolasīts un ievietots.</string>
+    <string name="scan_camera_notFound">Nav pieslēgta neviena kamera. „QR no attēla“ darbojas tik un tā.</string>
+    <string name="scan_camera_busy">Kameru pašlaik izmanto cita programma.</string>
+    <string name="scan_camera_failed">Kameru neizdevās palaist. „QR no attēla“ darbojas vienmēr.</string>
+    <plurals name="import_done">
+        <item quantity="zero">Pārņemti %1$s kontu no Google Authenticator eksporta</item>
+        <item quantity="one">Pārņemts %1$s konts no Google Authenticator eksporta</item>
+        <item quantity="other">Pārņemti %1$s konti no Google Authenticator eksporta</item>
+    </plurals>
+    <string name="import_skipped">izlaists: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, balstīts uz skaitītāju)</string>
+    <string name="import_skip_algorithm">%1$s (neatbalstīts algoritms)</string>
+    <string name="import_skip_emptySecret">%1$s (tukšs secret)</string>
+    <string name="import_unnamed">Bez nosaukuma</string>
+    <string name="import_unreadable">Eksports nav salasāms.</string>
+    <string name="vacant_demo">Ievietot testa atslēgu</string>
+    <string name="lang_label">Valoda</string>
+    <string name="lang_aria">Izvēlieties valodu</string>
+    <string name="err_base32_paddingInside">Zīme „=“ drīkst atrasties tikai beigās (tā ir tikai aizpildījums).</string>
+    <string name="err_base32_empty">Atslēga secret ir tukša.</string>
+    <string name="err_base32_badChar">Nederīga zīme „%1$s“ pozīcijā %2$s. Base32 pazīst tikai A–Z un 2–7 — cipari 0, 1 un 8 tajā neparādās (sajaukti ar O, I un B?).</string>
+    <string name="err_base32_badLength">Nederīgs garums: %1$s zīmes (bez atstarpēm un aizpildījuma). Base32 kodē 5 baitus 8 zīmēs; pēdējā blokā iespējamas tikai 2, 4, 5, 7 vai 8 zīmes. Visticamāk, trūkst vienas zīmes vai ir viena par daudz.</string>
+    <string name="err_uri_invalid">Šis nav derīgs URI. Gaidīts tiek „otpauth://totp/…“.</string>
+    <string name="err_uri_scheme">Nezināma shēma „%1$s“. Gaidīts tiek „otpauth“.</string>
+    <string name="err_uri_hotp">Šis ir HOTP URI (balstīts uz skaitītāju). Šī lietotne veido tikai uz laiku balstītus TOTP kodus — citādi būtu jāsaglabā skaitītāja stāvoklis.</string>
+    <string name="err_uri_type">Nezināms veids „%1$s“. Pēc „otpauth://“ jābūt „totp“.</string>
+    <string name="err_uri_typeEmpty">(tukšs)</string>
+    <string name="err_uri_noSecret">URI trūkst parametra „secret“.</string>
+    <string name="err_uri_badLabel">URI etiķetē ir bojāts procentu kodējums (piemēram, vientuļa „%“ zīme).</string>
+    <string name="err_uri_algorithm">Nezināms algoritms „%1$s“. Atbalstīti ir SHA1, SHA256 un SHA512.</string>
+    <string name="err_uri_digits">Nederīga vērtība „digits“: %1$s. Atļauts no %2$s līdz %3$s.</string>
+    <string name="err_uri_period">Nederīga vērtība „period“: %1$s. Gaidītas 1 līdz 3600 sekundes.</string>
+    <string name="err_uri_integer">Parametram „%1$s“ jābūt veselam skaitlim; atrasts tika „%2$s“.</string>
+    <string name="err_otp_digits">Nederīgs ciparu skaits: %1$s. Atļauts no %2$s līdz %3$s.</string>
+    <string name="err_otp_emptySecret">Secret ir tukšs — no tā nevar aprēķināt nevienu kodu.</string>
+    <string name="err_line_unreadable">Šo rindu neizdevās nolasīt.</string>
+    <string name="err_vault_openFailed">Seifu neizdevās atvērt. Nepareiza paroles frāze — vai saglabātie dati ir mainīti.</string>
+    <string name="err_vault_badFormat">Saglabātajiem seifa datiem ir nezināms formāts.</string>
+    <string name="err_vault_version">Seifa versija %1$s netiek atbalstīta (gaidīts: %2$s).</string>
+    <string name="err_vault_base64">Seifa datu lauks „%1$s“ nav derīgs Base64.</string>
+    <string name="err_vault_iterations">Nederīgs iterāciju skaits: %1$s.</string>
+    <string name="err_migration_notExport">Šis nav Google Authenticator eksports. Gaidīts tiek „otpauth-migration://offline?data=…“.</string>
+    <string name="err_migration_noData">URI trūkst parametra „data“.</string>
+    <string name="err_migration_badPercent">Parametrā „data“ ir bojāts procentu kodējums.</string>
+    <string name="err_migration_badBase64">Parametrs „data“ nav derīgs Base64.</string>
+    <string name="err_migration_noAccounts">Šajā eksportā nav neviena konta.</string>
+    <string name="vacant_text">Noslēpums, otpauth saite vai QR attēls — nekas no tā neatstāj šo ierīci.</string>
+    <string name="colophon_note">Bez tīkla · bez krātuves · HMAC caur javax.crypto</string>
+    <string name="scan_camera_unavailable">Šī ierīce kameru neatdod — „QR no attēla“ darbojas vienmēr.</string>
+    <string name="scan_camera_denied">Kamera tika atteikta. Piešķiriet atļauju lietotnes iestatījumos sistēmā — vai izmantojiet „QR no attēla“.</string>
+    <string name="vault_lockOnHide">un pametot lietotni</string>
+    <string name="vault_locked_hidden">Aizslēgts, pametot lietotni.</string>
+    <string name="vault_error_storageBlocked">Seifu neizdevās ierakstīt — vai krātuve ir pilna?</string>
+    <string name="vault_biometric_label">Atslēgt ar biometriju</string>
+    <string name="vault_biometric_note">Īsceļš, nevis otra atslēga: paroles frāze paliek vienīgais ceļš atpakaļ.</string>
+    <string name="vault_biometric_cancel">Izmantot paroles frāzi</string>
+    <string name="vault_biometric_unavailable">Šajā ierīcē nav iestatīta spēcīga biometrija.</string>
+    <string name="vault_biometric_invalidated">Tika reģistrēta jauna biometrija, tāpēc īsceļa vairs nav. Atslēdziet ar paroles frāzi un ieslēdziet to no jauna.</string>
+    <string name="vault_biometric_failed">Atslēgšana ar biometriju neizdevās — izmantojiet paroles frāzi.</string>
+    <string name="vault_screenshots_label">Bloķēt ekrānuzņēmumus un priekšskatījumus</string>
+    <string name="nav_home">Sākums</string>
+    <string name="nav_settings">Iestatījumi</string>
+    <string name="about_title">Par</string>
+    <string name="about_version">Versija</string>
+    <string name="about_network">Lietotnei nav tīkla atļaujas. Tā nevar atvērt savienojumu — ne atjauninājumiem, ne statistikai, ne aiz kļūdas.</string>
+    <string name="about_licenses">Licences</string>
+    <string name="about_source">Pirmkods</string>
+</resources>

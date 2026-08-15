@@ -1,19 +1,29 @@
-Clockwork erzeugt Zwei-Faktor-Codes (TOTP, RFC 6238) vollständig auf dem Gerät. Die App deklariert keine INTERNET-Berechtigung — sie kann nicht ins Netz, und diese Zusage steht für jeden nachlesbar im Manifest.
+Clockwork ist ein Zwei-Faktor-Authenticator (2FA), der TOTP-Codes vollständig auf deinem Gerät erzeugt. Die App deklariert keine INTERNET-Berechtigung — sie kann keine Verbindung öffnen, und das steht für jeden nachlesbar im Manifest, bevor man ein Wort davon glaubt.
 
-Unter der Haube ist sie der Einzeldatei-Bau des Projekts, getragen von einem System-WebView: dieselbe Seite, die unter clockwork-sage.vercel.app läuft, als App verpackt. Zur Laufzeit wird nichts nachgeladen, weil es nichts nachzuladen gibt.
+Das ist der Unterschied. Die meisten Authenticator-Apps halten Netzzugriff für Sync, Dienst-Icons oder Update-Prüfungen. Clockwork hat die Berechtigung nicht, also stellt sich die Frage gar nicht.
 
-Was sie kann:
+WAS SIE KANN
+• TOTP-Codes nach RFC 6238 — SHA-1, SHA-256 oder SHA-512, 6 bis 8 Stellen, beliebige Periode.
+• Konten hinzufügen, wie du sie gerade hast: QR-Code scannen, QR-Bild importieren, otpauth://-Link einfügen oder Base32-Secret tippen. Ein kompletter Google-Authenticator-Export wird automatisch umgewandelt.
+• Ein Zifferblatt mit 30er-Teilung und wanderndem Zeiger zeigt die Restzeit — eine Position, die man auf einen Blick abliest, kein schrumpfender Balken.
+• Ein Tipp kopiert den Code, und der nächste steht schon da, bevor er gilt.
+• Kaputte Eingaben werden Zeile für Zeile erklärt statt still verschluckt.
 
-• TOTP-Codes erzeugen — SHA-1, SHA-256 oder SHA-512, 6 bis 8 Stellen, beliebige Periode. Der Countdown ist eine 30er-Teilung mit drehendem Zeiger, kein Fortschrittsring: Ein Zeiger auf einer Skala zeigt eine ablesbare Position.
-• Eingaben in jeder üblichen Form: rohes Base32, otpauth://-URIs, ein kompletter Google-Authenticator-Export oder ein QR-Code aus Kamera oder Bild.
-• Kaputte Zeilen werden erklärt statt still verschluckt.
-• Auf Wunsch liegen die Secrets hinter einer Passphrase — strikt opt-in, AES-256-GCM über PBKDF2-SHA-256 mit 600.000 Iterationen, mit automatischer Sperre. Ohne Tresor wird nichts gespeichert.
-• 37 Sprachen, alle mitgebündelt, auch rechtsläufige Layouts.
+DEINE SECRETS BLEIBEN DEINE
+• Voreingestellt wird gar nichts gespeichert. App zu, Secrets weg.
+• Schaltest du den Tresor ein, bleiben sie hier — verschlüsselt mit deiner Passphrase: AES-256-GCM, Schlüssel abgeleitet per PBKDF2-SHA-256 mit 600.000 Iterationen. Auf die Platte geht nur der versiegelte Umschlag: nie der Klartext, nie die Passphrase, nie der abgeleitete Schlüssel.
+• Aufsperren per Fingerabdruck, wenn du magst. Die Passphrase bleibt der einzige Weg zurück.
+• Sperrt automatisch nach einer Zeit deiner Wahl und beim Verlassen der App. Bildschirmfotos und Vorschaubilder lassen sich sperren.
+• Das Android-Backup ist abgeschaltet — der verschlüsselte Tresor verlässt das Gerät nicht.
 
-Datenschutz in einem Satz: Es wird nichts erhoben, weil es nirgendwo hingehen könnte. Kein Analytics, keine Telemetrie, keine Update-Abfragen, keine Werbe-Kennungen, keine Konten.
+DATENSCHUTZ
+Es wird nichts erhoben, weil es nirgendwo hingehen könnte. Kein Analytics, keine Telemetrie, keine Update-Abfragen, keine Werbe-Kennungen, keine Konten, keine Werbung. Die Kamera-Berechtigung dient allein dem QR-Sucher und ist als freiwillige Hardware deklariert — QR aus Bild funktioniert ohne sie.
 
-Die Kamera-Berechtigung dient allein dem QR-Sucher und ist als freiwillige Hardware deklariert; QR aus Bild funktioniert ohne Kamera. Auto-Backup ist abgeschaltet — der verschlüsselte Tresor verlässt das Gerät nicht.
+ZUM NACHPRÜFEN GEBAUT
+Open Source unter der MIT-Lizenz. Die OTP-Algorithmen sind von Hand nach den RFC-Testvektoren geschrieben — keine OTP-Bibliothek. Quelltext, Testlauf und die Messskripte hinter jeder Zusage oben liegen öffentlich unter github.com/keco216/clockwork.
 
-Open Source unter der MIT-Lizenz. Die OTP-Algorithmen sind von Hand nach den RFC-Testvektoren implementiert — keine OTP-Bibliothek; die einzige geliehene Krypto-Primitive ist die Web Crypto API. Quelltext, Testlauf und Messskripte liegen öffentlich unter github.com/keco216/clockwork, damit man die Zusagen oben nachprüfen kann, statt sie zu glauben.
+Spricht 37 Sprachen, alle mitgebündelt, auch Layouts von rechts nach links.
 
-Wichtig, unabhängig von dieser App: Richte bei jedem Anbieter Backup-Codes ein, bevor du dich auf einen Authenticator verlässt. Sie sind das Einzige, was dich wieder hineinlässt, wenn das Secret weg ist.
+Ab Android 8.0. Auf Android 7 bleibt 1.5.4 die letzte Fassung.
+
+Eine Sache, unabhängig von dieser App: Richte bei jedem Anbieter Backup-Codes ein, bevor du dich auf einen Authenticator verlässt. Sie sind das Einzige, was dich wieder hineinlässt, wenn ein Secret weg ist.

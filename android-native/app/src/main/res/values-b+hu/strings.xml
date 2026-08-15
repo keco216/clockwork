@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/hu.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">TOTP-hitelesítő · RFC 6238</string>
+    <string name="skip_toCodes">Ugrás a kódokhoz</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Kapcsolat nélkül</string>
+    <string name="status_vault_off">semmi sem tárolódik</string>
+    <string name="status_vault_locked">a széf zárva</string>
+    <string name="status_vault_open">a széf nyitva</string>
+    <string name="zone_input">Bevitel</string>
+    <string name="zone_vault">Széf</string>
+    <string name="zone_codes">Kódok</string>
+    <string name="input_legend">Soronként egy bejegyzés</string>
+    <string name="input_placeholder">pl. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s vagy %2$s — vegyesen. A %3$s jegyzetet kezd.</string>
+    <string name="input_help_images">A QR-képek ide is húzhatók, vagy beilleszthetők a %1$s kombinációval.</string>
+    <string name="input_help_migration">A Google Authenticator exportjai (%1$s) automatikusan átalakulnak.</string>
+    <string name="input_help_more">Minden bemeneti formátum</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s fiók</item>
+        <item quantity="other">%1$s fiók</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s hiba</item>
+        <item quantity="other">%1$s hiba</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Ürítés</string>
+    <string name="key_qrImage">QR képből</string>
+    <string name="key_camera">Kamera</string>
+    <string name="key_cameraStop">Kamera ki</string>
+    <string name="key_copy">Másolás</string>
+    <string name="key_copyDone">Másolva</string>
+    <string name="key_copyFailed">Nem sikerült</string>
+    <string name="viewfinder_hint">Tartsa a QR-kódot a keretben</string>
+    <string name="filter_label">Fiókok szűrése</string>
+    <string name="filter_placeholder">Szűrés név szerint</string>
+    <string name="filter_empty">Semmi sem egyezik ezzel: „%1$s”.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s számjegy</item>
+        <item quantity="other">%1$s számjegy</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">következik</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">másodperc</string>
+    <string name="strip_seconds_valid">érvényes</string>
+    <string name="strip_accountFallback">%1$s. fiók</string>
+    <string name="strip_copyAria">%1$s kódjának másolása</string>
+    <string name="strip_copyAnnounce">%1$s kód másolva</string>
+    <string name="strip_copyFailedHint">A másolás nem sikerült. Jelölje ki a kódot kézzel.</string>
+    <string name="fault_title">A sor olvashatatlan</string>
+    <string name="vault_state_off">Kikapcsolva — semmi sem tárolódik</string>
+    <string name="vault_state_locked">Zárva — jelmondat kell</string>
+    <string name="vault_state_open">Nyitva — a secretek a szövegmezőben vannak</string>
+    <string name="vault_explain">A Clockwork alapértelmezésben semmit nem tárol. Ha bekapcsolja a páncélszekrényt, a bevitel itt marad, a jelmondatával titkosítva — nélküle a tárolt blokk értéktelen.</string>
+    <string name="vault_explain_crypto">A kulcsot PBKDF2-SHA-256 származtatja a jelmondatból %1$s iterációval, a titkosítást az AES-256-GCM végzi. Csak a lezárt boríték kerül tárolásra: sem a nyílt szöveg, sem a jelmondat, sem a származtatott kulcs.</string>
+    <string name="vault_explain_more">Minden részlet</string>
+    <string name="vault_pass_new">Új jelmondat</string>
+    <string name="vault_pass_existing">Jelmondat</string>
+    <string name="vault_action_seal">Titkosítva tárol</string>
+    <string name="vault_action_unseal">Kinyitás</string>
+    <string name="vault_action_deriving">Kulcs származtatása …</string>
+    <string name="vault_action_lock">Bezárás</string>
+    <string name="vault_action_update">Tárolás újra</string>
+    <string name="vault_action_wipe">Minden törlése</string>
+    <string name="vault_action_wipeConfirm">Tényleg törli?</string>
+    <string name="vault_timeout_label">Magától bezár ennyi után:</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s perc</item>
+        <item quantity="other">%1$s perc</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">Nincs mit tárolni — a szövegmező üres.</string>
+    <string name="vault_error_noVault">Nincs tárolt széf.</string>
+    <string name="vault_error_noPassphrase">Jelmondat nélkül nincs kulcs.</string>
+    <string name="vault_error_sealFailed">A tárolás nem sikerült.</string>
+    <string name="vault_error_unsealFailed">A kinyitás nem sikerült.</string>
+    <string name="vault_msg_sealed">A széf titkosítva tárolva.</string>
+    <string name="vault_msg_resealed">A széf újra titkosítva.</string>
+    <string name="vault_msg_unsealed">A széf kinyitva.</string>
+    <string name="vault_msg_locked">A széf bezárva.</string>
+    <string name="vault_msg_wiped">A széf törölve.</string>
+    <string name="vault_msg_wipedNote">Törölve. A tárolóban nem maradt semmi.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">%1$s perc bevitel nélkül eltelt, ezért bezárt.</item>
+        <item quantity="other">%1$s perc bevitel nélkül eltelt, ezért bezárt.</item>
+    </plurals>
+    <string name="scan_noQr">A képen nem volt felismerhető QR-kód.</string>
+    <string name="scan_unreadable">A képet nem sikerült beolvasni — tényleg kép ez?</string>
+    <string name="scan_done">QR-kód beolvasva és beillesztve.</string>
+    <string name="scan_camera_notFound">Nincs csatlakoztatott kamera. A „QR képből” így is működik.</string>
+    <string name="scan_camera_busy">A kamerát éppen egy másik program használja.</string>
+    <string name="scan_camera_failed">A kamerát nem sikerült elindítani. A „QR képből” mindig működik.</string>
+    <plurals name="import_done">
+        <item quantity="one">%1$s fiók átvéve a Google Authenticator exportjából</item>
+        <item quantity="other">%1$s fiók átvéve a Google Authenticator exportjából</item>
+    </plurals>
+    <string name="import_skipped">kihagyva: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, számlálóalapú)</string>
+    <string name="import_skip_algorithm">%1$s (nem támogatott algoritmus)</string>
+    <string name="import_skip_emptySecret">%1$s (üres secret)</string>
+    <string name="import_unnamed">Névtelen</string>
+    <string name="import_unreadable">Az export olvashatatlan.</string>
+    <string name="vacant_demo">Tesztkulcs beszúrása</string>
+    <string name="lang_label">Nyelv</string>
+    <string name="lang_aria">Nyelv választása</string>
+    <string name="err_base32_paddingInside">Az „=” jel csak a végén állhat (nem más, mint kitöltés).</string>
+    <string name="err_base32_empty">A secret kulcs üres.</string>
+    <string name="err_base32_badChar">Érvénytelen karakter: „%1$s” a(z) %2$s. helyen. A Base32 csak az A–Z és 2–7 jeleket ismeri — a 0, 1 és 8 számjegy nem fordul elő benne (O, I és B helyett írták?).</string>
+    <string name="err_base32_badLength">Érvénytelen hossz: %1$s karakter (szóközök és kitöltés nélkül). A Base32 5 bájtot 8 karakterben kódol; az utolsó blokkban csak 2, 4, 5, 7 vagy 8 karakter lehet. Alighanem hiányzik egy karakter, vagy eggyel több van.</string>
+    <string name="err_uri_invalid">Ez nem érvényes URI. A várt alak: „otpauth://totp/…”.</string>
+    <string name="err_uri_scheme">Ismeretlen séma: „%1$s”. A várt: „otpauth”.</string>
+    <string name="err_uri_hotp">Ez HOTP URI (számlálóalapú). Ez az alkalmazás csak időalapú TOTP-kódokat állít elő — ahhoz a számláló állását el kellene tárolni.</string>
+    <string name="err_uri_type">Ismeretlen típus: „%1$s”. Az „otpauth://” után „totp” kell álljon.</string>
+    <string name="err_uri_typeEmpty">(üres)</string>
+    <string name="err_uri_noSecret">Az URI-ból hiányzik a „secret” paraméter.</string>
+    <string name="err_uri_badLabel">Az URI címkéje hibás százalékkódolást tartalmaz (például egy magányos „%” jelet).</string>
+    <string name="err_uri_algorithm">Ismeretlen algoritmus: „%1$s”. A támogatottak: SHA1, SHA256 és SHA512.</string>
+    <string name="err_uri_digits">Érvénytelen „digits” érték: %1$s. A megengedett %2$s–%3$s.</string>
+    <string name="err_uri_period">Érvénytelen „period” érték: %1$s. A várt 1–3600 másodperc.</string>
+    <string name="err_uri_integer">A(z) „%1$s” paraméternek egész számnak kell lennie; „%2$s” állt ott.</string>
+    <string name="err_otp_digits">Érvénytelen számjegyszám: %1$s. A megengedett %2$s–%3$s.</string>
+    <string name="err_otp_emptySecret">A secret üres — ebből nem számolható kód.</string>
+    <string name="err_line_unreadable">Ezt a sort nem sikerült beolvasni.</string>
+    <string name="err_vault_openFailed">A széfet nem sikerült kinyitni. Hibás jelmondat — vagy a tárolt adatokat megváltoztatták.</string>
+    <string name="err_vault_badFormat">A tárolt széfadatok formátuma ismeretlen.</string>
+    <string name="err_vault_version">A(z) %1$s széfverzió nem támogatott (a várt: %2$s).</string>
+    <string name="err_vault_base64">A széfadatok „%1$s” mezője nem érvényes Base64.</string>
+    <string name="err_vault_iterations">Érvénytelen iterációszám: %1$s.</string>
+    <string name="err_migration_notExport">Ez nem Google Authenticator export. A várt alak: „otpauth-migration://offline?data=…”.</string>
+    <string name="err_migration_noData">Az URI-ból hiányzik a „data” paraméter.</string>
+    <string name="err_migration_badPercent">A „data” paraméter hibás százalékkódolást tartalmaz.</string>
+    <string name="err_migration_badBase64">A „data” paraméter nem érvényes Base64.</string>
+    <string name="err_migration_noAccounts">Ebben az exportban nincsenek fiókok.</string>
+    <string name="vacant_text">Secret, otpauth-hivatkozás vagy QR-kép — semmi sem hagyja el ezt az eszközt.</string>
+    <string name="colophon_note">Nincs hálózat · nincs tárolás · HMAC a javax.crypto-n keresztül</string>
+    <string name="scan_camera_unavailable">Ez az eszköz nem ad kamerát — a „QR képből” mindig működik.</string>
+    <string name="scan_camera_denied">A kamera elutasítva. Engedélyezze a rendszer alkalmazásbeállításaiban — vagy használja a „QR képből” gombot.</string>
+    <string name="vault_lockOnHide">és az alkalmazás elhagyásakor</string>
+    <string name="vault_locked_hidden">Az alkalmazás elhagyásakor bezárt.</string>
+    <string name="vault_error_storageBlocked">A széfet nem sikerült kiírni — megtelt a tárhely?</string>
+    <string name="vault_biometric_label">Feloldás biometriával</string>
+    <string name="vault_biometric_note">Rövidítés, nem második kulcs: a jelmondat marad az egyetlen visszaút.</string>
+    <string name="vault_biometric_cancel">Jelmondat használata</string>
+    <string name="vault_biometric_unavailable">Ezen az eszközön nincs beállítva erős biometria.</string>
+    <string name="vault_biometric_invalidated">Új biometria lett regisztrálva, így a rövidítés eltűnt. Oldja fel a jelmondattal, és kapcsolja be újra.</string>
+    <string name="vault_biometric_failed">A biometrikus feloldás nem sikerült — használja a jelmondatot.</string>
+    <string name="vault_screenshots_label">Képernyőképek és előnézetek tiltása</string>
+    <string name="nav_home">Kezdőlap</string>
+    <string name="nav_settings">Beállítások</string>
+    <string name="about_title">Névjegy</string>
+    <string name="about_version">Verzió</string>
+    <string name="about_network">Az alkalmazásnak nincs hálózati jogosultsága. Nem tud kapcsolatot nyitni — sem frissítéshez, sem statisztikához, sem véletlenül.</string>
+    <string name="about_licenses">Licencek</string>
+    <string name="about_source">Forráskód</string>
+</resources>

@@ -203,4 +203,37 @@ export default {
   'err.migration.badPercent': 'Il parametro « data » contiene una codifica percentuale rotta.',
   'err.migration.badBase64': 'Il parametro « data » non è Base64 valido.',
   'err.migration.noAccounts': 'In questa esportazione non ci sono account.',
+
+  'native.vacant.text':
+    'Secret, link otpauth o immagine QR: niente di tutto ciò lascia questo dispositivo.',
+
+  'native.colophon.note': 'Nessuna rete · nessun salvataggio · HMAC tramite javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Questo dispositivo non mette a disposizione una fotocamera — « QR da immagine » funziona sempre.',
+  'native.scan.camera.denied':
+    'La fotocamera è stata negata. Concedi l’autorizzazione nelle impostazioni di sistema dell’app — oppure usa « QR da immagine ».',
+  'native.vault.lockOnHide': 'e quando si lascia l’app',
+  'native.vault.locked.hidden': 'Chiusa lasciando l’app.',
+  'native.vault.error.storageBlocked':
+    'Non è stato possibile scrivere la cassaforte — la memoria è piena?',
+  'native.vault.biometric.label': 'Sbloccare con la biometria',
+  'native.vault.biometric.note':
+    'Una scorciatoia, non una seconda chiave: la passphrase resta l’unica via di ritorno.',
+  'native.vault.biometric.cancel': 'Usa la passphrase',
+  'native.vault.biometric.unavailable':
+    'Su questo dispositivo non è configurata una biometria forte.',
+  'native.vault.biometric.invalidated':
+    'È stata registrata una nuova biometria, quindi la scorciatoia non c’è più. Sblocca con la passphrase e riattivala.',
+  'native.vault.biometric.failed': 'Lo sblocco biometrico non ha funzionato — usa la passphrase.',
+  'native.vault.screenshots.label': 'Bloccare screenshot e anteprime',
+
+  'native.nav.home': 'Home',
+  'native.nav.settings': 'Impostazioni',
+  'native.about.title': 'Informazioni',
+  'native.about.version': 'Versione',
+  'native.about.network':
+    'L’app non ha alcun permesso di rete. Non può aprire una connessione: né per aggiornamenti, né per statistiche, né per errore.',
+  'native.about.licenses': 'Licenze',
+  'native.about.source': 'Codice sorgente',
 } satisfies Strings;

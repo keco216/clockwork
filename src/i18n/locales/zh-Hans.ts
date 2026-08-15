@@ -177,4 +177,32 @@ export default {
   'err.migration.badPercent': '参数“data”里有坏掉的百分号编码。',
   'err.migration.badBase64': '参数“data”不是有效的 Base64。',
   'err.migration.noAccounts': '这份导出里没有任何账户。',
+
+  'native.vacant.text': '密钥、otpauth 链接或二维码图片——都不会离开这个设备。',
+
+  'native.colophon.note': '无网络 · 无存储 · HMAC 经由 javax.crypto',
+
+  'native.scan.camera.unavailable': '这个设备不提供摄像头 ——“从图片读二维码”始终可用。',
+  'native.scan.camera.denied':
+    '摄像头被拒绝。请在系统的应用设置里授予权限，或改用“从图片读二维码”。',
+  'native.vault.lockOnHide': '离开应用时也上锁',
+  'native.vault.locked.hidden': '离开应用时已上锁。',
+  'native.vault.error.storageBlocked': '保险箱写不进去 — 存储空间满了吗？',
+  'native.vault.biometric.label': '用生物识别解锁',
+  'native.vault.biometric.note': '这是捷径，不是第二把钥匙：回来的路只有密码短语。',
+  'native.vault.biometric.cancel': '改用密码短语',
+  'native.vault.biometric.unavailable': '这台设备没有设置强生物识别。',
+  'native.vault.biometric.invalidated':
+    '注册了新的生物识别，捷径没了。请用密码短语解锁，再重新打开它。',
+  'native.vault.biometric.failed': '生物识别解锁没成功 — 请用密码短语。',
+  'native.vault.screenshots.label': '阻止截图和预览',
+
+  'native.nav.home': '主页',
+  'native.nav.settings': '设置',
+  'native.about.title': '关于',
+  'native.about.version': '版本',
+  'native.about.network':
+    '这个应用没有网络权限。它打不开任何连接——不为更新，不为统计，也不会误开。',
+  'native.about.licenses': '许可证',
+  'native.about.source': '源代码',
 } satisfies Strings;

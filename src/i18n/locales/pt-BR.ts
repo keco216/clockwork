@@ -197,4 +197,36 @@ export default {
   'err.migration.badPercent': 'O parâmetro “data” tem uma codificação por cento quebrada.',
   'err.migration.badBase64': 'O parâmetro “data” não é Base64 válido.',
   'err.migration.noAccounts': 'Nesta exportação não há nenhuma conta.',
+
+  'native.vacant.text': 'Secret, link otpauth ou imagem QR — nada disso sai deste dispositivo.',
+
+  'native.colophon.note': 'Sem rede · sem armazenamento · HMAC por javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Este dispositivo não libera nenhuma câmera — “QR a partir de imagem” sempre funciona.',
+  'native.scan.camera.denied':
+    'A câmera foi negada. Conceda a permissão nas configurações do aplicativo no sistema — ou use “QR a partir de imagem”.',
+  'native.vault.lockOnHide': 'e ao sair do aplicativo',
+  'native.vault.locked.hidden': 'Trancado ao sair do aplicativo.',
+  'native.vault.error.storageBlocked':
+    'Não foi possível gravar o cofre — o armazenamento está cheio?',
+  'native.vault.biometric.label': 'Desbloquear com biometria',
+  'native.vault.biometric.note':
+    'Um atalho, não uma segunda chave: a frase secreta continua sendo o único caminho de volta.',
+  'native.vault.biometric.cancel': 'Usar a frase secreta',
+  'native.vault.biometric.unavailable': 'Este dispositivo não tem biometria forte configurada.',
+  'native.vault.biometric.invalidated':
+    'Uma nova biometria foi cadastrada, então o atalho sumiu. Destranque com a frase secreta e ative-o de novo.',
+  'native.vault.biometric.failed':
+    'O desbloqueio por biometria não funcionou — use a frase secreta.',
+  'native.vault.screenshots.label': 'Bloquear capturas de tela e prévias',
+
+  'native.nav.home': 'Início',
+  'native.nav.settings': 'Configurações',
+  'native.about.title': 'Sobre',
+  'native.about.version': 'Versão',
+  'native.about.network':
+    'O app não tem permissão de rede. Ele não consegue abrir conexão alguma — nem para atualizações, nem para estatísticas, nem por engano.',
+  'native.about.licenses': 'Licenças',
+  'native.about.source': 'Código-fonte',
 } satisfies Strings;

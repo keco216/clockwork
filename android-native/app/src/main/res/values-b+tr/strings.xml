@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/tr.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">TOTP kimlik doğrulayıcı · RFC 6238</string>
+    <string name="skip_toCodes">Kodlara geç</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Çevrimdışı</string>
+    <string name="status_vault_off">hiçbir şey saklanmıyor</string>
+    <string name="status_vault_locked">kasa kilitli</string>
+    <string name="status_vault_open">kasa açık</string>
+    <string name="zone_input">Giriş</string>
+    <string name="zone_vault">Kasa</string>
+    <string name="zone_codes">Kodlar</string>
+    <string name="input_legend">Her satıra bir girdi</string>
+    <string name="input_placeholder">örn. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s ya da %2$s — karışık. %3$s bir not başlatır.</string>
+    <string name="input_help_images">QR görselleri buraya sürüklenebilir ya da %1$s ile yapıştırılabilir.</string>
+    <string name="input_help_migration">Google Authenticator dışa aktarımları (%1$s) kendiliğinden dönüştürülür.</string>
+    <string name="input_help_more">Tüm giriş biçimleri</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s hesap</item>
+        <item quantity="other">%1$s hesap</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s hata</item>
+        <item quantity="other">%1$s hata</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Boşalt</string>
+    <string name="key_qrImage">Görselden QR</string>
+    <string name="key_camera">Kamera</string>
+    <string name="key_cameraStop">Kamerayı kapat</string>
+    <string name="key_copy">Kopyala</string>
+    <string name="key_copyDone">Kopyalandı</string>
+    <string name="key_copyFailed">Başarısız</string>
+    <string name="viewfinder_hint">QR kodu çerçevenin içinde tutun</string>
+    <string name="filter_label">Hesapları filtrele</string>
+    <string name="filter_placeholder">Ada göre filtrele</string>
+    <string name="filter_empty">“%1$s” ile eşleşen yok.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s basamak</item>
+        <item quantity="other">%1$s basamak</item>
+    </plurals>
+    <string name="strip_period">%1$s sn</string>
+    <string name="strip_next">sıradaki</string>
+    <string name="strip_seconds_abbr">sn</string>
+    <string name="strip_seconds_title">saniye</string>
+    <string name="strip_seconds_valid">geçerli</string>
+    <string name="strip_accountFallback">%1$s. hesap</string>
+    <string name="strip_copyAria">%1$s kodunu kopyala</string>
+    <string name="strip_copyAnnounce">%1$s kodu kopyalandı</string>
+    <string name="strip_copyFailedHint">Kopyalama başarısız oldu. Kodu elle seçin.</string>
+    <string name="fault_title">Satır okunamıyor</string>
+    <string name="vault_state_off">Kapalı — hiçbir şey saklanmıyor</string>
+    <string name="vault_state_locked">Kilitli — parola cümlesi gerekiyor</string>
+    <string name="vault_state_open">Açık — secret’lar metin alanında</string>
+    <string name="vault_explain">Clockwork varsayılan olarak hiçbir şey saklamaz. Kasayı açarsanız girdi burada parola cümlenizle şifreli kalır — o olmadan saklanan blok hiçbir işe yaramaz.</string>
+    <string name="vault_explain_crypto">Anahtar, parola cümlesinden PBKDF2-SHA-256 ile %1$s yineleme sonunda türetilir; şifrelemeyi AES-256-GCM yapar. Yalnızca mühürlü zarf saklanır: ne açık metin, ne parola cümlesi, ne de türetilen anahtar.</string>
+    <string name="vault_explain_more">Tüm ayrıntılar</string>
+    <string name="vault_pass_new">Yeni parola cümlesi</string>
+    <string name="vault_pass_existing">Parola cümlesi</string>
+    <string name="vault_action_seal">Şifreli sakla</string>
+    <string name="vault_action_unseal">Kilidi aç</string>
+    <string name="vault_action_deriving">Anahtar türetiliyor …</string>
+    <string name="vault_action_lock">Kilitle</string>
+    <string name="vault_action_update">Yeniden sakla</string>
+    <string name="vault_action_wipe">Hepsini sil</string>
+    <string name="vault_action_wipeConfirm">Gerçekten silinsin mi?</string>
+    <string name="vault_timeout_label">Şu süre sonunda kendi kendine kilitlenir:</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s dakika</item>
+        <item quantity="other">%1$s dakika</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">Saklanacak bir şey yok — metin alanı boş.</string>
+    <string name="vault_error_noVault">Saklanmış bir kasa yok.</string>
+    <string name="vault_error_noPassphrase">Parola cümlesi olmadan anahtar da olmaz.</string>
+    <string name="vault_error_sealFailed">Saklama başarısız oldu.</string>
+    <string name="vault_error_unsealFailed">Kilit açma başarısız oldu.</string>
+    <string name="vault_msg_sealed">Kasa şifreli olarak saklandı.</string>
+    <string name="vault_msg_resealed">Kasa yeniden şifrelendi.</string>
+    <string name="vault_msg_unsealed">Kasanın kilidi açıldı.</string>
+    <string name="vault_msg_locked">Kasa kilitlendi.</string>
+    <string name="vault_msg_wiped">Kasa silindi.</string>
+    <string name="vault_msg_wipedNote">Silindi. Depolamada hiçbir şey kalmadı.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">%1$s dakika giriş yapılmadığı için kilitlendi.</item>
+        <item quantity="other">%1$s dakika giriş yapılmadığı için kilitlendi.</item>
+    </plurals>
+    <string name="scan_noQr">Görselde hiçbir QR kod seçilemedi.</string>
+    <string name="scan_unreadable">Görsel okunamadı — bu gerçekten bir görsel mi?</string>
+    <string name="scan_done">QR kod okundu ve eklendi.</string>
+    <string name="scan_camera_notFound">Bağlı kamera yok. “Görselden QR” yine de çalışır.</string>
+    <string name="scan_camera_busy">Kamerayı şu anda başka bir program kullanıyor.</string>
+    <string name="scan_camera_failed">Kamera başlatılamadı. “Görselden QR” her zaman çalışır.</string>
+    <plurals name="import_done">
+        <item quantity="one">Google Authenticator dışa aktarımından %1$s hesap alındı</item>
+        <item quantity="other">Google Authenticator dışa aktarımından %1$s hesap alındı</item>
+    </plurals>
+    <string name="import_skipped">atlananlar: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, sayaca dayalı)</string>
+    <string name="import_skip_algorithm">%1$s (desteklenmeyen algoritma)</string>
+    <string name="import_skip_emptySecret">%1$s (boş secret)</string>
+    <string name="import_unnamed">Adsız</string>
+    <string name="import_unreadable">Dışa aktarım okunamıyor.</string>
+    <string name="vacant_demo">Test anahtarı ekle</string>
+    <string name="lang_label">Dil</string>
+    <string name="lang_aria">Dil seçin</string>
+    <string name="err_base32_paddingInside">“=” karakteri yalnızca sonda durabilir (yalnızca doldurmadır).</string>
+    <string name="err_base32_empty">Secret anahtarı boş.</string>
+    <string name="err_base32_badChar">%2$s. konumda geçersiz karakter: “%1$s”. Base32 yalnızca A–Z ve 2–7 tanır — 0, 1 ve 8 rakamları onda geçmez (O, I ve B ile mi karıştırıldı?).</string>
+    <string name="err_base32_badLength">Geçersiz uzunluk: %1$s karakter (boşluklar ve doldurma hariç). Base32, 5 baytı 8 karakterle kodlar; son blokta yalnızca 2, 4, 5, 7 ya da 8 karakter olabilir. Büyük olasılıkla bir karakter eksik ya da bir fazla.</string>
+    <string name="err_uri_invalid">Bu geçerli bir URI değil. Beklenen: “otpauth://totp/…”.</string>
+    <string name="err_uri_scheme">Bilinmeyen şema “%1$s”. Beklenen: “otpauth”.</string>
+    <string name="err_uri_hotp">Bu bir HOTP URI’si (sayaca dayalı). Bu uygulama yalnızca zamana dayalı TOTP kodları üretir — öteki için sayaç durumunun saklanması gerekirdi.</string>
+    <string name="err_uri_type">Bilinmeyen tür “%1$s”. “otpauth://” ardından “totp” gelmelidir.</string>
+    <string name="err_uri_typeEmpty">(boş)</string>
+    <string name="err_uri_noSecret">URI’de “secret” parametresi eksik.</string>
+    <string name="err_uri_badLabel">URI etiketinde bozuk yüzde kodlaması var (örneğin tek başına bir “%”).</string>
+    <string name="err_uri_algorithm">Bilinmeyen algoritma “%1$s”. Desteklenenler: SHA1, SHA256 ve SHA512.</string>
+    <string name="err_uri_digits">“digits” için geçersiz değer: %1$s. İzin verilen: %2$s–%3$s.</string>
+    <string name="err_uri_period">“period” için geçersiz değer: %1$s. Beklenen: 1–3600 saniye.</string>
+    <string name="err_uri_integer">“%1$s” parametresi tam sayı olmalı; bulunan: “%2$s”.</string>
+    <string name="err_otp_digits">Geçersiz basamak sayısı: %1$s. İzin verilen: %2$s–%3$s.</string>
+    <string name="err_otp_emptySecret">Secret boş — bundan hiçbir kod hesaplanamaz.</string>
+    <string name="err_line_unreadable">Bu satır okunamadı.</string>
+    <string name="err_vault_openFailed">Kasa açılamadı. Yanlış parola cümlesi — ya da saklanan veriler değiştirilmiş.</string>
+    <string name="err_vault_badFormat">Saklanan kasa verileri bilinmeyen bir biçimde.</string>
+    <string name="err_vault_version">%1$s kasa sürümü desteklenmiyor (beklenen: %2$s).</string>
+    <string name="err_vault_base64">Kasa verilerinin “%1$s” alanı geçerli Base64 değil.</string>
+    <string name="err_vault_iterations">Geçersiz yineleme sayısı: %1$s.</string>
+    <string name="err_migration_notExport">Bu bir Google Authenticator dışa aktarımı değil. Beklenen: “otpauth-migration://offline?data=…”.</string>
+    <string name="err_migration_noData">URI’de “data” parametresi eksik.</string>
+    <string name="err_migration_badPercent">“data” parametresinde bozuk yüzde kodlaması var.</string>
+    <string name="err_migration_badBase64">“data” parametresi geçerli Base64 değil.</string>
+    <string name="err_migration_noAccounts">Bu dışa aktarımda hiç hesap yok.</string>
+    <string name="vacant_text">Secret, otpauth bağlantısı veya QR görüntüsü — hiçbiri bu cihazdan çıkmaz.</string>
+    <string name="colophon_note">Ağ yok · depolama yok · HMAC, javax.crypto üzerinden</string>
+    <string name="scan_camera_unavailable">Bu cihaz kamera vermiyor — “Görselden QR” her zaman çalışır.</string>
+    <string name="scan_camera_denied">Kameraya izin verilmedi. İzni sistemin uygulama ayarlarından verin — ya da “Görselden QR” kullanın.</string>
+    <string name="vault_lockOnHide">ve uygulamadan ayrılınca</string>
+    <string name="vault_locked_hidden">Uygulamadan ayrılınca kilitlendi.</string>
+    <string name="vault_error_storageBlocked">Kasa yazılamadı — depolama dolu mu?</string>
+    <string name="vault_biometric_label">Biyometriyle kilidi aç</string>
+    <string name="vault_biometric_note">Bir kısayol, ikinci bir anahtar değil: geri dönüşün tek yolu parola cümlesi olarak kalır.</string>
+    <string name="vault_biometric_cancel">Parola cümlesini kullan</string>
+    <string name="vault_biometric_unavailable">Bu cihazda güçlü biyometri kurulu değil.</string>
+    <string name="vault_biometric_invalidated">Yeni biyometri kaydedildi, bu yüzden kısayol gitti. Parola cümlesiyle açın ve yeniden etkinleştirin.</string>
+    <string name="vault_biometric_failed">Biyometriyle kilit açma işe yaramadı — parola cümlesini kullanın.</string>
+    <string name="vault_screenshots_label">Ekran görüntülerini ve önizlemeleri engelle</string>
+    <string name="nav_home">Ana sayfa</string>
+    <string name="nav_settings">Ayarlar</string>
+    <string name="about_title">Hakkında</string>
+    <string name="about_version">Sürüm</string>
+    <string name="about_network">Uygulamanın ağ izni yok. Hiçbir bağlantı açamaz — ne güncelleme için, ne istatistik için, ne de yanlışlıkla.</string>
+    <string name="about_licenses">Lisanslar</string>
+    <string name="about_source">Kaynak kodu</string>
+</resources>

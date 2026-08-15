@@ -282,6 +282,192 @@ export interface Strings {
   'err.migration.badPercent': string;
   'err.migration.badBase64': string;
   'err.migration.noAccounts': string;
+
+  /* ── Nur für die native App: das Präfix `native.` ────────────────────────
+     Diese Schlüssel stehen hier, weil es genau EINEN Katalog geben soll: Der
+     Compiler prüft sie über `satisfies Strings` in allen 37 Sprachen mit, und
+     `catalogue.test.ts` prüft Platzhalter und Mehrzahlformen ebenso. Eine
+     zweite Textquelle neben diesem Vorrat wäre nach dem ersten Tippfehler
+     stumm veraltet — und zwar in 36 Sprachen, in denen niemand nachsieht.
+
+     Im WEB-Bündel landen sie trotzdem nicht: `scripts/locale-subset.ts` nimmt
+     jeden `native.`-Schlüssel beim Bauen aus den Locale-Dateien. Gemessen ist
+     das Bündel danach byte-identisch zu einem ohne diese Schlüssel — das Web
+     trägt kein Byte davon. Wer hier etwas ergänzt, ändert also die native App
+     und nicht die Web-Fassung.
+
+     Warum es sie überhaupt gibt: Ein Satz wie „nichts davon verlässt diesen
+     Browser" ist im Web wahr und in einer nativen App schlicht falsch — dort
+     gibt es keinen Browser. Denselben Satz für beide zu biegen hieße, die
+     Web-Fassung schlechter zu machen. */
+
+  /**
+   * Der eine Satz der Onboarding-Bühne — native Fassung von `vacant.text`.
+   *
+   * Wortgleich bis auf das letzte Wort: „Gerät" statt „Browser". Die 35
+   * maschinellen Übersetzungen sind aus dem vorhandenen `vacant.text`
+   * ABGELEITET (nur dieses eine Wort getauscht, Satzbau unverändert) und
+   * erben damit den Qualitätsvorbehalt ihrer Ausgangssätze.
+   */
+  'native.vacant.text': string;
+
+  /**
+   * Die Fußzeile — native Fassung von `colophon.note`.
+   *
+   * Der Web-Satz endet auf „HMAC über die Web Crypto API". Nativ rechnet
+   * `javax.crypto`; die Web-Fassung dort stehen zu lassen wäre schlicht
+   * falsch, und zwar an der einen Stelle, die das Versprechen der App
+   * zusammenfasst.
+   *
+   * Der API-Name bleibt UNÜBERSETZT, genau wie „Web Crypto API" es in allen
+   * 37 Sprachen ist. Das ist auch der Grund, warum die Ableitung so sicher
+   * war: Getauscht wurde nur der Name samt Artikel („über die Web Crypto
+   * API" → „über javax.crypto"), der Rest jedes Satzes steht Zeichen für
+   * Zeichen unverändert.
+   */
+  'native.colophon.note': string;
+
+  /**
+   * Kamera nicht verfügbar — native Fassung von `scan.camera.unavailable`.
+   *
+   * Der Web-Satz erklärt `file://` und die Browser-Sperre; beides gibt es in
+   * einer nativen App nicht. Übrig bleibt der erste Satz mit dem
+   * Gerätewort aus `native.vacant.text` (dieselbe Wahl je Sprache) und die
+   * „QR aus Bild"-Zusicherung des zweiten — die 35 maschinellen Fassungen
+   * sind so ABGELEITET und erben den Qualitätsvorbehalt ihrer Ausgangssätze.
+   */
+  'native.scan.camera.unavailable': string;
+
+  /**
+   * Kamera abgelehnt — native Fassung von `scan.camera.denied`.
+   *
+   * Der Web-Satz sagt „Erlaubnis im Browser zurücksetzen". Nativ führt der
+   * Weg über die App-Einstellungen des Systems — nur dieser Wegweiser ist
+   * je Sprache getauscht, erster Satz und „QR aus Bild"-Ausweg stehen
+   * unverändert.
+   */
+  'native.scan.camera.denied': string;
+
+  /**
+   * „auch beim Verlassen der App" — native Fassung von `vault.lockOnHide`.
+   *
+   * Im Web hängt die Sperre an `visibilitychange`, also am Tab; nativ an
+   * `onStop` der Activity, also an der App. Derselbe Gedanke, ein anderes
+   * Wort — und ein Wort, das in einer App ohne Tabs schlicht ins Leere zeigt.
+   * Die 35 Fassungen sind ABGELEITET: nur das Wort für „Tab" gegen das für
+   * „App" getauscht, Satzbau unverändert.
+   */
+  'native.vault.lockOnHide': string;
+
+  /** „Beim Verlassen der App zugesperrt." — dieselbe Ableitung, als Meldung. */
+  'native.vault.locked.hidden': string;
+
+  /**
+   * Speichern fehlgeschlagen — native Fassung von `vault.error.storageBlocked`.
+   *
+   * Hier ist es KEINE Ableitung, sondern ein anderer Sachverhalt: Der Web-Satz
+   * nennt den privaten Modus, in dem der Browser `localStorage` sperrt. Nativ
+   * gibt es das nicht — die App schreibt in ihr eigenes Verzeichnis, und wenn
+   * das misslingt, ist der Speicher voll oder die Datei nicht beschreibbar.
+   * Den Web-Satz zu übernehmen hieße, dem Nutzer eine Ursache zu nennen, die
+   * es auf seinem Gerät gar nicht geben kann.
+   */
+  'native.vault.error.storageBlocked': string;
+
+  /**
+   * Der Schalter, der Knopf UND der Titel der System-Abfrage.
+   *
+   * Ein Schlüssel für drei Stellen ist hier kein Sparzwang, sondern richtig:
+   * An allen dreien steht dieselbe Handlung, und drei Formulierungen für
+   * dieselbe Sache wären drei Gelegenheiten, sie verschieden zu nennen.
+   */
+  'native.vault.biometric.label': string;
+
+  /**
+   * Der Satz neben dem Schalter.
+   *
+   * Er ist die wichtigste Zeile des ganzen Postens: Biometrie ist ein
+   * KOMFORTWEG. Der Wickel im Keystore kann jederzeit wertlos werden — neue
+   * Biometrie, entfernte Bildschirmsperre, neues Gerät —, und dann bleibt nur
+   * die Passphrase. Wer das nicht weiß, hält die Abkürzung für den Weg und
+   * vergisst die Passphrase.
+   */
+  'native.vault.biometric.note': string;
+
+  /**
+   * Der Abbruchknopf der System-Abfrage.
+   *
+   * Er heißt nicht „Abbrechen": Hinter ihm liegt das Passphrasenfeld, also
+   * ein zweiter Weg und keine Sackgasse. Android verlangt für diesen Knopf
+   * einen Text, und der soll sagen, wohin er führt.
+   */
+  'native.vault.biometric.cancel': string;
+
+  /** Das Gerät bietet keine starke Biometrie an. */
+  'native.vault.biometric.unavailable': string;
+
+  /**
+   * Neue Biometrie registriert — der Wickel ist ungültig geworden.
+   *
+   * Das ist Absicht und keine Panne: `setInvalidatedByBiometricEnrollment`
+   * sorgt dafür, dass ein hinzugefügter Fingerabdruck den fremden Tresor
+   * nicht mit aufsperrt. Ohne Erklärung sähe genau dieser Schutz wie ein
+   * Fehler aus.
+   */
+  'native.vault.biometric.invalidated': string;
+
+  /** Sensor gesperrt, zu viele Versuche, Hardware weg. */
+  'native.vault.biometric.failed': string;
+
+  /**
+   * `FLAG_SECURE` — Bildschirmfotos und das Vorschaubild in der
+   * Zuletzt-verwendet-Ansicht sperren. Voreinstellung AN.
+   */
+  'native.vault.screenshots.label': string;
+
+  /* ── Die zwei Seiten der nativen App (N11) ─────────────────────────────
+     Die Web-Fassung ist EINE Seite: Man scrollt, und unten stehen Fuß,
+     Sprachwahl und Tresor-Konfiguration im Fluss. Nativ ist das falsch —
+     eine App hat Seiten, keine Seitenenden. Die Struktur darf deshalb
+     abweichen, die Designsprache nicht (Kevins Entscheidung, N11a).
+
+     Die Beschriftungen der Leiste sind kurz, weil sie unter einem Zeichen
+     stehen und nicht daneben. */
+
+  /** Navigationsleiste: die Seite mit Codes, Eingabe und Tresor-Zustand. */
+  'native.nav.home': string;
+
+  /** Navigationsleiste: die Seite mit Sprache, Konfiguration und „Über". */
+  'native.nav.settings': string;
+
+  /** Überschrift der Über-Seite. */
+  'native.about.title': string;
+
+  /** Beschriftung vor Versionsname und -nummer. Der Wert kommt vom System. */
+  'native.about.version': string;
+
+  /**
+   * Die Netz-Zusage, ausgeschrieben.
+   *
+   * Im Fuß steht sie als drei Wörter (`native.colophon.note`); auf der
+   * Über-Seite hat sie Platz für den Grund. Die anderen zwei Zusagen
+   * (Tresorformat, Schlüsselableitung) stehen schon in `vault.explain`
+   * und `vault.explain.crypto` und werden dort wiederverwendet.
+   */
+  'native.about.network': string;
+
+  /**
+   * Überschrift über den Lizenzhinweisen.
+   *
+   * Die Hinweise selbst sind Eigennamen und SPDX-Kennungen („ZXing —
+   * Apache-2.0") und stehen deshalb NICHT im Katalog, sondern als
+   * Konstanten im Code — dieselbe Begründung wie bei `javax.crypto` in N8:
+   * Ein technischer Eigenname bleibt in allen 37 Sprachen unübersetzt.
+   */
+  'native.about.licenses': string;
+
+  /** Überschrift über dem Verweis auf das Quelltext-Verzeichnis. */
+  'native.about.source': string;
 }
 
 /** Alle Schlüssel, deren Wert ein einfacher String ist. */

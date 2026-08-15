@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/pt-BR.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">Autenticador TOTP · RFC 6238</string>
+    <string name="skip_toCodes">Ir para os códigos</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Off-line</string>
+    <string name="status_vault_off">nada é salvo</string>
+    <string name="status_vault_locked">cofre trancado</string>
+    <string name="status_vault_open">cofre aberto</string>
+    <string name="zone_input">Entrada</string>
+    <string name="zone_vault">Cofre</string>
+    <string name="zone_codes">Códigos</string>
+    <string name="input_legend">Uma entrada por linha</string>
+    <string name="input_placeholder">p. ex. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s ou %2$s — misturados. %3$s começa uma nota.</string>
+    <string name="input_help_images">Imagens com código QR também podem ser arrastadas para cá ou coladas com %1$s.</string>
+    <string name="input_help_migration">Exportações do Google Authenticator (%1$s) são convertidas automaticamente.</string>
+    <string name="input_help_more">Todos os formatos de entrada</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s conta</item>
+        <item quantity="many">%1$s contas</item>
+        <item quantity="other">%1$s contas</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s erro</item>
+        <item quantity="many">%1$s erros</item>
+        <item quantity="other">%1$s erros</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Limpar</string>
+    <string name="key_qrImage">QR a partir de imagem</string>
+    <string name="key_camera">Câmera</string>
+    <string name="key_cameraStop">Desligar câmera</string>
+    <string name="key_copy">Copiar</string>
+    <string name="key_copyDone">Copiado</string>
+    <string name="key_copyFailed">Falhou</string>
+    <string name="viewfinder_hint">Mantenha o código QR dentro da moldura</string>
+    <string name="filter_label">Filtrar contas</string>
+    <string name="filter_placeholder">Filtrar por nome</string>
+    <string name="filter_empty">Nada corresponde a “%1$s”.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s dígito</item>
+        <item quantity="many">%1$s dígitos</item>
+        <item quantity="other">%1$s dígitos</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">a seguir</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">segundos</string>
+    <string name="strip_seconds_valid">válido</string>
+    <string name="strip_accountFallback">Conta %1$s</string>
+    <string name="strip_copyAria">Copiar o código de %1$s</string>
+    <string name="strip_copyAnnounce">Código %1$s copiado</string>
+    <string name="strip_copyFailedHint">A cópia falhou. Selecione o código na mão.</string>
+    <string name="fault_title">Linha ilegível</string>
+    <string name="vault_state_off">Desligado — nada é salvo</string>
+    <string name="vault_state_locked">Trancado — é preciso a frase secreta</string>
+    <string name="vault_state_open">Aberto — os secrets estão no campo de texto</string>
+    <string name="vault_explain">Por padrão o Clockwork não guarda nada. Se você ligar o cofre, o que digitou fica aqui criptografado com a sua frase secreta: sem ela o bloco guardado não vale nada.</string>
+    <string name="vault_explain_crypto">A chave é derivada da frase secreta por PBKDF2-SHA-256 com %1$s iterações, e o AES-256-GCM faz a criptografia. Só o envelope selado é guardado: nunca o texto em claro, nunca a frase secreta, nunca a chave derivada.</string>
+    <string name="vault_explain_more">Todos os detalhes</string>
+    <string name="vault_pass_new">Nova frase secreta</string>
+    <string name="vault_pass_existing">Frase secreta</string>
+    <string name="vault_action_seal">Salvar criptografado</string>
+    <string name="vault_action_unseal">Abrir</string>
+    <string name="vault_action_deriving">Derivando a chave …</string>
+    <string name="vault_action_lock">Trancar</string>
+    <string name="vault_action_update">Salvar de novo</string>
+    <string name="vault_action_wipe">Apagar tudo</string>
+    <string name="vault_action_wipeConfirm">Apagar mesmo?</string>
+    <string name="vault_timeout_label">Tranca sozinho depois de</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minuto</item>
+        <item quantity="many">%1$s minutos</item>
+        <item quantity="other">%1$s minutos</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">Não há nada para salvar — o campo de texto está vazio.</string>
+    <string name="vault_error_noVault">Não há nenhum cofre salvo.</string>
+    <string name="vault_error_noPassphrase">Sem frase secreta não há chave.</string>
+    <string name="vault_error_sealFailed">Não foi possível salvar.</string>
+    <string name="vault_error_unsealFailed">Não foi possível abrir.</string>
+    <string name="vault_msg_sealed">Cofre salvo criptografado.</string>
+    <string name="vault_msg_resealed">Cofre criptografado de novo.</string>
+    <string name="vault_msg_unsealed">Cofre aberto.</string>
+    <string name="vault_msg_locked">Cofre trancado.</string>
+    <string name="vault_msg_wiped">Cofre apagado.</string>
+    <string name="vault_msg_wipedNote">Apagado. Não sobrou nada no armazenamento.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Trancado depois de %1$s minuto sem entradas.</item>
+        <item quantity="many">Trancado depois de %1$s minutos sem entradas.</item>
+        <item quantity="other">Trancado depois de %1$s minutos sem entradas.</item>
+    </plurals>
+    <string name="scan_noQr">Na imagem não dá para reconhecer nenhum código QR.</string>
+    <string name="scan_unreadable">Não foi possível ler a imagem — é mesmo uma imagem?</string>
+    <string name="scan_done">Código QR lido e inserido.</string>
+    <string name="scan_camera_notFound">Não há nenhuma câmera conectada. “QR a partir de imagem” funciona mesmo assim.</string>
+    <string name="scan_camera_busy">A câmera está sendo usada por outro programa.</string>
+    <string name="scan_camera_failed">Não foi possível iniciar a câmera. “QR a partir de imagem” sempre funciona.</string>
+    <plurals name="import_done">
+        <item quantity="one">%1$s conta trazida da exportação do Google Authenticator</item>
+        <item quantity="many">%1$s contas trazidas da exportação do Google Authenticator</item>
+        <item quantity="other">%1$s contas trazidas da exportação do Google Authenticator</item>
+    </plurals>
+    <string name="import_skipped">ignoradas: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, baseado em contador)</string>
+    <string name="import_skip_algorithm">%1$s (algoritmo não suportado)</string>
+    <string name="import_skip_emptySecret">%1$s (secret vazio)</string>
+    <string name="import_unnamed">Sem nome</string>
+    <string name="import_unreadable">Exportação ilegível.</string>
+    <string name="vacant_demo">Inserir chave de teste</string>
+    <string name="lang_label">Idioma</string>
+    <string name="lang_aria">Escolher idioma</string>
+    <string name="err_base32_paddingInside">O caractere “=” só pode ficar no fim (não passa de preenchimento).</string>
+    <string name="err_base32_empty">A chave secret está vazia.</string>
+    <string name="err_base32_badChar">Caractere inválido “%1$s” na posição %2$s. Base32 só conhece A–Z e 2–7 — os algarismos 0, 1 e 8 não aparecem (confundidos com O, I e B?).</string>
+    <string name="err_base32_badLength">Comprimento inválido: %1$s caracteres (sem espaços nem preenchimento). Base32 codifica 5 bytes em 8 caracteres; no último bloco só cabem 2, 4, 5, 7 ou 8 caracteres. Provavelmente falta um caractere ou há um a mais.</string>
+    <string name="err_uri_invalid">Isso não é uma URI válida. Espera-se “otpauth://totp/…”.</string>
+    <string name="err_uri_scheme">Esquema desconhecido “%1$s”. Espera-se “otpauth”.</string>
+    <string name="err_uri_hotp">Isso é uma URI HOTP (baseada em contador). Este aplicativo só gera códigos TOTP baseados no tempo — para o outro seria preciso guardar o estado do contador.</string>
+    <string name="err_uri_type">Tipo desconhecido “%1$s”. Depois de “otpauth://” tem de vir “totp”.</string>
+    <string name="err_uri_typeEmpty">(vazio)</string>
+    <string name="err_uri_noSecret">Falta o parâmetro “secret” na URI.</string>
+    <string name="err_uri_badLabel">O rótulo da URI tem uma codificação por cento quebrada (por exemplo um “%” sozinho).</string>
+    <string name="err_uri_algorithm">Algoritmo desconhecido “%1$s”. São suportados SHA1, SHA256 e SHA512.</string>
+    <string name="err_uri_digits">Valor inválido para “digits”: %1$s. São permitidos de %2$s a %3$s.</string>
+    <string name="err_uri_period">Valor inválido para “period”: %1$s. Esperam-se de 1 a 3600 segundos.</string>
+    <string name="err_uri_integer">O parâmetro “%1$s” tem de ser um número inteiro; foi encontrado “%2$s”.</string>
+    <string name="err_otp_digits">Número de dígitos inválido: %1$s. São permitidos de %2$s a %3$s.</string>
+    <string name="err_otp_emptySecret">O secret está vazio — daí não dá para calcular nenhum código.</string>
+    <string name="err_line_unreadable">Não foi possível ler esta linha.</string>
+    <string name="err_vault_openFailed">Não foi possível abrir o cofre. Frase secreta errada — ou os dados salvos foram alterados.</string>
+    <string name="err_vault_badFormat">Os dados salvos do cofre estão num formato desconhecido.</string>
+    <string name="err_vault_version">A versão %1$s do cofre não é suportada (esperada: %2$s).</string>
+    <string name="err_vault_base64">O campo “%1$s” dos dados do cofre não é Base64 válido.</string>
+    <string name="err_vault_iterations">Número de iterações inválido: %1$s.</string>
+    <string name="err_migration_notExport">Isso não é uma exportação do Google Authenticator. Espera-se “otpauth-migration://offline?data=…”.</string>
+    <string name="err_migration_noData">Falta o parâmetro “data” na URI.</string>
+    <string name="err_migration_badPercent">O parâmetro “data” tem uma codificação por cento quebrada.</string>
+    <string name="err_migration_badBase64">O parâmetro “data” não é Base64 válido.</string>
+    <string name="err_migration_noAccounts">Nesta exportação não há nenhuma conta.</string>
+    <string name="vacant_text">Secret, link otpauth ou imagem QR — nada disso sai deste dispositivo.</string>
+    <string name="colophon_note">Sem rede · sem armazenamento · HMAC por javax.crypto</string>
+    <string name="scan_camera_unavailable">Este dispositivo não libera nenhuma câmera — “QR a partir de imagem” sempre funciona.</string>
+    <string name="scan_camera_denied">A câmera foi negada. Conceda a permissão nas configurações do aplicativo no sistema — ou use “QR a partir de imagem”.</string>
+    <string name="vault_lockOnHide">e ao sair do aplicativo</string>
+    <string name="vault_locked_hidden">Trancado ao sair do aplicativo.</string>
+    <string name="vault_error_storageBlocked">Não foi possível gravar o cofre — o armazenamento está cheio?</string>
+    <string name="vault_biometric_label">Desbloquear com biometria</string>
+    <string name="vault_biometric_note">Um atalho, não uma segunda chave: a frase secreta continua sendo o único caminho de volta.</string>
+    <string name="vault_biometric_cancel">Usar a frase secreta</string>
+    <string name="vault_biometric_unavailable">Este dispositivo não tem biometria forte configurada.</string>
+    <string name="vault_biometric_invalidated">Uma nova biometria foi cadastrada, então o atalho sumiu. Destranque com a frase secreta e ative-o de novo.</string>
+    <string name="vault_biometric_failed">O desbloqueio por biometria não funcionou — use a frase secreta.</string>
+    <string name="vault_screenshots_label">Bloquear capturas de tela e prévias</string>
+    <string name="nav_home">Início</string>
+    <string name="nav_settings">Configurações</string>
+    <string name="about_title">Sobre</string>
+    <string name="about_version">Versão</string>
+    <string name="about_network">O app não tem permissão de rede. Ele não consegue abrir conexão alguma — nem para atualizações, nem para estatísticas, nem por engano.</string>
+    <string name="about_licenses">Licenças</string>
+    <string name="about_source">Código-fonte</string>
+</resources>

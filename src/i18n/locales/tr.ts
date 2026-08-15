@@ -190,4 +190,35 @@ export default {
   'err.migration.badPercent': '“data” parametresinde bozuk yüzde kodlaması var.',
   'err.migration.badBase64': '“data” parametresi geçerli Base64 değil.',
   'err.migration.noAccounts': 'Bu dışa aktarımda hiç hesap yok.',
+
+  'native.vacant.text':
+    'Secret, otpauth bağlantısı veya QR görüntüsü — hiçbiri bu cihazdan çıkmaz.',
+
+  'native.colophon.note': 'Ağ yok · depolama yok · HMAC, javax.crypto üzerinden',
+
+  'native.scan.camera.unavailable': 'Bu cihaz kamera vermiyor — “Görselden QR” her zaman çalışır.',
+  'native.scan.camera.denied':
+    'Kameraya izin verilmedi. İzni sistemin uygulama ayarlarından verin — ya da “Görselden QR” kullanın.',
+  'native.vault.lockOnHide': 've uygulamadan ayrılınca',
+  'native.vault.locked.hidden': 'Uygulamadan ayrılınca kilitlendi.',
+  'native.vault.error.storageBlocked': 'Kasa yazılamadı — depolama dolu mu?',
+  'native.vault.biometric.label': 'Biyometriyle kilidi aç',
+  'native.vault.biometric.note':
+    'Bir kısayol, ikinci bir anahtar değil: geri dönüşün tek yolu parola cümlesi olarak kalır.',
+  'native.vault.biometric.cancel': 'Parola cümlesini kullan',
+  'native.vault.biometric.unavailable': 'Bu cihazda güçlü biyometri kurulu değil.',
+  'native.vault.biometric.invalidated':
+    'Yeni biyometri kaydedildi, bu yüzden kısayol gitti. Parola cümlesiyle açın ve yeniden etkinleştirin.',
+  'native.vault.biometric.failed':
+    'Biyometriyle kilit açma işe yaramadı — parola cümlesini kullanın.',
+  'native.vault.screenshots.label': 'Ekran görüntülerini ve önizlemeleri engelle',
+
+  'native.nav.home': 'Ana sayfa',
+  'native.nav.settings': 'Ayarlar',
+  'native.about.title': 'Hakkında',
+  'native.about.version': 'Sürüm',
+  'native.about.network':
+    'Uygulamanın ağ izni yok. Hiçbir bağlantı açamaz — ne güncelleme için, ne istatistik için, ne de yanlışlıkla.',
+  'native.about.licenses': 'Lisanslar',
+  'native.about.source': 'Kaynak kodu',
 } satisfies Strings;

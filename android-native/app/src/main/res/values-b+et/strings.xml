@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/et.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">TOTP-autentija · RFC 6238</string>
+    <string name="skip_toCodes">Hüppa koodide juurde</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Võrguühenduseta</string>
+    <string name="status_vault_off">midagi ei salvestata</string>
+    <string name="status_vault_locked">seif lukus</string>
+    <string name="status_vault_open">seif avatud</string>
+    <string name="zone_input">Sisend</string>
+    <string name="zone_vault">Seif</string>
+    <string name="zone_codes">Koodid</string>
+    <string name="input_legend">Üks kirje rea kohta</string>
+    <string name="input_placeholder">nt JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s või %2$s — segamini. %3$s alustab märkust.</string>
+    <string name="input_help_images">QR-pilte saab ka siia lohistada või kleepida klahvidega %1$s.</string>
+    <string name="input_help_migration">Google Authenticatori eksportfailid (%1$s) teisendatakse ise.</string>
+    <string name="input_help_more">Kõik sisendvormingud</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s konto</item>
+        <item quantity="other">%1$s kontot</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s viga</item>
+        <item quantity="other">%1$s viga</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Tühjenda</string>
+    <string name="key_qrImage">QR pildilt</string>
+    <string name="key_camera">Kaamera</string>
+    <string name="key_cameraStop">Lülita kaamera välja</string>
+    <string name="key_copy">Kopeeri</string>
+    <string name="key_copyDone">Kopeeritud</string>
+    <string name="key_copyFailed">Ebaõnnestus</string>
+    <string name="viewfinder_hint">Hoia QR-kood raami sees</string>
+    <string name="filter_label">Filtreeri kontosid</string>
+    <string name="filter_placeholder">Filtreeri nime järgi</string>
+    <string name="filter_empty">Miski ei vasta otsingule „%1$s“.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s number</item>
+        <item quantity="other">%1$s numbrit</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">järgmine</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">sekundit</string>
+    <string name="strip_seconds_valid">kehtib</string>
+    <string name="strip_accountFallback">Konto %1$s</string>
+    <string name="strip_copyAria">Kopeeri %1$s kood</string>
+    <string name="strip_copyAnnounce">Kood %1$s kopeeritud</string>
+    <string name="strip_copyFailedHint">Kopeerimine ebaõnnestus. Vali kood käsitsi.</string>
+    <string name="fault_title">Rida ei ole loetav</string>
+    <string name="vault_state_off">Väljas — midagi ei salvestata</string>
+    <string name="vault_state_locked">Lukus — vaja on paroolifraasi</string>
+    <string name="vault_state_open">Avatud — secretid on tekstiväljal</string>
+    <string name="vault_explain">Vaikimisi ei salvesta Clockwork midagi. Kui lülitad seifi sisse, jääb sisestatu siia sinu paroolifraasiga krüpteerituna — ilma selleta on salvestatud plokk väärtusetu.</string>
+    <string name="vault_explain_crypto">Võti tuletatakse paroolifraasist PBKDF2-SHA-256-ga ja %1$s iteratsiooniga, krüpteerib AES-256-GCM. Salvestatakse ainult pitseeritud ümbrik: mitte kunagi avatud tekst, mitte paroolifraas, mitte tuletatud võti.</string>
+    <string name="vault_explain_more">Kõik üksikasjad</string>
+    <string name="vault_pass_new">Uus paroolifraas</string>
+    <string name="vault_pass_existing">Paroolifraas</string>
+    <string name="vault_action_seal">Salvesta krüptitult</string>
+    <string name="vault_action_unseal">Ava</string>
+    <string name="vault_action_deriving">Võtme tuletamine …</string>
+    <string name="vault_action_lock">Lukusta</string>
+    <string name="vault_action_update">Salvesta uuesti</string>
+    <string name="vault_action_wipe">Kustuta kõik</string>
+    <string name="vault_action_wipeConfirm">Kas tõesti kustutada?</string>
+    <string name="vault_timeout_label">Lukustub ise, kui möödub</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minut</item>
+        <item quantity="other">%1$s minutit</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">Salvestada pole midagi — tekstiväli on tühi.</string>
+    <string name="vault_error_noVault">Ühtki seifi ei ole salvestatud.</string>
+    <string name="vault_error_noPassphrase">Ilma paroolifraasita ei ole võtit.</string>
+    <string name="vault_error_sealFailed">Salvestamine ebaõnnestus.</string>
+    <string name="vault_error_unsealFailed">Avamine ebaõnnestus.</string>
+    <string name="vault_msg_sealed">Seif salvestatud krüptitult.</string>
+    <string name="vault_msg_resealed">Seif uuesti krüptitud.</string>
+    <string name="vault_msg_unsealed">Seif avatud.</string>
+    <string name="vault_msg_locked">Seif lukustatud.</string>
+    <string name="vault_msg_wiped">Seif kustutatud.</string>
+    <string name="vault_msg_wipedNote">Kustutatud. Salvestusruumi ei jäänud midagi.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Lukustus pärast %1$s minutit ilma sisendita.</item>
+        <item quantity="other">Lukustus pärast %1$s minutit ilma sisendita.</item>
+    </plurals>
+    <string name="scan_noQr">Pildilt ei olnud ühtki QR-koodi näha.</string>
+    <string name="scan_unreadable">Pilti ei õnnestunud lugeda — kas see on tõesti pilt?</string>
+    <string name="scan_done">QR-kood loetud ja lisatud.</string>
+    <string name="scan_camera_notFound">Ühtki kaamerat pole ühendatud. „QR pildilt“ töötab siiski.</string>
+    <string name="scan_camera_busy">Kaamerat kasutab praegu teine programm.</string>
+    <string name="scan_camera_failed">Kaamerat ei õnnestunud käivitada. „QR pildilt“ töötab alati.</string>
+    <plurals name="import_done">
+        <item quantity="one">%1$s konto võetud Google Authenticatori eksportfailist</item>
+        <item quantity="other">%1$s kontot võetud Google Authenticatori eksportfailist</item>
+    </plurals>
+    <string name="import_skipped">vahele jäetud: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, loenduripõhine)</string>
+    <string name="import_skip_algorithm">%1$s (algoritmi ei toetata)</string>
+    <string name="import_skip_emptySecret">%1$s (tühi secret)</string>
+    <string name="import_unnamed">Nimeta</string>
+    <string name="import_unreadable">Eksportfail ei ole loetav.</string>
+    <string name="vacant_demo">Lisa testvõti</string>
+    <string name="lang_label">Keel</string>
+    <string name="lang_aria">Vali keel</string>
+    <string name="err_base32_paddingInside">Märk „=“ tohib olla ainult lõpus (see on pelgalt täide).</string>
+    <string name="err_base32_empty">Võti secret on tühi.</string>
+    <string name="err_base32_badChar">Sobimatu märk „%1$s“ kohal %2$s. Base32 tunneb ainult A–Z ja 2–7 — numbreid 0, 1 ja 8 selles ei esine (aetud segamini tähtedega O, I ja B?).</string>
+    <string name="err_base32_badLength">Sobimatu pikkus: %1$s märki (ilma tühikute ja täiteta). Base32 kodeerib 5 baiti 8 märgiks; viimases plokis mahub ainult 2, 4, 5, 7 või 8 märki. Tõenäoliselt on üks märk puudu või üks liiga palju.</string>
+    <string name="err_uri_invalid">See ei ole kehtiv URI. Oodatakse kujul „otpauth://totp/…“.</string>
+    <string name="err_uri_scheme">Tundmatu skeem „%1$s“. Oodatakse „otpauth“.</string>
+    <string name="err_uri_hotp">See on HOTP-URI (loenduripõhine). See rakendus loob ainult ajapõhiseid TOTP-koode — muidu tuleks loenduri seis salvestada.</string>
+    <string name="err_uri_type">Tundmatu tüüp „%1$s“. Pärast „otpauth://“ peab seisma „totp“.</string>
+    <string name="err_uri_typeEmpty">(tühi)</string>
+    <string name="err_uri_noSecret">URI-s puudub parameeter „secret“.</string>
+    <string name="err_uri_badLabel">URI silt sisaldab katkist protsendikodeeringut (näiteks üksik „%“).</string>
+    <string name="err_uri_algorithm">Tundmatu algoritm „%1$s“. Toetatud on SHA1, SHA256 ja SHA512.</string>
+    <string name="err_uri_digits">Sobimatu väärtus väljale „digits“: %1$s. Lubatud on %2$s kuni %3$s.</string>
+    <string name="err_uri_period">Sobimatu väärtus väljale „period“: %1$s. Oodatakse 1 kuni 3600 sekundit.</string>
+    <string name="err_uri_integer">Parameeter „%1$s“ peab olema täisarv; leiti „%2$s“.</string>
+    <string name="err_otp_digits">Sobimatu numbrite arv: %1$s. Lubatud on %2$s kuni %3$s.</string>
+    <string name="err_otp_emptySecret">Secret on tühi — sellest ei saa ühtki koodi arvutada.</string>
+    <string name="err_line_unreadable">Seda rida ei õnnestunud lugeda.</string>
+    <string name="err_vault_openFailed">Seifi ei õnnestunud avada. Vale paroolifraas — või on salvestatud andmeid muudetud.</string>
+    <string name="err_vault_badFormat">Salvestatud seifiandmed on tundmatus vormingus.</string>
+    <string name="err_vault_version">Seifi versiooni %1$s ei toetata (oodati: %2$s).</string>
+    <string name="err_vault_base64">Seifiandmete väli „%1$s“ ei ole kehtiv Base64.</string>
+    <string name="err_vault_iterations">Sobimatu korduste arv: %1$s.</string>
+    <string name="err_migration_notExport">See ei ole Google Authenticatori eksportfail. Oodatakse kujul „otpauth-migration://offline?data=…“.</string>
+    <string name="err_migration_noData">URI-s puudub parameeter „data“.</string>
+    <string name="err_migration_badPercent">Parameeter „data“ sisaldab katkist protsendikodeeringut.</string>
+    <string name="err_migration_badBase64">Parameeter „data“ ei ole kehtiv Base64.</string>
+    <string name="err_migration_noAccounts">Selles eksportfailis ei ole ühtki kontot.</string>
+    <string name="vacant_text">Salajane võti, otpauth-link või QR-pilt — miski neist ei lahku sellest seadmest.</string>
+    <string name="colophon_note">Ei mingit võrku · ei mingit salvestust · HMAC javax.crypto kaudu</string>
+    <string name="scan_camera_unavailable">See seade ei anna kaamerat kasutada — „QR pildilt“ töötab alati.</string>
+    <string name="scan_camera_denied">Kaamerast keelduti. Anna luba süsteemi rakenduste seadetes — või kasuta valikut „QR pildilt“.</string>
+    <string name="vault_lockOnHide">ja rakendusest lahkumisel</string>
+    <string name="vault_locked_hidden">Lukustus rakendusest lahkumisel.</string>
+    <string name="vault_error_storageBlocked">Seifi ei õnnestunud kirjutada — kas mälu on täis?</string>
+    <string name="vault_biometric_label">Ava biomeetriaga</string>
+    <string name="vault_biometric_note">Otsetee, mitte teine võti: paroolifraas jääb ainsaks tagasiteeks.</string>
+    <string name="vault_biometric_cancel">Kasuta paroolifraasi</string>
+    <string name="vault_biometric_unavailable">Selles seadmes pole tugevat biomeetriat seadistatud.</string>
+    <string name="vault_biometric_invalidated">Registreeriti uus biomeetria, seega otsetee on kadunud. Ava paroolifraasiga ja lülita see uuesti sisse.</string>
+    <string name="vault_biometric_failed">Biomeetriline avamine ei õnnestunud — kasuta paroolifraasi.</string>
+    <string name="vault_screenshots_label">Blokeeri ekraanipildid ja eelvaated</string>
+    <string name="nav_home">Avaleht</string>
+    <string name="nav_settings">Seaded</string>
+    <string name="about_title">Teave</string>
+    <string name="about_version">Versioon</string>
+    <string name="about_network">Rakendusel pole võrguluba. See ei saa ühendust avada — ei uuenduste, statistika ega kogemata.</string>
+    <string name="about_licenses">Litsentsid</string>
+    <string name="about_source">Lähtekood</string>
+</resources>

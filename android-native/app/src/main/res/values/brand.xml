@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Die Wortmarke — die EINZIGE von Hand gepflegte Zeichenkette der App.
+
+  Sie steht bewusst nicht in strings.xml: Diese Datei erzeugt
+  scripts/native-strings.mjs aus den 37 Locale-Dateien und ueberschreibt sie
+  bei jedem Lauf. Genau das ist beim ersten Lauf passiert — der App-Name war
+  danach weg, und der Manifest-Verweis zeigte ins Leere.
+
+  Inhaltlich gehoert sie ohnehin hierher: „Ein Logo wird nicht uebersetzt"
+  steht so im Markenhandbuch, und der Launcher-Name IST die Wortmarke.
+  `translatable="false"` sagt das auch den Werkzeugen.
+-->
+<resources>
+    <string name="app_name" translatable="false">Clockwork</string>
+</resources>

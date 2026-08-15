@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/hi.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">TOTP प्रमाणक · RFC 6238</string>
+    <string name="skip_toCodes">कोड तक जाएँ</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">ऑफ़लाइन</string>
+    <string name="status_vault_off">कुछ भी सहेजा नहीं जाता</string>
+    <string name="status_vault_locked">तिजोरी बंद है</string>
+    <string name="status_vault_open">तिजोरी खुली है</string>
+    <string name="zone_input">इनपुट</string>
+    <string name="zone_vault">तिजोरी</string>
+    <string name="zone_codes">कोड</string>
+    <string name="input_legend">हर पंक्ति में एक प्रविष्टि</string>
+    <string name="input_placeholder">जैसे: JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s या %2$s — मिलाजुला. %3$s से टिप्पणी शुरू होती है.</string>
+    <string name="input_help_images">QR चित्र यहाँ खींचकर भी लाए जा सकते हैं या %1$s से चिपकाए जा सकते हैं.</string>
+    <string name="input_help_migration">Google Authenticator के निर्यात (%1$s) अपने आप बदल दिए जाते हैं.</string>
+    <string name="input_help_more">सभी इनपुट प्रारूप</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s खाता</item>
+        <item quantity="other">%1$s खाते</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s त्रुटि</item>
+        <item quantity="other">%1$s त्रुटियाँ</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">खाली करें</string>
+    <string name="key_qrImage">चित्र से QR</string>
+    <string name="key_camera">कैमरा</string>
+    <string name="key_cameraStop">कैमरा बंद करें</string>
+    <string name="key_copy">कॉपी करें</string>
+    <string name="key_copyDone">कॉपी हो गया</string>
+    <string name="key_copyFailed">विफल</string>
+    <string name="viewfinder_hint">QR कोड को फ़्रेम में रखें</string>
+    <string name="filter_label">खाते फ़िल्टर करें</string>
+    <string name="filter_placeholder">नाम से फ़िल्टर करें</string>
+    <string name="filter_empty">कुछ भी “%1$s” से मेल नहीं खाता।</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s अंक</item>
+        <item quantity="other">%1$s अंक</item>
+    </plurals>
+    <string name="strip_period">%1$s से</string>
+    <string name="strip_next">अगला</string>
+    <string name="strip_seconds_abbr">से</string>
+    <string name="strip_seconds_title">सेकंड</string>
+    <string name="strip_seconds_valid">वैध</string>
+    <string name="strip_accountFallback">खाता %1$s</string>
+    <string name="strip_copyAria">%1$s का कोड कॉपी करें</string>
+    <string name="strip_copyAnnounce">कोड %1$s कॉपी हो गया</string>
+    <string name="strip_copyFailedHint">कॉपी करना विफल रहा. कोड हाथ से चुनें.</string>
+    <string name="fault_title">पंक्ति पढ़ी नहीं जा सकी</string>
+    <string name="vault_state_off">बंद — कुछ भी सहेजा नहीं जाता</string>
+    <string name="vault_state_locked">बंद — पासफ़्रेज़ चाहिए</string>
+    <string name="vault_state_open">खुली — सीक्रेट टेक्स्ट फ़ील्ड में हैं</string>
+    <string name="vault_explain">डिफ़ॉल्ट रूप से Clockwork कुछ भी सहेजता नहीं। तिजोरी चालू करने पर आपकी दर्ज सामग्री आपके पासफ़्रेज़ से एन्क्रिप्ट होकर यहीं रहती है — उसके बिना सहेजा गया ब्लॉक बेकार है।</string>
+    <string name="vault_explain_crypto">कुंजी पासफ़्रेज़ से PBKDF2-SHA-256 द्वारा %1$s पुनरावृत्तियों में व्युत्पन्न होती है, और एन्क्रिप्शन AES-256-GCM करता है। सहेजा जाता है केवल सीलबंद लिफ़ाफ़ा: न सादा पाठ, न पासफ़्रेज़, न व्युत्पन्न कुंजी।</string>
+    <string name="vault_explain_more">सभी विवरण</string>
+    <string name="vault_pass_new">नया पासफ़्रेज़</string>
+    <string name="vault_pass_existing">पासफ़्रेज़</string>
+    <string name="vault_action_seal">एन्क्रिप्ट करके सहेजें</string>
+    <string name="vault_action_unseal">खोलें</string>
+    <string name="vault_action_deriving">कुंजी निकाली जा रही है …</string>
+    <string name="vault_action_lock">बंद करें</string>
+    <string name="vault_action_update">फिर से सहेजें</string>
+    <string name="vault_action_wipe">सब मिटाएँ</string>
+    <string name="vault_action_wipeConfirm">सचमुच मिटाएँ?</string>
+    <string name="vault_timeout_label">इतने समय बाद अपने आप बंद हो जाती है:</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s मिनट</item>
+        <item quantity="other">%1$s मिनट</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">सहेजने को कुछ नहीं है — टेक्स्ट फ़ील्ड खाली है.</string>
+    <string name="vault_error_noVault">कोई तिजोरी सहेजी नहीं गई है.</string>
+    <string name="vault_error_noPassphrase">पासफ़्रेज़ के बिना कोई कुंजी नहीं.</string>
+    <string name="vault_error_sealFailed">सहेजना विफल रहा.</string>
+    <string name="vault_error_unsealFailed">खोलना विफल रहा.</string>
+    <string name="vault_msg_sealed">तिजोरी एन्क्रिप्ट करके सहेजी गई.</string>
+    <string name="vault_msg_resealed">तिजोरी फिर से एन्क्रिप्ट की गई.</string>
+    <string name="vault_msg_unsealed">तिजोरी खुल गई.</string>
+    <string name="vault_msg_locked">तिजोरी बंद हो गई.</string>
+    <string name="vault_msg_wiped">तिजोरी मिटा दी गई.</string>
+    <string name="vault_msg_wipedNote">मिटा दी गई. भंडारण में कुछ नहीं बचा.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">%1$s मिनट बिना इनपुट के बीतने पर बंद हो गई.</item>
+        <item quantity="other">%1$s मिनट बिना इनपुट के बीतने पर बंद हो गई.</item>
+    </plurals>
+    <string name="scan_noQr">चित्र में कोई QR कोड नहीं पहचाना जा सका.</string>
+    <string name="scan_unreadable">चित्र पढ़ा नहीं जा सका — क्या यह सचमुच चित्र है?</string>
+    <string name="scan_done">QR कोड पढ़ लिया और डाल दिया गया.</string>
+    <string name="scan_camera_notFound">कोई कैमरा जुड़ा नहीं है. “चित्र से QR” फिर भी काम करता है.</string>
+    <string name="scan_camera_busy">कैमरा इस समय किसी दूसरे प्रोग्राम के पास है.</string>
+    <string name="scan_camera_failed">कैमरा चालू नहीं हो सका. “चित्र से QR” हमेशा काम करता है.</string>
+    <plurals name="import_done">
+        <item quantity="one">Google Authenticator के निर्यात से %1$s खाता लिया गया</item>
+        <item quantity="other">Google Authenticator के निर्यात से %1$s खाते लिए गए</item>
+    </plurals>
+    <string name="import_skipped">छोड़े गए: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, काउंटर आधारित)</string>
+    <string name="import_skip_algorithm">%1$s (असमर्थित एल्गोरिद्म)</string>
+    <string name="import_skip_emptySecret">%1$s (खाली सीक्रेट)</string>
+    <string name="import_unnamed">बिना नाम</string>
+    <string name="import_unreadable">निर्यात पढ़ा नहीं जा सकता.</string>
+    <string name="vacant_demo">परीक्षण कुंजी डालें</string>
+    <string name="lang_label">भाषा</string>
+    <string name="lang_aria">भाषा चुनें</string>
+    <string name="err_base32_paddingInside">अक्षर “=” केवल अंत में आ सकता है (वह मात्र भराव है).</string>
+    <string name="err_base32_empty">सीक्रेट कुंजी खाली है.</string>
+    <string name="err_base32_badChar">स्थान %2$s पर अमान्य अक्षर “%1$s”. Base32 केवल A–Z और 2–7 जानता है — अंक 0, 1 और 8 उसमें आते ही नहीं (O, I और B से भ्रम हुआ?).</string>
+    <string name="err_base32_badLength">अमान्य लंबाई: %1$s अक्षर (रिक्तियों और भराव के बिना). Base32 पाँच बाइट को आठ अक्षरों में बदलता है; अंतिम खंड में केवल 2, 4, 5, 7 या 8 अक्षर संभव हैं. संभवतः एक अक्षर कम है या एक ज़्यादा.</string>
+    <string name="err_uri_invalid">यह मान्य URI नहीं है. अपेक्षित है “otpauth://totp/…”.</string>
+    <string name="err_uri_scheme">अनजान स्कीम “%1$s”. अपेक्षित है “otpauth”.</string>
+    <string name="err_uri_hotp">यह HOTP URI है (काउंटर आधारित). यह ऐप केवल समय आधारित TOTP कोड बनाता है — उसके लिए काउंटर की स्थिति सहेजनी पड़ती.</string>
+    <string name="err_uri_type">अनजान प्रकार “%1$s”. “otpauth://” के बाद “totp” आना चाहिए.</string>
+    <string name="err_uri_typeEmpty">(खाली)</string>
+    <string name="err_uri_noSecret">URI में “secret” पैरामीटर नहीं है.</string>
+    <string name="err_uri_badLabel">URI के लेबल में टूटी प्रतिशत-कोडिंग है (जैसे अकेला “%”).</string>
+    <string name="err_uri_algorithm">अनजान एल्गोरिद्म “%1$s”. समर्थित हैं SHA1, SHA256 और SHA512.</string>
+    <string name="err_uri_digits">“digits” का अमान्य मान: %1$s. %2$s से %3$s तक की अनुमति है.</string>
+    <string name="err_uri_period">“period” का अमान्य मान: %1$s. 1 से 3600 सेकंड अपेक्षित हैं.</string>
+    <string name="err_uri_integer">पैरामीटर “%1$s” पूर्णांक होना चाहिए; मिला “%2$s”.</string>
+    <string name="err_otp_digits">अमान्य अंक संख्या: %1$s. %2$s से %3$s तक की अनुमति है.</string>
+    <string name="err_otp_emptySecret">सीक्रेट खाली है — उससे कोई कोड नहीं निकाला जा सकता.</string>
+    <string name="err_line_unreadable">यह पंक्ति पढ़ी नहीं जा सकी.</string>
+    <string name="err_vault_openFailed">तिजोरी नहीं खुली. पासफ़्रेज़ ग़लत — या सहेजा गया डेटा बदल दिया गया है.</string>
+    <string name="err_vault_badFormat">सहेजे गए तिजोरी डेटा का प्रारूप अनजान है.</string>
+    <string name="err_vault_version">तिजोरी संस्करण %1$s समर्थित नहीं है (अपेक्षित: %2$s).</string>
+    <string name="err_vault_base64">तिजोरी डेटा का “%1$s” फ़ील्ड मान्य Base64 नहीं है.</string>
+    <string name="err_vault_iterations">अमान्य पुनरावृत्ति संख्या: %1$s.</string>
+    <string name="err_migration_notExport">यह Google Authenticator का निर्यात नहीं है. अपेक्षित है “otpauth-migration://offline?data=…”.</string>
+    <string name="err_migration_noData">URI में “data” पैरामीटर नहीं है.</string>
+    <string name="err_migration_badPercent">“data” पैरामीटर में टूटी प्रतिशत-कोडिंग है.</string>
+    <string name="err_migration_badBase64">“data” पैरामीटर मान्य Base64 नहीं है.</string>
+    <string name="err_migration_noAccounts">इस निर्यात में कोई खाता नहीं है.</string>
+    <string name="vacant_text">सीक्रेट, otpauth लिंक या QR छवि — इनमें से कुछ भी इस डिवाइस से बाहर नहीं जाता।</string>
+    <string name="colophon_note">कोई नेटवर्क नहीं · कोई भंडारण नहीं · HMAC javax.crypto से</string>
+    <string name="scan_camera_unavailable">यह डिवाइस कैमरा नहीं देता — “चित्र से QR” हमेशा काम करता है.</string>
+    <string name="scan_camera_denied">कैमरे से मना कर दिया गया. सिस्टम की ऐप सेटिंग में अनुमति दें — या “चित्र से QR” लें.</string>
+    <string name="vault_lockOnHide">और ऐप छोड़ने पर भी</string>
+    <string name="vault_locked_hidden">ऐप छोड़ने पर बंद हो गई.</string>
+    <string name="vault_error_storageBlocked">तिजोरी लिखी नहीं जा सकी — क्या भंडारण भरा है?</string>
+    <string name="vault_biometric_label">बायोमेट्रिक से खोलें</string>
+    <string name="vault_biometric_note">यह छोटा रास्ता है, दूसरी चाबी नहीं: लौटने का रास्ता सिर्फ़ पासफ़्रेज़ है.</string>
+    <string name="vault_biometric_cancel">पासफ़्रेज़ लें</string>
+    <string name="vault_biometric_unavailable">इस डिवाइस पर मज़बूत बायोमेट्रिक सेट नहीं है.</string>
+    <string name="vault_biometric_invalidated">नया बायोमेट्रिक दर्ज हुआ, इसलिए छोटा रास्ता चला गया. पासफ़्रेज़ से खोलें और इसे फिर चालू करें.</string>
+    <string name="vault_biometric_failed">बायोमेट्रिक से खोलना नहीं हुआ — पासफ़्रेज़ लें.</string>
+    <string name="vault_screenshots_label">स्क्रीनशॉट और झलक रोकें</string>
+    <string name="nav_home">होम</string>
+    <string name="nav_settings">सेटिंग्स</string>
+    <string name="about_title">परिचय</string>
+    <string name="about_version">संस्करण</string>
+    <string name="about_network">ऐप के पास नेटवर्क की अनुमति नहीं है। वह कोई कनेक्शन नहीं खोल सकता — न अपडेट के लिए, न आँकड़ों के लिए, न ग़लती से।</string>
+    <string name="about_licenses">लाइसेंस</string>
+    <string name="about_source">स्रोत कोड</string>
+</resources>

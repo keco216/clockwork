@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Was hier NICHT steht, ist die eigentliche Aussage dieser Datei:
+
+  * KEINE android.permission.INTERNET. Ohne sie kann der Prozess auf
+    Betriebssystem-Ebene keine Verbindung oeffnen — dieselbe Zusage wie
+    `connect-src 'none'` in der Web-Fassung, nur eine Schicht tiefer und fuer
+    jeden mit `aapt2 dump badging` nachpruefbar.
+  * CAMERA ist die einzige Berechtigung, die zur Laufzeit ERFRAGT wird
+    (seit P6), ausschliesslich fuer den QR-Sucher. „QR aus Bild" laeuft ueber
+    den Photo Picker und braucht keine Speicher-Berechtigung.
+  * Dazu seit P7 die zwei Biometrie-Berechtigungen unten. Sie stehen hier
+    ausdruecklich, obwohl androidx.biometric sie ohnehin hineinmischen wuerde
+    — siehe Begruendung dort.
+
+  ── Was die Abhaengigkeiten HINEINMISCHEN (N20) ────────────────────────────
+  Der Satz oben ist nur wahr, wenn man auch sagt, was NICHT in dieser Datei
+  steht und trotzdem im fertigen Manifest landet. Am gemergten Manifest
+  abgelesen, nicht vermutet:
+
+  * `androidx.camera.core.impl.MetadataHolderService` — enabled=false,
+    exported=false, traegt nur ein Metadatum (CameraX-Konfiguration).
+  * `androidx.startup.InitializationProvider` — exported=false, mit zwei
+    Initialisierern (ProcessLifecycle, ProfileInstaller). Der dritte,
+    EmojiCompat, ist seit N17 ausdruecklich entfernt; siehe unten.
+  * `androidx.profileinstaller.ProfileInstallReceiver` — **exported=true**,
+    geschuetzt durch `android.permission.DUMP` (signature|privileged).
+    Erreichbar also nur von Shell und System, kein Angriffsweg von einer
+    anderen App. Er kommt mit den ART-Baseline-Profilen (siehe
+    `assets/dexopt/baseline.prof`, 5,8 kB), und die bleiben bewusst an:
+    Anders als in der 1.x-Fassung, wo die Java-Seite eine duenne
+    Capacitor-Bruecke war, ist hier die GANZE Oberflaeche Kotlin und Compose
+    — das Profil beschleunigt genau den teuren Kaltstart. Die
+    Reproduzierbarkeit, wegen der 1.x sie abschaltet, scheitert ohnehin an
+    anderer Stelle (R8 unter fremdem JDK).
+  * Zwei `uses-library`-Eintraege (`androidx.window.extensions`/`sidecar`),
+    beide `required="false"`.
+
+  Damit sagt diese Datei, was das APK sagt. Wer hier etwas hinzufuegt, prueft
+  das gemergte Manifest mit — eine Zusage, die eine Abhaengigkeit still
+  aendern kann, ist keine (die Lehre aus P7 und N17).
+-->
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!--
+      ── Die zwei Biometrie-Berechtigungen (P7) ────────────────────────────
+
+      Sie kommen aus dem Manifest von `androidx.biometric` und landen ueber
+      den Manifest-Merge ohnehin im APK. Sie stehen trotzdem HIER, und das ist
+      Absicht: Bis P6 stand in diesem Kopf „CAMERA ist die EINZIGE
+      Berechtigung", und ein `aapt2 dump badging` haette diesen Satz nach dem
+      Einbau der Biometrie widerlegt, ohne dass jemand die Datei angefasst
+      haette. Eine Zusage, die eine Abhaengigkeit still aendern kann, ist
+      keine. Ausgeschrieben ist sie nachlesbar.
+
+      Beide sind „normal" eingestuft: Sie werden beim Installieren erteilt und
+      erfragen nichts. Sie geben auch keinen Zugriff auf biometrische DATEN —
+      die App bekommt einen Fingerabdruck nie zu sehen, sie bekommt nur einen
+      freigeschalteten Cipher zurueck.
+
+      USE_FINGERPRINT ist seit API 28 abgeloest und steht nur fuer API 26/27
+      da, wo BiometricPrompt intern noch ueber FingerprintManager laeuft.
+      minSdk ist 26, also sind das echte Zielgeraete und keine Altlast.
+    -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission
+        android:name="android.permission.USE_FINGERPRINT"
+        android:maxSdkVersion="27" />
+
+    <!--
+      BEIDE Feature-Namen ausdruecklich freigestellt — die gemessene Falle aus
+      1.x: Die CAMERA-Berechtigung allein leitet ein implizites
+      `uses-feature android.hardware.camera required=true` ab, und ein
+      required="false" nur an `camera.any` deckt das NICHT. Ohne diese zwei
+      Zeilen waere die Kamera stillschweigend Installationsbedingung, und die
+      App verschwaende auf Geraeten ohne Kamera aus dem Katalog. Nach jedem
+      Anfassen: `aapt2 dump badging` — dort muss beides als
+      `uses-feature-not-required` stehen.
+    -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
+
+    <!--
+      Das Launcher-Icon fehlt hier noch mit Absicht — das Markenzeichen kommt
+      in P5 zusammen mit dem gezeichneten Zifferblatt. Ein Verweis auf eine
+      Ressource, die es nicht gibt, waere ein Bau, der nur zufaellig laeuft.
+
+      localeConfig zeigt auf die von scripts/native-strings.mjs erzeugte Liste
+      der 37 Sprachen. Ab API 33 liest das System sie und bietet die Sprachen
+      in den Systemeinstellungen an; darunter benutzt AppCompat dieselbe Datei.
+    -->
+    <application
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/Theme.Clockwork.Starting"
+        android:supportsRtl="true"
+        android:localeConfig="@xml/locales_config"
+        android:enableOnBackInvokedCallback="true"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules">
+
+        <!--
+          allowBackup="false": Ohne Tresor gibt es nichts zu sichern, und der
+          verschluesselte Tresor-Umschlag soll das Geraet nicht Richtung
+          Google-Backup verlassen. Dieselbe Entscheidung wie in 1.x.
+
+          Seit N20 steht `dataExtractionRules` daneben, und das ist kein
+          Beiwerk: Ab Android 12 gilt `allowBackup` NUR NOCH fuer die
+          Cloud-Sicherung — die Geraete-zu-Geraete-Uebertragung laeuft daneben
+          weiter und wird ausschliesslich in jener Datei geregelt. Ohne sie
+          waere der Umschlag beim Telefonwechsel mitgewandert, obwohl hier
+          seit 1.x das Gegenteil steht. Begruendung samt Preis in
+          `res/xml/data_extraction_rules.xml`.
+        -->
+
+        <!--
+          `taskAffinity=""` (F5, N20): Eine Activity gehoert per Voreinstellung
+          zur Aufgabe mit dem Namen des Pakets. Eine fremde App kann sich
+          dieselbe Affinitaet geben und ihre eigene Activity damit in DIESE
+          Aufgabe legen — der Nutzer wischt aus Clockwork heraus und landet in
+          etwas, das aussieht wie Clockwork. Mit leerer Affinitaet gehoert
+          diese Activity zu gar keiner benannten Aufgabe, und niemand kann
+          sich dazustellen.
+
+          Zusammen mit `singleTask` bleibt das Verhalten am Launcher
+          unveraendert — am Geraet nachgesehen: gestartet, verlassen,
+          zurueckgeholt, in der Uebersicht steht ein Eintrag.
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|locale|layoutDirection|fontScale|density"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          ── Die Emoji-Schrift von Google wird NICHT geholt (N17) ────────────
+
+          `androidx.appcompat` zieht `androidx.emoji2` mit, und dessen
+          `EmojiCompatInitializer` haengt sich ueber androidx.startup in den
+          App-Start. Er fragt bei jedem Kaltstart den Schriftanbieter von
+          Google Play Services nach der Schrift `NotoColorEmojiCompat` — auf
+          einem Geraet MIT Play Services also eine Abfrage an Google, bei der
+          Google das anfragende Paket sieht.
+
+          Gemessen war es, nicht vermutet: In
+          `/proc/<pid>/maps` des laufenden Prozesses lag
+          `/data/data/com.google.android.gms/files/fonts/opentype/
+           Noto_COLR_Emoji_Compat-400-100_0-0_0.ttf`.
+
+          Das verstoesst gegen die harte Hausregel „zur Laufzeit keine fremde
+          Netzwerkanfrage, keine Web-Fonts von aussen": Die App selbst hat kein
+          INTERNET und oeffnet auch keinen Socket — die Verbindung baut Google
+          Play Services stellvertretend auf. Genau dieselbe Bindung, wegen der
+          in libs.versions.toml ML Kit ausgeschlossen ist.
+
+          Nebenbei war es eine Verhaltens-Gabelung: Auf einem F-Droid-Geraet
+          ohne Play Services passiert gar nichts, auf einem Play-Geraet schon.
+          Zwei Faelle, von denen nur einer je gemessen worden waere.
+
+          Der Verzicht kostet die NACHGELIEFERTEN Emoji: Zeichen, die neuer
+          sind als die Systemschrift, erscheinen als Kaestchen. Bei einer App,
+          die Kontonamen und sechsstellige Zahlen zeigt, ist das der billigere
+          Preis. Die beiden anderen Initialisierer bleiben — sie sind
+          prozessintern und fragen niemanden.
+        -->
+        <!--
+          `tools:ignore="MissingClass"`: Lint sucht die Klasse im Quellbaum
+          und findet sie nicht — sie kommt aus `androidx.startup` und wird
+          erst beim Manifest-Merge eingesetzt. Der Eintrag hier ist kein
+          eigener Provider, sondern eine Aenderung an jenem (`node="merge"`).
+          Ohne diese Ausnahme faellt `lintRelease` mit einem Fehler aus, der
+          nichts meldet.
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:ignore="MissingClass"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+                tools:node="remove" />
+        </provider>
+
+        <!--
+          Der Dienst traegt keine Logik — AppCompat liest an ihm nur die
+          Metadaten fuer die per-App-Sprachwahl unterhalb von API 33. Ab 33
+          uebernimmt der LocaleManager der Plattform, und der Eintrag ist
+          wirkungslos. `enabled="false"` steht als AUSGANGSZUSTAND da; AppCompat
+          schaltet die Komponente zur Laufzeit selbst ein, um ihre Metadaten zu
+          lesen (am Geraet nachgesehen: sie steht in `dumpsys package` unter
+          `enabledComponents`). Starten tut sie trotzdem nie — sie bindet
+          nichts und traegt keinen Code.
+        -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
+    </application>
+
+</manifest>

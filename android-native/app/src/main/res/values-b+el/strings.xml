@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/el.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">Έλεγχος ταυτότητας TOTP · RFC 6238</string>
+    <string name="skip_toCodes">Μετάβαση στους κωδικούς</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Εκτός δικτύου</string>
+    <string name="status_vault_off">δεν αποθηκεύεται τίποτα</string>
+    <string name="status_vault_locked">η θυρίδα είναι κλειδωμένη</string>
+    <string name="status_vault_open">η θυρίδα είναι ανοιχτή</string>
+    <string name="zone_input">Είσοδος</string>
+    <string name="zone_vault">Θυρίδα</string>
+    <string name="zone_codes">Κωδικοί</string>
+    <string name="input_legend">Μία καταχώριση ανά γραμμή</string>
+    <string name="input_placeholder">π.χ. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s ή %2$s — ανάμεικτα. Το %3$s ξεκινά σημείωση.</string>
+    <string name="input_help_images">Οι εικόνες με κωδικό QR μπορούν επίσης να συρθούν εδώ ή να επικολληθούν με %1$s.</string>
+    <string name="input_help_migration">Οι εξαγωγές από το Google Authenticator (%1$s) μετατρέπονται αυτόματα.</string>
+    <string name="input_help_more">Όλες οι μορφές εισόδου</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s λογαριασμός</item>
+        <item quantity="other">%1$s λογαριασμοί</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s σφάλμα</item>
+        <item quantity="other">%1$s σφάλματα</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Άδειασμα</string>
+    <string name="key_qrImage">QR από εικόνα</string>
+    <string name="key_camera">Κάμερα</string>
+    <string name="key_cameraStop">Κλείσιμο κάμερας</string>
+    <string name="key_copy">Αντιγραφή</string>
+    <string name="key_copyDone">Αντιγράφηκε</string>
+    <string name="key_copyFailed">Απέτυχε</string>
+    <string name="viewfinder_hint">Κρατήστε τον κωδικό QR μέσα στο πλαίσιο</string>
+    <string name="filter_label">Φιλτράρισμα λογαριασμών</string>
+    <string name="filter_placeholder">Φιλτράρισμα κατά όνομα</string>
+    <string name="filter_empty">Τίποτα δεν ταιριάζει με «%1$s».</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s ψηφίο</item>
+        <item quantity="other">%1$s ψηφία</item>
+    </plurals>
+    <string name="strip_period">%1$s δ</string>
+    <string name="strip_next">ακολουθεί</string>
+    <string name="strip_seconds_abbr">δ</string>
+    <string name="strip_seconds_title">δευτερόλεπτα</string>
+    <string name="strip_seconds_valid">ισχύει</string>
+    <string name="strip_accountFallback">Λογαριασμός %1$s</string>
+    <string name="strip_copyAria">Αντιγραφή του κωδικού για %1$s</string>
+    <string name="strip_copyAnnounce">Ο κωδικός %1$s αντιγράφηκε</string>
+    <string name="strip_copyFailedHint">Η αντιγραφή απέτυχε. Επιλέξτε τον κωδικό με το χέρι.</string>
+    <string name="fault_title">Μη αναγνώσιμη γραμμή</string>
+    <string name="vault_state_off">Ανενεργή — δεν αποθηκεύεται τίποτα</string>
+    <string name="vault_state_locked">Κλειδωμένη — χρειάζεται συνθηματική φράση</string>
+    <string name="vault_state_open">Ανοιχτή — τα secret βρίσκονται στο πεδίο κειμένου</string>
+    <string name="vault_explain">Από προεπιλογή το Clockwork δεν αποθηκεύει τίποτα. Αν ενεργοποιήσετε το χρηματοκιβώτιο, η καταχώριση μένει εδώ κρυπτογραφημένη με τη συνθηματική φράση σας — χωρίς αυτή το αποθηκευμένο μπλοκ δεν αξίζει τίποτα.</string>
+    <string name="vault_explain_crypto">Το κλειδί παράγεται από τη συνθηματική φράση με PBKDF2-SHA-256 και %1$s επαναλήψεις, ενώ το AES-256-GCM κάνει την κρυπτογράφηση. Αποθηκεύεται μόνο ο σφραγισμένος φάκελος: ποτέ το απλό κείμενο, ποτέ η συνθηματική φράση, ποτέ το παραγόμενο κλειδί.</string>
+    <string name="vault_explain_more">Όλες οι λεπτομέρειες</string>
+    <string name="vault_pass_new">Νέα συνθηματική φράση</string>
+    <string name="vault_pass_existing">Συνθηματική φράση</string>
+    <string name="vault_action_seal">Αποθήκευση κρυπτογραφημένα</string>
+    <string name="vault_action_unseal">Ξεκλείδωμα</string>
+    <string name="vault_action_deriving">Παραγωγή κλειδιού …</string>
+    <string name="vault_action_lock">Κλείδωμα</string>
+    <string name="vault_action_update">Νέα αποθήκευση</string>
+    <string name="vault_action_wipe">Διαγραφή όλων</string>
+    <string name="vault_action_wipeConfirm">Οριστική διαγραφή;</string>
+    <string name="vault_timeout_label">Κλειδώνει μόνη της μετά από</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s λεπτό</item>
+        <item quantity="other">%1$s λεπτά</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">Δεν υπάρχει τίποτα να αποθηκευτεί — το πεδίο κειμένου είναι κενό.</string>
+    <string name="vault_error_noVault">Δεν υπάρχει αποθηκευμένη θυρίδα.</string>
+    <string name="vault_error_noPassphrase">Χωρίς συνθηματική φράση δεν υπάρχει κλειδί.</string>
+    <string name="vault_error_sealFailed">Η αποθήκευση απέτυχε.</string>
+    <string name="vault_error_unsealFailed">Το ξεκλείδωμα απέτυχε.</string>
+    <string name="vault_msg_sealed">Η θυρίδα αποθηκεύτηκε κρυπτογραφημένα.</string>
+    <string name="vault_msg_resealed">Η θυρίδα κρυπτογραφήθηκε ξανά.</string>
+    <string name="vault_msg_unsealed">Η θυρίδα ξεκλειδώθηκε.</string>
+    <string name="vault_msg_locked">Η θυρίδα κλειδώθηκε.</string>
+    <string name="vault_msg_wiped">Η θυρίδα διαγράφηκε.</string>
+    <string name="vault_msg_wipedNote">Διαγράφηκε. Στον αποθηκευτικό χώρο δεν έμεινε τίποτα.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Κλείδωσε μετά από %1$s λεπτό χωρίς είσοδο.</item>
+        <item quantity="other">Κλείδωσε μετά από %1$s λεπτά χωρίς είσοδο.</item>
+    </plurals>
+    <string name="scan_noQr">Στην εικόνα δεν αναγνωρίστηκε κανένας κωδικός QR.</string>
+    <string name="scan_unreadable">Η εικόνα δεν μπόρεσε να διαβαστεί — είναι όντως εικόνα;</string>
+    <string name="scan_done">Ο κωδικός QR διαβάστηκε και εισήχθη.</string>
+    <string name="scan_camera_notFound">Δεν υπάρχει συνδεδεμένη κάμερα. Το «QR από εικόνα» δουλεύει έτσι κι αλλιώς.</string>
+    <string name="scan_camera_busy">Η κάμερα χρησιμοποιείται αυτή τη στιγμή από άλλο πρόγραμμα.</string>
+    <string name="scan_camera_failed">Η κάμερα δεν μπόρεσε να ξεκινήσει. Το «QR από εικόνα» δουλεύει πάντα.</string>
+    <plurals name="import_done">
+        <item quantity="one">Παραλήφθηκε %1$s λογαριασμός από την εξαγωγή του Google Authenticator</item>
+        <item quantity="other">Παραλήφθηκαν %1$s λογαριασμοί από την εξαγωγή του Google Authenticator</item>
+    </plurals>
+    <string name="import_skipped">παραλείφθηκαν: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, με βάση μετρητή)</string>
+    <string name="import_skip_algorithm">%1$s (μη υποστηριζόμενος αλγόριθμος)</string>
+    <string name="import_skip_emptySecret">%1$s (κενό secret)</string>
+    <string name="import_unnamed">Χωρίς όνομα</string>
+    <string name="import_unreadable">Η εξαγωγή δεν διαβάζεται.</string>
+    <string name="vacant_demo">Εισαγωγή δοκιμαστικού κλειδιού</string>
+    <string name="lang_label">Γλώσσα</string>
+    <string name="lang_aria">Επιλογή γλώσσας</string>
+    <string name="err_base32_paddingInside">Ο χαρακτήρας «=» επιτρέπεται μόνο στο τέλος (δεν είναι παρά γέμισμα).</string>
+    <string name="err_base32_empty">Το κλειδί secret είναι κενό.</string>
+    <string name="err_base32_badChar">Άκυρος χαρακτήρας «%1$s» στη θέση %2$s. Το Base32 γνωρίζει μόνο A–Z και 2–7 — τα ψηφία 0, 1 και 8 δεν εμφανίζονται σε αυτό (μπερδεύτηκαν με O, I και B;).</string>
+    <string name="err_base32_badLength">Άκυρο μήκος: %1$s χαρακτήρες (χωρίς κενά και γέμισμα). Το Base32 κωδικοποιεί 5 ψηφιολέξεις σε 8 χαρακτήρες· στο τελευταίο μπλοκ χωρούν μόνο 2, 4, 5, 7 ή 8 χαρακτήρες. Πιθανότατα λείπει ένας χαρακτήρας ή περισσεύει ένας.</string>
+    <string name="err_uri_invalid">Αυτό δεν είναι έγκυρο URI. Αναμένεται «otpauth://totp/…».</string>
+    <string name="err_uri_scheme">Άγνωστο σχήμα «%1$s». Αναμένεται «otpauth».</string>
+    <string name="err_uri_hotp">Αυτό είναι URI τύπου HOTP (με βάση μετρητή). Αυτή η εφαρμογή παράγει μόνο κωδικούς TOTP με βάση τον χρόνο — για το άλλο θα έπρεπε να αποθηκεύεται η κατάσταση του μετρητή.</string>
+    <string name="err_uri_type">Άγνωστος τύπος «%1$s». Μετά το «otpauth://» πρέπει να ακολουθεί «totp».</string>
+    <string name="err_uri_typeEmpty">(κενό)</string>
+    <string name="err_uri_noSecret">Από το URI λείπει η παράμετρος «secret».</string>
+    <string name="err_uri_badLabel">Η ετικέτα του URI περιέχει χαλασμένη κωδικοποίηση επί τοις εκατό (για παράδειγμα ένα μεμονωμένο «%»).</string>
+    <string name="err_uri_algorithm">Άγνωστος αλγόριθμος «%1$s». Υποστηρίζονται SHA1, SHA256 και SHA512.</string>
+    <string name="err_uri_digits">Άκυρη τιμή για «digits»: %1$s. Επιτρέπονται από %2$s έως %3$s.</string>
+    <string name="err_uri_period">Άκυρη τιμή για «period»: %1$s. Αναμένονται από 1 έως 3600 δευτερόλεπτα.</string>
+    <string name="err_uri_integer">Η παράμετρος «%1$s» πρέπει να είναι ακέραιος· βρέθηκε «%2$s».</string>
+    <string name="err_otp_digits">Άκυρο πλήθος ψηφίων: %1$s. Επιτρέπονται από %2$s έως %3$s.</string>
+    <string name="err_otp_emptySecret">Το secret είναι κενό — από αυτό δεν υπολογίζεται κανένας κωδικός.</string>
+    <string name="err_line_unreadable">Αυτή η γραμμή δεν μπόρεσε να διαβαστεί.</string>
+    <string name="err_vault_openFailed">Η θυρίδα δεν άνοιξε. Λάθος συνθηματική φράση — ή τα αποθηκευμένα δεδομένα τροποποιήθηκαν.</string>
+    <string name="err_vault_badFormat">Τα αποθηκευμένα δεδομένα της θυρίδας έχουν άγνωστη μορφή.</string>
+    <string name="err_vault_version">Η έκδοση θυρίδας %1$s δεν υποστηρίζεται (αναμενόταν: %2$s).</string>
+    <string name="err_vault_base64">Το πεδίο «%1$s» των δεδομένων της θυρίδας δεν είναι έγκυρο Base64.</string>
+    <string name="err_vault_iterations">Άκυρο πλήθος επαναλήψεων: %1$s.</string>
+    <string name="err_migration_notExport">Αυτό δεν είναι εξαγωγή του Google Authenticator. Αναμένεται «otpauth-migration://offline?data=…».</string>
+    <string name="err_migration_noData">Από το URI λείπει η παράμετρος «data».</string>
+    <string name="err_migration_badPercent">Η παράμετρος «data» περιέχει χαλασμένη κωδικοποίηση επί τοις εκατό.</string>
+    <string name="err_migration_badBase64">Η παράμετρος «data» δεν είναι έγκυρο Base64.</string>
+    <string name="err_migration_noAccounts">Σε αυτή την εξαγωγή δεν υπάρχουν λογαριασμοί.</string>
+    <string name="vacant_text">Μυστικό, σύνδεσμος otpauth ή εικόνα QR — τίποτα από αυτά δεν φεύγει από αυτή τη συσκευή.</string>
+    <string name="colophon_note">Χωρίς δίκτυο · χωρίς αποθήκευση · HMAC μέσω javax.crypto</string>
+    <string name="scan_camera_unavailable">Αυτή η συσκευή δεν παραχωρεί κάμερα — το «QR από εικόνα» δουλεύει πάντα.</string>
+    <string name="scan_camera_denied">Η κάμερα απορρίφθηκε. Δώστε την άδεια στις ρυθμίσεις εφαρμογών του συστήματος — ή χρησιμοποιήστε το «QR από εικόνα».</string>
+    <string name="vault_lockOnHide">και όταν φύγετε από την εφαρμογή</string>
+    <string name="vault_locked_hidden">Κλείδωσε με την έξοδο από την εφαρμογή.</string>
+    <string name="vault_error_storageBlocked">Η θυρίδα δεν μπόρεσε να γραφτεί — μήπως ο αποθηκευτικός χώρος είναι γεμάτος;</string>
+    <string name="vault_biometric_label">Ξεκλείδωμα με βιομετρικά</string>
+    <string name="vault_biometric_note">Μια συντόμευση, όχι δεύτερο κλειδί: η συνθηματική φράση παραμένει ο μόνος δρόμος επιστροφής.</string>
+    <string name="vault_biometric_cancel">Χρήση συνθηματικής φράσης</string>
+    <string name="vault_biometric_unavailable">Αυτή η συσκευή δεν έχει ρυθμισμένα ισχυρά βιομετρικά.</string>
+    <string name="vault_biometric_invalidated">Καταχωρίστηκαν νέα βιομετρικά, οπότε η συντόμευση χάθηκε. Ξεκλειδώστε με τη συνθηματική φράση και ενεργοποιήστε την ξανά.</string>
+    <string name="vault_biometric_failed">Το ξεκλείδωμα με βιομετρικά δεν πέτυχε — χρησιμοποιήστε τη συνθηματική φράση.</string>
+    <string name="vault_screenshots_label">Αποκλεισμός στιγμιότυπων οθόνης και προεπισκοπήσεων</string>
+    <string name="nav_home">Αρχική</string>
+    <string name="nav_settings">Ρυθμίσεις</string>
+    <string name="about_title">Σχετικά</string>
+    <string name="about_version">Έκδοση</string>
+    <string name="about_network">Η εφαρμογή δεν έχει άδεια δικτύου. Δεν μπορεί να ανοίξει σύνδεση — ούτε για ενημερώσεις, ούτε για στατιστικά, ούτε κατά λάθος.</string>
+    <string name="about_licenses">Άδειες</string>
+    <string name="about_source">Πηγαίος κώδικας</string>
+</resources>

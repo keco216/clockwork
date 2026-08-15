@@ -214,4 +214,35 @@ export default {
   'err.migration.badPercent': 'У параметрі «data» зіпсоване відсоткове кодування.',
   'err.migration.badBase64': 'Параметр «data» не є придатним Base64.',
   'err.migration.noAccounts': 'У цьому вивантаженні немає жодного облікового запису.',
+
+  'native.vacant.text':
+    'Секрет, посилання otpauth або зображення QR — ніщо з цього не залишає пристрій.',
+
+  'native.colophon.note': 'Жодної мережі · жодного сховища · HMAC через javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Цей пристрій не видає камеру — «QR із зображення» працює завжди.',
+  'native.scan.camera.denied':
+    'У камері відмовлено. Надайте дозвіл у системних налаштуваннях застосунку — або візьміть «QR із зображення».',
+  'native.vault.lockOnHide': 'і коли ви виходите із застосунку',
+  'native.vault.locked.hidden': 'Замкнено при виході із застосунку.',
+  'native.vault.error.storageBlocked': 'Сейф не вдалося записати — чи не заповнене сховище?',
+  'native.vault.biometric.label': 'Відмикати біометрією',
+  'native.vault.biometric.note':
+    'Це коротший шлях, а не другий ключ: парольна фраза лишається єдиною дорогою назад.',
+  'native.vault.biometric.cancel': 'Узяти парольну фразу',
+  'native.vault.biometric.unavailable': 'На цьому пристрої не налаштовано сильної біометрії.',
+  'native.vault.biometric.invalidated':
+    'Зареєстровано нову біометрію, тож коротшого шляху більше немає. Відімкніть парольною фразою і ввімкніть його знову.',
+  'native.vault.biometric.failed': 'Відімкнути біометрією не вдалося — візьміть парольну фразу.',
+  'native.vault.screenshots.label': 'Забороняти знімки екрана та попередній перегляд',
+
+  'native.nav.home': 'Головна',
+  'native.nav.settings': 'Налаштування',
+  'native.about.title': 'Про застосунок',
+  'native.about.version': 'Версія',
+  'native.about.network':
+    'Застосунок не має дозволу на мережу. Він не може відкрити з’єднання — ні для оновлень, ні для статистики, ні помилково.',
+  'native.about.licenses': 'Ліцензії',
+  'native.about.source': 'Вихідний код',
 } satisfies Strings;

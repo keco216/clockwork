@@ -207,4 +207,37 @@ export default {
   'err.migration.badPercent': 'Le paramètre « data » contient un encodage pour cent défectueux.',
   'err.migration.badBase64': 'Le paramètre « data » n’est pas du Base64 valide.',
   'err.migration.noAccounts': 'Cet export ne contient aucun compte.',
+
+  'native.vacant.text':
+    'Secret, lien otpauth ou image QR — rien de tout cela ne quitte cet appareil.',
+
+  'native.colophon.note': 'Pas de réseau · pas de stockage · HMAC via javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Cet appareil ne donne pas accès à une caméra — « QR depuis une image » fonctionne toujours.',
+  'native.scan.camera.denied':
+    'La caméra a été refusée. Accordez l’autorisation dans les paramètres système de l’application — ou utilisez « QR depuis une image ».',
+  'native.vault.lockOnHide': 'et en quittant l’application',
+  'native.vault.locked.hidden': 'Verrouillé en quittant l’application.',
+  'native.vault.error.storageBlocked':
+    'Le coffre n’a pas pu être écrit — le stockage est-il plein ?',
+  'native.vault.biometric.label': 'Déverrouiller par biométrie',
+  'native.vault.biometric.note':
+    'Un raccourci, pas une seconde clé : la phrase secrète reste le seul retour possible.',
+  'native.vault.biometric.cancel': 'Utiliser la phrase secrète',
+  'native.vault.biometric.unavailable': 'Cet appareil n’a pas de biométrie forte configurée.',
+  'native.vault.biometric.invalidated':
+    'Une nouvelle biométrie a été enregistrée, le raccourci a donc disparu. Déverrouillez avec la phrase secrète et réactivez-le.',
+  'native.vault.biometric.failed':
+    'Le déverrouillage biométrique n’a pas fonctionné — utilisez la phrase secrète.',
+  'native.vault.screenshots.label': 'Bloquer les captures d’écran et les aperçus',
+
+  'native.nav.home': 'Accueil',
+  'native.nav.settings': 'Réglages',
+  'native.about.title': 'À propos',
+  'native.about.version': 'Version',
+  'native.about.network':
+    'L’application n’a aucune permission réseau. Elle ne peut ouvrir aucune connexion — ni pour des mises à jour, ni pour des statistiques, ni par erreur.',
+  'native.about.licenses': 'Licences',
+  'native.about.source': 'Code source',
 } satisfies Strings;

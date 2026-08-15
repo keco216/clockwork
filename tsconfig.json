@@ -32,6 +32,16 @@
        Config-Loader (Nodes eigener TypeScript-Modus) verlangt dort den
        vollständigen Pfad. */
     "allowImportingTsExtensions": true,
+    /* `scripts/version.mjs` ist die eine Quelle der Versionsnummer und muss
+       `.mjs` bleiben: `store-listing.mjs` und `store-shots.mjs` laufen mit
+       blankem `node`, und das lädt kein TypeScript. Drei Tests importieren
+       dieselbe Datei — ohne `allowJs` sähe tsc dort nur `any`.
+
+       `checkJs` bleibt AUS: Die Datei wird für die Typherleitung gelesen, nicht
+       geprüft. Eine `.d.mts` daneben wäre die Alternative gewesen und genau
+       das, was D1b abgeschafft hat — eine zweite Stelle, die mitgepflegt
+       werden will. */
+    "allowJs": true,
 
     /* Vite erzeugt das JS, tsc prüft nur die Typen. */
     "noEmit": true,

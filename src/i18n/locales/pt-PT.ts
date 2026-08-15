@@ -201,4 +201,35 @@ export default {
   'err.migration.badPercent': 'O parâmetro « data » tem uma codificação por cento estragada.',
   'err.migration.badBase64': 'O parâmetro « data » não é Base64 válido.',
   'err.migration.noAccounts': 'Nesta exportação não há contas nenhumas.',
+
+  'native.vacant.text': 'Secret, ligação otpauth ou imagem QR — nada disso sai deste dispositivo.',
+
+  'native.colophon.note': 'Sem rede · sem armazenamento · HMAC através de javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Este dispositivo não disponibiliza nenhuma câmara — « QR a partir de imagem » funciona sempre.',
+  'native.scan.camera.denied':
+    'A câmara foi recusada. Conceda a permissão nas definições da aplicação no sistema — ou use « QR a partir de imagem ».',
+  'native.vault.lockOnHide': 'e ao sair da aplicação',
+  'native.vault.locked.hidden': 'Trancado ao sair da aplicação.',
+  'native.vault.error.storageBlocked':
+    'Não foi possível escrever o cofre — o armazenamento está cheio?',
+  'native.vault.biometric.label': 'Desbloquear com biometria',
+  'native.vault.biometric.note':
+    'Um atalho, não uma segunda chave: a frase-passe continua a ser o único caminho de volta.',
+  'native.vault.biometric.cancel': 'Usar a frase-passe',
+  'native.vault.biometric.unavailable': 'Este dispositivo não tem biometria forte configurada.',
+  'native.vault.biometric.invalidated':
+    'Foi registada uma nova biometria, por isso o atalho desapareceu. Destranque com a frase-passe e volte a ativá-lo.',
+  'native.vault.biometric.failed': 'O desbloqueio por biometria não resultou — use a frase-passe.',
+  'native.vault.screenshots.label': 'Bloquear capturas de ecrã e pré-visualizações',
+
+  'native.nav.home': 'Início',
+  'native.nav.settings': 'Definições',
+  'native.about.title': 'Acerca',
+  'native.about.version': 'Versão',
+  'native.about.network':
+    'A aplicação não tem permissão de rede. Não consegue abrir qualquer ligação — nem para atualizações, nem para estatísticas, nem por engano.',
+  'native.about.licenses': 'Licenças',
+  'native.about.source': 'Código-fonte',
 } satisfies Strings;

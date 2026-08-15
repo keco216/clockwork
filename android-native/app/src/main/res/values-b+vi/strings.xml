@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/vi.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">Trình xác thực TOTP · RFC 6238</string>
+    <string name="skip_toCodes">Nhảy tới các mã</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Ngoại tuyến</string>
+    <string name="status_vault_off">không lưu gì cả</string>
+    <string name="status_vault_locked">két đã khoá</string>
+    <string name="status_vault_open">két đang mở</string>
+    <string name="zone_input">Nhập vào</string>
+    <string name="zone_vault">Két</string>
+    <string name="zone_codes">Mã</string>
+    <string name="input_legend">Mỗi dòng một mục</string>
+    <string name="input_placeholder">ví dụ: JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s hoặc %2$s — trộn lẫn. %3$s mở đầu một ghi chú.</string>
+    <string name="input_help_images">Ảnh mã QR cũng có thể kéo vào đây hoặc dán bằng %1$s.</string>
+    <string name="input_help_migration">Bản xuất từ Google Authenticator (%1$s) được chuyển đổi tự động.</string>
+    <string name="input_help_more">Mọi định dạng đầu vào</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="other">%1$s tài khoản</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="other">%1$s lỗi</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Xoá trống</string>
+    <string name="key_qrImage">QR từ ảnh</string>
+    <string name="key_camera">Máy ảnh</string>
+    <string name="key_cameraStop">Tắt máy ảnh</string>
+    <string name="key_copy">Sao chép</string>
+    <string name="key_copyDone">Đã chép</string>
+    <string name="key_copyFailed">Thất bại</string>
+    <string name="viewfinder_hint">Giữ mã QR trong khung</string>
+    <string name="filter_label">Lọc tài khoản</string>
+    <string name="filter_placeholder">Lọc theo tên</string>
+    <string name="filter_empty">Không có gì khớp với “%1$s”.</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="other">%1$s chữ số</item>
+    </plurals>
+    <string name="strip_period">%1$s giây</string>
+    <string name="strip_next">tiếp theo</string>
+    <string name="strip_seconds_abbr">g</string>
+    <string name="strip_seconds_title">giây</string>
+    <string name="strip_seconds_valid">còn hiệu lực</string>
+    <string name="strip_accountFallback">Tài khoản %1$s</string>
+    <string name="strip_copyAria">Sao chép mã của %1$s</string>
+    <string name="strip_copyAnnounce">Đã chép mã %1$s</string>
+    <string name="strip_copyFailedHint">Sao chép thất bại. Hãy bôi đen mã bằng tay.</string>
+    <string name="fault_title">Dòng không đọc được</string>
+    <string name="vault_state_off">Tắt — không lưu gì cả</string>
+    <string name="vault_state_locked">Đã khoá — cần cụm mật khẩu</string>
+    <string name="vault_state_open">Đang mở — các secret nằm trong ô văn bản</string>
+    <string name="vault_explain">Theo mặc định Clockwork không lưu gì cả. Nếu bật hầm, phần đã nhập sẽ ở lại đây dưới dạng mã hoá bằng cụm mật khẩu của bạn — không có nó thì khối đã lưu chẳng có giá trị.</string>
+    <string name="vault_explain_crypto">Khoá được suy ra từ cụm mật khẩu bằng PBKDF2-SHA-256 với %1$s lần lặp, còn AES-256-GCM lo việc mã hoá. Chỉ phong bì đã niêm phong được lưu: không bao giờ là văn bản rõ, không bao giờ là cụm mật khẩu, không bao giờ là khoá dẫn xuất.</string>
+    <string name="vault_explain_more">Mọi chi tiết</string>
+    <string name="vault_pass_new">Cụm mật khẩu mới</string>
+    <string name="vault_pass_existing">Cụm mật khẩu</string>
+    <string name="vault_action_seal">Lưu đã mã hoá</string>
+    <string name="vault_action_unseal">Mở khoá</string>
+    <string name="vault_action_deriving">Đang dẫn xuất khoá …</string>
+    <string name="vault_action_lock">Khoá</string>
+    <string name="vault_action_update">Lưu lại</string>
+    <string name="vault_action_wipe">Xoá tất cả</string>
+    <string name="vault_action_wipeConfirm">Xoá thật chứ?</string>
+    <string name="vault_timeout_label">Tự khoá sau</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="other">%1$s phút</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">Không có gì để lưu — ô văn bản trống.</string>
+    <string name="vault_error_noVault">Không có két nào được lưu.</string>
+    <string name="vault_error_noPassphrase">Không có cụm mật khẩu thì không có khoá.</string>
+    <string name="vault_error_sealFailed">Lưu thất bại.</string>
+    <string name="vault_error_unsealFailed">Mở khoá thất bại.</string>
+    <string name="vault_msg_sealed">Đã lưu két ở dạng mã hoá.</string>
+    <string name="vault_msg_resealed">Đã mã hoá lại két.</string>
+    <string name="vault_msg_unsealed">Đã mở khoá két.</string>
+    <string name="vault_msg_locked">Đã khoá két.</string>
+    <string name="vault_msg_wiped">Đã xoá két.</string>
+    <string name="vault_msg_wipedNote">Đã xoá. Trong kho không còn gì.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="other">Đã khoá sau %1$s phút không nhập gì.</item>
+    </plurals>
+    <string name="scan_noQr">Không nhận ra mã QR nào trong ảnh.</string>
+    <string name="scan_unreadable">Không đọc được ảnh — đây có thật là ảnh không?</string>
+    <string name="scan_done">Đã đọc mã QR và chèn vào.</string>
+    <string name="scan_camera_notFound">Không có máy ảnh nào được nối. “QR từ ảnh” vẫn chạy.</string>
+    <string name="scan_camera_busy">Máy ảnh đang được một chương trình khác dùng.</string>
+    <string name="scan_camera_failed">Không khởi động được máy ảnh. “QR từ ảnh” lúc nào cũng chạy.</string>
+    <plurals name="import_done">
+        <item quantity="other">Đã lấy %1$s tài khoản từ bản xuất Google Authenticator</item>
+    </plurals>
+    <string name="import_skipped">bỏ qua: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, dựa trên bộ đếm)</string>
+    <string name="import_skip_algorithm">%1$s (thuật toán không được hỗ trợ)</string>
+    <string name="import_skip_emptySecret">%1$s (secret rỗng)</string>
+    <string name="import_unnamed">Không tên</string>
+    <string name="import_unreadable">Bản xuất không đọc được.</string>
+    <string name="vacant_demo">Chèn khóa thử</string>
+    <string name="lang_label">Ngôn ngữ</string>
+    <string name="lang_aria">Chọn ngôn ngữ</string>
+    <string name="err_base32_paddingInside">Ký tự “=” chỉ được đứng ở cuối (nó chỉ là phần đệm).</string>
+    <string name="err_base32_empty">Khoá secret rỗng.</string>
+    <string name="err_base32_badChar">Ký tự không hợp lệ “%1$s” ở vị trí %2$s. Base32 chỉ biết A–Z và 2–7 — các chữ số 0, 1 và 8 không xuất hiện trong đó (nhầm với O, I và B?).</string>
+    <string name="err_base32_badLength">Độ dài không hợp lệ: %1$s ký tự (không kể dấu cách và phần đệm). Base32 mã hoá 5 byte thành 8 ký tự; khối cuối chỉ có thể là 2, 4, 5, 7 hoặc 8 ký tự. Nhiều khả năng thiếu một ký tự hoặc thừa một ký tự.</string>
+    <string name="err_uri_invalid">Đây không phải URI hợp lệ. Cần có “otpauth://totp/…”.</string>
+    <string name="err_uri_scheme">Lược đồ lạ “%1$s”. Cần có “otpauth”.</string>
+    <string name="err_uri_hotp">Đây là URI kiểu HOTP (dựa trên bộ đếm). Ứng dụng này chỉ tạo mã TOTP theo thời gian — nếu không thì phải lưu trạng thái bộ đếm.</string>
+    <string name="err_uri_type">Kiểu lạ “%1$s”. Sau “otpauth://” phải là “totp”.</string>
+    <string name="err_uri_typeEmpty">(rỗng)</string>
+    <string name="err_uri_noSecret">URI thiếu tham số “secret”.</string>
+    <string name="err_uri_badLabel">Nhãn của URI có mã hoá phần trăm bị hỏng (chẳng hạn một “%” lẻ loi).</string>
+    <string name="err_uri_algorithm">Thuật toán lạ “%1$s”. Hỗ trợ SHA1, SHA256 và SHA512.</string>
+    <string name="err_uri_digits">Giá trị “digits” không hợp lệ: %1$s. Cho phép từ %2$s đến %3$s.</string>
+    <string name="err_uri_period">Giá trị “period” không hợp lệ: %1$s. Cần từ 1 đến 3600 giây.</string>
+    <string name="err_uri_integer">Tham số “%1$s” phải là số nguyên; tìm thấy “%2$s”.</string>
+    <string name="err_otp_digits">Số chữ số không hợp lệ: %1$s. Cho phép từ %2$s đến %3$s.</string>
+    <string name="err_otp_emptySecret">Secret rỗng — không tính được mã nào từ đó.</string>
+    <string name="err_line_unreadable">Không đọc được dòng này.</string>
+    <string name="err_vault_openFailed">Không mở được két. Sai cụm mật khẩu — hoặc dữ liệu đã lưu bị sửa đổi.</string>
+    <string name="err_vault_badFormat">Dữ liệu két đã lưu có định dạng lạ.</string>
+    <string name="err_vault_version">Phiên bản két %1$s không được hỗ trợ (cần: %2$s).</string>
+    <string name="err_vault_base64">Trường “%1$s” của dữ liệu két không phải Base64 hợp lệ.</string>
+    <string name="err_vault_iterations">Số vòng lặp không hợp lệ: %1$s.</string>
+    <string name="err_migration_notExport">Đây không phải bản xuất của Google Authenticator. Cần có “otpauth-migration://offline?data=…”.</string>
+    <string name="err_migration_noData">URI thiếu tham số “data”.</string>
+    <string name="err_migration_badPercent">Tham số “data” có mã hoá phần trăm bị hỏng.</string>
+    <string name="err_migration_badBase64">Tham số “data” không phải Base64 hợp lệ.</string>
+    <string name="err_migration_noAccounts">Trong bản xuất này không có tài khoản nào.</string>
+    <string name="vacant_text">Secret, liên kết otpauth hoặc ảnh QR — không có gì rời khỏi thiết bị này.</string>
+    <string name="colophon_note">Không mạng · không lưu trữ · HMAC qua javax.crypto</string>
+    <string name="scan_camera_unavailable">Thiết bị này không cấp máy ảnh — “QR từ ảnh” thì lúc nào cũng chạy.</string>
+    <string name="scan_camera_denied">Máy ảnh bị từ chối. Hãy cấp quyền trong cài đặt ứng dụng của hệ thống — hoặc dùng “QR từ ảnh”.</string>
+    <string name="vault_lockOnHide">và khi rời khỏi ứng dụng</string>
+    <string name="vault_locked_hidden">Đã khoá khi rời khỏi ứng dụng.</string>
+    <string name="vault_error_storageBlocked">Không ghi được két — bộ nhớ đã đầy chăng?</string>
+    <string name="vault_biometric_label">Mở khoá bằng sinh trắc học</string>
+    <string name="vault_biometric_note">Một lối tắt, không phải chìa khoá thứ hai: cụm mật khẩu vẫn là đường về duy nhất.</string>
+    <string name="vault_biometric_cancel">Dùng cụm mật khẩu</string>
+    <string name="vault_biometric_unavailable">Thiết bị này chưa đặt sinh trắc học mạnh.</string>
+    <string name="vault_biometric_invalidated">Sinh trắc học mới đã được đăng ký nên lối tắt không còn. Hãy mở bằng cụm mật khẩu rồi bật lại.</string>
+    <string name="vault_biometric_failed">Mở khoá bằng sinh trắc học không được — hãy dùng cụm mật khẩu.</string>
+    <string name="vault_screenshots_label">Chặn ảnh chụp màn hình và bản xem trước</string>
+    <string name="nav_home">Trang chính</string>
+    <string name="nav_settings">Cài đặt</string>
+    <string name="about_title">Giới thiệu</string>
+    <string name="about_version">Phiên bản</string>
+    <string name="about_network">Ứng dụng không có quyền mạng. Nó không thể mở kết nối nào — không để cập nhật, không để thống kê, cũng không do nhầm lẫn.</string>
+    <string name="about_licenses">Giấy phép</string>
+    <string name="about_source">Mã nguồn</string>
+</resources>

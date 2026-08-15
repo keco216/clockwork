@@ -187,4 +187,35 @@ export default {
   'err.migration.badPercent': 'Parameter “data” mengandung pengodean persen yang rusak.',
   'err.migration.badBase64': 'Parameter “data” bukan Base64 yang sah.',
   'err.migration.noAccounts': 'Tidak ada akun di dalam ekspor ini.',
+
+  'native.vacant.text':
+    'Secret, tautan otpauth, atau gambar QR — tidak ada yang meninggalkan perangkat ini.',
+
+  'native.colophon.note': 'Tanpa jaringan · tanpa penyimpanan · HMAC lewat javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Perangkat ini tidak memberikan kamera — “QR dari gambar” selalu berhasil.',
+  'native.scan.camera.denied':
+    'Kamera ditolak. Izinkan di setelan aplikasi pada sistem — atau pakai “QR dari gambar”.',
+  'native.vault.lockOnHide': 'dan saat meninggalkan aplikasi',
+  'native.vault.locked.hidden': 'Terkunci saat aplikasi ditinggalkan.',
+  'native.vault.error.storageBlocked': 'Brankas tidak bisa ditulis — apakah penyimpanan penuh?',
+  'native.vault.biometric.label': 'Buka dengan biometrik',
+  'native.vault.biometric.note':
+    'Jalan pintas, bukan kunci kedua: frasa sandi tetap satu-satunya jalan kembali.',
+  'native.vault.biometric.cancel': 'Pakai frasa sandi',
+  'native.vault.biometric.unavailable': 'Perangkat ini belum menyiapkan biometrik yang kuat.',
+  'native.vault.biometric.invalidated':
+    'Biometrik baru didaftarkan, jadi jalan pintasnya hilang. Buka dengan frasa sandi lalu nyalakan lagi.',
+  'native.vault.biometric.failed': 'Membuka dengan biometrik tidak berhasil — pakai frasa sandi.',
+  'native.vault.screenshots.label': 'Blokir tangkapan layar dan pratinjau',
+
+  'native.nav.home': 'Beranda',
+  'native.nav.settings': 'Pengaturan',
+  'native.about.title': 'Tentang',
+  'native.about.version': 'Versi',
+  'native.about.network':
+    'Aplikasi ini tidak punya izin jaringan. Ia tidak bisa membuka koneksi — bukan untuk pembaruan, bukan untuk statistik, bukan karena keliru.',
+  'native.about.licenses': 'Lisensi',
+  'native.about.source': 'Kode sumber',
 } satisfies Strings;

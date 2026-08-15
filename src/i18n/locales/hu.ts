@@ -191,4 +191,34 @@ export default {
   'err.migration.badPercent': 'A „data” paraméter hibás százalékkódolást tartalmaz.',
   'err.migration.badBase64': 'A „data” paraméter nem érvényes Base64.',
   'err.migration.noAccounts': 'Ebben az exportban nincsenek fiókok.',
+
+  'native.vacant.text':
+    'Secret, otpauth-hivatkozás vagy QR-kép — semmi sem hagyja el ezt az eszközt.',
+
+  'native.colophon.note': 'Nincs hálózat · nincs tárolás · HMAC a javax.crypto-n keresztül',
+
+  'native.scan.camera.unavailable': 'Ez az eszköz nem ad kamerát — a „QR képből” mindig működik.',
+  'native.scan.camera.denied':
+    'A kamera elutasítva. Engedélyezze a rendszer alkalmazásbeállításaiban — vagy használja a „QR képből” gombot.',
+  'native.vault.lockOnHide': 'és az alkalmazás elhagyásakor',
+  'native.vault.locked.hidden': 'Az alkalmazás elhagyásakor bezárt.',
+  'native.vault.error.storageBlocked': 'A széfet nem sikerült kiírni — megtelt a tárhely?',
+  'native.vault.biometric.label': 'Feloldás biometriával',
+  'native.vault.biometric.note':
+    'Rövidítés, nem második kulcs: a jelmondat marad az egyetlen visszaút.',
+  'native.vault.biometric.cancel': 'Jelmondat használata',
+  'native.vault.biometric.unavailable': 'Ezen az eszközön nincs beállítva erős biometria.',
+  'native.vault.biometric.invalidated':
+    'Új biometria lett regisztrálva, így a rövidítés eltűnt. Oldja fel a jelmondattal, és kapcsolja be újra.',
+  'native.vault.biometric.failed': 'A biometrikus feloldás nem sikerült — használja a jelmondatot.',
+  'native.vault.screenshots.label': 'Képernyőképek és előnézetek tiltása',
+
+  'native.nav.home': 'Kezdőlap',
+  'native.nav.settings': 'Beállítások',
+  'native.about.title': 'Névjegy',
+  'native.about.version': 'Verzió',
+  'native.about.network':
+    'Az alkalmazásnak nincs hálózati jogosultsága. Nem tud kapcsolatot nyitni — sem frissítéshez, sem statisztikához, sem véletlenül.',
+  'native.about.licenses': 'Licencek',
+  'native.about.source': 'Forráskód',
 } satisfies Strings;

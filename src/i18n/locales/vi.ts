@@ -185,4 +185,34 @@ export default {
   'err.migration.badPercent': 'Tham số “data” có mã hoá phần trăm bị hỏng.',
   'err.migration.badBase64': 'Tham số “data” không phải Base64 hợp lệ.',
   'err.migration.noAccounts': 'Trong bản xuất này không có tài khoản nào.',
+
+  'native.vacant.text': 'Secret, liên kết otpauth hoặc ảnh QR — không có gì rời khỏi thiết bị này.',
+
+  'native.colophon.note': 'Không mạng · không lưu trữ · HMAC qua javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Thiết bị này không cấp máy ảnh — “QR từ ảnh” thì lúc nào cũng chạy.',
+  'native.scan.camera.denied':
+    'Máy ảnh bị từ chối. Hãy cấp quyền trong cài đặt ứng dụng của hệ thống — hoặc dùng “QR từ ảnh”.',
+  'native.vault.lockOnHide': 'và khi rời khỏi ứng dụng',
+  'native.vault.locked.hidden': 'Đã khoá khi rời khỏi ứng dụng.',
+  'native.vault.error.storageBlocked': 'Không ghi được két — bộ nhớ đã đầy chăng?',
+  'native.vault.biometric.label': 'Mở khoá bằng sinh trắc học',
+  'native.vault.biometric.note':
+    'Một lối tắt, không phải chìa khoá thứ hai: cụm mật khẩu vẫn là đường về duy nhất.',
+  'native.vault.biometric.cancel': 'Dùng cụm mật khẩu',
+  'native.vault.biometric.unavailable': 'Thiết bị này chưa đặt sinh trắc học mạnh.',
+  'native.vault.biometric.invalidated':
+    'Sinh trắc học mới đã được đăng ký nên lối tắt không còn. Hãy mở bằng cụm mật khẩu rồi bật lại.',
+  'native.vault.biometric.failed': 'Mở khoá bằng sinh trắc học không được — hãy dùng cụm mật khẩu.',
+  'native.vault.screenshots.label': 'Chặn ảnh chụp màn hình và bản xem trước',
+
+  'native.nav.home': 'Trang chính',
+  'native.nav.settings': 'Cài đặt',
+  'native.about.title': 'Giới thiệu',
+  'native.about.version': 'Phiên bản',
+  'native.about.network':
+    'Ứng dụng không có quyền mạng. Nó không thể mở kết nối nào — không để cập nhật, không để thống kê, cũng không do nhầm lẫn.',
+  'native.about.licenses': 'Giấy phép',
+  'native.about.source': 'Mã nguồn',
 } satisfies Strings;

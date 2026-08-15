@@ -71,14 +71,29 @@ describe('play/listing', () => {
     }
   });
 
-  it('nennt dieselbe Adresse wie scripts/site.ts', async () => {
-    /* Dieselbe Doppelung wie in der Datenschutzseite: Der Text nennt die
-       Adresse ausgeschrieben, weil ein Store-Eintrag keinen Platzhalter
-       ersetzen kann. Ein Domainwechsel muss hier also mitwandern. */
+  it('nennt den Quelltext und keine veraltete Adresse', async () => {
+    /* Bis 1.x stand hier „muss die Adresse aus scripts/site.ts enthalten".
+       Der Text der 2.0-Fassung nennt sie nicht mehr, und das ist Absicht: Er
+       wirbt fuer eine ANDROID-App, und der Beleg fuer jede seiner Zusagen ist
+       der Quelltext, nicht die Web-Fassung. Die Pruefung dreht sich damit um —
+       aus „muss die Adresse nennen" wird „darf keine falsche nennen":
+
+         * Das Repo MUSS drinstehen; es traegt die Nachpruefbarkeit, mit der
+           der letzte Absatz wirbt.
+         * Steht die Webadresse doch irgendwann wieder drin, muss sie die aus
+           `scripts/site.ts` sein — sonst wandert ein Domainwechsel hier nicht
+           mit, und genau davor schuetzte die alte Fassung dieses Tests. */
     const host = new URL(SITE_URL).host;
 
     for (const sprache of SPRACHEN) {
-      expect(await lies(sprache, 'full_description.txt')).toContain(host);
+      const text = await lies(sprache, 'full_description.txt');
+
+      expect(text).toContain('github.com/keco216/clockwork');
+      const adressen = text.match(/[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:app|com|dev|page|net)/g) ?? [];
+      for (const adresse of adressen) {
+        if (adresse.includes('github.com')) continue;
+        expect(adresse).toBe(host);
+      }
     }
   });
 

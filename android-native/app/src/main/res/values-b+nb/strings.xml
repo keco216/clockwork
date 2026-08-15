@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/nb.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">TOTP-autentisering · RFC 6238</string>
+    <string name="skip_toCodes">Hopp til kodene</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Frakoblet</string>
+    <string name="status_vault_off">ingenting lagres</string>
+    <string name="status_vault_locked">safen er låst</string>
+    <string name="status_vault_open">safen er åpen</string>
+    <string name="zone_input">Inndata</string>
+    <string name="zone_vault">Safe</string>
+    <string name="zone_codes">Koder</string>
+    <string name="input_legend">Én oppføring per linje</string>
+    <string name="input_placeholder">f.eks. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s eller %2$s — blandet. %3$s starter et notat.</string>
+    <string name="input_help_images">QR-bilder kan også dras hit eller limes inn med %1$s.</string>
+    <string name="input_help_migration">Eksporter fra Google Authenticator (%1$s) blir omgjort automatisk.</string>
+    <string name="input_help_more">Alle inndataformater</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s konto</item>
+        <item quantity="other">%1$s kontoer</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s feil</item>
+        <item quantity="other">%1$s feil</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Tøm</string>
+    <string name="key_qrImage">QR fra bilde</string>
+    <string name="key_camera">Kamera</string>
+    <string name="key_cameraStop">Slå av kameraet</string>
+    <string name="key_copy">Kopier</string>
+    <string name="key_copyDone">Kopiert</string>
+    <string name="key_copyFailed">Mislyktes</string>
+    <string name="viewfinder_hint">Hold QR-koden innenfor rammen</string>
+    <string name="filter_label">Filtrer kontoer</string>
+    <string name="filter_placeholder">Filtrer etter navn</string>
+    <string name="filter_empty">Ingenting stemmer med «%1$s».</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s siffer</item>
+        <item quantity="other">%1$s sifre</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">følger</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">sekunder</string>
+    <string name="strip_seconds_valid">gyldig</string>
+    <string name="strip_accountFallback">Konto %1$s</string>
+    <string name="strip_copyAria">Kopier koden for %1$s</string>
+    <string name="strip_copyAnnounce">Koden %1$s kopiert</string>
+    <string name="strip_copyFailedHint">Kopieringen mislyktes. Merk koden for hånd.</string>
+    <string name="fault_title">Linjen kan ikke leses</string>
+    <string name="vault_state_off">Av — ingenting lagres</string>
+    <string name="vault_state_locked">Låst — passordfrase trengs</string>
+    <string name="vault_state_open">Åpen — dine secrets ligger i tekstfeltet</string>
+    <string name="vault_explain">Som standard lagrer Clockwork ingenting. Slår du på safen, blir det du skrev liggende her kryptert med passordfrasen din — uten den er den lagrede blokken verdiløs.</string>
+    <string name="vault_explain_crypto">Nøkkelen utledes fra passordfrasen med PBKDF2-SHA-256 og %1$s iterasjoner, og AES-256-GCM gjør krypteringen. Bare den lukkede konvolutten lagres: aldri klartekst, aldri passordfrasen, aldri den utledede nøkkelen.</string>
+    <string name="vault_explain_more">Alle detaljer</string>
+    <string name="vault_pass_new">Ny passordfrase</string>
+    <string name="vault_pass_existing">Passordfrase</string>
+    <string name="vault_action_seal">Lagre kryptert</string>
+    <string name="vault_action_unseal">Lås opp</string>
+    <string name="vault_action_deriving">Nøkkelen utledes …</string>
+    <string name="vault_action_lock">Lås</string>
+    <string name="vault_action_update">Lagre på nytt</string>
+    <string name="vault_action_wipe">Slett alt</string>
+    <string name="vault_action_wipeConfirm">Slette på ordentlig?</string>
+    <string name="vault_timeout_label">Låser seg selv etter</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minutt</item>
+        <item quantity="other">%1$s minutter</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">Det er ingenting å lagre — tekstfeltet er tomt.</string>
+    <string name="vault_error_noVault">Ingen safe er lagret.</string>
+    <string name="vault_error_noPassphrase">Uten passordfrase finnes ingen nøkkel.</string>
+    <string name="vault_error_sealFailed">Lagringen mislyktes.</string>
+    <string name="vault_error_unsealFailed">Opplåsingen mislyktes.</string>
+    <string name="vault_msg_sealed">Safen lagret kryptert.</string>
+    <string name="vault_msg_resealed">Safen kryptert på nytt.</string>
+    <string name="vault_msg_unsealed">Safen låst opp.</string>
+    <string name="vault_msg_locked">Safen låst.</string>
+    <string name="vault_msg_wiped">Safen slettet.</string>
+    <string name="vault_msg_wipedNote">Slettet. Det ligger ikke noe igjen i lageret.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Låst etter %1$s minutt uten inndata.</item>
+        <item quantity="other">Låst etter %1$s minutter uten inndata.</item>
+    </plurals>
+    <string name="scan_noQr">Det var ingen QR-kode å se på bildet.</string>
+    <string name="scan_unreadable">Bildet kunne ikke leses — er det virkelig et bilde?</string>
+    <string name="scan_done">QR-koden lest og satt inn.</string>
+    <string name="scan_camera_notFound">Ingen kamera er tilkoblet. «QR fra bilde» virker likevel.</string>
+    <string name="scan_camera_busy">Kameraet brukes akkurat nå av et annet program.</string>
+    <string name="scan_camera_failed">Kameraet kunne ikke startes. «QR fra bilde» virker alltid.</string>
+    <plurals name="import_done">
+        <item quantity="one">%1$s konto hentet fra Google Authenticator-eksporten</item>
+        <item quantity="other">%1$s kontoer hentet fra Google Authenticator-eksporten</item>
+    </plurals>
+    <string name="import_skipped">hoppet over: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, tellerbasert)</string>
+    <string name="import_skip_algorithm">%1$s (algoritmen støttes ikke)</string>
+    <string name="import_skip_emptySecret">%1$s (tom secret)</string>
+    <string name="import_unnamed">Uten navn</string>
+    <string name="import_unreadable">Eksporten kan ikke leses.</string>
+    <string name="vacant_demo">Sett inn testnøkkel</string>
+    <string name="lang_label">Språk</string>
+    <string name="lang_aria">Velg språk</string>
+    <string name="err_base32_paddingInside">Tegnet «=» kan bare stå til slutt (det er ikke annet enn utfylling).</string>
+    <string name="err_base32_empty">Nøkkelen secret er tom.</string>
+    <string name="err_base32_badChar">Ugyldig tegn «%1$s» på plass %2$s. Base32 kjenner bare A–Z og 2–7 — sifrene 0, 1 og 8 forekommer ikke (forvekslet med O, I og B?).</string>
+    <string name="err_base32_badLength">Ugyldig lengde: %1$s tegn (uten mellomrom og utfylling). Base32 koder 5 byte i 8 tegn; i siste blokk er det bare plass til 2, 4, 5, 7 eller 8 tegn. Sannsynligvis mangler det et tegn, eller så er det ett for mye.</string>
+    <string name="err_uri_invalid">Dette er ingen gyldig URI. Ventet: «otpauth://totp/…».</string>
+    <string name="err_uri_scheme">Ukjent skjema «%1$s». Ventet: «otpauth».</string>
+    <string name="err_uri_hotp">Dette er en HOTP-URI (tellerbasert). Denne appen lager bare tidsbaserte TOTP-koder — til det andre måtte tellerstanden lagres.</string>
+    <string name="err_uri_type">Ukjent type «%1$s». Etter «otpauth://» må «totp» stå.</string>
+    <string name="err_uri_typeEmpty">(tom)</string>
+    <string name="err_uri_noSecret">I URI-en mangler parameteren «secret».</string>
+    <string name="err_uri_badLabel">Etiketten i URI-en inneholder ødelagt prosentkoding (for eksempel en enslig «%»).</string>
+    <string name="err_uri_algorithm">Ukjent algoritme «%1$s». Støttet er SHA1, SHA256 og SHA512.</string>
+    <string name="err_uri_digits">Ugyldig verdi for «digits»: %1$s. Tillatt er %2$s til %3$s.</string>
+    <string name="err_uri_period">Ugyldig verdi for «period»: %1$s. Ventet er 1 til 3600 sekunder.</string>
+    <string name="err_uri_integer">Parameteren «%1$s» må være et helt tall; funnet ble «%2$s».</string>
+    <string name="err_otp_digits">Ugyldig antall sifre: %1$s. Tillatt er %2$s til %3$s.</string>
+    <string name="err_otp_emptySecret">Din secret er tom — av den kan ingen kode regnes ut.</string>
+    <string name="err_line_unreadable">Denne linjen kunne ikke leses.</string>
+    <string name="err_vault_openFailed">Safen lot seg ikke åpne. Feil passordfrase — eller de lagrede dataene er endret.</string>
+    <string name="err_vault_badFormat">De lagrede safedataene har et ukjent format.</string>
+    <string name="err_vault_version">Safeversjon %1$s støttes ikke (ventet: %2$s).</string>
+    <string name="err_vault_base64">Feltet «%1$s» i safedataene er ikke gyldig Base64.</string>
+    <string name="err_vault_iterations">Ugyldig antall runder: %1$s.</string>
+    <string name="err_migration_notExport">Dette er ingen Google Authenticator-eksport. Ventet: «otpauth-migration://offline?data=…».</string>
+    <string name="err_migration_noData">I URI-en mangler parameteren «data».</string>
+    <string name="err_migration_badPercent">Parameteren «data» inneholder ødelagt prosentkoding.</string>
+    <string name="err_migration_badBase64">Parameteren «data» er ikke gyldig Base64.</string>
+    <string name="err_migration_noAccounts">I denne eksporten finnes ingen kontoer.</string>
+    <string name="vacant_text">Secret, otpauth-lenke eller QR-bilde — ingenting av det forlater denne enheten.</string>
+    <string name="colophon_note">Ikke noe nettverk · ingen lagring · HMAC via javax.crypto</string>
+    <string name="scan_camera_unavailable">Denne enheten gir ikke tilgang til noe kamera — «QR fra bilde» virker alltid.</string>
+    <string name="scan_camera_denied">Kameraet ble avvist. Gi tillatelsen i systemets appinnstillinger — eller bruk «QR fra bilde».</string>
+    <string name="vault_lockOnHide">og når appen forlates</string>
+    <string name="vault_locked_hidden">Låst da appen ble forlatt.</string>
+    <string name="vault_error_storageBlocked">Safen kunne ikke skrives — er lagringen full?</string>
+    <string name="vault_biometric_label">Lås opp med biometri</string>
+    <string name="vault_biometric_note">En snarvei, ikke en ekstra nøkkel: passordfrasen er fortsatt den eneste veien tilbake.</string>
+    <string name="vault_biometric_cancel">Bruk passordfrase</string>
+    <string name="vault_biometric_unavailable">Denne enheten har ingen sterk biometri satt opp.</string>
+    <string name="vault_biometric_invalidated">Ny biometri ble registrert, så snarveien er borte. Lås opp med passordfrasen og slå den på igjen.</string>
+    <string name="vault_biometric_failed">Opplåsing med biometri virket ikke — bruk passordfrasen.</string>
+    <string name="vault_screenshots_label">Blokker skjermbilder og forhåndsvisninger</string>
+    <string name="nav_home">Hjem</string>
+    <string name="nav_settings">Innstillinger</string>
+    <string name="about_title">Om</string>
+    <string name="about_version">Versjon</string>
+    <string name="about_network">Appen har ingen nettverkstillatelse. Den kan ikke åpne en forbindelse — verken for oppdateringer, for statistikk eller ved et uhell.</string>
+    <string name="about_licenses">Lisenser</string>
+    <string name="about_source">Kildekode</string>
+</resources>

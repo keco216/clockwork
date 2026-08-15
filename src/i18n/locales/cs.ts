@@ -214,4 +214,34 @@ export default {
   'err.migration.badPercent': 'Parametr „data“ obsahuje poškozené procentové kódování.',
   'err.migration.badBase64': 'Parametr „data“ není platné Base64.',
   'err.migration.noAccounts': 'V tomto exportu nejsou žádné účty.',
+
+  'native.vacant.text':
+    'Secret, odkaz otpauth nebo obrázek QR — nic z toho neopustí toto zařízení.',
+
+  'native.colophon.note': 'Žádná síť · žádné úložiště · HMAC přes javax.crypto',
+
+  'native.scan.camera.unavailable': 'Toto zařízení kameru neuvolní — „QR z obrázku“ funguje vždy.',
+  'native.scan.camera.denied':
+    'Kamera byla odmítnuta. Povolte ji v systémovém nastavení aplikace — nebo použijte „QR z obrázku“.',
+  'native.vault.lockOnHide': 'a při opuštění aplikace',
+  'native.vault.locked.hidden': 'Zamčeno při opuštění aplikace.',
+  'native.vault.error.storageBlocked': 'Trezor se nepodařilo zapsat — není plné úložiště?',
+  'native.vault.biometric.label': 'Odemknout biometrií',
+  'native.vault.biometric.note':
+    'Zkratka, ne druhý klíč: heslová fráze zůstává jedinou cestou zpět.',
+  'native.vault.biometric.cancel': 'Použít heslovou frázi',
+  'native.vault.biometric.unavailable': 'Na tomto zařízení není nastavena silná biometrie.',
+  'native.vault.biometric.invalidated':
+    'Byla zaregistrována nová biometrie, takže zkratka zmizela. Odemkněte heslovou frází a znovu ji zapněte.',
+  'native.vault.biometric.failed': 'Odemknutí biometrií se nezdařilo — použijte heslovou frázi.',
+  'native.vault.screenshots.label': 'Blokovat snímky obrazovky a náhledy',
+
+  'native.nav.home': 'Domů',
+  'native.nav.settings': 'Nastavení',
+  'native.about.title': 'O aplikaci',
+  'native.about.version': 'Verze',
+  'native.about.network':
+    'Aplikace nemá oprávnění k síti. Nedokáže otevřít spojení — ani kvůli aktualizacím, ani kvůli statistice, ani omylem.',
+  'native.about.licenses': 'Licence',
+  'native.about.source': 'Zdrojový kód',
 } satisfies Strings;

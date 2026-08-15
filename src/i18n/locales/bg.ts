@@ -192,4 +192,36 @@ export default {
   'err.migration.badPercent': 'Параметърът „data“ съдържа развалено процентно кодиране.',
   'err.migration.badBase64': 'Параметърът „data“ не е валиден Base64.',
   'err.migration.noAccounts': 'В този износ няма никакви акаунти.',
+
+  'native.vacant.text':
+    'Секрет, връзка otpauth или QR изображение — нищо от това не напуска това устройство.',
+
+  'native.colophon.note': 'Без мрежа · без хранилище · HMAC през javax.crypto',
+
+  'native.scan.camera.unavailable':
+    'Това устройство не предоставя камера — „QR от изображение“ работи винаги.',
+  'native.scan.camera.denied':
+    'Камерата беше отказана. Разрешете я в системните настройки на приложението — или използвайте „QR от изображение“.',
+  'native.vault.lockOnHide': 'и при напускане на приложението',
+  'native.vault.locked.hidden': 'Заключен при напускане на приложението.',
+  'native.vault.error.storageBlocked': 'Сейфът не можа да бъде записан — пълна ли е паметта?',
+  'native.vault.biometric.label': 'Отключване с биометрия',
+  'native.vault.biometric.note':
+    'Пряк път, а не втори ключ: парола-фразата остава единственият път назад.',
+  'native.vault.biometric.cancel': 'Използване на парола-фраза',
+  'native.vault.biometric.unavailable': 'На това устройство не е настроена силна биометрия.',
+  'native.vault.biometric.invalidated':
+    'Регистрирана е нова биометрия, така че прекият път го няма. Отключете с парола-фразата и го включете отново.',
+  'native.vault.biometric.failed':
+    'Отключването с биометрия не се получи — използвайте парола-фразата.',
+  'native.vault.screenshots.label': 'Блокиране на снимки на екрана и на прегледите',
+
+  'native.nav.home': 'Начало',
+  'native.nav.settings': 'Настройки',
+  'native.about.title': 'Относно',
+  'native.about.version': 'Версия',
+  'native.about.network':
+    'Приложението няма разрешение за мрежа. Не може да отвори връзка — нито за обновявания, нито за статистика, нито по погрешка.',
+  'native.about.licenses': 'Лицензи',
+  'native.about.source': 'Изходен код',
 } satisfies Strings;

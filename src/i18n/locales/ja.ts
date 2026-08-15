@@ -185,4 +185,33 @@ export default {
   'err.migration.badPercent': '引数「data」にパーセント符号化の壊れがある。',
   'err.migration.badBase64': '引数「data」が正しい Base64 ではない。',
   'err.migration.noAccounts': 'このエクスポートにはアカウントが入っていない。',
+
+  'native.vacant.text': 'シークレット、otpauth リンク、QR 画像 — どれもこの端末から出ない。',
+
+  'native.colophon.note': 'ネットワークなし · 保存なし · HMAC は javax.crypto 経由',
+
+  'native.scan.camera.unavailable': 'この端末ではカメラを使えない — 「画像から QR」なら必ず動く。',
+  'native.scan.camera.denied':
+    'カメラが拒否された。システムのアプリ設定で許可するか、「画像から QR」を使ってほしい。',
+  'native.vault.lockOnHide': 'アプリを離れたときも施錠する',
+  'native.vault.locked.hidden': 'アプリを離れたので施錠した。',
+  'native.vault.error.storageBlocked': '金庫を書き込めなかった — 空き容量が足りない?',
+  'native.vault.biometric.label': '生体認証で解錠する',
+  'native.vault.biometric.note': '近道であって二本目の鍵ではない。戻る道はパスフレーズだけ。',
+  'native.vault.biometric.cancel': 'パスフレーズを使う',
+  'native.vault.biometric.unavailable': 'この端末には強い生体認証が設定されていない。',
+  'native.vault.biometric.invalidated':
+    '生体認証が新しく登録されたので近道は消えた。パスフレーズで解錠して、もう一度入れてほしい。',
+  'native.vault.biometric.failed':
+    '生体認証での解錠がうまくいかなかった — パスフレーズを使ってほしい。',
+  'native.vault.screenshots.label': 'スクリーンショットとプレビューを禁じる',
+
+  'native.nav.home': 'ホーム',
+  'native.nav.settings': '設定',
+  'native.about.title': 'このアプリについて',
+  'native.about.version': 'バージョン',
+  'native.about.network':
+    'このアプリにネットワーク権限はない。接続を開けない — 更新のためにも、統計のためにも、うっかりでも。',
+  'native.about.licenses': 'ライセンス',
+  'native.about.source': 'ソースコード',
 } satisfies Strings;

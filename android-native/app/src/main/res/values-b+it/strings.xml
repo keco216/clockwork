@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ERZEUGT von scripts/native-strings.mjs aus src/i18n/locales/it.ts
+  Nicht von Hand aendern: Der naechste Lauf ueberschreibt jede Aenderung.
+  Texte gehoeren in die Locale-Datei, wo der Compiler sie prueft.
+-->
+<resources>
+    <string name="brand_tagline">Autenticatore TOTP · RFC 6238</string>
+    <string name="skip_toCodes">Vai ai codici</string>
+    <string name="status_line">%1$s · %2$s</string>
+    <string name="status_offline">Non in rete</string>
+    <string name="status_vault_off">non viene salvato nulla</string>
+    <string name="status_vault_locked">cassaforte chiusa</string>
+    <string name="status_vault_open">cassaforte aperta</string>
+    <string name="zone_input">Inserimento</string>
+    <string name="zone_vault">Cassaforte</string>
+    <string name="zone_codes">Codici</string>
+    <string name="input_legend">Una voce per riga</string>
+    <string name="input_placeholder">ad es. JBSWY3DPEHPK3PXP\nGitHub: jbsw y3dp ehpk 3pxp\notpauth://totp/ACME:kevin@example.com?secret=JBSWY3DPEHPK3PXP</string>
+    <string name="input_help_formats">Base32, %1$s oppure %2$s — misti. %3$s apre una nota.</string>
+    <string name="input_help_images">Le immagini con codice QR si possono anche trascinare qui o incollare con %1$s.</string>
+    <string name="input_help_migration">Le esportazioni di Google Authenticator (%1$s) vengono convertite in automatico.</string>
+    <string name="input_help_more">Tutti i formati di input</string>
+    <string name="shortcut_modifier">Ctrl</string>
+    <plurals name="input_count_accounts">
+        <item quantity="one">%1$s account</item>
+        <item quantity="many">%1$s account</item>
+        <item quantity="other">%1$s account</item>
+    </plurals>
+    <plurals name="input_count_errors">
+        <item quantity="one">%1$s errore</item>
+        <item quantity="many">%1$s errori</item>
+        <item quantity="other">%1$s errori</item>
+    </plurals>
+    <string name="input_count_join">%1$s · %2$s</string>
+    <string name="key_clear">Svuota</string>
+    <string name="key_qrImage">QR da immagine</string>
+    <string name="key_camera">Fotocamera</string>
+    <string name="key_cameraStop">Spegni fotocamera</string>
+    <string name="key_copy">Copia</string>
+    <string name="key_copyDone">Copiato</string>
+    <string name="key_copyFailed">Non riuscito</string>
+    <string name="viewfinder_hint">Tieni il codice QR dentro la cornice</string>
+    <string name="filter_label">Filtra gli account</string>
+    <string name="filter_placeholder">Filtra per nome</string>
+    <string name="filter_empty">Nessuna corrispondenza per «%1$s».</string>
+    <string name="strip_spec">%1$s · %2$s · %3$s</string>
+    <plurals name="strip_digits">
+        <item quantity="one">%1$s cifra</item>
+        <item quantity="many">%1$s cifre</item>
+        <item quantity="other">%1$s cifre</item>
+    </plurals>
+    <string name="strip_period">%1$s s</string>
+    <string name="strip_next">segue</string>
+    <string name="strip_seconds_abbr">s</string>
+    <string name="strip_seconds_title">secondi</string>
+    <string name="strip_seconds_valid">valido</string>
+    <string name="strip_accountFallback">Account %1$s</string>
+    <string name="strip_copyAria">Copia il codice di %1$s</string>
+    <string name="strip_copyAnnounce">Codice %1$s copiato</string>
+    <string name="strip_copyFailedHint">Copia non riuscita. Seleziona il codice a mano.</string>
+    <string name="fault_title">Riga illeggibile</string>
+    <string name="vault_state_off">Spenta — non viene salvato nulla</string>
+    <string name="vault_state_locked">Chiusa — serve la passphrase</string>
+    <string name="vault_state_open">Aperta — i secret sono nel campo di testo</string>
+    <string name="vault_explain">Per impostazione predefinita Clockwork non salva nulla. Se attivi la cassaforte, ciò che hai inserito resta qui cifrato con la tua passphrase: senza di essa il blocco salvato non vale niente.</string>
+    <string name="vault_explain_crypto">La chiave viene derivata dalla passphrase con PBKDF2-SHA-256 e %1$s iterazioni, mentre AES-256-GCM esegue la cifratura. Viene salvata solo la busta sigillata: mai il testo in chiaro, mai la passphrase, mai la chiave derivata.</string>
+    <string name="vault_explain_more">Tutti i dettagli</string>
+    <string name="vault_pass_new">Nuova passphrase</string>
+    <string name="vault_pass_existing">Passphrase</string>
+    <string name="vault_action_seal">Salva cifrato</string>
+    <string name="vault_action_unseal">Apri</string>
+    <string name="vault_action_deriving">Derivazione della chiave …</string>
+    <string name="vault_action_lock">Chiudi</string>
+    <string name="vault_action_update">Salva di nuovo</string>
+    <string name="vault_action_wipe">Cancella tutto</string>
+    <string name="vault_action_wipeConfirm">Cancellare davvero?</string>
+    <string name="vault_timeout_label">Si chiude da sola dopo</string>
+    <plurals name="vault_timeout_minutes">
+        <item quantity="one">%1$s minuto</item>
+        <item quantity="many">%1$s minuti</item>
+        <item quantity="other">%1$s minuti</item>
+    </plurals>
+    <string name="vault_error_nothingToStore">Non c’è nulla da salvare — il campo di testo è vuoto.</string>
+    <string name="vault_error_noVault">Non è salvata alcuna cassaforte.</string>
+    <string name="vault_error_noPassphrase">Senza passphrase non c’è chiave.</string>
+    <string name="vault_error_sealFailed">Salvataggio non riuscito.</string>
+    <string name="vault_error_unsealFailed">Apertura non riuscita.</string>
+    <string name="vault_msg_sealed">Cassaforte salvata cifrata.</string>
+    <string name="vault_msg_resealed">Cassaforte cifrata di nuovo.</string>
+    <string name="vault_msg_unsealed">Cassaforte aperta.</string>
+    <string name="vault_msg_locked">Cassaforte chiusa.</string>
+    <string name="vault_msg_wiped">Cassaforte cancellata.</string>
+    <string name="vault_msg_wipedNote">Cancellata. In memoria non resta nulla.</string>
+    <plurals name="vault_locked_idle">
+        <item quantity="one">Chiusa dopo %1$s minuto senza inserimenti.</item>
+        <item quantity="many">Chiusa dopo %1$s minuti senza inserimenti.</item>
+        <item quantity="other">Chiusa dopo %1$s minuti senza inserimenti.</item>
+    </plurals>
+    <string name="scan_noQr">Nell’immagine non si riconosce alcun codice QR.</string>
+    <string name="scan_unreadable">Non è stato possibile leggere l’immagine — è davvero un’immagine?</string>
+    <string name="scan_done">Codice QR letto e inserito.</string>
+    <string name="scan_camera_notFound">Non è collegata alcuna fotocamera. « QR da immagine » funziona lo stesso.</string>
+    <string name="scan_camera_busy">La fotocamera è in uso da un altro programma.</string>
+    <string name="scan_camera_failed">Non è stato possibile avviare la fotocamera. « QR da immagine » funziona sempre.</string>
+    <plurals name="import_done">
+        <item quantity="one">%1$s account ripreso dall’esportazione di Google Authenticator</item>
+        <item quantity="many">%1$s account ripresi dall’esportazione di Google Authenticator</item>
+        <item quantity="other">%1$s account ripresi dall’esportazione di Google Authenticator</item>
+    </plurals>
+    <string name="import_skipped">saltati: %1$s</string>
+    <string name="import_skip_hotp">%1$s (HOTP, basato su contatore)</string>
+    <string name="import_skip_algorithm">%1$s (algoritmo non supportato)</string>
+    <string name="import_skip_emptySecret">%1$s (secret vuoto)</string>
+    <string name="import_unnamed">Senza nome</string>
+    <string name="import_unreadable">Esportazione illeggibile.</string>
+    <string name="vacant_demo">Inserisci chiave di prova</string>
+    <string name="lang_label">Lingua</string>
+    <string name="lang_aria">Scegli la lingua</string>
+    <string name="err_base32_paddingInside">Il carattere « = » può stare solo alla fine (è soltanto riempimento).</string>
+    <string name="err_base32_empty">La chiave secret è vuota.</string>
+    <string name="err_base32_badChar">Carattere non valido « %1$s » alla posizione %2$s. Base32 conosce solo A–Z e 2–7 — le cifre 0, 1 e 8 non compaiono (confuse con O, I e B?).</string>
+    <string name="err_base32_badLength">Lunghezza non valida: %1$s caratteri (senza spazi né riempimento). Base32 codifica 5 byte in 8 caratteri; nell’ultimo blocco sono possibili solo 2, 4, 5, 7 o 8 caratteri. Probabilmente manca un carattere o ce n’è uno di troppo.</string>
+    <string name="err_uri_invalid">Questa non è una URI valida. Attesa: « otpauth://totp/… ».</string>
+    <string name="err_uri_scheme">Schema sconosciuto « %1$s ». Atteso: « otpauth ».</string>
+    <string name="err_uri_hotp">Questa è una URI HOTP (basata su contatore). Questa applicazione genera solo codici TOTP basati sul tempo — servirebbe salvare lo stato del contatore.</string>
+    <string name="err_uri_type">Tipo sconosciuto « %1$s ». Dopo « otpauth:// » deve venire « totp ».</string>
+    <string name="err_uri_typeEmpty">(vuoto)</string>
+    <string name="err_uri_noSecret">Nella URI manca il parametro « secret ».</string>
+    <string name="err_uri_badLabel">L’etichetta della URI contiene una codifica percentuale rotta (per esempio un « % » isolato).</string>
+    <string name="err_uri_algorithm">Algoritmo sconosciuto « %1$s ». Sono supportati SHA1, SHA256 e SHA512.</string>
+    <string name="err_uri_digits">Valore non valido per « digits »: %1$s. Sono ammessi da %2$s a %3$s.</string>
+    <string name="err_uri_period">Valore non valido per « period »: %1$s. Attesi da 1 a 3600 secondi.</string>
+    <string name="err_uri_integer">Il parametro « %1$s » deve essere un numero intero; è stato trovato « %2$s ».</string>
+    <string name="err_otp_digits">Numero di cifre non valido: %1$s. Sono ammessi da %2$s a %3$s.</string>
+    <string name="err_otp_emptySecret">Il secret è vuoto — non se ne può calcolare alcun codice.</string>
+    <string name="err_line_unreadable">Non è stato possibile leggere questa riga.</string>
+    <string name="err_vault_openFailed">Non è stato possibile aprire la cassaforte. Passphrase errata — oppure i dati salvati sono stati modificati.</string>
+    <string name="err_vault_badFormat">I dati della cassaforte salvati hanno un formato sconosciuto.</string>
+    <string name="err_vault_version">La versione %1$s della cassaforte non è supportata (attesa: %2$s).</string>
+    <string name="err_vault_base64">Il campo « %1$s » dei dati della cassaforte non è Base64 valido.</string>
+    <string name="err_vault_iterations">Numero di iterazioni non valido: %1$s.</string>
+    <string name="err_migration_notExport">Questa non è un’esportazione di Google Authenticator. Attesa: « otpauth-migration://offline?data=… ».</string>
+    <string name="err_migration_noData">Nella URI manca il parametro « data ».</string>
+    <string name="err_migration_badPercent">Il parametro « data » contiene una codifica percentuale rotta.</string>
+    <string name="err_migration_badBase64">Il parametro « data » non è Base64 valido.</string>
+    <string name="err_migration_noAccounts">In questa esportazione non ci sono account.</string>
+    <string name="vacant_text">Secret, link otpauth o immagine QR: niente di tutto ciò lascia questo dispositivo.</string>
+    <string name="colophon_note">Nessuna rete · nessun salvataggio · HMAC tramite javax.crypto</string>
+    <string name="scan_camera_unavailable">Questo dispositivo non mette a disposizione una fotocamera — « QR da immagine » funziona sempre.</string>
+    <string name="scan_camera_denied">La fotocamera è stata negata. Concedi l’autorizzazione nelle impostazioni di sistema dell’app — oppure usa « QR da immagine ».</string>
+    <string name="vault_lockOnHide">e quando si lascia l’app</string>
+    <string name="vault_locked_hidden">Chiusa lasciando l’app.</string>
+    <string name="vault_error_storageBlocked">Non è stato possibile scrivere la cassaforte — la memoria è piena?</string>
+    <string name="vault_biometric_label">Sbloccare con la biometria</string>
+    <string name="vault_biometric_note">Una scorciatoia, non una seconda chiave: la passphrase resta l’unica via di ritorno.</string>
+    <string name="vault_biometric_cancel">Usa la passphrase</string>
+    <string name="vault_biometric_unavailable">Su questo dispositivo non è configurata una biometria forte.</string>
+    <string name="vault_biometric_invalidated">È stata registrata una nuova biometria, quindi la scorciatoia non c’è più. Sblocca con la passphrase e riattivala.</string>
+    <string name="vault_biometric_failed">Lo sblocco biometrico non ha funzionato — usa la passphrase.</string>
+    <string name="vault_screenshots_label">Bloccare screenshot e anteprime</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_settings">Impostazioni</string>
+    <string name="about_title">Informazioni</string>
+    <string name="about_version">Versione</string>
+    <string name="about_network">L’app non ha alcun permesso di rete. Non può aprire una connessione: né per aggiornamenti, né per statistiche, né per errore.</string>
+    <string name="about_licenses">Licenze</string>
+    <string name="about_source">Codice sorgente</string>
+</resources>

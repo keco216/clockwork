@@ -1,5 +1,13 @@
 # Play-Store-Vorbereitung
 
+> **Achtung, Stand 15.08.2026:** Für Play gilt ab jetzt **v2.0.1, die native
+> App** — siehe den Nachtrag in Abschnitt 6. Die Abschnitte 1 bis 5 gelten
+> unverändert (Richtlinien, Data Safety, Bau-Entscheidungen, Kanal-Regel); die
+> ARTEFAKT-Angaben unten beschreiben weiter 1.5.4 und damit den F-Droid- und
+> GitHub-Kanal. Auch der Bildbestand hat sich mit N18 geändert: Es sind
+> **sieben Screenshots je Sprache plus Funktionsgrafik**, in beiden Sprachen,
+> und sie entstehen jetzt am Emulator statt über Playwright.
+
 **Stand 13.08.2026: fertig vorbereitet, nicht eingereicht.** Im Repo liegt
 alles, was sich ohne Google-Konto herstellen lässt — Datenschutzseite,
 Listing-Texte in zwei Sprachen, Funktionsgrafik, vier Screenshots in
@@ -217,6 +225,36 @@ hilft es ohnehin nicht: Dort signiert Google, unabhängig von jeder
 Reproduzierbarkeit.
 
 ## 6. Der Stand — das AAB liegt fertig da
+
+> **Nachtrag 15.08.2026 (P9): Für Play gilt ab jetzt v2.0.1, nicht 1.5.4.**
+> Kevins Entscheidung: Der erste Play-Build ist die **native** App aus dem
+> Zweig `kotlin-android` — nicht die WebView-Fassung. Dieser Abschnitt
+> beschreibt darunter weiter den 1.x-Stand; er bleibt stehen, weil er den
+> F-Droid- und GitHub-Kanal betrifft und weil die Abschnitte 1 bis 5
+> unverändert gelten (Richtlinien, Data Safety, `dependenciesInfo`,
+> Kanal-Regel).
+>
+> **Warum 2.0.1 und nicht 2.0.0 (D1, 15.08.2026):** Der 2.0.0-Bau ging in den
+> geschlossenen Test und hatte dort einen bekannten Defekt — Play teilte das
+> Bundle nach Sprachen auf, und 35 der 37 Sprachen kamen auf dem Gerät nie an.
+> Play nimmt eine Nummer kein zweites Mal an; 20000 steht damit dauerhaft für
+> den defekten Stand. Behoben mit `bundle { language { enableSplit = false } }`,
+> nachgemessen in `android-native/docs/abnahme/README.de.md` (Abschnitt D1).
+>
+> Was sich für v2.0 ändert:
+>
+> |                     | 1.5.4 (unten)                            | **2.0.1 (Play)**                               |
+> | ------------------- | ---------------------------------------- | ---------------------------------------------- |
+> | Gebaut in           | `android/` (Capacitor)                   | `android-native/`                              |
+> | Befehl              | `npm run android; gradlew bundleRelease` | `cd android-native; gradlew.bat bundleRelease` |
+> | versionCode / -Name | 10504 / 1.5.4                            | **20001 / 2.0.1**                              |
+> | AAB                 | 1.604.575 Byte                           | **5.432.694 Byte** (signiert gemessen)         |
+> | APK                 | 1.235.807 Byte                           | **3.289.773 Byte**                             |
+>
+> Die Größe ist in `android-native/docs/abnahme/README.de.md` (Abschnitt P9)
+> eingeordnet. Berechtigungen und Zusagen sind am Release-APK mit
+> `aapt2 dump badging` nachgemessen: kein INTERNET, CAMERA plus die zwei
+> Biometrie-Berechtigungen, beide Kamera-Features `uses-feature-not-required`.
 
 Am 12.08.2026 war hier noch alles Android-nahe blockiert: Die Maschine war
 frisch aufgesetzt, es gab weder SDK noch JDK noch den Keystore. Beides ist
