@@ -48,12 +48,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -235,14 +235,44 @@ fun ClockworkApp() {
     // Voreinstellung ZU: Wer seine Codes will, soll nicht an der Bedienung
     // vorbeiscrollen. Die eine Ausnahme steht darunter.
     var inputOpen by rememberSaveable { mutableStateOf(false) }
-    var fieldFocused by remember { mutableStateOf(false) }
 
-    // „Offen bleibt der Editor beim Buehnenwechsel nur, wenn der Fokus darin
-    // liegt" — die V10-Regel woertlich. Wer gerade das erste Secret tippt, dem
-    // klappt nichts unter den Fingern zu; wer den Tresor aufsperrt, bekommt
-    // die Codes obenan und die Eingabe zu.
+    /**
+     * Kam der Buehnenwechsel vom TIPPEN?
+     *
+     * ── Warum nicht am Fokus gemessen wird (Kevins Befund, 15.08.2026) ─────
+     * Hier stand bis P9 `inputOpen = fieldFocused` — die V10-Regel „offen
+     * bleibt der Editor nur, wenn der Fokus darin liegt". Sie konnte nie
+     * greifen, und der Fehler war am Geraet gemessen bitter: Wer ins leere
+     * Feld tippte, kam nach GENAU EINEM Zeichen wieder heraus.
+     *
+     * Die Kette: Das erste Zeichen macht `vacant` falsch, damit verlaesst
+     * `VacantStage` die Komposition, ihr Feld wird entsorgt — und beim
+     * Entsorgen feuert `onFocusChanged(false)`. Erst DANACH lief dieser
+     * Effekt und las ein `fieldFocused`, das der Abbau gerade
+     * zurueckgesetzt hatte. Gemessen: Schublade zu, kein fokussierter Knoten,
+     * Tastatur weg, zweites Zeichen kommt nicht mehr an.
+     *
+     * Gefragt wird deshalb nach der URSACHE statt nach einem Zustand, den der
+     * Wechsel selbst zerstoert. `onFieldChange` ruft ausschliesslich das
+     * Textfeld — Testschluessel, Scan, Import und das Aufsperren des Tresors
+     * setzen `field` direkt. Der Uebergang leer → nicht leer DORT heisst
+     * eindeutig: Da tippt jemand.
+     *
+     * Die Absicht der V10-Regel bleibt damit unveraendert erfuellt: Wer tippt,
+     * dem klappt nichts unter den Fingern zu; wer den Tresor aufsperrt,
+     * bekommt die Codes obenan und die Eingabe zu.
+     */
+    var getippt by remember { mutableStateOf(false) }
+
+    /** Nach dem Wechsel gehoert der Fokus ins Feld der neuen Buehne. */
+    var fokusNachziehen by remember { mutableStateOf(false) }
+
     LaunchedEffect(vacant) {
-        if (!vacant) inputOpen = fieldFocused
+        if (!vacant) {
+            inputOpen = getippt
+            fokusNachziehen = getippt
+        }
+        getippt = false
     }
 
     // ── Die Rueckmeldung zu Import und Scan ────────────────────────────────
@@ -379,7 +409,21 @@ fun ClockworkApp() {
     LaunchedEffect(keyboardUp) {
         if (keyboardUp) {
             keyboardWasUp = true
-        } else if (keyboardWasUp) {
+            // Die Tastatur steht wieder — das Nachziehen ist gelungen, und die
+            // Ausnahme unten darf zurueck in den Normalbetrieb.
+            fokusNachziehen = false
+        } else if (keyboardWasUp && !fokusNachziehen) {
+            /* ── Die Ausnahme: der Buehnenwechsel beim ersten Zeichen ────────
+               Genau hier steckte die zweite Haelfte von Kevins Befund. Beim
+               Wechsel von der Leer- auf die Arbeitsbuehne wird das alte Feld
+               entsorgt, die Tastatur faehrt fuer einen Wimpernschlag herunter —
+               und diese Regel raeumte daraufhin den Fokus, den die neue Buehne
+               sich gerade erst geholt hatte.
+
+               Gemessen: Die Schublade blieb nach dem ersten Fix zwar offen,
+               aber es gab weiter KEINEN fokussierten Knoten, und das zweite
+               Zeichen kam nicht an. Solange ein Nachziehen aussteht, gehoert
+               der Fokus also der neuen Buehne und nicht dieser Regel. */
             keyboardWasUp = false
             focus.clearFocus()
         }
@@ -485,8 +529,13 @@ fun ClockworkApp() {
             } else if (vacant) {
                 VacantStage(
                     field = field,
-                    onFieldChange = { field = it; vault.resetIdleTimer() },
-                    onFocusChange = { fieldFocused = it },
+                    onFieldChange = { neu ->
+                        // Der Uebergang leer → nicht leer kommt hier nur vom
+                        // Tippen; siehe die Begruendung bei `getippt`.
+                        if (field.text.isEmpty() && neu.text.isNotEmpty()) getippt = true
+                        field = neu
+                        vault.resetIdleTimer()
+                    },
                     onTestKey = { field = TextFieldValue(TEST_KEY) },
                     note = note,
                     onScan = ::handleScan,
@@ -501,12 +550,13 @@ fun ClockworkApp() {
             } else {
                 WorkingStage(
                     field = field,
-                    onFieldChange = { field = it; vault.resetIdleTimer() },
-                    onFocusChange = { fieldFocused = it },
+                    onFieldChange = { neu -> field = neu; vault.resetIdleTimer() },
                     entries = entries,
                     unixSeconds = unixSeconds,
                     inputOpen = inputOpen,
                     onToggleInput = { inputOpen = !inputOpen },
+                    fokusNachziehen = fokusNachziehen,
+                    onFokusNachgezogen = { fokusNachziehen = false },
                     onCopy = { code -> context.copySensitive(code) },
                     note = note,
                     onScan = ::handleScan,
@@ -694,7 +744,6 @@ private fun ColophonLine(modifier: Modifier = Modifier) {
 private fun VacantStage(
     field: TextFieldValue,
     onFieldChange: (TextFieldValue) -> Unit,
-    onFocusChange: (Boolean) -> Unit,
     onTestKey: () -> Unit,
     note: String,
     onScan: (String) -> Unit,
@@ -762,7 +811,6 @@ private fun VacantStage(
         SecretField(
             field = field,
             onFieldChange = onFieldChange,
-            onFocusChange = onFocusChange,
             focusRequester = fieldFocus,
         )
 
@@ -871,11 +919,16 @@ private fun VacantStage(
 private fun WorkingStage(
     field: TextFieldValue,
     onFieldChange: (TextFieldValue) -> Unit,
-    onFocusChange: (Boolean) -> Unit,
     entries: List<ParsedEntry>,
     unixSeconds: Double,
     inputOpen: Boolean,
     onToggleInput: () -> Unit,
+    /**
+     * Der Buehnenwechsel kam vom Tippen — der Fokus gehoert ins Feld dieser
+     * Buehne, sonst steht die Schublade offen und die Tastatur trotzdem nicht.
+     */
+    fokusNachziehen: Boolean,
+    onFokusNachgezogen: () -> Unit,
     onCopy: (String) -> Unit,
     note: String,
     onScan: (String) -> Unit,
@@ -1052,10 +1105,46 @@ private fun WorkingStage(
                         verticalArrangement = Arrangement.spacedBy(Dimens.gapPair),
                     ) {
                         val fieldFocus = remember { FocusRequester() }
+
+                        /* Den Fokus ins Feld DIESER Buehne holen, wenn der
+                           Wechsel vom Tippen kam. Ohne das stuende die
+                           Schublade zwar offen, aber der Cursor waere nirgends
+                           und die Tastatur weg — der halbe Fehler bliebe.
+
+                           `withFrameNanos` wartet EIN Bild ab: Der
+                           FocusRequester haengt erst, wenn sein Modifier
+                           angebunden ist, und ein `requestFocus()` davor
+                           wirft. Die Schublade faehrt in diesem Moment gerade
+                           auf — `Drawer` setzt ihren Inhalt erst in den Baum,
+                           sobald der Anteil ueber null ist. */
+                        val tastatur = LocalSoftwareKeyboardController.current
+                        LaunchedEffect(fokusNachziehen) {
+                            if (!fokusNachziehen) return@LaunchedEffect
+                            withFrameNanos {}
+                            fieldFocus.requestFocus()
+                            // Der Fokus allein holt die Tastatur nicht zurueck:
+                            // Sie ist beim Buehnenwechsel heruntergefahren, und
+                            // ein Feld, das den Fokus BEKOMMT statt angetippt zu
+                            // werden, oeffnet sie nicht von selbst.
+                            tastatur?.show()
+
+                            /* Die Marke bleibt stehen, bis die Tastatur wieder
+                               oben ist — das erledigt der Effekt an
+                               `keyboardUp`. Diese Frist ist nur der Notausgang:
+                               Ohne sie bliebe die Regel „Tastatur runter raeumt
+                               den Fokus" auf einem Geraet mit Hardware-Tastatur
+                               dauerhaft ausser Kraft.
+
+                               Zwei Sekunden, weil die gemessene Luecke zwischen
+                               `requestFocus` und der Tastatur-Meldung 85 ms
+                               betrug — eine Groessenordnung darunter. */
+                            delay(2000)
+                            onFokusNachgezogen()
+                        }
+
                         SecretField(
                             field = field,
                             onFieldChange = onFieldChange,
-                            onFocusChange = onFocusChange,
                             focusRequester = fieldFocus,
                         )
 
@@ -1294,8 +1383,10 @@ private fun ClearKey(onClear: () -> Unit, modifier: Modifier = Modifier) {
 private fun SecretField(
     field: TextFieldValue,
     onFieldChange: (TextFieldValue) -> Unit,
-    onFocusChange: (Boolean) -> Unit,
-    /** Damit „Leeren" den Fokus zurueckgeben kann — siehe [ClearKey]. */
+    /**
+     * Damit „Leeren" den Fokus zurueckgeben kann — siehe [ClearKey] — und
+     * damit die Arbeitsbuehne ihn nach dem Buehnenwechsel nachziehen kann.
+     */
     focusRequester: FocusRequester,
 ) {
     val colors = LocalColors.current
@@ -1315,7 +1406,6 @@ private fun SecretField(
         modifier = Modifier
             .fillMaxWidth()
             .focusRequester(focusRequester)
-            .onFocusChanged { onFocusChange(it.isFocused) }
             .clip(RoundedCornerShape(Dimens.radiusField))
             .background(fieldFill(interaction))
             .padding(Dimens.sp3),

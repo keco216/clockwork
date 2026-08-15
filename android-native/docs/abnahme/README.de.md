@@ -2778,3 +2778,86 @@ Im AAB liegen weiterhin `base/root/DebugProbesKt.bin` (**1.728 Byte**) und
 `kotlin/*.kotlin_builtins`. G6 aus dem N17-Audit ist damit gemessen offen; der
 Fix ist ein `packaging { resources { excludes … } }`-Block und gehört in einen
 eigenen Lauf.
+
+---
+
+## Nach P9 — Kevins Befund: nach EINEM Zeichen fliegt man aus dem Feld
+
+Kevin am 15.08.2026, nach dem Deploy auf sein S24: „wenn ich in den Text-Input
+schreibe, dann geht es automatisch raus."
+
+Der Befund lag da schon in meinen eigenen Messungen — der P9-Bild-Harness ist
+genau darüber gestolpert (`input text` bringt ein Zeichen, siehe Falle 2). Ich
+hatte ihn als Eigenheit des WERKZEUGS abgelegt statt als Fehler der APP. Das
+ist die eigentliche Lehre dieses Abschnitts: **Wenn ein Automat an derselben
+Stelle scheitert, an der ein Mensch scheitern würde, ist es kein
+Automatenproblem.**
+
+### Reproduktion, vorher
+
+| Schritt                | Messung                                                      |
+| ---------------------- | ------------------------------------------------------------ |
+| Feld antippen          | Fokus auf dem 224-px-Feld, Tastatur steht                    |
+| **ein** Zeichen tippen | Schublade **zu**, **kein** fokussierter Knoten, Tastatur weg |
+| zweites Zeichen        | kommt nicht an — Fehlerkarte bleibt bei „1 Zeichen"          |
+
+Man konnte also genau ein Zeichen tippen. Ein Secret von Hand einzugeben war
+praktisch unmöglich.
+
+### Zwei Ursachen, nicht eine
+
+**Erstens: die Regel las einen Zustand, den der Wechsel selbst zerstört.**
+`ClockworkApp.kt` hielt die Eingabe-Schublade mit
+`LaunchedEffect(vacant) { if (!vacant) inputOpen = fieldFocused }` offen — die
+V10-Regel „offen bleibt der Editor nur, wenn der Fokus darin liegt". Sie konnte
+nie greifen: Das erste Zeichen macht `vacant` falsch, `VacantStage` verlässt
+die Komposition, ihr Feld wird entsorgt — und beim Entsorgen feuert
+`onFocusChanged(false)`. Erst **danach** lief der Effekt.
+
+Gefragt wird jetzt nach der **Ursache** statt nach einem Zustand:
+`onFieldChange` ruft ausschließlich das Textfeld selbst — Testschlüssel, Scan,
+Import und das Aufsperren des Tresors setzen `field` direkt. Der Übergang
+leer → nicht leer dort heißt eindeutig „da tippt jemand" und setzt `getippt`.
+
+**Zweitens — und das war der zähere Teil: eine globale Regel räumte den Fokus
+85 ms später wieder weg.** Nach dem ersten Fix blieb die Schublade offen, aber
+es gab weiter keinen fokussierten Knoten. Statt weiter zu raten, ist der Lauf
+instrumentiert worden; das Protokoll sagt es in vier Zeilen:
+
+```
+16.690  Buehnenwechsel, getippt=true
+16.793  Effekt laeuft, ziehe Fokus nach
+16.833  requestFocus zurueck              ← der Fokus IST da
+16.918  clearFocus (fokusNachziehen=false) ← 85 ms spaeter ist er weg
+```
+
+Schuld ist die N15-Regel „Tastatur runter räumt den Fokus" (`ClockworkApp.kt`,
+Effekt an `keyboardUp`). Beim Bühnenwechsel fährt die Tastatur für einen
+Wimpernschlag herunter, und die Regel schlug zu. Ihr eigener Kommentar ahnt
+genau diesen Wimpernschlag — er sichert aber nur die Gegenrichtung.
+
+Die Marke `fokusNachziehen` setzt die Regel deshalb aus, **solange ein
+Nachziehen aussteht**, und wird erst gelöscht, wenn die Tastatur wieder steht
+(Notausgang nach 2 s, damit ein Gerät mit Hardware-Tastatur die Regel nicht
+dauerhaft ausser Kraft setzt).
+
+Dazu holt die Arbeitsbühne den Fokus aktiv ins neue Feld und ruft
+`SoftwareKeyboardController.show()` — ein Feld, das den Fokus **bekommt**
+statt angetippt zu werden, öffnet die Tastatur nicht von selbst.
+
+### Reproduktion, nachher
+
+| Schritt                  | vorher       | nachher                    |
+| ------------------------ | ------------ | -------------------------- |
+| Schublade nach 1 Zeichen | zu           | **offen**                  |
+| Fokus                    | kein Knoten  | **auf dem Feld, Text „A"** |
+| Tastatur                 | weg          | **steht**                  |
+| zweites Zeichen          | kam nicht an | **„AB" im Feld**           |
+
+231 native Tests grün, `lintRelease` unverändert bei 0 Fehlern und 32
+Warnungen, `checkNoMaterial` grün.
+
+**Auf die Store-Bilder wirkt der Fix nicht:** Die Aufnahmen entstehen über den
+Testschlüssel-Knopf, und der läuft nicht durch `onFieldChange` — `getippt`
+bleibt falsch, die Schublade zu. Nachgemessen an den Bildern, die vor dem Fix
+entstanden sind.
