@@ -65,7 +65,8 @@
  *
  * ── Der Versionsname ─────────────────────────────────────────────────────
  * Gebaut wird mit `-Pclockwork.storeShot` (siehe app/build.gradle.kts): Die
- * Ueber-Karte zeigt damit „2.0.0 (20000)" statt „2.0.0-dev-debug (20000)".
+ * Ueber-Karte zeigt damit den reinen Auslieferungsstand statt
+ * „<version>-dev-debug".
  * Der Lauf PRUEFT das am installierten Paket und bricht sonst ab — ein
  * Store-Bild mit Werkstattmarkierung faellt sonst erst im Store auf.
  */
@@ -75,6 +76,8 @@ import { mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+
+import { VERSION } from './version.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PKG = 'io.github.keco216.clockwork.dev';
@@ -384,9 +387,15 @@ async function ladeStrings(resDir) {
 async function geraetVorbereiten() {
   const badging = execFileSync(AAPT, ['dump', 'badging', APK], { encoding: 'utf8' }).split('\n')[0];
   const versionName = /versionName='([^']*)'/.exec(badging)?.[1];
-  if (versionName !== '2.0.0') {
+  /* Der Schutz bleibt, seine Zahl nicht: Bis D1b stand hier '2.0.0'. Ein
+     Abbruch, der gegen eine feste Nummer prueft, wird beim naechsten
+     Versionssprung selbst zur Fehlerquelle — er meldet dann einen Fehler, wo
+     keiner ist, und wer ihn schnell wegdreht, verliert den Schutz ganz.
+     Verglichen wird gegen den Auslieferungsstand aus `package.json`. */
+  if (versionName !== VERSION) {
     throw new Error(
-      `Das gebaute APK traegt versionName='${versionName}'. Store-Bilder brauchen den Auslieferungsstand:\n` +
+      `Das gebaute APK traegt versionName='${versionName}', erwartet ist '${VERSION}' aus package.json.\n` +
+        `  Store-Bilder brauchen den Auslieferungsstand:\n` +
         "    cd android-native; .\\gradlew.bat assembleDebug '-Pclockwork.storeShot'\n" +
         '  Die Anfuehrungszeichen sind noetig: PowerShell zerlegt -Pclockwork.storeShot am\n' +
         "  Punkt, und Gradle sucht dann einen Task namens '.storeShot'.",

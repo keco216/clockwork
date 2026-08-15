@@ -1,11 +1,14 @@
 /**
  * Die drei Angaben, die ein Release zusammenhalten — gegeneinander geprüft.
  *
- * Ein Release besteht aus Dingen an drei Orten: der Version in `package.json`,
- * `versionName`/`versionCode` in `android/app/build.gradle` und dem Changelog
- * unter `fastlane/…/changelogs/<versionCode>.txt`. Seit F-Droid mit
- * `AutoUpdateMode: Version` selbst zieht, liest es genau diese Dateien — es
- * fragt niemanden, ob sie zusammenpassen.
+ * Ein Release besteht aus Dingen an mehreren Orten: `versionName`/`versionCode`
+ * im Bauplan und dem Changelog unter `fastlane/…/changelogs/<versionCode>.txt`.
+ * Seit F-Droid mit `AutoUpdateMode: Version` selbst zieht, liest es genau diese
+ * Dateien — es fragt niemanden, ob sie zusammenpassen.
+ *
+ * Diese Datei prüft den EINGEFRORENEN 1.x-Baum in `android/` und die
+ * Changelogs beider Fassungen. Die Version der ausgelieferten App hält
+ * `native-version.test.ts` gegen `package.json` (D1b).
  *
  * ── Warum das eine Prüfung braucht ─────────────────────────────────────────
  * Der vergessene Changelog ist der teuerste Fehler dieser Kette, weil er
@@ -28,6 +31,8 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
+import { versionCodeVon } from './version.mjs';
+
 /** F-Droids Grenze für einen Changelog, dieselbe wie Plays „What's new". */
 const CHANGELOG_MAX = 500;
 
@@ -35,7 +40,6 @@ const SPRACHEN = ['en-US', 'de-DE'] as const;
 
 const wurzel = (pfad: string) => fileURLToPath(new URL(`../${pfad}`, import.meta.url));
 
-const paket = JSON.parse(await readFile(wurzel('package.json'), 'utf8')) as { version: string };
 const gradle = await readFile(wurzel('android/app/build.gradle'), 'utf8');
 
 const versionCode = Number(gradle.match(/^\s*versionCode\s+(\d+)/m)?.[1]);
@@ -47,27 +51,26 @@ describe('Release-Metadaten', () => {
     expect(versionName).toBeDefined();
   });
 
-  it('versionName folgt der Version in package.json', () => {
-    expect(versionName).toBe(paket.version);
+  /* ── Warum hier NICHT mehr gegen package.json geprüft wird (D1b) ─────────
+     Bis 2.0.0 stand hier `expect(versionName).toBe(paket.version)`, und das
+     war richtig, solange `android/` die ausgelieferte App war. Seit dem
+     Kotlin-Zweig ist sie es nicht mehr: Der Baum ist die eingefrorene
+     1.x-WebView-Hülle, absichtlich auf 1.5.4/10504 stehengelassen, damit ein
+     Tag bei F-Droid wirkungslos bleibt, solange der Metadaten-MR fehlt.
+
+     `package.json` trägt die Version der AUSGELIEFERTEN App, also die native.
+     Diese Kopplung prüft `native-version.test.ts`. Hier bleibt, was diesen
+     Baum betrifft: dass er in sich stimmt und eingefroren bleibt. */
+  it('die eingefrorene WebView-Fassung steht auf 1.5.4 / 10504', () => {
+    expect(versionName).toBe('1.5.4');
+    expect(versionCode).toBe(10504);
   });
 
   it('versionCode folgt der Formel Major·10000 + Minor·100 + Patch', () => {
-    /* Ausdrücklich per Muster zerlegt statt über ein Destructuring: Bei
-       `split('.')` weiß der Compiler nicht, dass drei Teile herauskommen —
-       und eine Version, die das nicht tut, soll hier auffallen und nicht
-       stillschweigend als NaN weiterlaufen. */
-    const treffer = /^(\d+)\.(\d+)\.(\d+)$/.exec(paket.version);
-    expect(treffer, `Version "${paket.version}" ist nicht Major.Minor.Patch`).not.toBeNull();
-
-    const major = Number(treffer?.[1]);
-    const minor = Number(treffer?.[2]);
-    const patch = Number(treffer?.[3]);
-
-    expect([major, minor, patch].every(Number.isInteger)).toBe(true);
-    // Die Formel bleibt nur monoton, solange Minor und Patch zweistellig sind.
-    expect(minor).toBeLessThan(100);
-    expect(patch).toBeLessThan(100);
-    expect(versionCode).toBe(major * 10000 + minor * 100 + patch);
+    /* Dieselbe Formel wie für die native App, deshalb dieselbe Funktion aus
+       `version.mjs` — eine zweite Rechnung an dieser Stelle wäre genau die
+       Doppelung, die D1b abgeräumt hat. */
+    expect(versionCode).toBe(versionCodeVon(versionName as string));
   });
 
   for (const sprache of SPRACHEN) {

@@ -6,12 +6,20 @@
  * Aus den rohen Geraeteaufnahmen (`play/shots/<locale>/`, Stufe 1) und den
  * Bildtexten (`play/captions/<locale>.json`) entstehen
  *
- *   play/listing/<locale>/images/phoneScreenshots/1..7.png   1080x1920
- *   play/listing/<locale>/images/featureGraphic.png          1024x500
+ *   play/frames/<locale>/images/phoneScreenshots/1..7.png   1080x1920
+ *   play/frames/<locale>/images/featureGraphic.png          1024x500
  *
- * und dieselben Dateien noch einmal unter `fastlane/metadata/android/<locale>/`
- * — eine Quelle, zwei Ziele (N23). Der Vergleich beider Baeume ist ein Test
- * (`scripts/store-listing.test.ts`), keine Absichtserklaerung.
+ * ── ACHTUNG, seit D7: das ist die WERKSTATT, nicht die Auslieferung ──────
+ * Bis D6 schrieb dieses Skript direkt in die zwei Store-Baeume. Seit die
+ * Motive in Figma ueberarbeitet werden, tut es das NICHT mehr: Was an Play und
+ * F-Droid geht, schreibt `store-figma.mjs` aus `play/Figma/`, und zwar als
+ * einziger. Zwei Schreiber auf denselben Dateien heisst, dass ein Lauf den
+ * anderen stillschweigend ueberschreibt — hier waere das eine verlorene
+ * Gestaltungsrunde gewesen.
+ *
+ * Wer die Montage wieder ausliefern will, kopiert sie bewusst von
+ * `play/frames/` nach `play/Figma/` und faehrt `store-figma.mjs`. Ein Schritt
+ * von Hand, mit Absicht.
  *
  * ── Warum diese Stufe getrennt laeuft ────────────────────────────────────
  * Weil sie REINE RECHNUNG ist: dieselben Eingaben ergeben dieselben Bytes. Ein
@@ -62,11 +70,14 @@
  */
 
 import { chromium } from 'playwright';
-import { deflateSync, crc32 } from 'node:zlib';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+
+// Der PNG-Schreiber stand bis D6 hier; seit dem Figma-Import braucht ihn ein
+// zweites Skript, und zwei Kopien waeren zwei Wahrheiten.
+import { encodePng } from './png.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -136,85 +147,6 @@ const MOTIVE = [
   { nr: 6, thema: 'hell', shot: '6-sprachen' },
   { nr: 7, thema: 'hell', shot: '7-start-hell', shot2: '7-start-dunkel' },
 ];
-
-/* ── PNG schreiben (Farbtyp 2, deterministisch) ──────────────────────────── */
-
-function chunk(type, data) {
-  const length = Buffer.alloc(4);
-  length.writeUInt32BE(data.length);
-  const typeAndData = Buffer.concat([Buffer.from(type, 'ascii'), data]);
-  const checksum = Buffer.alloc(4);
-  checksum.writeUInt32BE(crc32(typeAndData) >>> 0);
-  return Buffer.concat([length, typeAndData, checksum]);
-}
-
-/**
- * Zeilenfilter: hier ADAPTIV, anders als in `play-graphics.mjs`.
- *
- * Dort steht Filter 0, und dort ist das richtig — eine Flaeche aus dreissig
- * Strichen auf einfarbigem Grund komprimiert ueber identische Zeilen besser als
- * ueber Differenzen. Hier liegt aber eine SKALIERTE Aufnahme im Bild, also
- * weiche Verlaeufe an jeder Kante; Filter 0 blaeht sie auf das Zwei- bis
- * Dreifache. Gewaehlt wird je Zeile der Filter mit der kleinsten Summe der
- * Betraege — die uebliche Heuristik, deterministisch und ohne Parameter.
- */
-function filterZeile(roh, vorige, stride, bpp) {
-  const kandidaten = [];
-  for (let typ = 0; typ <= 4; typ++) {
-    const out = Buffer.alloc(stride);
-    let summe = 0;
-    for (let i = 0; i < stride; i++) {
-      const a = i >= bpp ? roh[i - bpp] : 0;
-      const b = vorige[i];
-      const c = i >= bpp ? vorige[i - bpp] : 0;
-      let wert;
-      if (typ === 0) wert = roh[i];
-      else if (typ === 1) wert = roh[i] - a;
-      else if (typ === 2) wert = roh[i] - b;
-      else if (typ === 3) wert = roh[i] - ((a + b) >> 1);
-      else {
-        const p = a + b - c;
-        const pa = Math.abs(p - a);
-        const pb = Math.abs(p - b);
-        const pc = Math.abs(p - c);
-        wert = roh[i] - (pa <= pb && pa <= pc ? a : pb <= pc ? b : c);
-      }
-      out[i] = wert & 255;
-      summe += out[i] < 128 ? out[i] : 256 - out[i];
-    }
-    kandidaten.push({ typ, out, summe });
-  }
-  return kandidaten.reduce((beste, k) => (k.summe < beste.summe ? k : beste));
-}
-
-function encodePng(rgb, width, height) {
-  const header = Buffer.alloc(13);
-  header.writeUInt32BE(width, 0);
-  header.writeUInt32BE(height, 4);
-  header[8] = 8; // Bit-Tiefe
-  header[9] = 2; // Farbtyp 2 = RGB ohne Alpha — die Play-Vorgabe
-  header[10] = 0;
-  header[11] = 0;
-  header[12] = 0;
-
-  const stride = width * 3;
-  const raw = Buffer.alloc(height * (stride + 1));
-  let vorige = Buffer.alloc(stride);
-  for (let row = 0; row < height; row++) {
-    const zeile = rgb.subarray(row * stride, (row + 1) * stride);
-    const beste = filterZeile(zeile, vorige, stride, 3);
-    raw[row * (stride + 1)] = beste.typ;
-    beste.out.copy(raw, row * (stride + 1) + 1);
-    vorige = zeile;
-  }
-
-  return Buffer.concat([
-    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
-    chunk('IHDR', header),
-    chunk('IDAT', deflateSync(raw, { level: 9 })),
-    chunk('IEND', Buffer.alloc(0)),
-  ]);
-}
 
 /* ── Was im Browser gezeichnet wird ──────────────────────────────────────── */
 
@@ -743,11 +675,23 @@ for (const locale of localeList) {
 await browser.close();
 
 /** Schreibt EINE Datei in BEIDE Baeume (N23) und misst sie nach. */
+/**
+ * Geschrieben wird in die WERKSTATT, nicht in die Auslieferung (D7).
+ *
+ * Bis D6 schrieb dieses Skript direkt nach `play/listing/` und
+ * `fastlane/metadata/android/`. Seit die Motive aus Figma kommen
+ * (`store-figma.mjs`), haetten zwei Skripte dieselben Dateien geschrieben —
+ * und der zweite Lauf haette den ersten stillschweigend ueberschrieben. Genau
+ * so verliert man eine Gestaltungsrunde, ohne es zu merken.
+ *
+ * Jetzt gilt: EIN Gegenstand, EIN Schreiber. Die ausgelieferten Bilder gehoeren
+ * `store-figma.mjs`; dieses Skript legt seine Montage unter `play/frames/` ab.
+ * Von dort kann man sie ansehen, vergleichen und — wenn die Montage wieder die
+ * bessere ist — nach `play/Figma/` uebernehmen. Nichts davon passiert
+ * automatisch.
+ */
 async function schreibe(locale, relativ, png, breite, hoehe) {
-  const ziele = [
-    path.join(root, 'play', 'listing', locale, relativ),
-    path.join(root, 'fastlane', 'metadata', 'android', locale, relativ),
-  ];
+  const ziele = [path.join(root, 'play', 'frames', locale, relativ)];
   const sha = createHash('sha256').update(png).digest('hex');
   const gemessen = { breite: png.readUInt32BE(16), hoehe: png.readUInt32BE(20), farbtyp: png[25] };
   if (gemessen.breite !== breite || gemessen.hoehe !== hoehe) {
@@ -775,7 +719,8 @@ async function schreibe(locale, relativ, png, breite, hoehe) {
   return eintraege;
 }
 
-console.log(`\n  ${dateien.length} Dateien in zwei Baeumen (${dateien.length / 2} Bilder).`);
+console.log(`\n  ${dateien.length} Bilder in der Werkstatt (play/frames/).`);
+console.log('  Ausgeliefert wird daraus NICHTS — das tut scripts/store-figma.mjs.');
 if (befunde.length > 0) {
   console.error(`\n  ${befunde.length} Befund(e):`);
   for (const befund of befunde) console.error(`  • ${befund}`);

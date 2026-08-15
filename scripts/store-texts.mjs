@@ -41,8 +41,11 @@ export const GRENZEN = {
   changelog: 500,
 };
 
-/** Der versionCode, zu dem der Changelog gehoert — 2.0.0 = 20000. */
-export const VERSION_CODE = 20000;
+/* Der versionCode, zu dem der Changelog gehoert, stand bis D1b hier als harte
+   Zahl. Er kommt jetzt aus `scripts/version.mjs`, also aus `package.json` —
+   `store-listing.mjs` holt ihn direkt von dort. Eine Konstante an dieser
+   Stelle waere eine zweite Quelle gewesen, und genau die ist beim Sprung von
+   2.0.0 auf 2.0.1 aufgefallen. */
 
 export const TEXTE = {
   'en-US': {
@@ -74,12 +77,15 @@ Open source under the MIT licence. The OTP algorithms are written from scratch a
 
 Speaks 37 languages, all bundled, including right-to-left layouts.
 
-One thing, independent of this app: set up backup codes with every provider before you rely on any authenticator. They are the only thing that gets you back in when a secret is gone.`,
-    changelog: `Clockwork 2.0 is a native Android app, rewritten in Kotlin and Jetpack Compose. No browser engine any more: it starts faster, scrolls natively and follows the system for language, dark mode and font size.
+Android 8.0 or newer. On Android 7, 1.5.4 stays the final version.
 
+One thing, independent of this app: set up backup codes with every provider before you rely on any authenticator. They are the only thing that gets you back in when a secret is gone.`,
+    changelog: `Clockwork 2.0 is a native Android app, rewritten in Kotlin and Jetpack Compose — no browser engine any more.
+
+• Android 8.0 or newer. On Android 7, 1.5.4 stays the final version.
 • An existing vault is carried over on update — nothing to export, nothing to type again.
 • Unlock with your fingerprint. The passphrase stays the only way back in.
-• Still no INTERNET permission, and now nothing at all is fetched at startup.`,
+• Still no INTERNET permission.`,
   },
 
   'de-DE': {
@@ -110,13 +116,16 @@ Es wird nichts erhoben, weil es nirgendwo hingehen könnte. Kein Analytics, kein
 ZUM NACHPRÜFEN GEBAUT
 Open Source unter der MIT-Lizenz. Die OTP-Algorithmen sind von Hand nach den RFC-Testvektoren geschrieben — keine OTP-Bibliothek. Quelltext, Testlauf und die Messskripte hinter jeder Zusage oben liegen öffentlich unter github.com/keco216/clockwork.
 
-Spricht 37 Sprachen, alle mitgebündelt, auch rechtsläufige Layouts.
+Spricht 37 Sprachen, alle mitgebündelt, auch Layouts von rechts nach links.
+
+Ab Android 8.0. Auf Android 7 bleibt 1.5.4 die letzte Fassung.
 
 Eine Sache, unabhängig von dieser App: Richte bei jedem Anbieter Backup-Codes ein, bevor du dich auf einen Authenticator verlässt. Sie sind das Einzige, was dich wieder hineinlässt, wenn ein Secret weg ist.`,
-    changelog: `Clockwork 2.0 ist eine native Android-App, neu geschrieben in Kotlin und Jetpack Compose. Keine Browser-Engine mehr: schnellerer Start, native Bewegung, und Sprache, Dunkelmodus und Schriftgröße folgen dem System.
+    changelog: `Clockwork 2.0 ist eine native Android-App, neu geschrieben in Kotlin und Jetpack Compose — keine Browser-Engine mehr.
 
+• Ab Android 8.0. Auf Android 7 bleibt 1.5.4 die letzte Fassung.
 • Ein vorhandener Tresor wandert beim Update von selbst mit — nichts exportieren, nichts neu tippen.
 • Aufsperren per Fingerabdruck. Die Passphrase bleibt der einzige Weg zurück.
-• Weiterhin keine INTERNET-Berechtigung, und jetzt wird beim Start auch nichts mehr nachgeladen.`,
+• Weiterhin keine INTERNET-Berechtigung.`,
   },
 };

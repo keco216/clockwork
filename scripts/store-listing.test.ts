@@ -25,6 +25,8 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
+import { VERSION_CODE } from './version.mjs';
+
 const SPRACHEN = ['en-US', 'de-DE'] as const;
 const STANDARD = 'en-US';
 
@@ -33,7 +35,11 @@ const GETEILT = [
   'title.txt',
   'short_description.txt',
   'full_description.txt',
-  'changelogs/20000.txt',
+  /* Der Changelog haengt am versionCode und wurde bis D1b hier fest genannt.
+     Eine harte Nummer haette diesen Test nach jedem Versionssprung still auf
+     die ALTE Datei zeigen lassen — er waere gruen geblieben und haette den
+     neuen Changelog nie angesehen. */
+  `changelogs/${VERSION_CODE}.txt`,
   'images/featureGraphic.png',
   ...Array.from({ length: 7 }, (_unused, i) => `images/phoneScreenshots/${i + 1}.png`),
 ] as const;

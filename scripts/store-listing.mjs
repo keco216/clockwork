@@ -15,8 +15,11 @@
  * liest (N23).
  *
  * Der Changelog geht in beide Baeume unter dem versionCode: F-Droid zeigt
- * `changelogs/20000.txt` im Katalog an, Play braucht denselben Text im Feld
- * „Neu in dieser Version" beim Upload.
+ * `changelogs/<versionCode>.txt` im Katalog an, Play braucht denselben Text im
+ * Feld „Neu in dieser Version" beim Upload. Die Nummer kommt seit D1b aus
+ * `version.mjs` und damit aus `package.json` — sie steht hier ausdruecklich
+ * NICHT ausgeschrieben, denn ein Changelog unter der falschen Nummer faellt
+ * still aus: F-Droid baut trotzdem, nur der Hinweis fehlt.
  *
  * ── Was dieses Skript NICHT anfasst ──────────────────────────────────────
  * Die Bilder. Die schreibt `store-frames.mjs`, ebenfalls in beide Baeume, und
@@ -28,7 +31,8 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-import { TEXTE, GRENZEN, VERSION_CODE } from './store-texts.mjs';
+import { TEXTE, GRENZEN } from './store-texts.mjs';
+import { VERSION_CODE } from './version.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const befunde = [];

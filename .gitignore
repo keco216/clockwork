@@ -19,6 +19,11 @@ lighthouse.json
 # uses are committed under docs/ instead, so a local run cannot change them.
 screenshots/
 
+# Workshop output of scripts/store-frames.mjs. The delivered store images come
+# from scripts/store-figma.mjs and are committed under play/listing/ and
+# fastlane/; these are the montage variants, kept only for comparison.
+play/frames/
+
 # Secrets and local overrides — nothing of the sort belongs in this repo
 .env
 .env.*
