@@ -387,7 +387,9 @@ async function geraetVorbereiten() {
   if (versionName !== '2.0.0') {
     throw new Error(
       `Das gebaute APK traegt versionName='${versionName}'. Store-Bilder brauchen den Auslieferungsstand:\n` +
-        '    cd android-native && ./gradlew.bat assembleDebug -Pclockwork.storeShot',
+        "    cd android-native; .\\gradlew.bat assembleDebug '-Pclockwork.storeShot'\n" +
+        '  Die Anfuehrungszeichen sind noetig: PowerShell zerlegt -Pclockwork.storeShot am\n' +
+        "  Punkt, und Gradle sucht dann einen Task namens '.storeShot'.",
     );
   }
 
