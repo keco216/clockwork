@@ -7,9 +7,105 @@ wurde, mit welcher Messung oder welcher Regel es gescheitert ist, und was
 stattdessen dasteht. Wer einen Punkt neu aufmachen will, findet hier die
 Bedingung, unter der die Entscheidung kippen würde.
 
-> **Stand N14.** Der Posten P9 ergänzt diese Liste um die Punkte aus der
-> Bau-Phase (Material3, ML Kit und was sonst geprüft und verworfen wurde);
-> hier stehen bislang nur die Befunde aus N13 und N14.
+> **Stand P9 (15.08.2026).** Die Punkte aus der Bau-Phase sind nachgetragen;
+> ihre Begründungen standen bis dahin nur als Kommentar an der Stelle, an der
+> sie wirken. Die Fundstelle steht jeweils dabei — sie ist die Quelle, dieser
+> Eintrag die Zusammenfassung.
+
+---
+
+## Compose Material (M2 und M3)
+
+**Geprüft:** Die naheliegende Art, eine Compose-App zu bauen.
+
+**Verworfen,** weil es ein zweites Designsystem neben `src/styles/tokens.css`
+wäre. Eine Material-Taste bringt ihre eigene Farbrolle, ihre eigene Höhe und
+ihre eigene Ripple mit; Clockwork ist seit v1.3.0 ein HeroUI-Theme, und das
+steht in Tokens, nicht in einer Bibliothek. Dieselbe Hausregel wie im Web, wo
+die Oberfläche aus rohem CSS entsteht und nicht aus Tailwind.
+
+**Stattdessen** Compose Foundation. Der Preis ist ehrlich zu benennen: Ripple,
+Fokus-Ring und Trefferfläche baut man dann selbst (`ui/Components.kt`).
+
+**Die Bedingung, unter der es kippt:** keine. Die Entscheidung ist als
+Dauerprüfung festgeschrieben — `gradlew checkNoMaterial` löst den
+Release-Klassenpfad auf und fällt aus, sobald ein `androidx.compose.material*`
+darin auftaucht, auch über `material-ripple`.
+_Quelle: `app/build.gradle.kts`, Aufgabe `checkNoMaterial`._
+
+## ML Kit für die QR-Erkennung
+
+**Geprüft:** Googles Barcode-Scanner, der bequemere Weg.
+
+**Verworfen,** weil er proprietär ist und an Play Services hängt. Eine App,
+deren Zusage „kein Netz, nichts wird nachgeladen" lautet, kann ihre
+Bilderkennung nicht von einem Dienst holen, der nachlädt — genau diese Art von
+stiller Abhängigkeit hat N17 bei der Emoji-Schrift gefunden.
+
+**Stattdessen** ZXing core: pures Java, Apache-2.0, keine Play-Services-Bindung.
+Es sieht Pixel und liefert Text; die OTP-Rechnung bleibt vollständig die eigene
+(harte Regel 1). Das native Gegenstück zu jsQR in der Web-Fassung.
+_Quelle: `app/build.gradle.kts`, Abhängigkeitsblock „Kamera und QR (P6)"._
+
+## `EncryptedSharedPreferences` für den Tresor
+
+**Geprüft:** Die naheliegende Wahl für „verschlüsselt speichern" unter Android.
+
+**Verworfen** aus zwei Gründen, und der zweite wiegt schwerer:
+
+1. Seit `androidx.security` 1.1 ist es als **deprecated** gekennzeichnet, ohne
+   Nachfolger.
+2. Es verschlüsselt mit einem Schlüssel, den das **Gerät** hält. Der Tresor
+   hinge dann am Gerät und nicht mehr an der Passphrase — eine schwächere
+   Zusage als die, die in der App steht, und von außen nicht zu unterscheiden.
+
+**Stattdessen** eine Datei: `vault.json` im `filesDir`, Inhalt ist genau der
+Umschlag der Web-Fassung (AES-256-GCM, Schlüssel aus PBKDF2). Das ist zugleich
+die Voraussetzung für P8 — wer von 1.x aktualisiert, öffnet denselben Umschlag
+mit derselben Passphrase.
+_Quelle: `store/VaultStore.kt`, Kopfkommentar._
+
+## `DataStore` für die Einstellungen
+
+**Geprüft:** Der von Google empfohlene Nachfolger von `SharedPreferences`.
+
+**Verworfen,** weil vier Werte kein Framework brauchen. DataStore brächte
+Coroutinen-Flüsse, ein Serialisierungsschema und eine Abhängigkeit für eine
+Datei, die vier Zeilen lang ist. Dieselbe Abwägung wie beim selbst
+geschriebenen Protobuf-Leser der Web-Fassung (harte Regel 2).
+
+**Stattdessen** `lock-settings.json` neben dem Umschlag — unverschlüsselt, weil
+darin kein Stück Klartext-Geheimnis steht, und mit denselben Feldnamen wie im
+`localStorage` der WebView-Fassung, damit die Übernahme in P8 ein
+Kopiervorgang ist und keine Umrechnung.
+_Quelle: `store/LockSettings.kt`, Kopfkommentar._
+
+## Ein Navigations-Framework
+
+**Geprüft:** `navigation-compose`, der Standardweg für mehrere Seiten.
+
+**Verworfen,** weil die App genau eine Bühne mit zwei Zuständen hat
+(`data-stage` vacant/working im Web) — ein Navigationsgraph dafür wäre Apparat
+ohne Aufgabe. Auch die zwei Seiten seit N11 (Start, Einstellungen) sind ein
+Zustand und kein Rückweg: Es gibt keinen Zurück-Stapel, keine Argumente, keine
+Tiefenverlinkung.
+
+**Stattdessen** eine einzige Activity, kein Fragment, und die Seitenwahl als
+Zustand in der Composition.
+_Quelle: `MainActivity.kt`, Kopfkommentar._
+
+## Der T0-Parameter aus RFC 6238
+
+**Geprüft:** RFC 6238 erlaubt einen Startzeitpunkt T0 ≠ 0, also
+`floor((zeit − T0) / periode)`.
+
+**Verworfen,** weil ihn kein Anbieter benutzt, das `otpauth://`-Format kein Feld
+dafür vorsieht und die RFC-Testvektoren alle von T0 = 0 ausgehen. Ein Parameter,
+den niemand setzen kann, ist eine Eingabemöglichkeit für Fehler.
+
+**Stattdessen** T0 fest auf 0 — in beiden Fassungen, denn `src/lib/` ist die
+Quelle und der Kotlin-Port bildet sie Zeile für Zeile ab.
+_Quelle: `src/lib/totp.ts`, Kopfkommentar; `core/Totp.kt` gleichlautend._
 
 ---
 

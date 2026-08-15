@@ -49,6 +49,7 @@ import io.github.keco216.clockwork.ui.theme.LocalColors
 import io.github.keco216.clockwork.ui.theme.Motion
 import io.github.keco216.clockwork.ui.theme.TextStyles
 import io.github.keco216.clockwork.ui.theme.Typo
+import io.github.keco216.clockwork.ui.theme.devicePad
 import kotlin.math.abs
 
 /**
@@ -218,7 +219,12 @@ fun Masthead(
     ) {
         Column(
             modifier = Modifier.padding(
-                horizontal = Dimens.gapGroup,
+                /* `devicePad` und nicht `gapGroup`: Der Kopf ist randbreit und
+                   polstert sich selbst — im Web tut er dasselbe, indem er sich
+                   um `--device-pad` heraus- und wieder hineinzieht. Stuende
+                   hier ein anderer Betrag als an der Buehne, fluchtete die
+                   Wortmarke nicht mehr mit den Karten darunter (P9). */
+                horizontal = Dimens.devicePad,
                 vertical = Dimens.sp4,
             ),
             verticalArrangement = Arrangement.spacedBy(Dimens.gapPair),

@@ -1,11 +1,15 @@
 package io.github.keco216.clockwork.ui.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.animation.core.CubicBezierEasing
@@ -256,6 +260,74 @@ object Dimens {
     /** Unter dieser Breite traegt die Karte das Kompaktraster (V10). */
     val compactCardWidth = 420.dp
 }
+
+/**
+ * Unter dieser FENSTERbreite rueckt die Buehne naeher an den Rand.
+ *
+ * Die Web-Fassung schaltet bei `@media (max-width: 34rem)` um — 34 × 16 =
+ * **544 px** (`src/style.css`, dort wird `--device-pad` von `--gap-group` auf
+ * `--sp-4` gesetzt). Das ist eine ANDERE Schwelle als die 420 dp des
+ * Kompaktrasters, und sie hat auch einen anderen Grund: Beim Kompaktraster
+ * geht es um die Anordnung IN der Karte, hier um den Platz DANEBEN.
+ */
+private const val DEVICE_PAD_BELOW_DP = 544
+
+/**
+ * Der seitliche Rand der Buehne — `--device-pad` der Web-Fassung.
+ *
+ * ── Warum es diesen Wert gibt (P9, gemessen am 15.08.2026) ────────────────
+ * Bis P9 stand an beiden Buehnen fest `Dimens.gapGroup`, also 24 dp. Die
+ * Web-Fassung nimmt unter 34 rem aber nur 16 — und der Unterschied ist
+ * sichtbar, nicht theoretisch. Gemessen an den Kartenkanten der
+ * P9-Vergleichsbilder bei gleicher logischer Breite (374,8 dp):
+ *
+ *     Web    Rand links/rechts 16,0 dp   Karte 343,0 dp breit
+ *     Nativ  Rand links/rechts 23,9 dp   Karte 326,9 dp breit
+ *
+ * Die native Karte war also 16 dp schmaler als dieselbe Karte im Web. Nach
+ * der Auftragsregel aus N6 ist eine sichtbare Abweichung ein Fehler und wird
+ * gefixt, nicht notiert.
+ *
+ * Ein eigener Wert und nicht einfach `sp4`: Oberhalb der Schwelle gilt weiter
+ * 24 dp, genau wie im Web. Ein Telefon im Hochformat liegt praktisch immer
+ * darunter, ein Tablet oder das Querformat nicht — und dort waere der enge
+ * Rand falsch.
+ */
+val Dimens.devicePad: Dp
+    @Composable
+    @ReadOnlyComposable
+    get() = if (LocalConfiguration.current.screenWidthDp < DEVICE_PAD_BELOW_DP) sp4 else gapGroup
+
+/**
+ * Das INNENmass einer Karte — `--panel-pad` der Web-Fassung.
+ *
+ * Es faellt unter derselben Schwelle und auf denselben Wert wie
+ * [devicePad]; im Web stehen die beiden Zeilen woertlich untereinander
+ * (`src/style.css`, `@media (max-width: 34rem)`). Sie trotzdem als ZWEI Werte
+ * zu fuehren ist Absicht und nicht Umstaendlichkeit: Der eine misst den Platz
+ * NEBEN der Karte, der andere den DARIN. Wer spaeter einen davon aendert,
+ * soll nicht ungewollt den anderen mitnehmen — und die Web-Fassung fuehrt sie
+ * aus demselben Grund getrennt.
+ *
+ * Gemessen an der „Kopieren"-Taste der P9-Vergleichsbilder, die in beiden
+ * Fassungen ueber die volle Kartenbreite spannt (374,8 dp logische Breite):
+ *
+ *     Web    Innenmass links/rechts 17,5 dp
+ *     Nativ  Innenmass links/rechts 25,3 dp
+ *
+ * Die 1,5 dp ueber dem Nennwert sind die Rundung der Pille und stehen auf
+ * beiden Seiten gleich — der Unterschied der beiden Fassungen sind die
+ * 8 dp der Sprosse.
+ *
+ * Es gilt ueberall, wo bisher `gapGroup` als KARTENINNENMASS stand: am Polster
+ * der Karte selbst, an den Listenzeilen und an ihren Haarlinien. NICHT
+ * betroffen ist der senkrechte Rhythmus (`--gap-group` bleibt im Web auch
+ * mobil 24) und nicht die Fuge zwischen den Spalten im Kartenraster.
+ */
+val Dimens.panelPad: Dp
+    @Composable
+    @ReadOnlyComposable
+    get() = if (LocalConfiguration.current.screenWidthDp < DEVICE_PAD_BELOW_DP) sp4 else gapGroup
 
 /* ── Schrift ────────────────────────────────────────────────────────────── */
 

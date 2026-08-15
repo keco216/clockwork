@@ -69,7 +69,18 @@ android {
            Fassung kann die WebView-Fassung also spaeter als Update abloesen,
            was P8 (Tresor-Uebernahme) ueberhaupt erst moeglich macht. */
         versionCode = 20000
-        versionName = if (storeShot) "2.0.0" else "2.0.0-dev"
+
+        /* Bis zum 15.08.2026 stand hier `if (storeShot) "2.0.0" else "2.0.0-dev"`.
+           Das `-dev` war die Werkstattmarkierung des Zweigs, solange er nichts
+           auslieferte — und es steckte NICHT im Debug-Suffix, ein Release-Bau
+           haette es also in der Ueber-Karte gezeigt.
+
+           Mit dem ersten Play-Bau ist der Zweig kein Prototyp mehr: Was hier
+           steht, ist der Auslieferungsstand. `-dev` ist deshalb weg (Punkt 2
+           der Release-Checkliste in CLAUDE.md). Der Debug-Bau bleibt
+           unterscheidbar — er traegt weiter `.dev` an der applicationId und
+           `-debug` am Versionsnamen. */
+        versionName = "2.0.0"
     }
 
     signingConfigs {

@@ -22,6 +22,8 @@ import io.github.keco216.clockwork.core.PBKDF2_ITERATIONS
 import io.github.keco216.clockwork.ui.theme.Dimens
 import io.github.keco216.clockwork.ui.theme.LocalColors
 import io.github.keco216.clockwork.ui.theme.TextStyles
+import io.github.keco216.clockwork.ui.theme.devicePad
+import io.github.keco216.clockwork.ui.theme.panelPad
 
 /**
  * Die Einstellungen-Seite (N11).
@@ -63,8 +65,11 @@ fun SettingsPage(
             .fillMaxWidth()
             .verticalScroll(scroll)
             .padding(
-                start = Dimens.gapGroup,
-                end = Dimens.gapGroup,
+                // Seitlich `devicePad` wie auf der Startseite (P9) — beide
+                // Seiten tragen denselben Rand, sonst wanderten die Karten
+                // beim Seitenwechsel.
+                start = Dimens.devicePad,
+                end = Dimens.devicePad,
                 // Wie auf der Startseite: gemessene Leistenhoehe plus
                 // Gruppenfuge, damit die Ueber-Karte vollstaendig ueber die
                 // schwebende Leiste hinausgescrollt werden kann (N12/N13).
@@ -111,7 +116,7 @@ fun SettingsPage(
                    sie erreicht. Die Haarlinie darueber ist die Grenze der
                    Liste: Was danach kommt, ist keine Einstellung mehr. */
                 RowDivider(modifier = Modifier.padding(vertical = Dimens.sp2))
-                Box(modifier = Modifier.padding(Dimens.gapGroup)) {
+                Box(modifier = Modifier.padding(Dimens.panelPad)) {
                     VaultDanger(controller = vault, state = vault.state)
                 }
             }
@@ -147,7 +152,7 @@ private fun AboutPanel() {
                die Saetze, die die Zusagen der App tragen. Sie bekommen deshalb
                die Einrueckung der Zeilen, aber nicht ihre Form. */
             Column(
-                modifier = Modifier.padding(horizontal = Dimens.gapGroup),
+                modifier = Modifier.padding(horizontal = Dimens.panelPad),
                 verticalArrangement = Arrangement.spacedBy(Dimens.gapStack),
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(Dimens.gapPair)) {
@@ -222,8 +227,10 @@ private fun SectionLabel(label: String) {
         text = label,
         style = TextStyles.small.copy(color = colors.ink),
         modifier = Modifier.padding(
-            start = Dimens.gapGroup,
-            end = Dimens.gapGroup,
+            // Karteninnenmass, damit die Ueberschrift mit den Zeilen darunter
+            // fluchtet (P9 — mobil 16 statt 24).
+            start = Dimens.panelPad,
+            end = Dimens.panelPad,
             top = Dimens.sp2,
             bottom = Dimens.gapPair,
         ),

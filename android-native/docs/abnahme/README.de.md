@@ -2575,3 +2575,206 @@ Geräteabnahme.
 **G6 — `DebugProbesKt.bin` und `kotlin-tooling-metadata.json`** aus dem
 Release nehmen (`packaging { resources { excludes … } }`). Zwei Kilobyte und
 eine Angabe zur Bauumgebung weniger.
+
+---
+
+## P9 — Die Endabnahme: Web gegen Nativ, gemessen statt betrachtet
+
+P9 stellt die native Fassung neben die Web-Fassung und fragt, ob sie dieselbe
+App ist. Der Auftrag verlangt Vergleichsbilder (Web-mobil 375 px gegen Nativ,
+Motive leer / 1 Konto / 12 Konten × hell/dunkel), den Diff-Export nach N4 und
+die ehrlich eingeordnete Paketgröße.
+
+### Wie verglichen wird — und warum die Dichte dafür verstellt wird
+
+Zwei Aufnahmen verschiedener Breite vergleichen die Breite, nicht die Fassung.
+Die Web-Bilder entstehen in einem 375-px-Viewport; das AVD ist 1080 px breit
+bei Dichte 420, also **411 dp**. `scripts/native-shots.mjs` stellt deshalb für
+den Lauf die Dichte auf **461** — 1080 / 461 × 160 = **374,8 dp** — und danach
+wieder zurück. Beide Seiten zeigen dann dieselbe Menge Oberfläche.
+
+Die Bilder bleiben verschieden groß (750 × 1720 im Web bei
+`deviceScaleFactor: 2`, 1080 × 2400 nativ). Das ist Absicht: Jede Seite entsteht
+in ihrer eigenen vollen Auflösung, skaliert wird beim Ansehen. 375 dp liegt
+unter der Hausschwelle von 420 — **beide Fassungen stehen damit im
+Kompaktraster**, und genau das soll der Vergleich zeigen.
+
+| Seite | Aufruf                                                                                       |
+| ----- | -------------------------------------------------------------------------------------------- |
+| Web   | `node scripts/shoot-mobile.mjs <ordner>` — 27 Aufnahmen, alle Strukturprüfungen bestanden    |
+| Nativ | `node scripts/native-shots.mjs android-native/docs/abnahme/p9-vergleich/nativ` — 6 Aufnahmen |
+
+Beide Sätze tragen **dieselben Dateinamen** (`0375-hell-leer.png` …). Wer die
+Ordner nebeneinanderlegt, hat Paare und keine Suchaufgabe. Der Inhalt (`DEMO_1`,
+`DEMO_12`) ist in beiden Skripten wörtlich derselbe; `native-shots.mjs` liest
+`shoot-mobile.mjs` als Text und meldet einen Befund, wenn die Listen
+auseinanderlaufen — eine Kopie, die sich selbst bewacht, statt eines Imports,
+den niemand mehr liest.
+
+### Der Befund: die native Bühne war 8 dp zu breit gepolstert
+
+Gemessen an den Kartenkanten und an der „Kopieren"-Taste (sie spannt in beiden
+Fassungen über die volle Kartenbreite), bei 374,8 dp logischer Breite:
+
+| Maß                         | Web      | Nativ **vorher** | Nativ **nachher** |
+| --------------------------- | -------- | ---------------- | ----------------- |
+| Seitenrand links/rechts     | 16,0 dp  | **23,9 dp**      | 16,0 dp           |
+| Kartenbreite                | 343,0 dp | **326,9 dp**     | 342,9 dp          |
+| Karteninnenmaß links/rechts | 17,5 dp  | **25,3 dp**      | 17,4 dp           |
+
+Die 1,5 dp über dem Nennwert beim Innenmaß sind die Rundung der Pille; sie
+stehen auf beiden Seiten und in beiden Fassungen gleich. Die verbleibenden
+0,1 dp bei der Kartenbreite sind die Rundung der Dichte (374,8 statt 375,0 dp).
+
+**Die Ursache** steht in `src/style.css` unter `@media (max-width: 34rem)`:
+Dort fallen **zwei** Tokens von `--gap-group` (24) auf `--sp-4` (16) —
+`--device-pad` und `--panel-pad`. Die native Fassung hatte diese Schwelle nicht,
+sie stand überall auf `Dimens.gapGroup`. Nach der Auftragsregel aus N6 ist eine
+sichtbare Abweichung ein Fehler und wird gefixt, nicht notiert.
+
+**Der Fix** sind zwei Erweiterungs-Eigenschaften in `ui/theme/Tokens.kt` —
+`Dimens.devicePad` und `Dimens.panelPad` —, beide mit der Schwelle **544 dp**
+(34 rem × 16) über `LocalConfiguration.current.screenWidthDp`; dasselbe Muster,
+mit dem `Strip.kt` seit V10 das Kompaktraster schaltet. Sie gelten an sieben
+Stellen: den zwei Bühnen (Start, Einstellungen), dem Kopf, dem Kartenpolster,
+`FoldPanelPadding`, den Listenzeilen und ihren Haarlinien. **Nicht** betroffen
+ist der senkrechte Rhythmus — `--gap-group` bleibt im Web auch mobil 24 — und
+nicht die Spaltenfuge im Kartenraster.
+
+Zwei getrennte Werte für dieselbe Zahl sind Absicht: Der eine misst den Platz
+**neben** der Karte, der andere den **darin**. Die Web-Fassung führt sie aus
+demselben Grund getrennt.
+
+**Der Preis, benannt:** `:app:lintRelease` steht danach bei **32 statt 30**
+bewerteten Warnungen, beide neu vom Typ `ConfigurationScreenWidthHeight` — Lint
+empfiehlt `LocalWindowInfo.current.containerSize` statt
+`LocalConfiguration.current.screenWidthDp`. Die zwei neuen Werte folgen trotzdem
+dem Muster, das `Strip.kt` seit V10 für das Kompaktraster benutzt: Zwei
+verschiedene Wege, die Fensterbreite zu erfragen, wären in derselben App
+schlimmer als eine Warnung. Ein Umstieg beträfe beide Stellen und ist ein
+eigener Posten. **Fehler bleiben bei 0.**
+
+### Sechs Messfallen, die dieser Lauf gekostet hat
+
+Der Bild-Harness ist sechsmal in eine Falle gelaufen, und alle haben dieselbe
+Form: **Eine Auskunft sagte „alles gut", und nur das Ergebnis war falsch.**
+
+**1. Zwei komplett schwarze Bilder lagen als Beweis im Ordner.** Richtiger
+Name, plausible Größe, kein Fehler im Protokoll. Aufgefallen ist es daran, dass
+zwei Dateien auf dasselbe Byte gleich groß waren (15.580).
+
+Die Ursache ist eine hängende `starting_reveal`-Leash des Splash-Fensters:
+Startet die App **einmal** mit FLAG_SECURE — und das ist die Voreinstellung
+nach `pm clear` —, liefert `screencap` danach weiter Schwarz, auch wenn die
+Flagge längst weg ist. Und zwar den **ganzen** Schirm, nicht nur das
+App-Fenster. Jede Einzelauskunft widersprach dem:
+
+| Gefragt                  | Antwort                            |
+| ------------------------ | ---------------------------------- |
+| `dumpsys window` → `fl=` | kein `SECURE`                      |
+| `dumpsys display`        | `mState=ON`                        |
+| `dumpsys power`          | `mWakefulness=Awake`               |
+| `uiautomator dump`       | vollständiger Baum, deutsche Texte |
+| `screencap`              | **100,00 % #000000**               |
+
+Der Lauf umgeht die Ursache, indem er `lock-settings.json` **vor dem ersten
+Start** schreibt (`run-as … mkdir -p files`, dann `push` + `run-as cp`) — dann
+gibt es nie eine FLAG_SECURE-Sitzung. Gemessen: erster Start nach `pm clear`
+**0,00 %** Schwarz. Die Probe bleibt trotzdem in `schuss()`: Jede Aufnahme wird
+auf ihren Schwarzanteil geprüft, über 99 % ist ein Befund. Eine Messung, die
+ihren eigenen Fehlschlag nicht sehen kann, ist keine.
+
+**2. `adb shell input text` bringt genau EIN Zeichen ins große Eingabefeld.**
+Nicht wegen Escapings — nachgemessen mit reinem ASCII: `ABCDEFGH` → Feldinhalt
+`A`. Der Grund liegt in der App: Beim ersten Zeichen kippt die Bühne von „leer"
+auf „Arbeit", das Feld wird neu aufgebaut und verliert den Fokus.
+
+Das Rezept dagegen: erst **ein** Zeichen, dann die Eingabe-Zone wieder
+aufklappen, das Feld über seine **Breite** wiederfinden (das erste Zeichen steht
+auch in der Fehlerkarte darüber — wer nur nach dem Text sucht, tippt daneben),
+Cursor ans Ende, Rest in einem Zug. So kommt auch
+`otpauth://totp/ACME%20Co:…?secret=…&issuer=ACME%20Co` **byte-identisch** an;
+die Karte „ACME Co" und die Zeile `SHA-256 · 8 Stellen · 60 s` bei Google sind
+der Beweis, dass auch die Query-Parameter durchkamen.
+
+**3. `mInputShown` lügt über eine übriggebliebene Tastatur.** Gemessen:
+`mInputShown=false`, `mImeWindowVis=0` — und auf dem Bild war die halbe untere
+Hälfte Tastatur. Eine Tastatur aus einer **früheren** Sitzung gilt dem System
+nicht als „gezeigt", und weder `pm clear` noch ein Neustart der App räumen sie
+weg; sie gehört der IME. Geprüft wird deshalb, was das Bild zeigen soll: Steht
+die untere Navigationsleiste im unteren Sechstel? Zusätzlich schaltet der Lauf
+die Bildschirmtastatur für seine Dauer ab (`ime disable`) und danach wieder ein
+— `input text` braucht sie nicht, es spritzt Tastenereignisse ein.
+
+**4. Eine Abbruchbedingung, die immer wahr ist.** Der Sucher für die
+Zusammenfassungszeile brach ab, wenn ein Wisch „nichts bewegt" hatte — gemessen
+an `dump()[0].y1`. Das ist der Wurzelknoten des Fensters, und der steht immer
+auf 0. Die Schleife brach nach drei Wischern ab und meldete die Zeile als
+„nicht gefunden", obwohl sie nur noch nicht im Bild war. Gemessen wird jetzt an
+einer Signatur aller Knotenpositionen.
+
+Dazu die Einsicht, die zweimal gekostet hat: **Die Zusammenfassungszeile ist die
+KOPFzeile der Eingabe-Zone und steht über dem Feld.** Nach dem Tippen steht die
+Seite am Feld — wer von dort nach unten sucht, läuft von ihr weg. Gesucht wird
+deshalb ab dem Seitenanfang abwärts, wo die Reihenfolge fest ist.
+
+**5. Ein Wisch, der auf der Tastatur beginnt, bewegt die Seite nicht.** Auch
+nach dem Signatur-Fix blieb die Zeile unauffindbar. Das Abnahmebild zeigte
+warum: Die Seite stand am Anfang (`nachOben` hatte also funktioniert), und die
+Tastatur bedeckte die untere Hälfte. Die Suchwischer liefen von y=1800 nach
+y=700 — **y=1800 liegt auf der Tastatur.** Eine Geste gehört dem, was unter
+ihrem STARTpunkt liegt; die Seite bewegte sich kein Pixel, und der Lauf meldete
+„nicht gefunden", ohne je gescrollt zu haben.
+
+Die Suchwischer beginnen jetzt bei y=1400, also über der Tastatur. `nachOben`
+war nie betroffen — es startet bei y=700 auf der Seite und darf ruhig auf der
+Tastatur enden. **Der Unterschied zwischen den beiden ist der Startpunkt, nicht
+die Richtung**, und genau das sieht man einer Wischanweisung nicht an.
+
+**6. `input text` verliert bei langen Zeilen Zeichen — still.** Der erste Lauf,
+in dem die Prüfung aus Falle 1 endlich griff, meldete **10 Konten / 2 Fehler**
+statt 11 / 1: Eine der langen `otpauth`-Zeilen (bis 114 Zeichen) war
+verstümmelt angekommen und wurde zur zweiten Fehlerzeile. Das Bild wäre
+trotzdem entstanden und hätte im Beweisordner gelegen — mit einem Konto weniger
+als sein Web-Gegenstück, und niemand hätte den Unterschied einem Paritätsfehler
+oder dem Werkzeug zuordnen können.
+
+Zwei Maßnahmen: Der Text geht jetzt in **Stücken zu 32 Zeichen** mit einer
+Atempause dazwischen hinein, und jede Füllung hat **bis zu drei Anläufe** —
+stimmt die Kontozahl nicht, wird die App geleert und neu getippt. Bleibt es nach
+drei Anläufen falsch, ist es ein Befund und kein Bild.
+
+Das ist die Regel hinter allen sechs: **Ein Werkzeug, das seinen eigenen
+Fehlschlag nicht bemerkt, produziert Beweise, die keine sind.**
+
+### Die Größe, ehrlich eingeordnet
+
+Gebaut ohne `CLOCKWORK_KEYSTORE`, also unsigniert; die Signatur ändert an diesen
+Zahlen nur wenige hundert Byte.
+
+| Artefakt                                       | Größe              |
+| ---------------------------------------------- | ------------------ |
+| Release-APK (nativ, R8 + Ressourcen-Shrinking) | **3.289.773 Byte** |
+| Release-AAB (nativ)                            | **5.403.370 Byte** |
+| APK der 1.x-WebView-Hülle                      | rund 1,24 MB       |
+
+Die native App ist also **gut zweieinhalbmal so groß** wie die Hülle, die sie
+ablöst. Das ist erwartbar und nicht schönzureden: Die 1.x-Fassung lieferte ein
+paar hundert Kilobyte Web-Bündel plus eine dünne Java-Brücke aus und benutzte
+die System-WebView als Laufzeit. Hier liegt die ganze Oberfläche als
+Compose-Code im Paket, dazu zwei variable Schriften (Inter 879.708 Byte, Chivo
+Mono 123.880 Byte — zusammen rund ein Megabyte, also fast ein Drittel des APKs)
+und die ZXing-Kernbibliothek.
+
+Das AAB ist größer als das APK, weil es alle ABIs und Dichten trägt; was ein
+Gerät herunterlädt, schneidet Play daraus zu. Die 35,9 MB
+`BUNDLE-METADATA/…/proguard.map` darin sind die R8-Zuordnungsdatei für lesbare
+Absturzberichte — Play entfernt sie beim Erzeugen der APKs.
+
+### Was das Paket sonst noch enthält (G6, nachgemessen)
+
+Im AAB liegen weiterhin `base/root/DebugProbesKt.bin` (**1.728 Byte**) und
+`base/root/kotlin-tooling-metadata.json` (**626 Byte**), dazu rund 54 kB
+`kotlin/*.kotlin_builtins`. G6 aus dem N17-Audit ist damit gemessen offen; der
+Fix ist ein `packaging { resources { excludes … } }`-Block und gehört in einen
+eigenen Lauf.

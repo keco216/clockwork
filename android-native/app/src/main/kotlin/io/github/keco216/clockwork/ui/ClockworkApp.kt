@@ -99,6 +99,7 @@ import kotlinx.coroutines.flow.collect
 import io.github.keco216.clockwork.ui.theme.Dimens
 import io.github.keco216.clockwork.ui.theme.LocalColors
 import io.github.keco216.clockwork.ui.theme.TextStyles
+import io.github.keco216.clockwork.ui.theme.devicePad
 
 /**
  * Die eine Buehne mit zwei Zustaenden — das Gegenstueck zu `data-stage` im Web.
@@ -732,8 +733,10 @@ private fun VacantStage(
             .padding(
                 top = topInset,
                 bottom = Dimens.gapGroup + bottomInset,
-                start = Dimens.gapGroup,
-                end = Dimens.gapGroup,
+                // Seitlich `devicePad` und nicht `gapGroup`: unter 34 rem sind
+                // das 16 dp statt 24, genau wie `--device-pad` im Web (P9).
+                start = Dimens.devicePad,
+                end = Dimens.devicePad,
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -933,8 +936,10 @@ private fun WorkingStage(
                 // letzte Karte vollstaendig ueber die schwebende Leiste hinaus
                 // scrollen, und darunter bleiben sichtbare 24 dp Luft.
                 bottom = Dimens.gapGroup + bottomInset,
-                start = Dimens.gapGroup,
-                end = Dimens.gapGroup,
+                // Seitlich `devicePad` und nicht `gapGroup` — siehe die andere
+                // Buehne oben und den Kommentar an Dimens.devicePad (P9).
+                start = Dimens.devicePad,
+                end = Dimens.devicePad,
             ),
         verticalArrangement = Arrangement.spacedBy(Dimens.gapGroup),
     ) {

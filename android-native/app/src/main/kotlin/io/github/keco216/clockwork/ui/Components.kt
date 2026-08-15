@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -69,6 +70,7 @@ import io.github.keco216.clockwork.ui.theme.Dimens
 import io.github.keco216.clockwork.ui.theme.LocalColors
 import io.github.keco216.clockwork.ui.theme.Motion
 import io.github.keco216.clockwork.ui.theme.TextStyles
+import io.github.keco216.clockwork.ui.theme.panelPad
 import kotlinx.coroutines.delay
 
 /**
@@ -387,13 +389,15 @@ fun Chip(label: String, modifier: Modifier = Modifier, accent: Boolean = false) 
  * beim Gruppenmass, damit die Zeile mit dem Inhalt der Nachbarkarten
  * fluchtet — ein Kasten, der schmaler wird, ruecke sonst als einziger ein.
  */
-val FoldPanelPadding: PaddingValues =
-    PaddingValues(horizontal = Dimens.gapGroup, vertical = Dimens.sp2)
+val FoldPanelPadding: PaddingValues
+    @Composable
+    @ReadOnlyComposable
+    get() = PaddingValues(horizontal = Dimens.panelPad, vertical = Dimens.sp2)
 
 @Composable
 fun Panel(
     modifier: Modifier = Modifier,
-    padding: PaddingValues = PaddingValues(Dimens.gapGroup),
+    padding: PaddingValues = PaddingValues(Dimens.panelPad),
     content: @Composable () -> Unit,
 ) {
     val colors = LocalColors.current
@@ -649,7 +653,9 @@ fun ListRow(
                 },
             )
             .defaultMinSize(minHeight = Dimens.touchMin)
-            .padding(horizontal = Dimens.gapGroup, vertical = Dimens.sp2),
+            // Waagerecht das KARTENINNENMASS, damit der Zeilentext mit dem
+            // Inhalt der Nachbarkarten fluchtet (P9 — es faellt mobil auf 16).
+            .padding(horizontal = Dimens.panelPad, vertical = Dimens.sp2),
         horizontalArrangement = Arrangement.spacedBy(Dimens.gapStack),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -699,7 +705,8 @@ fun RowDivider(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimens.gapGroup)
+            // Dieselbe Einrueckung wie die Zeilen darueber und darunter (P9).
+            .padding(horizontal = Dimens.panelPad)
             .height(1.dp)
             .background(colors.rule),
     )

@@ -10,3 +10,9 @@ local.properties
 .idea/
 *.iml
 captures/
+
+# Der Diff-Export der Endabnahme (N4). Er entsteht mit
+#   git diff main...kotlin-android > android-native/docs/abnahme/diff-kotlin-android.txt
+# und ist ein PRUEFARTEFAKT, kein Repo-Inhalt: Er waere eine zweite Kopie des
+# Zweigs, die beim naechsten Commit still falsch wird.
+docs/abnahme/diff-kotlin-android.txt
