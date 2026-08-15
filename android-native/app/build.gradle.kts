@@ -65,10 +65,22 @@ android {
         targetSdk = 36
 
         /* Dieselbe Zaehlweise wie in 1.x: Major*10000 + Minor*100 + Patch.
-           2.0.0 ist damit 20000 und liegt ueber jedem 1.x-Stand — die native
+           2.0.1 ist damit 20001 und liegt ueber jedem 1.x-Stand — die native
            Fassung kann die WebView-Fassung also spaeter als Update abloesen,
-           was P8 (Tresor-Uebernahme) ueberhaupt erst moeglich macht. */
-        versionCode = 20000
+           was P8 (Tresor-Uebernahme) ueberhaupt erst moeglich macht.
+
+           ── Warum nicht mehr 20000 (D1, 15.08.2026) ─────────────────────
+           Der 2.0.0-Bau ist in den geschlossenen Test gegangen und trug dort
+           einen bekannten Defekt: Play teilte das Bundle nach Sprachen auf,
+           35 der 37 Sprachen kamen auf dem Geraet nie an (der bundle-Block
+           weiter unten raeumt das weg). Play nimmt eine Nummer kein zweites
+           Mal an — 20000 steht damit dauerhaft fuer den defekten Stand.
+
+           Oeffentlich hat 2.0.0 nie existiert, nur zwei Tester im
+           geschlossenen Test. Getrennte Nummern je Kanal waeren auf Dauer
+           teurer als dieser eine Ziffernwechsel, deshalb geht 2.0.1 auf
+           ALLE drei Kanaele: Play, F-Droid, GitHub. */
+        versionCode = 20001
 
         /* Bis zum 15.08.2026 stand hier `if (storeShot) "2.0.0" else "2.0.0-dev"`.
            Das `-dev` war die Werkstattmarkierung des Zweigs, solange er nichts
@@ -79,8 +91,11 @@ android {
            steht, ist der Auslieferungsstand. `-dev` ist deshalb weg (Punkt 2
            der Release-Checkliste in CLAUDE.md). Der Debug-Bau bleibt
            unterscheidbar — er traegt weiter `.dev` an der applicationId und
-           `-debug` am Versionsnamen. */
-        versionName = "2.0.0"
+           `-debug` am Versionsnamen.
+
+           Seit D1 steht hier 2.0.1 — die Begruendung fuer den Ziffernwechsel
+           haengt am versionCode darueber. */
+        versionName = "2.0.1"
     }
 
     signingConfigs {
@@ -122,6 +137,47 @@ android {
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false
+    }
+
+    /* ── Sprach-Splits AUS (D1, 15.08.2026) ────────────────────────────────
+       Play zerlegt ein Bundle per Voreinstellung nach ABI, Bildschirmdichte
+       UND Sprache und installiert nur die Teile, die zum Geraet passen. Fuer
+       eine App mit EIGENER Sprachwahl ueber 37 Sprachen ist das der falsche
+       Zuschnitt: Wer auf einem deutschen Telefon Franzoesisch waehlt, findet
+       die franzoesischen Ressourcen nicht vor — sie sind nie installiert
+       worden —, und die Auswahl faellt still auf die Basissprache zurueck.
+       Dasselbe gilt fuer die Sprachwahl der Plattform ab API 33, die an
+       `localeConfig` haengt: Der Waehler zeigt alle 37 an, geliefert sind
+       zwei.
+
+       So ist es im geschlossenen Test aufgefallen: Es gingen nur Deutsch
+       (die Geraetesprache) und Englisch (die Basis). Der Fehler sass NICHT
+       in der App, sondern im Auslieferungsweg, und er betrifft
+       ausschliesslich Play: F-Droid und der GitHub-Kanal liefern ein
+       universelles APK, in dem alle 37 Sprachen ohnehin stecken. Deshalb hat
+       ihn keiner der Laeufe P0-P9 gesehen — sie haben alle gegen APKs
+       gemessen, nie gegen ein installiertes Bundle.
+
+       Gemessen am `BundleConfig.pb` des 2.0.0-Bundles: `splits_config` war
+       LEER, es galten also bundletools Voreinstellungen, und die teilen auf.
+       Der Preis dieser vier Zeilen ist ebenfalls gemessen (bundletool 1.18.3,
+       `get-size total` gegen ein deutsches Geraet, x86_64, Dichte 420,
+       API 36): der Download steigt von 2.182.124 auf 2.358.940 Byte, also um
+       176.816 Byte oder 8,1 %. Der Satz Split-APKs faellt dabei von 87 auf 13
+       Teile, die 74 Sprach-Splits (zusammen 1.553.412 Byte) verschwinden in
+       `base-master`. Die theoretische Obergrenze waere die ganze
+       Ressourcentabelle (765.840 Byte) gewesen — so teuer ist es nicht, weil
+       Basis und Geraetesprache vorher schon drin waren und der Rest gut
+       packt.
+
+       Der andere Weg — Sprachen bei Bedarf ueber `SplitInstallManager`
+       nachladen — ist geprueft und verworfen: Er braucht Play Core, also
+       eine proprietaere Abhaengigkeit, die den F-Droid-Bau und die
+       Netz-Zusage bricht. Ausfuehrlich in docs/geprueft-und-verworfen.md. */
+    bundle {
+        language {
+            enableSplit = false
+        }
     }
 
     buildFeatures {

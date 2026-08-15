@@ -47,6 +47,38 @@ Es sieht Pixel und liefert Text; die OTP-Rechnung bleibt vollständig die eigene
 (harte Regel 1). Das native Gegenstück zu jsQR in der Web-Fassung.
 _Quelle: `app/build.gradle.kts`, Abhängigkeitsblock „Kamera und QR (P6)"._
 
+## `SplitInstallManager` (Play Feature Delivery) für die Sprachen
+
+**Geprüft:** Der von Google vorgesehene Weg, wenn ein Bundle nach Sprachen
+aufgeteilt ist und die App trotzdem eine eigene Sprachwahl anbietet. Die App
+fordert die fehlende Sprache zur Laufzeit nach (`SplitInstallManager
+.deferredLanguageInstall` bzw. `startInstall`), Play lädt sie herunter.
+
+**Verworfen** aus drei Gründen, von denen jeder allein genügt:
+
+1. Er braucht **Play Core** (`com.google.android.play:feature-delivery`) — eine
+   proprietäre Bibliothek. Damit wäre der F-Droid-Bau erledigt: Deren Buildserver
+   nimmt keine unfreien Abhängigkeiten, und die App liegt seit dem 12.08.2026 im
+   Katalog.
+2. Er bricht die **Netz-Zusage**. „Zur Laufzeit keine fremde Netzwerkanfrage" ist
+   harte Regel 4 und steht in beiden READMEs; eine Sprache nachzuladen ist
+   genau so eine Anfrage. Dass sie an Google ginge und nicht an einen
+   beliebigen Dritten, ändert daran nichts — es ist dieselbe Klasse stiller
+   Abhängigkeit, die N17 bei der Emoji-Schrift gefunden hat.
+3. Er verlegt einen **Fehlerfall in die Sprachwahl**: ohne Netz keine Sprache.
+   Eine Offline-App, deren Bedienoberfläche erst online vollständig wird, sagt
+   etwas anderes zu, als auf der Verpackung steht.
+
+**Stattdessen** die Aufteilung gar nicht erst zulassen:
+`bundle { language { enableSplit = false } }`. Jede Installation trägt alle 37
+Sprachen, die Sprachwahl greift ohne Netz, und alle drei Kanäle verhalten sich
+gleich. Der Preis ist gemessen und steht an der Fundstelle.
+
+**Die Bedingung, unter der es kippt:** Wenn der Sprachanteil so wüchse, dass er
+den Download spürbar belastet — bei 37 Sprachen tut er das nicht. Play Core
+käme auch dann nicht in Frage; der Weg wäre dann eher, den Katalog zu teilen.
+_Quelle: `app/build.gradle.kts`, Block „Sprach-Splits AUS (D1)"._
+
 ## `EncryptedSharedPreferences` für den Tresor
 
 **Geprüft:** Die naheliegende Wahl für „verschlüsselt speichern" unter Android.

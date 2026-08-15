@@ -1,5 +1,0 @@
-Clockwork 2.0 is a native Android app, rewritten in Kotlin and Jetpack Compose. No browser engine any more: it starts faster, scrolls natively and follows the system for language, dark mode and font size.
-
-• An existing vault is carried over on update — nothing to export, nothing to type again.
-• Unlock with your fingerprint. The passphrase stays the only way back in.
-• Still no INTERNET permission, and now nothing at all is fetched at startup.
