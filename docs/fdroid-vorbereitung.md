@@ -11,13 +11,33 @@ Verbindung, kein Update-Check, kein Tracker**. Die zentrale Zusage dieses
 Projekts ist damit von dritter Seite nachgemessen worden und nicht nur von
 uns behauptet.
 
-**Was ab jetzt gilt:** F-Droid baut und signiert selbst; die App erscheint
-mit dem nächsten Build- und Signierzyklus. `AutoUpdateMode: Version` +
-`UpdateCheckMode: Tags ^v[0-9.]+$` sind aktiv — **ein neues Tag `^v[0-9.]+$`
-zieht F-Droid von selbst**, ein MR ist dafür nicht mehr nötig. Im Repo
-gebraucht werden nur `versionCode`/`versionName` in
-`android/app/build.gradle` und ein `fastlane/.../changelogs/<code>.txt` in
-beiden Sprachen.
+**Was ab jetzt gilt:** F-Droid baut und signiert **selbst**. Die
+Metadatendatei führt weder `Binaries` noch `AllowedAPKSigningKeys` — das
+Katalog-APK trägt also F-Droids Schlüssel, nicht Kevins, und die beiden
+Kanäle sind nicht gegenseitig updatefähig (siehe Abschnitt 3, warum der
+Versuch gescheitert ist).
+
+`AutoUpdateMode: Version` + `UpdateCheckMode: Tags ^v[0-9.]+$` sind aktiv.
+**Für 1.x zieht ein neues Tag `^v[0-9.]+$` von selbst**, ohne MR; gebraucht
+werden dafür nur `versionCode`/`versionName` in `android/app/build.gradle`
+und ein `fastlane/.../changelogs/<code>.txt` in beiden Sprachen.
+
+> **Für 2.x gilt das NICHT — gemessen am 15.08.2026 (D1/D3).**
+> `AutoUpdateMode: Version` klont den letzten `Builds`-Eintrag; der zeigt auf
+> `subdir: android/app` und fährt `prebuild: npm run android`, also die
+> **WebView-Fassung**. Die native App liegt in `android-native/app`. Ein Tag
+> allein baut damit entweder das Falsche oder gar nichts —
+> `android/app/build.gradle` steht unverändert auf 1.5.4/10504, dort fände der
+> Tag-Checker nicht einmal eine neue Version.
+>
+> **Für 2.x braucht es einen Metadaten-MR:** `subdir` auf
+> `android-native/app`, die npm-Kette (`sudo`, `init`, `prebuild`) raus,
+> `scandelete: node_modules` raus (sonst „Unused scandelete path").
+>
+> Die Werkzeugkette des Buildservers ist geprüft und trägt: Debian trixie,
+> OpenJDK 21, Gradle wird aus der `distributionUrl` geholt und gegen das
+> Transparenz-Log geprüft — **9.5.1 steht dort**. Einzelheiten im
+> D3-Abschnitt von `android-native/docs/abnahme/README.de.md`.
 
 Dieses Dokument hält die Prüfung gegen die Aufnahmeregeln fest,
 beschreibt die Bausteine (fastlane-Metadaten, Build-Härtung), enthält die

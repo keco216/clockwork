@@ -25,7 +25,7 @@ mitgebündelt und ohne eine einzige Netzwerkanfrage — auch die
 ```bash
 npm install      # einmalig
 npm run dev      # Dev-Server, danach http://localhost:5173 öffnen
-npm test         # 548 Tests
+npm test         # 594 Tests
 npm run build    # dist/ (PWA) + dist/clockwork.html (eine Datei)
 ```
 
@@ -1340,7 +1340,11 @@ berechnet wird und der dadurch von selbst auf die Sekundengrenze einrastet.
 npm test
 ```
 
-548 Tests. Die wichtigsten stammen unverändert aus den Standards:
+**594 Tests** in der Web-Fassung, dazu **231** in der nativen App
+(`cd android-native; gradlew.bat testDebugUnitTest`). Beide Zahlen sind am
+15.08.2026 gemessen, nicht fortgeschrieben.
+
+Die wichtigsten stammen unverändert aus den Standards:
 
 | Datei                      | Tests | Inhalt                                                                                |
 | -------------------------- | ----- | ------------------------------------------------------------------------------------- |
@@ -1802,6 +1806,18 @@ liegt) und `AllowedAPKSigningKeys` (welcher Schlüssel gelten darf).
 **Erreicht ist das noch nicht** — und der Weg dorthin hat vor allem eine Lehre
 über das Messen selbst hinterlassen.
 
+> **Richtigstellung zur Release-Notiz von v1.5.3 (15.08.2026).** Dort steht
+> öffentlich, F-Droid liefere bei Byte-Gleichheit das eigene, hier signierte
+> Paket aus. Das beschreibt die Möglichkeit, nicht den Zustand: Die
+> Metadatendatei im Katalog führt **weder `Binaries` noch
+> `AllowedAPKSigningKeys`** — nachgelesen am 15.08.2026 in
+> `metadata/io.github.keco216.clockwork.yml`. Ohne diese zwei Felder kann
+> F-Droid gar nichts übernehmen; das Katalog-APK trägt F-Droids Schlüssel,
+> und zwar seit der ersten Aufnahme. Der Satz war zu keinem Zeitpunkt wahr,
+> er war eine Absicht. **Die Kanal-Regel weiter unten gilt unverändert:** Wer
+> die Quelle wechselt, muss deinstallieren und verliert einen gespeicherten
+> Tresor.
+
 Der erste Anlauf (v1.5.3) verglich F-Droids Bau-Ergebnis mit dem eigenen und
 meldete: von 409 Einträgen wichen zwei ab, `classes.dex` sei bereits identisch.
 **Das war falsch.** Der Vergleich las je Eintrag Name und Länge, aber die
@@ -1867,6 +1883,67 @@ per Fingerabdruck aufsperren. Das hieße aber fremder nativer Krypto-Code
 neben `crypto.subtle` und ein zweiter Tresor-Pfad, der nur auf einer
 Plattform existiert. Der Web-Tresor funktioniert in der App unverändert —
 `localStorage` liegt im privaten App-Verzeichnis, und Auto-Backup ist aus.
+
+## Die native App (Kotlin, ab v2.0)
+
+Seit v2.0 löst eine **native App in Kotlin und Jetpack Compose** die
+WebView-Hülle ab. Sie liegt in `android-native/`, trägt dieselbe
+`applicationId` und damit dieselbe Katalog-Position — ein Update von 1.x
+landet dort.
+
+**Warum überhaupt.** Die Capacitor-Hülle war ehrlich, aber sie hatte eine
+Browser-Engine im Betrieb. Nativ fallen Start-Overhead, WebView-Untergrenze
+und die halbe Zusagen-Prosa („funktioniert auch unter `file://`") weg — und
+die Oberfläche folgt dem System bei Sprache, Dunkelmodus und Schriftskala,
+statt es nachzubauen.
+
+**Was gleich geblieben ist.** Die Rechnung. Base32, HOTP, TOTP, die
+otpauth-URI und der Protobuf-Leser des Google-Exports sind auch nativ von Hand
+geschrieben, gegen dieselben RFC-Testvektoren — geliehen ist nur `javax.crypto`
+statt `crypto.subtle`. Der Tresor öffnet denselben Umschlag mit derselben
+Passphrase: AES-256-GCM, Schlüssel aus PBKDF2-SHA-256 mit 600.000 Iterationen.
+`src/lib/` ist dabei **byte-identisch geblieben**; die native Fassung ist eine
+zweite Umsetzung, kein Umbau der ersten.
+
+**Was dazugekommen ist.**
+
+- **Biometrie.** Der Umschlag-Schlüssel liegt im Android-Keystore mit
+  `setUserAuthenticationRequired`; ein neuer Fingerabdruck macht ihn ungültig.
+  Die Passphrase bleibt der einzige Weg zurück.
+- **`FLAG_SECURE`** ab dem ersten Bild, nicht erst nach dem Lesen der
+  Einstellungen.
+- **Kein `INTERNET`** — und seit dem Audit auch keine Emoji-Schrift mehr über
+  Play Services. Der Preis: sehr neue Emoji erscheinen als Kästchen.
+- **Alle 37 Sprachen**, umschaltbar in der App über die Sprach-API der
+  Plattform.
+
+**Was es kostet, ehrlich benannt.**
+
+|                 |                                                                                                                |
+| --------------- | -------------------------------------------------------------------------------------------------------------- |
+| Mindestversion  | **Android 8.0** (API 26) statt 7.0 — wer darunter ist, bleibt auf 1.5.4                                        |
+| Paketgröße      | Release-APK **3.289.773 Byte** gegen rund 1,24 MB der Hülle                                                    |
+| davon Schriften | rund ein Drittel (Inter und Chivo Mono als variable Schnitte)                                                  |
+| Berechtigungen  | `CAMERA`, `USE_BIOMETRIC`, `USE_FINGERPRINT` (bis API 27) und eine von androidx erzeugte Signatur-Berechtigung |
+
+**Der eine WebView-Pfad, der geblieben ist.** Beim ersten Start nach einem
+Update von 1.x liest die App den Tresor einmalig aus dem `localStorage` der
+alten Hülle und schreibt ihn in ihr eigenes Format. Danach nie wieder. Die
+Zusage „keine Browser-Engine" gilt dem **Betrieb**, nicht dieser einen
+Übernahme — und sie steht hier, statt verschwiegen zu werden.
+
+**Kein Material.** Die Oberfläche ist Compose **Foundation**; eine
+Dauerprüfung (`gradlew checkNoMaterial`) löst den Release-Klassenpfad auf und
+fällt aus, sobald ein `androidx.compose.material*` darin auftaucht. Farben,
+Radien, Höhen und Kurven kommen aus derselben Token-Quelle wie im Web, gegen
+`src/styles/tokens.css` geprüft (`scripts/native-theme-check.mjs`, 92 Werte).
+
+```bash
+cd android-native
+gradlew.bat testDebugUnitTest   # 231 Tests
+gradlew.bat :app:lintRelease    # 0 Fehler
+gradlew.bat checkNoMaterial
+```
 
 ## Bewusste Abweichungen
 

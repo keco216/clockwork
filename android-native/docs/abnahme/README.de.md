@@ -2755,8 +2755,13 @@ Zahlen nur wenige hundert Byte.
 | Artefakt                                       | Größe              |
 | ---------------------------------------------- | ------------------ |
 | Release-APK (nativ, R8 + Ressourcen-Shrinking) | **3.289.773 Byte** |
-| Release-AAB (nativ)                            | **5.403.370 Byte** |
+| Release-AAB (nativ, 2.0.0, unsigniert)         | **5.403.370 Byte** |
 | APK der 1.x-WebView-Hülle                      | rund 1,24 MB       |
+
+> **Nachtrag D7:** Der AAB steht inzwischen bei **5.432.694 Byte** — 2.0.1,
+> signiert, mit abgeschalteten Sprach-Splits. Die 5.403.370 oben bleiben als
+> P9-Messwert stehen; sie waren der unsignierte 2.0.0-Stand. Wer zwei Zahlen
+> vergleicht, muss wissen, welche Fassung jede gemessen hat.
 
 Die native App ist also **gut zweieinhalbmal so groß** wie die Hülle, die sie
 ablöst. Das ist erwartbar und nicht schönzureden: Die 1.x-Fassung lieferte ein
@@ -2861,3 +2866,319 @@ Warnungen, `checkNoMaterial` grün.
 Testschlüssel-Knopf, und der läuft nicht durch `onFieldChange` — `getippt`
 bleibt falsch, die Schublade zu. Nachgemessen an den Bildern, die vor dem Fix
 entstanden sind.
+
+---
+
+## D1 — Play lieferte 35 von 37 Sprachen gar nicht erst aus
+
+Kevins Befund vom 15.08.2026, aus dem geschlossenen Test: „leider werden nicht
+alle sprachen geändert sobald ich eine auswähle nur deutsch und englisch geht".
+
+### Der Fehler saß nicht in der App, sondern im Auslieferungsweg
+
+Play zerlegt ein App Bundle per Voreinstellung nach ABI, Bildschirmdichte
+**und Sprache** und installiert nur die Teile, die zum Gerät passen. Kevins S24
+steht auf Deutsch — also kamen der Basis-Teil (Englisch) und der deutsche
+Sprach-Teil an, sonst nichts. Wer danach in der App Französisch wählt, findet
+keine französischen Ressourcen vor; sie sind nie installiert worden.
+
+**Gemessen am `BundleConfig.pb` des 2.0.0-Bundles:** `optimizations.splits_config`
+war **leer**, es galten also bundletools Voreinstellungen. Damit die Meldung
+„leer" nicht der leere Vergleich aus der Fallensammlung ist, wurde ein
+künstliches `BundleConfig` mit `SplitDimension(LANGUAGE, negate=true)` gebaut
+und durch denselben Leser geschickt — er zeigt sie an. Der Leser kann einen
+Unterschied sehen; im 2.0.0-Bundle war keiner.
+
+**Warum keiner der Läufe P0–P9 das gefunden hat:** Sie haben alle gegen **APKs**
+gemessen. Ein universelles APK trägt alle 37 Sprachen; die Aufteilung entsteht
+erst im Bundle. F-Droid und der GitHub-Kanal sind deshalb unberührt — der
+Fehler ist reines Play.
+
+### Der Beweis am Gerät: dasselbe AVD, zwei Bundles
+
+AVD `clockwork-test`, frische Nutzerdaten (`-wipe-data`), Gerätesprache
+**Deutsch** (`am get-config` → `de-rDE`), API 36, Dichte 420, x86_64.
+Werkzeug: bundletool 1.18.3, `install-apks`, danach `cmd locale
+set-app-locales` je Sprache und `uiautomator dump`.
+
+Schon `pm path` zeigt den Unterschied:
+
+|                        | installierte Teile                                           |
+| ---------------------- | ------------------------------------------------------------ |
+| **2.0.0** (Splits an)  | `base.apk` · **`split_config.de.apk`** · `x86_64` · `xxhdpi` |
+| **2.0.1** (Splits aus) | `base.apk` · `x86_64` · `xxhdpi`                             |
+
+Und auf dem Schirm, gemessen am Leerzustandstext `vacant_text`:
+
+**Gemessen wurden nicht Stichproben, sondern alle 37.** Der erste Durchgang
+nahm sieben Sprachen; auf Kevins Rückfrage („bei allen Sprachen oder nur ein
+Teil?") ist er auf den vollen Katalog erweitert worden — beide Bundles, jede
+Sprache einzeln gesetzt, gestartet, `uiautomator dump`, Vergleich gegen den
+Soll-Text aus der jeweiligen `strings.xml`.
+
+|                            | 2.0.0, Splits an          | 2.0.1, Splits aus |
+| -------------------------- | ------------------------- | ----------------- |
+| zeigen ihre eigene Fassung | **2 von 37** (`de`, `en`) | **37 von 37**     |
+| zeigen stattdessen Deutsch | **35**                    | 0                 |
+
+Die 35 falschen: `ar bg cs da el es et fi fr he hi hr hu id it ja ko lt lv nb
+nl pl pt-BR pt-PT ro ru sk sl sv th tr uk vi zh-Hans zh-Hant`.
+
+Der Durchgang über 2.0.0 ist zugleich die **Gegenprobe auf die Messung**: Ein
+Prüfverfahren, das nur „37 von 37 richtig" melden kann, misst nichts. Dieses
+hier meldet auf demselben Gerät und mit demselben Skript 2 von 37, sobald das
+alte Bundle installiert ist.
+
+Vorbedingung, vorher geprüft: Die 37 Soll-Texte sind **paarweise verschieden**
+— kein Treffer ist mehrdeutig, auch `pt-BR` gegen `pt-PT` und `zh-Hans` gegen
+`zh-Hant` nicht.
+
+Der Rückfall geht auf die **Gerätesprache**, nicht auf Englisch — die
+falschen Dumps sind größengleich mit dem deutschen (14.473 B). Kevins
+„nur deutsch und englisch geht" ist damit genau erklärt: Deutsch, weil es die
+Gerätesprache ist, Englisch, weil es die Basis ist.
+
+### Der Preis, gemessen statt geschätzt
+
+bundletool `get-size total` gegen ein deutsches Gerät (x86_64, 420 dpi, API 36):
+
+|                          | vorher                | nachher     | Differenz               |
+| ------------------------ | --------------------- | ----------- | ----------------------- |
+| Download deutsches Gerät | 2.182.124 B           | 2.358.940 B | **+176.816 B (+8,1 %)** |
+| Teile im Split-Satz      | 87                    | 13          | −74                     |
+| davon Sprach-Splits      | 74 (zus. 1.553.412 B) | **0**       | —                       |
+| `base-master.apk`        | 2.260.449 B           | 2.887.137 B | +626.688 B              |
+| AAB                      | 5.432.680 B           | 5.432.694 B | +14 B                   |
+
+Die theoretische Obergrenze wäre die ganze Ressourcentabelle gewesen
+(765.840 B). So teuer ist es nicht: Basis und Gerätesprache waren vorher schon
+drin, und der Rest packt gut.
+
+### Vier Messfallen, die dieser Lauf gekostet hat
+
+- **`avdmanager list avd` meldet LEER, wenn `JAVA_HOME` fehlt** — und zwar ohne
+  Fehler in der gefilterten Ausgabe. Das AVD war die ganze Zeit da. Wer eine
+  Liste filtert, prüft zuerst, ob der Aufruf überhaupt gelaufen ist.
+- **`setprop ctl.restart zygote` hinterlässt ein halb gebautes Framework.** Der
+  Benachrichtigungsschleier klemmte im Fokus, und kein `am start` kam mehr
+  durch. Ein `adb reboot` hat es nicht geheilt. Wer die Gerätesprache stellt,
+  nimmt `-prop persist.sys.locale=…` beim Emulatorstart oder einen echten
+  Neustart — nicht den Zygote-Trick.
+- **`uiautomator dump /sdcard/…` schreibt unter `adb root` ins Leere.** Die
+  Meldung „UI hierchary dumped to" kommt trotzdem. Ziel ist
+  `/data/local/tmp/`.
+- **Der entscheidende Gegenbeweis kam von der DEBUG-App.** Als auch die normal
+  installierte `.dev`-Fassung nicht mehr startete, war klar: Es liegt am AVD,
+  nicht am Split-Install. Ohne diese Gegenprobe wäre der Fix zu Unrecht
+  verdächtigt worden. Ursache war ein zerschossener Nutzerdatenstand
+  (`ceDataInode=0` bei beiden Paketen); `-wipe-data` hat ihn geräumt.
+
+### Ketten
+
+231 native Tests grün, `lintRelease` unverändert **0 Fehler, 32 Warnungen,
+2 Hinweise**, `checkNoMaterial` grün. Am Web-Baum wurde nichts geändert.
+
+---
+
+## D1b — die Versionsnummer kommt aus einer Quelle
+
+Der Sprung von 2.0.0 auf 2.0.1 hat fünf Stellen aufgedeckt, an denen die Zahl
+hart im Code stand. Kevins Entscheidung: nicht die Zahlen tauschen, sondern die
+Quelle festlegen — „von Hand nachziehen heißt, es bei 2.0.2 wieder zu tun".
+
+### Die Quelle
+
+`scripts/version.mjs` liest `package.json` und rechnet den versionCode nach dem
+Hausschema `Major·10000 + Minor·100 + Patch`. Bauart wie `scripts/csp.ts` und
+`scripts/site.ts` — eine Datei, ein Gegenstand.
+
+**Warum `.mjs` und nicht `.ts`:** `store-listing.mjs` und `store-shots.mjs`
+laufen mit blankem `node`, und das lädt kein TypeScript. Die drei Tests, die
+dieselbe Datei importieren, brauchten dafür `allowJs` in der `tsconfig.json`
+(`checkJs` bleibt aus — die Datei wird für die Typherleitung gelesen, nicht
+geprüft). Die Alternative wäre eine `.d.mts` daneben gewesen: wieder eine
+zweite Stelle, die mitgepflegt werden will, also genau das, was dieser Posten
+abschafft.
+
+**Warum `package.json` und nicht ein Bauplan:** Es gibt zwei Android-Bäume, die
+dasselbe Paket ausliefern. Einer von beiden müsste sonst die Wahrheit halten,
+der andere wäre still im Unrecht.
+
+**Warum ein Test und kein Generator:** Ein Skript, das `build.gradle.kts`
+umschreibt, wäre die nächste stille Quelle — es liefe beim Bauen, und niemand
+sähe die Änderung im Diff. Die Zahl steht von Hand im Bauplan, und
+`native-version.test.ts` hält sie dagegen.
+
+### Was sich geändert hat
+
+| Stelle                     | vorher                              | nachher                                |
+| -------------------------- | ----------------------------------- | -------------------------------------- |
+| `store-texts.mjs`          | `export const VERSION_CODE = 20000` | keine eigene Konstante                 |
+| `store-listing.mjs`        | Import aus `store-texts.mjs`        | Import aus `version.mjs`               |
+| `store-listing.test.ts`    | `'changelogs/20000.txt'`            | `` `changelogs/${VERSION_CODE}.txt` `` |
+| `store-shots.mjs`          | Abbruch gegen `'2.0.0'`             | Abbruch gegen `VERSION`                |
+| `release-metadata.test.ts` | `versionName === paket.version`     | `android/` als eingefrorener 1.x-Baum  |
+| `package.json`             | `1.5.4`                             | `2.0.1`                                |
+
+Der Abbruch in `store-shots.mjs` **bleibt** — er ist der Schutz davor, dass ein
+Store-Bild die Werkstattmarkierung zeigt. Nur seine Zahl ist weg: Ein Abbruch
+gegen eine feste Nummer wird beim nächsten Sprung selbst zur Fehlerquelle, und
+wer ihn dann schnell wegdreht, verliert den Schutz ganz.
+
+### Die neue Dauerprüfung war absichtlich einmal rot
+
+`versionCode` im Bauplan versuchsweise auf 20002 gesetzt:
+
+```
+× versionCode folgt dem Hausschema Major·10000 + Minor·100 + Patch
+AssertionError: expected 20002 to be 20001
+      Tests  1 failed | 3 passed (4)
+```
+
+Danach zurückgestellt, 4 von 4 grün. Ein Test, der nur grün werden kann, prüft
+nichts — dieselbe Regel wie beim leeren APK-Vergleich aus der Fallensammlung.
+
+Die Prüfung hat vier Zusicherungen, und die erste prüft die **Messung**: dass
+beide Angaben überhaupt aus `build.gradle.kts` gelesen wurden. Ein Muster, das
+nichts trifft, ergäbe `undefined` bzw. `NaN`, und der Vergleich schlüge zwar
+fehl, sagte aber das Falsche.
+
+### `release-metadata.test.ts` musste entkoppelt werden
+
+Dort stand `expect(versionName).toBe(paket.version)` gegen
+`android/app/build.gradle`. Das war richtig, solange `android/` die
+ausgelieferte App war — seit dem Kotlin-Zweig ist es die eingefrorene
+1.x-WebView-Hülle, absichtlich auf 1.5.4/10504 stehengelassen (D1). Mit
+`package.json` auf 2.0.1 wäre der Test zu Recht rot geworden.
+
+Er prüft jetzt, dass dieser Baum **eingefroren bleibt** (1.5.4 / 10504) und in
+sich stimmt; die Formel rechnet er mit derselben Funktion aus `version.mjs`.
+Die Kopplung an die ausgelieferte App liegt in `native-version.test.ts`.
+
+### Die vier alten Changelogs sind weg
+
+`changelogs/20000.txt` in beiden Bäumen und beiden Sprachen, `git rm`.
+Begründung: 20000 ist nie öffentlich erschienen — F-Droid hatte nie etwas
+anderes als 10504, und Play-Release-Notizen kommen aus der Konsole. Die
+Historie hält git. `20001.txt` ist aus `store-listing.mjs` entstanden, nicht
+von Hand: en-US 448 von 500 Zeichen, de-DE 490 von 500.
+
+### Ketten
+
+|                       |                                                                 |
+| --------------------- | --------------------------------------------------------------- |
+| `tsc --noEmit`        | grün                                                            |
+| `vitest run`          | **594 Tests**, 21 Dateien, 0 Fehler (vorher 590)                |
+| ESLint                | 0                                                               |
+| Prettier              | sauber                                                          |
+| `npm run build`       | grün                                                            |
+| `dist/clockwork.html` | **801.401 Byte**, SHA-256 `175f4a8e…584e` — **unverändert**     |
+| `check-bundle.mjs`    | 0 Netzaufrufe, „Voller Bau in Ordnung"                          |
+| `store-frames.mjs`    | Probelauf, 32 Dateien geschrieben, **keine Bilddatei geändert** |
+
+Die Bündel-Prüfsumme ist der Beweis, dass `package.json` die Web-Fassung nicht
+berührt: Vorher gemessen, dass die Version dort nirgends ankommt — nachher am
+gebauten Bündel bestätigt.
+
+---
+
+## D6 — fastlane-Metadaten fertiggestellt
+
+### Eine Annahme, die nicht stimmte
+
+Der Auftrag ging davon aus, im fastlane-Baum lägen noch Screenshots der
+WEB-Fassung. **Nachgemessen: nein.** `fastlane/metadata/android/` und
+`play/listing/` waren für alle sieben Motive und die Funktionsgrafik
+**byte-identisch**, und beide trugen die nativen Bilder aus dem P9-Lauf
+(Commit `dbc6655`). Die Figma-Fassungen lagen in keinem der beiden Bäume.
+
+Der Auftrag bleibt trotzdem richtig — die Figma-Motive sollen hinein. Nur der
+Grund war ein anderer.
+
+### Die Bilder gehen in BEIDE Bäume, nicht nur in fastlane
+
+Der Auftrag nannte nur `fastlane/`. Das hätte die zwei Bäume auseinander
+laufen lassen — genau das, was N23 verbietet und was
+`store-listing.test.ts` prüft. Geschrieben wird deshalb in beide.
+
+### Kopieren ging nicht: Figma exportiert RGBA
+
+Der erste Versuch war ein reines `copyFileSync`. Der Store-Test hat ihn
+gestoppt:
+
+```
+AssertionError: expected 6 to be 2
+ ❯ scripts/store-listing.test.ts:88   expect(png[25]).toBe(2);
+```
+
+PNG-Farbtyp 6 statt 2 — die Figma-Exporte tragen einen Alphakanal. Gemessen,
+ob er etwas trägt: **2.073.600 von 2.073.600 Punkten voll undurchsichtig**.
+Das Strippen ist damit verlustfrei, und es lohnt: Die Dateien schrumpfen um
+rund 30 % (en-1: 211.252 → 144.026 Byte).
+
+### Was dafür gebaut wurde
+
+| Datei                     | was                                                    |
+| ------------------------- | ------------------------------------------------------ |
+| `scripts/png.mjs`         | PNG lesen **und** schreiben, an einer Stelle           |
+| `scripts/store-figma.mjs` | `play/Figma/{en,de}/` → beide Bäume, mit Alpha-Prüfung |
+
+Der Schreiber (`encodePng`) stand bis dahin in `store-frames.mjs`. Er ist
+unverändert nach `png.mjs` gezogen — eine zweite Kopie wäre die Doppelung
+gewesen, die D1b bei der Versionsnummer abgeräumt hat. **Der Beweis, dass die
+Verlagerung nichts verändert:** `store-frames.mjs` danach voll gefahren, alle
+16 Bilder byte-identisch zum eingecheckten Stand.
+
+Der Leser ist neu und kann bewusst wenig: 8 Bit, nicht interlaced, Farbtyp 2
+oder 6. Alles andere bricht ab. `ohneAlpha` weigert sich bei halbdurchsichtigen
+Punkten, statt eine Grundfarbe zu erfinden.
+
+### Ein Zielkonflikt, ausgeschrieben statt versteckt
+
+`store-frames.mjs` schreibt **dieselben Dateien** und würde die Figma-Bilder
+überschreiben. Beide Wege stehen jetzt nebeneinander im Repo. Bis das
+entschieden ist, gilt: Wer den Rahmen umbaut, fährt danach `store-figma.mjs`.
+Die Funktionsgrafik ist nicht betroffen — sie ist in beiden Wegen dieselbe
+Datei, byte-identisch nachgemessen.
+
+### Ein Mangel an den Figma-Bildern, den Kevin kennen muss
+
+Auf allen Motiven ist die **Uhr in der Statusleiste oben angeschnitten** — die
+Geräteaufnahme sitzt einige Pixel zu hoch im Rahmen, sichtbar bei `en-1` und
+`en-3` geprüft. Kein Fehler der Pipeline: Er steckt in der Figma-Vorlage.
+Gegenüber der montierten Fassung sind die Bilder sonst besser (Wortmarke sitzt
+richtig, die Navigationsleiste ist im Bild, die Tresor-Karte vollständig).
+
+### Texte
+
+- **Changelog 20001 neu gefasst**, Android 8.0 als erster Punkt, Ausschmückungen
+  und der emoji2-Punkt gestrichen. Gemessen **de 403/500, en 375/500** — Kevins
+  Vorlage nennt 420/389; ich konnte diese Zahlen mit keiner Formatierung
+  nachstellen (verbatim mit seinen Umbrüchen 406/376). Beide Fassungen liegen
+  weit unter der Grenze, die Abweichung ändert nichts.
+- **Der Android-8.0-Hinweis steht zusätzlich in `full_description`**, beide
+  Sprachen — wer kein Update angeboten bekommt, sieht den Changelog nie.
+- **Sachfehler behoben:** Die deutsche Langbeschreibung sagte „auch
+  rechtsläufige Layouts". _Rechtsläufig_ heißt von links nach rechts, also das
+  Gegenteil des Gemeinten. Jetzt „auch Layouts von rechts nach links".
+- Der emoji2-Punkt ist **vorgemerkt** für die GitHub-Release-Notizen.
+
+### N23 geprüft statt angenommen
+
+Der Test existiert und deckt mehr ab als gefragt: `store-listing.test.ts`
+vergleicht `title.txt`, `short_description.txt`, `full_description.txt`,
+`changelogs/<versionCode>.txt`, die Funktionsgrafik und **alle sieben
+Screenshots** je Sprache **byte-für-byte** zwischen beiden Bäumen. Dazu prüft
+er Maße, Farbtyp und Seitenverhältnis der Bilder und die Vollständigkeit der
+Bildtexte. **30 Zusicherungen, alle grün.**
+
+### Was NICHT geprüft werden konnte
+
+Der Abgleich gegen den **Play-Eintrag** selbst. Ich habe keinen Zugang zur Play
+Console; verglichen sind die beiden Repo-Bäume gegeneinander. Wer wissen will,
+ob der Live-Eintrag denselben Text trägt, muss ihn hierher kopieren.
+
+### Ketten
+
+`tsc` grün · **594 Tests** (21 Dateien) · ESLint 0 · Prettier sauber ·
+`store-frames.mjs` byte-identisch · beide Bäume 14/14 gleich, Farbtyp 2 überall.

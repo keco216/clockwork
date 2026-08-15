@@ -49,7 +49,7 @@ accounts. Every claim here is meant to be checked, not believed:
 - **Verified against the standards, not against itself.** The suite runs all 10
   HOTP vectors from RFC 4226 appendix D and all 18 TOTP vectors from RFC 6238
   appendix B, on three levels — HMAC, truncation, final code. Base32 is checked
-  against RFC 4648 section 10. Run `npm test` yourself: 548 tests.
+  against RFC 4648 section 10. Run `npm test` yourself: 594 tests.
 - **Offline by design, not by configuration.** After load the app makes no
   requests at all; the single-file build ships
   `Content-Security-Policy: connect-src 'none'`. The Android app declares **no
@@ -81,7 +81,7 @@ From source:
 ```bash
 npm ci
 npm run dev        # http://localhost:5173
-npm test           # 548 tests
+npm test           # 594 tests
 npm run build      # dist/ (PWA) + dist/clockwork.html (single file)
 ```
 
@@ -97,17 +97,25 @@ GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ
 Android only accepts an update signed with the same key as the installed app.
 Each source signs with its own:
 
-| Source                                                                  | Who signs                              |
+Three channels, three signatures — none of them interchangeable:
+
+| Source                                                                  | Who holds the signing key              |
 | ----------------------------------------------------------------------- | -------------------------------------- |
 | GitHub release                                                          | this project — SHA-256 `d31e10a4…cf3f` |
 | [F-Droid](https://f-droid.org/en/packages/io.github.keco216.clockwork/) | F-Droid, with its own key              |
-| Google Play — _prepared, not published yet_                             | Google, via Play App Signing           |
+| Google Play — _closed testing, not public yet_                          | Google, via Play App Signing           |
 
-**No two of them can update each other.** Pick one source and stay with it; if
-you switch, copy your vault entries out as text before uninstalling. Making
-F-Droid ship this project's own APK would need a reproducible build — measured
-against F-Droid's build of the same commit, 14 entries still differ, all from
-toolchain versions rather than the recipe. Details in the
+**No two of them can update each other**, and Android will not let you install
+one over the other. Switching source therefore means: **uninstall first — which
+deletes a vault stored on that device** — then install from the new source. So
+pick one source and stay with it, or unlock your vault and copy the entries out
+as plain text before you switch.
+
+Making F-Droid ship this project's own APK would need a reproducible build and
+two extra fields in the catalogue recipe (`Binaries`, `AllowedAPKSigningKeys`).
+Neither is in place: measured against F-Droid's build of the same commit, 14
+entries still differ, all from toolchain versions rather than the recipe.
+Details in the
 [German documentation](docs/README.de.md#eine-signatur-für-beide-wege--der-stand-v154).
 
 ## Limits worth knowing
