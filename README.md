@@ -38,8 +38,10 @@ library, no network requests, and nothing stored unless you ask for it.
   drag or the clipboard. Broken lines get explained, not swallowed.
 - **Optionally remembers your secrets** behind a passphrase: strictly opt-in,
   AES-256-GCM over PBKDF2-SHA-256 with 600,000 iterations, with an auto-lock.
+  On Android the vault can also unlock with a fingerprint.
 - **Speaks 37 languages**, all bundled, including right-to-left layouts.
-- **Runs as a web app, a PWA, one self-contained HTML file, or an Android app.**
+- **Runs as a web app, a PWA, one self-contained HTML file, or a native
+  Android app** — Kotlin and Jetpack Compose since v2.0.
 
 ## Why trust this?
 
@@ -49,7 +51,9 @@ accounts. Every claim here is meant to be checked, not believed:
 - **Verified against the standards, not against itself.** The suite runs all 10
   HOTP vectors from RFC 4226 appendix D and all 18 TOTP vectors from RFC 6238
   appendix B, on three levels — HMAC, truncation, final code. Base32 is checked
-  against RFC 4648 section 10. Run `npm test` yourself: 594 tests.
+  against RFC 4648 section 10. Run `npm test` yourself: 594 tests. The native
+  Android app runs its own 231 against the same vectors
+  (`gradlew testDebugUnitTest`).
 - **Offline by design, not by configuration.** After load the app makes no
   requests at all; the single-file build ships
   `Content-Security-Policy: connect-src 'none'`. The Android app declares **no
@@ -92,11 +96,36 @@ text `12345678901234567890`:
 GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ
 ```
 
+## The Android app is native since v2.0
+
+Version 2.0 replaced the WebView shell with a **native app in Kotlin and
+Jetpack Compose** — same application ID, so an existing 1.x install updates in
+place (from the same source; see below). The arithmetic did not move: Base32,
+HOTP, TOTP, the `otpauth://` parser and the protobuf reader are hand-written
+here too and run against the same RFC vectors; only `javax.crypto` stands in
+for `crypto.subtle`. The vault opens the same envelope with the same
+passphrase — now optionally behind a fingerprint, whose key sits in the
+Android Keystore and is invalidated the moment a new fingerprint is enrolled.
+The passphrase remains the only way back in.
+
+Worth knowing before you install:
+
+- **Android 8.0 (API 26) or newer.** Below that, 1.5.4 stays the last version.
+- **The permissions, all of them:** `CAMERA` (scanning QR codes),
+  `USE_BIOMETRIC` plus `USE_FINGERPRINT` up to API 27 (vault unlock), and one
+  signature-level permission androidx generates itself — verify with
+  `aapt2 dump badging`. Still **no INTERNET**, and the app does not even let
+  Play Services fetch an emoji font; very new emoji show as boxes instead.
+- **One WebView moment remains, explained rather than hidden:** the first
+  start after an update from 1.x reads the old shell's vault out of
+  `localStorage`, once. In operation there is no browser engine.
+
+The full story — what changed, what it costs, every number measured — is in
+the [German documentation](docs/README.de.md#die-native-app-kotlin-ab-v20).
+
 ## Where you can get it — and why that matters
 
 Android only accepts an update signed with the same key as the installed app.
-Each source signs with its own:
-
 Three channels, three signatures — none of them interchangeable:
 
 | Source                                                                  | Who holds the signing key              |
